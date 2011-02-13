@@ -1,0 +1,6 @@
+#
+# Ambrosia project file
+########################
+
+sub libAmbrosia
+sub Ambrosia : lib libAmbrosia
