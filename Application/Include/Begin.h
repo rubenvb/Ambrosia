@@ -24,12 +24,15 @@ namespace ambrosia
     {
     public:
         Begin( const int argc, const char* const argv[], State* parent = 0 );
+        ~Begin();
 
         State* event();
 
     private:
-        std::string m_arguments;
-
+        bool m_first_dashless_argument; // true if no arguments without '-' was processed
+        std::vector<std::string> m_arguments;
+        // internal functions
+        const std::string find_project_file( const std::string &path );
     };
 } // namespace ambrosia
 

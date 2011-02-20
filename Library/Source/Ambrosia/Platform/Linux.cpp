@@ -29,20 +29,20 @@ namespace ambrosia
 /*
  * Functions
  ************/
-    template<class OutIt>
-    void scanDir( OutIt it, const string &relDir, const string &dirName )
+    template<class output_iterator>
+    void recursive_scan_directory( output_iterator it, const string &relative_directory, const string &directory_name )
     {
         DIR* dir;
         struct dirent* entry;
         struct stat attributes;
 
-        if( (dir=opendir(relDir.c_str())) == 0 )
-            throw runtime_error( "unable to open file: " + dirName );
+        if( (dir=opendir(relative_directory.c_str())) == 0 )
+            throw runtime_error( "unable to open file: " + directory_name );
 
         // store cwd to return to original directory when finished
-        string cwd( currentWorkingDir() );
+        string cwd( current_working_directory() );
 
-        chdir( relDir.c_str() );
+        chdir( relative_directory.c_str() );
 
         while( (entry=readdir(dir)) != 0 )
         {
@@ -61,13 +61,15 @@ namespace ambrosia
             }
             else
             {
-                if( dirName.empty() )
+                if( directory_name.empty() )
                     it = make_pair( name, attributes.st_mtime );
                 else
-                    it = make_pair( dirName+"/"+name, attributes.st_mtime );
+                    it = make_pair( directory_name+"/"+name, attributes.st_mtime );
             }
         }
         chdir( cwd.c_str() );
         closedir( dir );
     }
+    // explicit instantiation
+    template void recursive_scan_directory<insert_iterator<map<string, time_t> > >( insert_iterator<map<string, time_t> >, const string &, const string & );
 } // namespace ambrosia

@@ -24,13 +24,15 @@ namespace ambrosia
     class FileStore
     {
     public:
-        FileStore( const std::string &sourceDir );
+        FileStore( const std::string &source_directory );
+
+        static const std::string find_nectar_file( const std::string &directory );
 
     private:
         // Project files
-        std::string m_sourceDirectory; // relative or absolute source directory
-        ambrosia::fileSet m_fileList; // list of files in source directory
-        const ambrosia::fileSet generateFileList() const;
+        std::string m_source_directory; // relative or absolute source directory
+        file_set m_file_list; // list of files in source directory
+        const file_set generate_file_list() const;
     };
 } // namespace ambrosia
 

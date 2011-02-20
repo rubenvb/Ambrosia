@@ -21,11 +21,12 @@
 
 namespace ambrosia
 {
-    typedef std::pair<std::string, bool> stringBool;
-    typedef std::vector<std::string> stringList;
-    typedef std::set<std::string> stringSet;
-    typedef std::map<std::string, std::string> stringMap;
-    typedef std::map<std::string, time_t> fileSet;
+    typedef std::pair<std::string, bool> pair_string_bool;
+    typedef std::pair<std::string, std::string> pair_string_string_set;
+    typedef std::vector<std::string> string_vector;
+    typedef std::set<std::string> string_set;
+    typedef std::map<std::string, std::string> string_map;
+    typedef std::map<std::string, time_t> file_set;
 } // namespace ambrosia
 
 #endif // TYPEDEFS_H

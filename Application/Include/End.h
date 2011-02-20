@@ -26,7 +26,7 @@ namespace ambrosia
     public:
         End( State* parent = 0 );
         End( const std::string &message, State* parent = 0 );
-        End( const std::string &message, const ambrosia::stringList &list,
+        End( const std::string &message, const string_vector &list,
              State* parent = 0 );
         ~End();
 

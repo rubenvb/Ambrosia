@@ -9,10 +9,13 @@ DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
 
 CONFIG( debug, debug|release ) {
     LIBSUFFIX = d
+    DEFINES += AMBROSIA_DEBUG
 } else {
     LIBSUFFIX =
 }
 TARGET = Ambrosia$${LIBSUFFIX}
+
+#DEFINES += AMBROSIA_DLL AMRBOSIA_BUILD_DLL
 
 INCLUDEPATH += . Include Include/Ambrosia Include/Parser
 DEPENDPATH += . Include Source
@@ -28,7 +31,9 @@ HEADERS += \
     Include/Target.h \
     Include/Ambrosia/Error.h \
     Include/Ambrosia/State.h \
-    Include/Ambrosia/Global.h
+    Include/Ambrosia/Global.h \
+    Include/Project.h \
+    Include/BuildConfig.h
 
 SOURCES += \
     Source/FileStore.cpp \
@@ -36,7 +41,10 @@ SOURCES += \
     Source/Ambrosia/Algorithm.cpp \
     Source/Target.cpp \
     Source/Ambrosia/Error.cpp \
-    Source/Ambrosia/State.cpp
+    Source/Ambrosia/State.cpp \
+    Source/Ambrosia/Platform/Common.cpp \
+    Source/Project.cpp \
+    Source/BuildConfig.cpp
 
-*win32*:SOURCES += Source/Ambrosia/Platform_Windows.cpp
-*linux*:SOURCES += Source/Ambrosia/Platform_Linux.cpp
+*win32*:SOURCES += Source/Ambrosia/Platform/Windows.cpp
+*linux*:SOURCES += Source/Ambrosia/Platform/Linux.cpp

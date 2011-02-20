@@ -11,7 +11,6 @@
 
 // C++ includes
 #include <iostream>
-#include <string>
 
 namespace ambrosia
 {

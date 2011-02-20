@@ -13,7 +13,7 @@
 #include "Ambrosia/Global.h"
 
 // C++ includes
-#include <iosfwd>
+#include <iostream>
 #include <string>
 
 namespace ambrosia
@@ -30,7 +30,7 @@ namespace ambrosia
         #ifdef AMBROSIA_DEBUG
         Debug& operator<<( const T &output )
         {
-            std::cout << output;
+            std::cerr << output;
         #else
         Debug& operator<<( const T & )
         {
@@ -42,7 +42,7 @@ namespace ambrosia
         #ifdef AMBROSIA_DEBUG
         Debug& operator<<( STRFUNC func )
         {
-            func(std::cout);
+            func(std::cerr);
         #else
         Debug& operator<<( STRFUNC )
         {

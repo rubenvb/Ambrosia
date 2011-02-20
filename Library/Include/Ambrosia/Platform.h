@@ -23,17 +23,24 @@ namespace ambrosia
 /*
  * constants
  *********************/
-    extern const std::string executableSuffix;
-    extern const os buildOS;
+    extern const char directory_seperator;
+    extern const std::string executable_suffix;
+    extern const os build_oS;
 /*
  * Functions
  ************/
     // current working directory in string form.
-    const std::string currentWorkingDir();
+    const std::string current_working_directory();
+    // check if a file/directory exists/is accessible
+    bool directory_exists( const std::string &directory );
+    bool file_exists( const std::string &filename );
+    // Single level directory scan
+    template<class output_iterator>
+    void scan_directory( output_iterator it, const std::string &relative_directory );
     // Recursive directory listing with generic output iterator
-    template<class OutIt>
-    void scanDir( OutIt it, const std::string &relDir, const std::string &dirName = "" );
+    template<class output_iterator>
+    void recursive_scan_directory( output_iterator it, const std::string &relative_directory,
+                                   const std::string &directory_name = "" );
 }
-
 
 #endif // PLATFORM_H

@@ -12,11 +12,13 @@ INCLUDEPATH += ../Library/Include
 CONFIG( debug, debug|release ) {
     LIBSUFFIX = d
     LIBS += -L../Library/debug
+    DEFINES += AMBROSIA_DEBUG
 } else {
     LIBSUFFIX =
     LIBS += -L../Library/release
 }
 LIBS += -lAmbrosia$${LIBSUFFIX}
+#DEFINES += AMBROSIA_DLL
 
 # Application includes
 INCLUDEPATH += . Include

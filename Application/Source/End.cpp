@@ -24,14 +24,14 @@ namespace ambrosia
     End::End( const string &message, State* parent )
     :   State( parent )
     {
-        Debug() << "End created.\n";
+        Debug() << "End::End created.\n";
         cerr << message << endl;
     }
-    End::End( const string &message, const stringList &list,
+    End::End( const string &message, const string_vector &list,
               State* parent )
     :   State( parent )
     {
-        cerr << message << "\n";
+        cerr << "End::" << message << "\n";
         for( auto it = list.begin(); it != list.end(); ++it )
         {
             cerr << " " << *it;
@@ -40,7 +40,7 @@ namespace ambrosia
 
     End::~End()
     {
-        Debug() << "End destroyed.\n";
+        Debug() << "End::Destroyed.\n";
     }
 
     bool End::end() const
