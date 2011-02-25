@@ -28,6 +28,12 @@ namespace ambrosia
     public:
         Target( const size_t line_number, const std::string &text );
 
+        // mighty compiler/linker option duplicate filter functions
+        static const std::string filter_duplicate_CFLAGS( const std::string &new_options,
+                                                          const std::string previous_options );
+        static const std::string filter_duplicate_LFLAGS( const std::string &new_options,
+                                                          const std::string previous_options );
+
     private:
         // full target text, with beginning line number
         const size_t m_line_number;

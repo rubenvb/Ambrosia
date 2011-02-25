@@ -19,19 +19,27 @@
 
 namespace ambrosia
 {
-    namespace error
+    class Error
     {
+    public:
         enum class status
         {
             none,
             warning,
             error // perhaps with warning
         };
-        status current_status;
-    } // namespace error
-    void emit_error( const std::string &message );
-    void emit_warning( const std::string &message );
-    void print_messages();
+
+        static void emit_error( const std::string &message );
+        static void emit_warning( const std::string &message );
+        static void print_errors();
+        static void print_warnings();
+
+    private:
+        Error();
+        static status current_status;
+        static std::string errors;
+        static std::string warnings;
+    };
 } // namespace ambrosia
 
 #endif // ERROR_H

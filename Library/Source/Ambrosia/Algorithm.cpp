@@ -16,21 +16,21 @@
 namespace ambrosia
 {
 
-bool wildcardDirectoryCompare( const string &wildString, const string &fullString )
+bool wildcard_directory_compare( const string &wild_string, const string &full_string )
 {
     // Written by Jack Handy - jakkhandy@hotmail.com
     // Taken from http://www.codeproject.com/KB/string/wildcmp.aspx
     // Adapted by Ruben Van Boxem for Ambrosia
 
-    auto wild = wildString.begin();
-    auto str = fullString.begin();
-    const auto wildEnd = wildString.end();
-    const auto strEnd = fullString.end();
+    auto wild = wild_string.begin();
+    auto str = full_string.begin();
+    const auto wild_end = wild_string.end();
+    const auto string_end = full_string.end();
 
-    auto cp = strEnd;
-    auto mp = wildEnd;
+    auto cp = string_end;
+    auto mp = wild_end;
 
-    while( str != strEnd && (*wild != '*') )
+    while( str != string_end && (*wild != '*') )
     {
         if( (*wild != *str) && (*wild != '?') )
             return false;
@@ -38,12 +38,12 @@ bool wildcardDirectoryCompare( const string &wildString, const string &fullStrin
         ++wild;
         ++str;
     }
-    while( str != strEnd ) // string != end
+    while( str != string_end ) // string != end
     {
         if( *wild == '*' )
         {
             ++wild;
-            if( wild == wildEnd )
+            if( wild == wild_end )
                 return true;
 
             mp = wild;
@@ -64,11 +64,11 @@ bool wildcardDirectoryCompare( const string &wildString, const string &fullStrin
             ++cp;
         }
     }
-    while( wild != wildEnd && *wild == '*' )
+    while( wild != wild_end && *wild == '*' )
     {
         ++wild;
     }
-    return ( wild==wildEnd );
+    return ( wild==wild_end );
 }
 
 } // namespace ambrosia

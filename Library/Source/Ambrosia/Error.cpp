@@ -9,22 +9,44 @@
 // Function include
 #include "Ambrosia/Error.h"
 
+// C++ includes
+#include <iostream>
+    using std::cerr;
+/* <string> */
+    using std::string;
+
 namespace ambrosia
 {
-    namespace error
+    // static member initialization
+    Error::status Error::current_status = Error::status::none;
+    string Error::errors = string();
+    string Error::warnings = string();
+
+    void Error::emit_error( const std::string &message )
     {
-        std::string messages;
+        errors += "\nError: " + message;
+        current_status = status::error;
     }
-    void emit_error( const std::string &message )
+    void Error::emit_warning( const std::string &message )
     {
-        error::messages += "\nError: " + message;
-        error::current_status = error::status::error;
+        warnings += "\nWarning: " + message;
+        current_status = std::max( current_status, status::warning );
     }
-    void emit_warning( const std::string &message )
+
+    void Error::print_errors()
     {
-        error::messages += "\nWarning: " + message;
-        error::current_status = std::max( error::current_status, error::status::warning );
+        cerr << errors;
+        errors.clear();
+        if( warnings.empty() )
+            current_status = status::none;
+        else
+           current_status = status::warning;
     }
-    void print_messages()
-    {}
+    void Error::print_warnings()
+    {
+        cerr << warnings;
+        warnings.clear();
+        if( current_status != status::error )
+            current_status = status::none;
+    }
 } // namespace ambrosia

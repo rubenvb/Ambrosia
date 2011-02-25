@@ -11,6 +11,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/Debug.h"
+#include "Ambrosia/Error.h"
 
 // C++ includes
 #include <iostream>
@@ -21,6 +22,13 @@
 
 namespace ambrosia
 {
+    End::End( State *parent )
+    :   State( parent )
+    {
+        cerr << "Error: ";
+        Error::print_errors();
+    }
+
     End::End( const string &message, State* parent )
     :   State( parent )
     {

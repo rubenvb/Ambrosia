@@ -19,24 +19,25 @@ namespace ambrosia
     class Output
     {
     public:
-        Output()
-        {}
+        //Output();
 
         template<typename T>
         Output& operator<<( const T &output )
         {
-            std::cout << output;
+            m_output_stream << output;
             return *this;
         }
         // for std::endl and other manipulators
         typedef std::ostream& (*STRFUNC)(std::ostream&);
         Output& operator<<( STRFUNC func )
         {
-            func(std::cout);
+            func(m_output_stream);
             return *this;
         }
+    private:
+        static std::ostream &m_output_stream;
     };
-
+    std::ostream &Output::m_output_stream = std::cout;
 } // namespace ambrosia
 
 

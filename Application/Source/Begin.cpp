@@ -11,6 +11,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/Debug.h"
+#include "Ambrosia/Error.h"
 #include "Ambrosia/Platform.h"
 #include "FileStore.h"
 
@@ -21,6 +22,9 @@
 #include "Ambrosia/Global.h" // for version information
 
 // C++ includes
+#include <algorithm>
+#include <iterator>
+    using std::insert_iterator;
 #include <string>
     using std::string;
 #include <sstream>
@@ -33,7 +37,8 @@ namespace ambrosia
     Begin::Begin( const int argc, const char* const argv[], State* parent )
     :   State( parent ),
         m_first_dashless_argument( true ),
-        m_arguments( vector<string>() )
+        m_arguments( vector<string>() ),
+        m_targets_and_options( vector<pair_string_string_set>())
     {
         // Welcome message
         Output() << "Welcome to Ambrosia, version "
@@ -69,7 +74,6 @@ namespace ambrosia
         // Options to be filled in, with default values, if any
         string source_directory( "." );
         string project_file;
-        vector<pair_string_string_set> targets_and_options;
         string user_options;
         string ambrosia_options;
         for( auto it = m_arguments.begin(); it != end; ++it )
@@ -102,41 +106,26 @@ namespace ambrosia
                     }
                     else
                     {
-                        Debug() << "Begin::Target to be built: " << current << ".\n";
-                        index = current.find( ":" );
-                        if( index == string::npos )
-                            targets_and_options.push_back( std::make_pair(current, "") );
-                        else
-                        {
-                            string options;
-                            istringstream stream( current );
-                            stream.seekg( index );
-                            string temp;
-                            while( std::getline(stream, temp, ',') )
-                            {
-                                options += " " + temp;
-                            }
-                            targets_and_options.push_back( std::make_pair(current.substr(0, index), options) );
-                        }
+                        if( !add_build_target(current) )
+                            return new End( this );
                     }
                     break;
                 case 1:
                     if( current[0] == '-' )
                     {
-                        Debug() << "Begin::Ambrosia option: " << current << " set.\n";
-
+                        if( !set_internal_option(current) )
+                            return new End( this );
                     }
                     else if( current[0] == ':' )
                     {
-                        Debug() << "Begin::Target configuration option: " << current << " set.\n";
-                        // add config options to all previous targets.
+                        if( !add_configuration_options(current) )
+                            return new End( this );
                     }
                     break;
                 default:
-                    return new End( "Unknown commandline argument: \'" + current + "\'.", this );
+                    return new End( "Invalid commandline argument: \'" + current + "\'.", this );
             }
         }
-
         return new End( "Begin does little for now.", this );
     }
 
@@ -144,16 +133,96 @@ namespace ambrosia
     {
         // check if the path is a file
         if( ambrosia::file_exists(path) )
+        {
+            Debug() << "Begin::File specified on commandline.\n";
             return path;
+        }
 
         // check if it's a directory, nd search it for a *.nectar.txt file
         if( ambrosia::directory_exists(path) )
         {
+            Debug() << "Begin::Directory specified on commandline.\n";
             string project_file( FileStore::find_nectar_file(path) );
             if( !project_file.empty() )
+            {
+                Debug() << "Begin::Project file found in specified directory.\n";
                 return project_file;
+            }
         }
         // if no *.nectar.txt file is found, return an empty string
         return string();
+    }
+
+    bool Begin::add_build_target( const std::string &target )
+    {
+        // TODO: fixme: this function does wrong things
+        const size_t index = target.find( ":" );
+        if( index == string::npos )
+        {
+            Debug() << "Begin::Target to be built: " << target << ".\n";
+            m_targets_and_options.push_back( std::make_pair(target, string_set()) );
+        }
+        else
+        {
+            const string target_name( target.substr(0, index) );
+            Debug() << "Begin::Target to be built: " << target_name << ".\n";
+            string_set options;
+            string_set duplicates;
+            istringstream stream( target );
+            stream.seekg( index );
+            string temp;
+            while( std::getline(stream, temp, ',') )
+            {
+                if( options.insert(temp).second == false )
+                    duplicates.insert( temp );
+            }
+            m_targets_and_options.push_back( std::make_pair(target_name, options) );
+        }
+        return true;
+    }
+    bool Begin::set_internal_option( const std::string &option )
+    {
+        Debug() << "Begin::Ambrosia internal option: " << option << " set.\n";
+        Error::emit_error( "Begin::No Ambrosia internal options implemented yet." );
+        return false;
+    }
+    bool Begin::add_configuration_options( const std::string &options )
+    {
+        Debug() << "Begin::Target configuration option: " << options << " set.\n";
+        // put them in a set
+        istringstream stream( options );
+        string temp;
+        string_set new_options;
+        while( stream >> temp )
+        {
+            if( new_options.insert(temp).second == false )
+                Output() << "Warning: duplicate configuration option: " << temp << ".\n";
+        }
+        // add config options to all previous targets and output duplicates as a warning.
+        const auto end = m_targets_and_options.end();
+        for( auto it = m_targets_and_options.begin(); it != end; ++it )
+        {
+            string_set &old_options( (*it).second );
+            string_set merged_options;
+            string_set duplicate_options;
+            // get merged set
+            std::set_union( old_options.begin(), old_options.end(),
+                            new_options.begin(), new_options.end(),
+                            insert_iterator<string_set>(merged_options, merged_options.begin()) );
+            // get duplicates
+            std::set_intersection( old_options.begin(), old_options.end(),
+                                   new_options.begin(), new_options.end(),
+                                   insert_iterator<string_set>(duplicate_options, duplicate_options.begin()) );
+            if( !duplicate_options.empty() )
+            {
+                Output() << "Warning: duplicate configuration options (for target " << (*it).first << "): ";
+                const auto end = duplicate_options.end();
+                for( auto it = duplicate_options.begin(); it != end; ++it )
+                {
+                    Output() << "Warning: duplicate configuration options: " << *it << "\n";
+                }
+            }
+        }
+        return true;
     }
 } // namespace ambrosia

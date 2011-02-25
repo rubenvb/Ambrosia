@@ -31,8 +31,12 @@ namespace ambrosia
     private:
         bool m_first_dashless_argument; // true if no arguments without '-' was processed
         std::vector<std::string> m_arguments;
+        std::vector<pair_string_string_set> m_targets_and_options;
         // internal functions
         const std::string find_project_file( const std::string &path );
+        bool add_build_target( const std::string &target );
+        bool set_internal_option( const std::string &option );
+        bool add_configuration_options( const std::string &options );
     };
 } // namespace ambrosia
 

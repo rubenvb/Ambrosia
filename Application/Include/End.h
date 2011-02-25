@@ -24,8 +24,11 @@ namespace ambrosia
     class End : public State
     {
     public:
+        // print "Error:" followed by libAmbrosia's error::print_errors
         End( State* parent = 0 );
+        // print contents of "message"
         End( const std::string &message, State* parent = 0 );
+        // pring contents of "message", followed by every item in "list"
         End( const std::string &message, const string_vector &list,
              State* parent = 0 );
         ~End();

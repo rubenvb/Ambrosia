@@ -22,7 +22,7 @@
 namespace ambrosia
 {
     typedef std::pair<std::string, bool> pair_string_bool;
-    typedef std::pair<std::string, std::string> pair_string_string_set;
+    typedef std::pair<std::string, std::set<std::string> > pair_string_string_set;
     typedef std::vector<std::string> string_vector;
     typedef std::set<std::string> string_set;
     typedef std::map<std::string, std::string> string_map;

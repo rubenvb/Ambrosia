@@ -30,7 +30,7 @@ namespace ambrosia
     {
         ifstream stream( filename.c_str() );
         if( !stream )
-            emit_error( "Reader: Unable to open file " + filename );
+            Error::emit_error( "Reader: Unable to open file " + filename );
 
 
 
