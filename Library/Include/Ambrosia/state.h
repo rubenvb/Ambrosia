@@ -1,5 +1,5 @@
 /**
-  * State.h
+  * state.h
   * Abstract base class for all States of Ambrosia.
   *
   * Author: Ruben Van Boxem
@@ -14,24 +14,24 @@
 
 namespace ambrosia
 {
-    class State
+    class state
     {
     public:
-        State( State* parent = 0 );
-        State( const State &state );
-        virtual ~State();
-        State & operator=( const State &state );
+        state( state* parent = 0 );
+        state( const state &s );
+        virtual ~state();
+        state & operator=( const state &s );
 
         virtual bool end() const;
-        virtual State* endOfState();
+        virtual state* end_of_state();
 
-        virtual State* event() = 0;
+        virtual state* event() = 0;
 
         // Setters
-        void setParent( State* parent = 0 );
+        void set_parent( state* parent = 0 );
 
     private:
-        State* p_parent;
+        state* p_parent;
     };
 } // namespace ambrosia
 

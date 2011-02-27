@@ -1,5 +1,5 @@
 /**
-  * State.h
+  * Ambrosia/state.h
   * Class implementation.
   *
   * Author: Ruben Van Boxem
@@ -7,35 +7,35 @@
   **/
 
 // Class include
-#include "State.h"
+#include "state.h"
 
 namespace ambrosia
 {
-    State::State( State* parent )
+    state::state( state* parent )
     :   p_parent( parent )
     {   }
-    State::State( const State &state )
+    state::state( const state &state )
     :   p_parent( state.p_parent )
     {   }
-    State::~State()
+    state::~state()
     {   }
-    State & State::operator=( const State &state )
+    state & state::operator=( const state &state )
     {
         p_parent = state.p_parent;
         return *this;
     }
 
-    bool State::end() const
+    bool state::end() const
     {
         return false;
     }
-    State* State::endOfState()
+    state* state::end_of_state()
     {
-        State* parent = p_parent; // save pointer to parent
+        state* parent = p_parent; // save pointer to parent
         delete this;
         return parent;
     }
-    void State::setParent( State* parent )
+    void state::set_parent( state* parent )
     {
         p_parent = parent;
     }

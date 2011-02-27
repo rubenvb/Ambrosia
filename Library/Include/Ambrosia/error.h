@@ -1,5 +1,5 @@
 /**
-  * Error.h
+  * error.h
   * libAmbrosia's error handling system. Users of the library functions must
   *  check ambrosia::error::status after every libAmbrosia class function call.
   *  Additionally,
@@ -19,7 +19,7 @@
 
 namespace ambrosia
 {
-    class Error
+    class error
     {
     public:
         enum class status
@@ -35,7 +35,7 @@ namespace ambrosia
         static void print_warnings();
 
     private:
-        Error();
+        error();
         static status current_status;
         static std::string errors;
         static std::string warnings;

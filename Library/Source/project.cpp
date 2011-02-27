@@ -1,5 +1,5 @@
 /**
-  * Project.cpp
+  * project.cpp
   * Class implementation.
   *
   * Author: Ruben Van Boxem
@@ -7,10 +7,10 @@
   **/
 
 // class include
-#include "Project.h"
+#include "project.h"
 
 // libAmbrosia includes
-/* "Target.h" */
+/* "target.h" */
 
 // C++ includes
 /* <vector> */
@@ -18,7 +18,7 @@
 
 namespace ambrosia
 {
-    Project::Project()
-    :   m_targets( vector<Target>() )
+    project::project()
+    :   m_targets( vector<target>() )
     {   }
 }

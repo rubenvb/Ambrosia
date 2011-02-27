@@ -1,5 +1,5 @@
 /**
-  * Platform.h
+  * platform.h
   * Ambrosia's platform dependent functions.
   *
   * Author: Ruben Van Boxem
@@ -25,7 +25,7 @@ namespace ambrosia
  *********************/
     extern const char directory_seperator;
     extern const std::string executable_suffix;
-    extern const os build_oS;
+    extern const os build_os;
 /*
  * Functions
  ************/

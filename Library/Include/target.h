@@ -1,5 +1,5 @@
 /**
-  * Target.h
+  * target.h
   * Ambrosia's internal representation of a build target. This includes:
   *  - full nectar.txt target text for:
   *     > multiple builds in one
@@ -23,10 +23,10 @@
 
 namespace ambrosia
 {
-    class Target
+    class target
     {
     public:
-        Target( const size_t line_number, const std::string &text );
+        target( const size_t line_number, const std::string &text );
 
         // mighty compiler/linker option duplicate filter functions
         static const std::string filter_duplicate_CFLAGS( const std::string &new_options,

@@ -1,5 +1,5 @@
 /**
-  * Enums.h
+  * enums.h
   * Ambrosia's handy enums.
   *
   * Author: Ruben Van Boxem
@@ -49,6 +49,6 @@ namespace ambrosia
         Intel
         // ...
     };
-}
+} // namespace ambrosia
 
 #endif // ENUMS_H

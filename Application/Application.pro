@@ -25,12 +25,12 @@ INCLUDEPATH += . Include
 DEPENDPATH += . Include Source
 
 SOURCES += \
-    Source/Main.cpp \
-    Source/Begin.cpp \
-    Source/End.cpp
+    Source/begin.cpp \
+    Source/main.cpp \
+    Source/end_state.cpp
 
 HEADERS += \
-    Include/Begin.h \
-    Include/Output.h \
-    Include/End.h \
-    Include/Global.h
+    Include/output.h \
+    Include/begin.h \
+    Include/global.h \
+    Include/end_state.h

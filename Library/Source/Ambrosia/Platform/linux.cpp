@@ -1,5 +1,5 @@
 /**
-  * Platform_Linux.cpp
+  * Ambrosia/Platform/linux.cpp
   * Function implementations for GNU/Linux.
   *
   * Author: Ruben Van Boxem
@@ -7,9 +7,14 @@
   **/
 
 // Function include
-#include "Platform.h"
+#include "platform.h"
+
+// libAmbrosia includes
+#include "typedefs.h"
 
 // C++ includes
+#include <iterator>
+    using std::insert_iterator;
 #include <stdexcept>
     using std::runtime_error;
 /* <string> */
@@ -25,7 +30,7 @@ namespace ambrosia
  * Constants
  ************/
     const std::string executableSuffix = "";
-    const os buildOS = os::Linux;
+    const os build_os = os::Linux;
 /*
  * Functions
  ************/
@@ -57,7 +62,7 @@ namespace ambrosia
                 if( strcmp(".",name.substr(0,1).c_str()) == 0 || strcmp("..",name.c_str()) == 0 )
                     continue;
                 else
-                    scanDir( it, name, name );
+                    recursive_scan_directory( it, name, name );
             }
             else
             {
@@ -71,5 +76,5 @@ namespace ambrosia
         closedir( dir );
     }
     // explicit instantiation
-    template void recursive_scan_directory<insert_iterator<map<string, time_t> > >( insert_iterator<map<string, time_t> >, const string &, const string & );
+    template void recursive_scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string &, const string & );
 } // namespace ambrosia

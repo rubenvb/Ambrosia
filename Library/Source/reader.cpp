@@ -1,5 +1,5 @@
 /**
-  * Reader.cpp
+  * reader.cpp
   * Class implementation.
   *
   * Author: Ruben Van Boxem
@@ -7,10 +7,10 @@
   **/
 
 // Class include
-#include "Reader.h"
+#include "reader.h"
 
 // Ambrosia includes
-#include "Ambrosia/Error.h"
+#include "Ambrosia/error.h"
 
 // C++ includes
 #include <fstream>
@@ -22,21 +22,21 @@
 
 namespace ambrosia
 {
-    Reader::Reader()
+    reader::reader()
     :   m_targets( vector<string>() )
     {   }
 
-    void Reader::load_nectar( const std::string &filename )
+    void reader::load_nectar( const std::string &filename )
     {
         ifstream stream( filename.c_str() );
         if( !stream )
-            Error::emit_error( "Reader: Unable to open file " + filename );
+            error::emit_error( "Reader: Unable to open file " + filename );
 
 
 
     }
 
-    void Reader::dependency_sort()
+    void reader::dependency_sort()
     {
 
     }

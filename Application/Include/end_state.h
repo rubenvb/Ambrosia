@@ -1,40 +1,40 @@
 /**
-  * End.h
+  * end_state.h
   * Error handler state, which ends the main event loop at any time.
   *
   * Author: Ruben Van Boxem
   *
   **/
 
-#ifndef END_H
-#define END_H
+#ifndef end_H
+#define end_H
 
 // Global include
-#include "Global.h"
+#include "global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Typedefs.h"
-#include "Ambrosia/State.h"
+#include "Ambrosia/typedefs.h"
+#include "Ambrosia/state.h"
 
 // C++ includes
 /* <string> */
 
 namespace ambrosia
 {
-    class End : public State
+    class end_state : public state
     {
     public:
         // print "Error:" followed by libAmbrosia's error::print_errors
-        End( State* parent = 0 );
+        end_state( state* parent = 0 );
         // print contents of "message"
-        End( const std::string &message, State* parent = 0 );
+        end_state( const std::string &message, state* parent = 0 );
         // pring contents of "message", followed by every item in "list"
-        End( const std::string &message, const string_vector &list,
-             State* parent = 0 );
-        ~End();
+        end_state( const std::string &message, const string_vector &list,
+             state* parent = 0 );
+        ~end_state();
 
         bool end() const;
-        State* event();
+        state* event();
     };
 } // namespace ambrosia
 

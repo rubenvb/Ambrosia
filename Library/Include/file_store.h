@@ -1,5 +1,5 @@
 /**
-  * FileStore.h
+  * file_store.h
   * Internal list of files and directories that might be relevant to the
   *  project being built.
   *
@@ -11,20 +11,20 @@
 #define FILESTORE_H
 
 // Global include
-#include "Ambrosia/Global.h"
+#include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Typedefs.h"
+#include "Ambrosia/typedefs.h"
 
 // C++ includes
 /* <string> */
 
 namespace ambrosia
 {
-    class FileStore
+    class file_store
     {
     public:
-        FileStore( const std::string &source_directory );
+        file_store( const std::string &source_directory );
 
         static const std::string find_nectar_file( const std::string &directory );
 

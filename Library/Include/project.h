@@ -1,5 +1,5 @@
 /**
-  * Project.h
+  * project.h
   * Ambrosia's internal representation of a project. Contains everything
   *  Ambrosia has done:
   *   - Target list
@@ -24,18 +24,18 @@
 #include <vector>
 
 // Forward declarations
-class BuildConfig;
+class build_config;
 
 namespace ambrosia
 {
-    class Project
+    class project
     {
     public:
-        Project();
-        Project( const std::string &filename, const BuildConfig &build_config );
+        project();
+        project( const std::string &filename, const build_config &build_conf );
 
     private:
-        std::vector<Target> m_targets; // a list of all Targets
+        std::vector<target> m_targets; // a list of all Targets
     };
 } // namespace ambrosia
 

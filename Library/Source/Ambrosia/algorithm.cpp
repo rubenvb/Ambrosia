@@ -1,5 +1,5 @@
 /**
-  * Algorithm.cpp
+  * Ambrosia/algorithm.cpp
   * Function implementations.
   *
   * Author: Ruben Van Boxem
@@ -7,7 +7,7 @@
   **/
 
 // Function include
-#include "Algorithm.h"
+#include "algorithm.h"
 
 // C++ includes
 /* <string> */

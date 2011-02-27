@@ -1,5 +1,5 @@
 /***
-  * Debug.h
+  * debug.h
   * Class designed to be used as temporary output stream for debugging purposes.
   *
   * Author: Ruben Van Boxem
@@ -10,7 +10,7 @@
 #define DEBUG_H
 
 // Ambrosia includes
-#include "Ambrosia/Global.h"
+#include "Ambrosia/global.h"
 
 // C++ includes
 #include <iostream>
@@ -20,19 +20,19 @@ namespace ambrosia
 {
     typedef std::ostream& (*STRFUNC)(std::ostream&);
 
-    class Debug
+    class debug
     {
     public:
-        Debug()
+        debug()
         {}
 
         template<typename T>
         #ifdef AMBROSIA_DEBUG
-        Debug& operator<<( const T &output )
+        debug& operator<<( const T &output )
         {
             std::cerr << output;
         #else
-        Debug& operator<<( const T & )
+        debug& operator<<( const T & )
         {
         #endif // AMBROSIA_DEBUG
             return *this;
@@ -40,17 +40,16 @@ namespace ambrosia
         // for std::endl and other manipulators
         typedef std::ostream& (*STRFUNC)(std::ostream&);
         #ifdef AMBROSIA_DEBUG
-        Debug& operator<<( STRFUNC func )
+        debug& operator<<( STRFUNC func )
         {
             func(std::cerr);
         #else
-        Debug& operator<<( STRFUNC )
+        debug& operator<<( STRFUNC )
         {
         #endif // AMBROSIA_DEBUG
             return *this;
         }
     };
-
 } // namespace ambrosia
 
 #endif // DEBUG_H

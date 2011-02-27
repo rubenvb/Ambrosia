@@ -21,30 +21,32 @@ INCLUDEPATH += . Include Include/Ambrosia Include/Parser
 DEPENDPATH += . Include Source
 
 HEADERS += \
-    Include/FileStore.h \
-    Include/Reader.h \
-    Include/Ambrosia/Algorithm.h \
-    Include/Ambrosia/Enums.h \
-    Include/Ambrosia/Platform.h \
-    Include/Ambrosia/Typedefs.h \
-    Include/Ambrosia/Debug.h \
-    Include/Target.h \
-    Include/Ambrosia/Error.h \
-    Include/Ambrosia/State.h \
-    Include/Ambrosia/Global.h \
-    Include/Project.h \
-    Include/BuildConfig.h
+    Include/Ambrosia/algorithm.h \
+    Include/Ambrosia/debug.h \
+    Include/Ambrosia/enums.h \
+    Include/Ambrosia/error.h \
+    Include/Ambrosia/global.h \
+    Include/Ambrosia/platform.h \
+    Include/Ambrosia/typedefs.h \
+    Include/Ambrosia/state.h \
+    Include/build_config.h \
+    Include/file_store.h \
+    Include/project.h \
+    Include/reader.h \
+    Include/target.h
 
 SOURCES += \
-    Source/FileStore.cpp \
-    Source/Reader.cpp \
-    Source/Ambrosia/Algorithm.cpp \
-    Source/Target.cpp \
-    Source/Ambrosia/Error.cpp \
-    Source/Ambrosia/State.cpp \
-    Source/Ambrosia/Platform/Common.cpp \
-    Source/Project.cpp \
-    Source/BuildConfig.cpp
+    Source/Ambrosia/Platform/common.cpp \
+    Source/Ambrosia/Platform/linux.cpp \
+    Source/Ambrosia/Platform/windows.cpp \
+    Source/Ambrosia/algorithm.cpp \
+    Source/Ambrosia/error.cpp \
+    Source/Ambrosia/state.cpp \
+    Source/build_config.cpp \
+    Source/file_store.cpp \
+    Source/project.cpp \
+    Source/reader.cpp \
+    Source/target.cpp
 
-*win32*:SOURCES += Source/Ambrosia/Platform/Windows.cpp
-*linux*:SOURCES += Source/Ambrosia/Platform/Linux.cpp
+*win32*:SOURCES +=
+*linux*:SOURCES +=

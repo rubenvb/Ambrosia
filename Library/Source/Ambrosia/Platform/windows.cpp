@@ -1,5 +1,5 @@
 /**
-  * Platform.cpp
+  * ambrosia/platform/windows.cpp
   * Function implementations for Windows.
   *
   * Author: Ruben Van Boxem
@@ -7,10 +7,11 @@
   **/
 
 // Function include
-#include "Platform.h"
+#include "platform.h"
 
 // libAmbrosia includes
-#include "Debug.h"
+#include "debug.h"
+#include "typedefs.h"
 
 // C++ includes
 #include <iterator>
@@ -155,7 +156,7 @@ namespace ambrosia
     {
         const wstring directory_name_wide = convert_to_utf16( directory_name );
         wstring directory_wide( directory_name_wide + L"\\*" );
-        Debug() << "Platform::Scanning directory: " << convert_to_utf8( directory_wide ) << ".\n";
+        debug() << "Platform::Scanning directory: " << convert_to_utf8( directory_wide ) << ".\n";
 
         _WIN32_FIND_DATAW find_data;
 
@@ -223,6 +224,6 @@ namespace ambrosia
         }
     }
     // explicit instantiation
-    template void recursive_scan_directory<insert_iterator<map<string, time_t> > >( insert_iterator<map<string, time_t> >, const string &, const string & );
+    template void recursive_scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string &, const string & );
 } // namespace ambrosia
 

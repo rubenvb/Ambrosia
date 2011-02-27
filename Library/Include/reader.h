@@ -1,5 +1,5 @@
 /**
-  * Reader.h
+  * reader.h
   * Ambrosia's file reader. Seperates the nectar files into targets
   *  and sets up dependencies.
   *
@@ -19,10 +19,10 @@
 
 namespace ambrosia
 {
-    class Reader
+    class reader
     {
     public:
-        Reader();
+        reader();
 
         // read the nectar.txt files and store all seperate targets.
         void load_nectar( const std::string &filename );

@@ -1,5 +1,5 @@
 /**
-  * BuildConfig.cpp
+  * build_config.cpp
   * Class implementation.
   *
   * Author: Ruben Van Boxem
@@ -7,10 +7,10 @@
   **/
 
 // Class include
-#include "BuildConfig.h"
+#include "build_config.h"
 
 // libAmbrosia includes
-/* "Ambrosia/Typedefs.h" */
+/* "Ambrosia/typedefs.h" */
 
 // C++ includes
 /* <string> */
@@ -18,7 +18,7 @@
 
 namespace ambrosia
 {
-    BuildConfig::BuildConfig()
+    build_config::build_config()
     :   m_cross_prefix( string() ),
         m_user_options( string_map() ),
         m_target_config( string_map() )

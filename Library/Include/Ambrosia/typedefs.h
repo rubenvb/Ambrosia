@@ -1,5 +1,5 @@
 /**
-  * Typedefs.h
+  * typedefs.h
   * Handy typedefs used throughout Ambrosia code as shorthand notation.
   *
   * Author: Ruben Van Boxem

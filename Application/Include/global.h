@@ -1,5 +1,5 @@
 /**
-  * Global_Application.h
+  * global.h
   * Global header included in all Ambrosia Application headers.
   *
   * Author: Ruben Van Boxem
@@ -8,10 +8,6 @@
 
 #ifndef GLOBAL_APPLICATION_H
 #define GLOBAL_APPLICATION_H
-
-// Temporary include
-// TODO: remove when Application is State complete
-#include "End.h"
 
 namespace ambrosia
 {

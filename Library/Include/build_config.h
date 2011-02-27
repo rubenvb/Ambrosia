@@ -1,5 +1,5 @@
 /**
-  * BuildConfig.h
+  * build_config.h
   * Information required to set up a chain of build commands from the Target list.
   *  It contains the following:
   *   - cross-compile prefix,
@@ -16,17 +16,17 @@
 #define BUILDCONFIG_H
 
 // Global include
-#include "Ambrosia/Global.h"
+#include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Typedefs.h"
+#include "Ambrosia/typedefs.h"
 
 namespace ambrosia
 {
-    class BuildConfig
+    class build_config
     {
     public:
-        BuildConfig();
+        build_config();
 
     private:
         std::string m_cross_prefix; // GNU triplet for platform
