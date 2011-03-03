@@ -36,7 +36,8 @@ namespace ambrosia
         // internal functions
         const std::string find_project_file( const std::string &path );
         bool add_build_target( const std::string &target );
-        bool set_internal_option( const std::string &option );
+        // TODO: implement internal Ambrosia options
+        void set_internal_option( const std::string &option, const std::string &value );
         bool add_configuration_options( const std::string &options );
     };
 } // namespace ambrosia

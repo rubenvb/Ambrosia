@@ -17,6 +17,8 @@
 #include <iostream>
     using std::cerr;
     using std::endl;
+#include <stdexcept>
+    using std::runtime_error;
 /* <string> */
     using std::string;
 

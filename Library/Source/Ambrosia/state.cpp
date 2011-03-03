@@ -9,11 +9,16 @@
 // Class include
 #include "state.h"
 
+// libAmbrosia includes
+#include "Ambrosia/debug.h"
+
 namespace ambrosia
 {
     state::state( state* parent )
     :   p_parent( parent )
-    {   }
+    {
+        debug() << "State created.\n";
+    }
     state::state( const state &state )
     :   p_parent( state.p_parent )
     {   }

@@ -111,7 +111,15 @@ namespace ambrosia
                 case 1:
                     if( current[0] == '-' )
                     {
-                        if( !set_internal_option(current) )
+                        const size_t index = current.find( "=",1 );
+                        if( index == string::npos || index == current.size()-1 )
+                            return new end_state( "Ambrosia internal options must be set by \'-option=value\' type arguments." );
+
+                        const string option( current.substr(1,index-1) );
+                        const string value( current.substr(index+1, string::npos) );
+                        set_internal_option( option, value );
+                        // check for any error that may have happened in the above call to libAmbrosia
+                        if( error::status::error == error::current_status()  )
                             return new end_state( this );
                     }
                     else if( current[0] == ':' )
@@ -178,11 +186,21 @@ namespace ambrosia
         }
         return true;
     }
-    bool begin::set_internal_option( const std::string &option )
+    void begin::set_internal_option( const std::string &option, const std::string &value )
     {
-        debug() << "begin::Ambrosia internal option: " << option << " set.\n";
-        error::emit_error( "begin::No Ambrosia internal options implemented yet." );
-        return false;
+        debug() << "begin::Ambrosia internal option: " << option
+                << " with value " << value << " being set.\n";
+
+        if( "cross" == option )
+        {
+            debug() << "begin::Cross-compiling for " << value << ".\n";
+            m_build_config.set_ambrosia_cross( value );
+        }
+        else if( "gnu-prefix" == option )
+        {
+            debug() << "begin::Cross-compiling with GNU prefix " << value << ".\n";
+            m_build_config.set_gnu_prefix( value );
+        }
     }
     bool begin::add_configuration_options( const std::string &options )
     {

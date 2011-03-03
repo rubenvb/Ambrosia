@@ -18,35 +18,40 @@
 namespace ambrosia
 {
     // static member initialization
-    error::status error::current_status = error::status::none;
-    string error::errors = string();
-    string error::warnings = string();
+    error::status error::s_status = error::status::none;
+    string error::s_errors = string();
+    string error::s_warnings = string();
+
+    error::status & error::current_status()
+    {
+        return s_status;
+    }
 
     void error::emit_error( const std::string &message )
     {
-        errors += "\nError: " + message;
-        current_status = status::error;
+        s_errors += "\nError: " + message;
+        s_status = status::error;
     }
     void error::emit_warning( const std::string &message )
     {
-        warnings += "\nWarning: " + message;
-        current_status = std::max( current_status, status::warning );
+        s_warnings += "\nWarning: " + message;
+        s_status = std::max( s_status, status::warning );
     }
 
     void error::print_errors()
     {
-        cerr << errors;
-        errors.clear();
-        if( warnings.empty() )
-            current_status = status::none;
+        cerr << s_errors;
+        s_errors.clear();
+        if( s_warnings.empty() )
+            s_status = status::none;
         else
-           current_status = status::warning;
+           s_status = status::warning;
     }
     void error::print_warnings()
     {
-        cerr << warnings;
-        warnings.clear();
-        if( current_status != status::error )
-            current_status = status::none;
+        cerr << s_warnings;
+        s_warnings.clear();
+        if( s_status != status::error )
+            s_status = status::none;
     }
 } // namespace ambrosia

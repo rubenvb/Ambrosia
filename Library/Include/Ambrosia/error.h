@@ -29,6 +29,7 @@ namespace ambrosia
             error // perhaps with warning
         };
 
+        static status & current_status();
         static void emit_error( const std::string &message );
         static void emit_warning( const std::string &message );
         static void print_errors();
@@ -36,9 +37,9 @@ namespace ambrosia
 
     private:
         error();
-        static status current_status;
-        static std::string errors;
-        static std::string warnings;
+        static status s_status;
+        static std::string s_errors;
+        static std::string s_warnings;
     };
 } // namespace ambrosia
 

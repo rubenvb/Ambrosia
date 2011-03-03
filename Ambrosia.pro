@@ -5,4 +5,5 @@ SUBDIRS += Library \
 
 Application.depends = Library
 
-OTHER_FILES += Ambrosia.nectar.txt
+OTHER_FILES += Ambrosia.nectar.txt \
+               "Environment detection.txt"

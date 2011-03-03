@@ -31,6 +31,13 @@ namespace ambrosia
  ************/
     const std::string executableSuffix = "";
     const os build_os = os::Linux;
+    // this works for GCC:
+#if i386
+    const architecture build_architecture = architecture::x86;
+#elif __x86_64__
+    const architecture build_architecture = architecture::amd64;
+#endif // i386 || __x86_64__
+
 /*
  * Functions
  ************/

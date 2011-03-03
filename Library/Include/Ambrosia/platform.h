@@ -26,6 +26,7 @@ namespace ambrosia
     extern const char directory_seperator;
     extern const std::string executable_suffix;
     extern const os build_os;
+    extern const architecture build_architecture;
 /*
  * Functions
  ************/

@@ -46,6 +46,11 @@ namespace ambrosia
     const char directory_seperator = '\\';
     const string executable_suffix = ".exe";
     const os build_os = os::Windows;
+#if _WIN64
+    const architecture build_architecture = architecture::amd64;
+#else
+    const architecture build_architecture = architecture::x86;
+#endif // _WIN64
 /*
  * Windows support functions
  ****************************/

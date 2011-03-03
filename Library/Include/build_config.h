@@ -19,7 +19,12 @@
 #include "Ambrosia/global.h"
 
 // libAmbrosia includes
+#include "Ambrosia/enums.h"
 #include "Ambrosia/typedefs.h"
+
+// C++ includes
+/* <map> */
+/* <string> */
 
 namespace ambrosia
 {
@@ -28,10 +33,21 @@ namespace ambrosia
     public:
         build_config();
 
+        // set cross-compilation options
+        void set_ambrosia_cross( const std::string &cross );
+        void set_gnu_prefix( const std::string &prefix ); // handles a lot of standard GU triplets
+        // add config value to one target
+        void add_target_config( const std::string &target, const std::string &config );
+
     private:
-        std::string m_cross_prefix; // GNU triplet for platform
+        os m_target_os;
+        architecture m_target_architecture;
+        std::string m_gnu_prefix; // GNU triplet for platform
         string_map m_user_options; // user option --> value
         string_map m_target_config; // Target name --> config list
+        const static std::map<std::string, os> s_os_map;
+        const static std::map<std::string, architecture> s_architecture_map;
+        const static std::map<std::string, toolchain> s_toolchain_map;
     };
 } // namespace ambrosia
 

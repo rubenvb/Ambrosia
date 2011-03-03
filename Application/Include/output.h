@@ -25,20 +25,20 @@ namespace ambrosia
         template<typename T>
         output& operator<<( const T &output )
         {
-            m_output_stream << output;
+            s_output_stream << output;
             return *this;
         }
         // for std::endl and other manipulators
         typedef std::ostream& (*STRFUNC)(std::ostream&);
         output& operator<<( STRFUNC func )
         {
-            func(m_output_stream);
+            func(s_output_stream);
             return *this;
         }
     private:
-        static std::ostream &m_output_stream;
+        static std::ostream &s_output_stream;
     };
-    std::ostream &output::m_output_stream = std::cout;
+    std::ostream &output::s_output_stream = std::cout;
 } // namespace ambrosia
 
 #endif // OUTPUT_H

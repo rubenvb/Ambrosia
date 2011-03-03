@@ -1,0 +1,54 @@
+Cross-compilation
+=================
+
+Ambrosia supports cross-compilation "natively", which means it was inherently baked into
+the program and not an afterthought. There are three terms that are important in cross-
+compilation: host, target and build:
+
+Host: the platform/OS where the created binary will run/be used.
+Target: Only important when compiling compilers; the host the created binary will create binaries for. Confused?
+Build: the platform/OS where Ambrosia is run. This is the easiest to determine (it's compiled in)
+
+Target is not implemented for now (not really a reason to do so). The host option can be altered (see next section).
+
+SUPPORT
+-------
+This table lists the target OS - toolchain combinations that Ambrosia can build with/for.
+The left column is the option provided by the "-cross=..." option on the commandline.
+
+Ambrosia config     | target OS | bitness | Toolchain | Description
+--------------------+-----------+---------+-----------+------------
+windows-x86-gcc     | Windows   |   32    |   GCC     | MinGW (all 32-bit flavours)
+windows-amd64-gcc   | Windows   |   64    |   GCC     | MinGW (all 64-bit flavours)
+windows-x86-msvc    | Windows   |   32    |   MSVC    | Windows SDK and/or Visual Studio tools x86
+windows-amd64-msvc  | Windows   |   64    |   MSVC    | Windows SDK and/or Visual Studio tools x64
+windows-x86-clang   | Windows   |   32    |   Clang   | UNSUPPORTED
+windows-amd64-clang | Windows   |   64    |   Clang   | UNSUPPORTED
+windows-x86-intel   | Windows   |   32    |   Intel   | UNSUPPORTED
+windows-amd64-intel | Windows   |   64    |   Intel   | UNSUPPORTED
+linux-x86-gcc       | linux     |   32    |   GCC     | i?86-*-linux
+linux-amd64-gcc     | linux     |   64    |   GCC     | x86_64-*-linux
+linux-x86-clang     | linux     |   32    |   Clang   | UNSUPPORTED
+linux-amd64-clang   | linux     |   64    |   Clang   | UNSUPPORTED
+linux-x86-intel     | linux     |   32    |   Intel   | UNSUPPORTED
+linux-amd64-intel   | linux     |   64    |   Intel   | UNSUPPORTED
+mac-x86-gcc         | Mac OS X  |   32    |   GCC     | UNSUPPORTED
+mac-amd64-gcc       | Mac OS X  |   64    |   GCC     | UNSUPPORTED
+mac-x86-clang       | Mac OS X  |   32    |   Clang   | UNSUPPORTED
+mac-amd64-clang     | Mac OS X  |   64    |   Clang   | UNSUPPORTED
+mac-x86-intel       | Mac OS X  |   32    |   Intel   | UNSUPPORTED
+mac-amd64-intel     | Mac OS X  |   64    |   Intel   | UNSUPPORTED
+
+If no "-cross=..." option is passed, auto-detection is initiated:
+
+1. Native compilation is assumed, which means running Ambrosia
+   on Windows x64 will by default create Win64 binaries if possible.
+2. Toolchain ordering:
+   1) GCC
+   2) (Windows only) MSVC
+   3) Clang
+   4) Intel
+
+This information is unique to a run of Ambrosia, and can only be altered by the "-cross=..." option.
+Many platform specific settings (like inclusion of source files or not in a certain target) can be
+determined this way by using conditionals
