@@ -111,57 +111,14 @@ namespace ambrosia
         return t2;
     }
 
-    const std::string currentWorkingDir()
-    {
-        const size_t chunkSize=255;
-        const int maxChunks=10240; // 2550 KiBs of current path are more than enough
-
-        char stackBuffer[chunkSize]; // Stack buffer for the "normal" case
-        if( getcwd(stackBuffer, sizeof(stackBuffer)) != NULL )
-            return stackBuffer;
-        if( errno!=ERANGE )
-          throw std::runtime_error("Cannot determine the current path.");
-
-        for(int chunks=2; chunks<maxChunks ; chunks++)
-        {
-            std::unique_ptr<char> cwd(new char[chunkSize*chunks]);
-            if( getcwd(cwd.get(),chunkSize*chunks) != NULL )
-                return cwd.get();
-
-            if(errno!=ERANGE)
-                throw std::runtime_error("Cannot determine the current path.");
-        }
-        throw std::runtime_error("Cannot determine the current path; the path is apparently unreasonably long");
-    }
-
 /*
  * Functions
  ************/
-    bool directory_exists( const string &directory )
-    {
-        DWORD attributes = GetFileAttributesW( convert_to_utf16(directory).c_str() );
-        if( attributes != INVALID_FILE_ATTRIBUTES
-            && (attributes & FILE_ATTRIBUTE_DIRECTORY) )
-            return true;
-        else
-            return false;
-    }
-    bool file_exists( const string &filename )
-    {
-        DWORD attributes = GetFileAttributesW( convert_to_utf16(filename).c_str() );
-        // Win32 API magic
-        if( 0xFFFFFFFF == attributes )
-            return false;
-        else
-            return true;
-    }
-
     template<class output_iterator>
     void scan_directory( output_iterator it, const std::string &directory_name )
     {
         const wstring directory_name_wide = convert_to_utf16( directory_name );
         wstring directory_wide( directory_name_wide + L"\\*" );
-        debug() << "Platform::Scanning directory: " << convert_to_utf8( directory_wide ) << ".\n";
 
         _WIN32_FIND_DATAW find_data;
 
@@ -205,8 +162,8 @@ namespace ambrosia
         {
             if( find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
             {
-                if( (wcsncmp(L".", find_data.cFileName, 1) != 0) &&
-                    (wcscmp(L"..", find_data.cFileName) != 0) )
+                if( (wcsncmp(L".", find_data.cFileName, 1) != 0)
+                 && (wcscmp(L"..", find_data.cFileName) != 0) )
                 {
                     string subdirectory;
                     if( directory_name.empty() )

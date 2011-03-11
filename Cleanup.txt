@@ -1,0 +1,9 @@
+This file lists a couple of items that need drastic improvement or general
+code cleanup.
+
+1. ambrosia::error class
+    This seemed the best way to handle internal library errors, and to be able
+    to abstract away return codes up to the level of Ambrosia's application
+    states. Apart from the ugly syntax, it works quite well except in:
+     - begin::event(), in case 0, where a lot of checks need to be made because
+     this is the only place where an end_state can be returned.

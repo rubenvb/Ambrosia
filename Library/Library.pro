@@ -29,11 +29,12 @@ HEADERS += \
     Include/Ambrosia/platform.h \
     Include/Ambrosia/typedefs.h \
     Include/Ambrosia/state.h \
-    Include/build_config.h \
     Include/file_store.h \
     Include/project.h \
-    Include/reader.h \
-    Include/target.h
+    Include/target.h \
+    Include/Ambrosia/enum_maps.h \
+    Include/nectar_loader.h \
+    Include/Ambrosia/build_config.h
 
 SOURCES += \
     Source/Ambrosia/Platform/common.cpp \
@@ -42,11 +43,12 @@ SOURCES += \
     Source/Ambrosia/algorithm.cpp \
     Source/Ambrosia/error.cpp \
     Source/Ambrosia/state.cpp \
-    Source/build_config.cpp \
     Source/file_store.cpp \
     Source/project.cpp \
-    Source/reader.cpp \
-    Source/target.cpp
+    Source/target.cpp \
+    Source/Ambrosia/enum_maps.cpp \
+    Source/nectar_loader.cpp \
+    Source/Ambrosia/build_config.cpp
 
 *win32*:SOURCES +=
 *linux*:SOURCES +=

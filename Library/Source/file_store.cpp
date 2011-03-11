@@ -10,6 +10,7 @@
 #include "file_store.h"
 
 // libAmbrosia includes
+#include "error.h"
 #include "debug.h"
 #include "platform.h"
 /* "typedefs.h" */
@@ -37,18 +38,25 @@ namespace ambrosia
         scan_directory( std::back_inserter(file_list), directory );
         debug() << "file_store::found " << file_list.size() << " files:\n";
         const auto end = file_list.end();
-        string file;
+        vector<string> nectar_files;
         for( auto it = file_list.begin(); it != end; ++it )
         {
-            file = (*it);
-            debug() << "file_store::searching for nectar.txt file... " << file << "\n";
+            const string file( *it );
             // find the first *.nectar.txt file in main source directory (not a subdirectory)
             size_t index = file.rfind( ".nectar.txt" );
             if( (index < string::npos) && (file.find('/') == string::npos) )
-                break;
+            {
+                debug() << "file_store::searching for nectar.txt file... " << file << "\n";
+                nectar_files.push_back( file );
+            }
         }
-        return file;
 
+        if( nectar_files.size() == 1 )
+            return nectar_files[0]; // return the unique match
+        else if( !nectar_files.empty() )
+            error::emit_error( "More than one *.nectar.txt files found in specified directory: " + directory );
+        // If there are no or more than one match, return an empty string
+        return string();
     }
 
     const file_set file_store::generate_file_list() const

@@ -66,7 +66,8 @@ namespace ambrosia
             if( S_ISDIR(attributes.st_mode) )
             {
                 // skip ".", "..", and ".*" (hidden directory on *nix)
-                if( strcmp(".",name.substr(0,1).c_str()) == 0 || strcmp("..",name.c_str()) == 0 )
+                if( strcmp(".",name.substr(0,1).c_str()) == 0
+                 || strcmp("..",name.c_str()) == 0 )
                     continue;
                 else
                     recursive_scan_directory( it, name, name );
@@ -76,7 +77,7 @@ namespace ambrosia
                 if( directory_name.empty() )
                     it = make_pair( name, attributes.st_mtime );
                 else
-                    it = make_pair( directory_name+"/"+name, attributes.st_mtime );
+                    it = make_pair( directory_name + "/" + name, attributes.st_mtime );
             }
         }
         chdir( cwd.c_str() );

@@ -27,10 +27,17 @@ DEPENDPATH += . Include Source
 SOURCES += \
     Source/begin.cpp \
     Source/main.cpp \
-    Source/end_state.cpp
+    Source/end_state.cpp \
+    Source/help_and_version_output.cpp \
+    Source/output.cpp \
+    Source/reader.cpp \
+    Source/builder.cpp
 
 HEADERS += \
     Include/output.h \
     Include/begin.h \
     Include/global.h \
-    Include/end_state.h
+    Include/end_state.h \
+    Include/help_and_version_output.h \
+    Include/reader.h \
+    Include/builder.h

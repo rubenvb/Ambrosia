@@ -6,4 +6,6 @@ SUBDIRS += Library \
 Application.depends = Library
 
 OTHER_FILES += Ambrosia.nectar.txt \
-               "Environment detection.txt"
+               "Environment detection.txt" \
+               Cleanup.txt \
+               Codestyle.txt

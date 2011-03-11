@@ -38,7 +38,6 @@ namespace ambrosia
     private:
         static std::ostream &s_output_stream;
     };
-    std::ostream &output::s_output_stream = std::cout;
 } // namespace ambrosia
 
 #endif // OUTPUT_H

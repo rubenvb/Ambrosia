@@ -24,20 +24,20 @@ windows-x86-msvc    | Windows   |   32    |   MSVC    | Windows SDK and/or Visua
 windows-amd64-msvc  | Windows   |   64    |   MSVC    | Windows SDK and/or Visual Studio tools x64
 windows-x86-clang   | Windows   |   32    |   Clang   | UNSUPPORTED
 windows-amd64-clang | Windows   |   64    |   Clang   | UNSUPPORTED
-windows-x86-intel   | Windows   |   32    |   Intel   | UNSUPPORTED
-windows-amd64-intel | Windows   |   64    |   Intel   | UNSUPPORTED
+windows-x86-icc     | Windows   |   32    |   Intel   | UNSUPPORTED
+windows-amd64-icc   | Windows   |   64    |   Intel   | UNSUPPORTED
 linux-x86-gcc       | linux     |   32    |   GCC     | i?86-*-linux
 linux-amd64-gcc     | linux     |   64    |   GCC     | x86_64-*-linux
 linux-x86-clang     | linux     |   32    |   Clang   | UNSUPPORTED
 linux-amd64-clang   | linux     |   64    |   Clang   | UNSUPPORTED
-linux-x86-intel     | linux     |   32    |   Intel   | UNSUPPORTED
-linux-amd64-intel   | linux     |   64    |   Intel   | UNSUPPORTED
+linux-x86-icc       | linux     |   32    |   Intel   | UNSUPPORTED
+linux-amd64-icc     | linux     |   64    |   Intel   | UNSUPPORTED
 mac-x86-gcc         | Mac OS X  |   32    |   GCC     | UNSUPPORTED
 mac-amd64-gcc       | Mac OS X  |   64    |   GCC     | UNSUPPORTED
 mac-x86-clang       | Mac OS X  |   32    |   Clang   | UNSUPPORTED
 mac-amd64-clang     | Mac OS X  |   64    |   Clang   | UNSUPPORTED
-mac-x86-intel       | Mac OS X  |   32    |   Intel   | UNSUPPORTED
-mac-amd64-intel     | Mac OS X  |   64    |   Intel   | UNSUPPORTED
+mac-x86-icc         | Mac OS X  |   32    |   Intel   | UNSUPPORTED
+mac-amd64-icc       | Mac OS X  |   64    |   Intel   | UNSUPPORTED
 
 If no "-cross=..." option is passed, auto-detection is initiated:
 

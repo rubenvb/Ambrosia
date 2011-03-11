@@ -28,13 +28,17 @@ namespace ambrosia
     extern const os build_os;
     extern const architecture build_architecture;
 /*
- * Functions
- ************/
+ * Possible commonly implemented functions
+ ******************************************/
     // current working directory in string form.
     const std::string current_working_directory();
     // check if a file/directory exists/is accessible
     bool directory_exists( const std::string &directory );
     bool file_exists( const std::string &filename );
+
+/*
+ * Mostly platform dependently implemented functions
+ ****************************************************/
     // Single level directory scan
     template<class output_iterator>
     void scan_directory( output_iterator it, const std::string &relative_directory );

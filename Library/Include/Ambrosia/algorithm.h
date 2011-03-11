@@ -19,6 +19,7 @@
 namespace ambrosia
 {
     // returns true if expanding '?' or '*' between forward slashes '/' produces a match
+    bool wildcard_compare( const std::string &wildcard_string, const std::string &full_string );
     bool wildcard_directory_compare( const std::string &wildcard_string, const std::string &full_string );
 }
 
