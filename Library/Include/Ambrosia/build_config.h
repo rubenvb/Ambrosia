@@ -44,10 +44,12 @@ namespace ambrosia
         // set cross-compilation options
         void set_ambrosia_cross( const std::string &cross );
         void set_gnu_prefix( const std::string &prefix ); // handles a lot of standard GU triplets
-        // add config options to one target
+        // add target or add additional config options to one target
         void add_target_config( const std::string &target, const string_set &options );
         // add config options to all present targets
         void add_general_config( const string_set &options );
+        // add user option settings
+        void set_user_option( const std::string &option, const std::string &value );
 
     /*
      * Getters

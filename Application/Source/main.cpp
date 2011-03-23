@@ -8,6 +8,9 @@
 
 // Ambrosia includes
 #include "begin.h"
+
+// libAmbrosia includes
+#include "Ambrosia/algorithm.h"
 #include "Ambrosia/debug.h"
 
 // C-ish includes

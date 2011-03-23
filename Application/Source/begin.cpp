@@ -13,10 +13,10 @@
 
 // libAmbrosia includes
 #include "Ambrosia/debug.h"
-#include "Ambrosia/error.h"
+#include "Ambrosia/status.h"
 #include "help_and_version_output.h"
 #include "Ambrosia/platform.h"
-#include "file_store.h"
+#include "Ambrosia/nectar.h"
 
 // Ambrosia includes
 #include "output.h"
@@ -71,34 +71,18 @@ namespace ambrosia
                     if( m_first_dashless_argument )
                     {
                         m_first_dashless_argument = false;
-                        debug() << "begin::possible project file or directory:" << current << ".\n";
-                        project_file = find_project_file( current );
-                        // if the directory contains a *.nectar.txt file, set source directory as well
-                        if( !project_file.empty() )
+                        debug() << "begin::Possible project file or directory: \'" << current << "\'.\n";
+
+                        find_project_file( current );
+
+                        if( ambrosia::current_status() == status::error )
+                            return new end_state( this );
+                        else if( ambrosia::current_status() == status::warning )
                         {
-                            debug() << "begin::Project file found: " <<  project_file << ".\n";
-                            s_build_config.set_source_directory( current );
-                        }
-                        else
-                        {
-                            if( error::status::error == error::current_status() )
-                                return new end_state( this );
-                            // no project file found, search current directory
-                            debug() << "begin::No *.nectar.txt file found in " << current << ".\n";
-                            project_file = find_project_file( s_build_config.source_directory() );
-                            if( project_file.empty() )
-                            {
-                                if( error::status::error == error::current_status() )
-                                    return new end_state( this );
-                                else
-                                    return new end_state( "Error:No project file found in " + current + " or current directory.", this );
-                            }
-                            else
-                            {
-                                debug() << "begin::Project file found in current directory \'.\': " << project_file << ".\n";
-                                // "current" is really a target name to be built, skip to below next else
-                                goto add_target;
-                            }
+                            // warning emitted when in-source build is performed
+                            ambrosia::print_warnings();
+                            // "current" is really a target name to be built, skip to below next else
+                            goto add_target;
                         }
                     }
                     else
@@ -131,7 +115,7 @@ namespace ambrosia
                         const string value( current.substr(index+1, string::npos) );
                         set_internal_option( option, value );
                         // check for any error that may have happened in the above call to libAmbrosia
-                        if( error::status::error == error::current_status()  )
+                        if( ambrosia::current_status() == status::error )
                             return new end_state( this );
                     }
                     else if( current[0] == ':' )
@@ -152,29 +136,45 @@ namespace ambrosia
         return new reader( this );
     }
 
-    const string begin::find_project_file( const std::string &path )
+    void begin::find_project_file( const std::string &path )
     {
-        debug() << "begin::find_project_file called for path = " << path << ".\n";
-        // check if the path is a file
+        debug() << "begin::find_project_file called for " << path << ".\n";
+
         if( ambrosia::file_exists(path) )
         {
-            debug() << "begin::File specified on commandline.\n";
-            return path;
+            debug() << "begin::find_project_file detected file.\n";
+            // TODO: generalize the directory seperators list
+            // seperate filename from (realtive) path
+            const size_t index = path.find_last_of( "/\\" );
+            s_build_config.set_project_file( path.substr(index+1, string::npos) );
+            s_build_config.set_source_directory( path.substr(0, index) );
         }
-        // check if it's a directory, and search it for a *.nectar.txt file
         else if( ambrosia::directory_exists(path) )
         {
-            debug() << "begin::Directory specified on commandline.\n";
-            string project_file( file_store::find_nectar_file(path) );
+            const string project_file = ambrosia::find_nectar_file( path );
+            // if the directory contains a *.nectar.txt file, set source directory as well
             if( !project_file.empty() )
             {
-                debug() << "begin::Project file found in specified directory.\n";
-                return project_file;
+                debug() << "begin::Project file found: " <<  path << ambrosia::directory_seperator << project_file << ".\n";
+                s_build_config.set_source_directory( path );
+                s_build_config.set_project_file( project_file );
             }
         }
-        debug() << "begin::Project file not found in specified directory or more than one file located.\n";
-        // if no *.nectar.txt file is found, return an empty string
-        return string();
+        else
+        {
+            // no project file found, search current directory "."
+            debug() << "begin::No *.nectar.txt file found in " << path << ".\n";
+            const string project_file = ambrosia::find_nectar_file( "." );
+            if( !project_file.empty() )
+            {
+                debug() << "begin::Project file found in current directory \'.\': " << project_file << ".\n";
+                ambrosia::emit_warning( "Ambrosia does not recommend an in-source build." );
+                s_build_config.set_source_directory( "");
+                s_build_config.set_project_file( project_file );
+            }
+            else if( ambrosia::current_status() != status::error )
+                ambrosia::emit_error( "No project file found in " + path + " or current directory." );
+        }
     }
 
     bool begin::add_build_target( const std::string &target )
@@ -184,7 +184,7 @@ namespace ambrosia
         if( index == string::npos )
         {
             debug() << "begin::Target to be built: " << target << ".\n";
-            //m_targets_and_options.push_back( std::make_pair(target, string_set()) );
+            s_build_config.add_target_config( target, string_set() );
         }
         else
         {
@@ -200,7 +200,7 @@ namespace ambrosia
                 if( options.insert(temp).second == false )
                     duplicates.insert( temp );
             }
-            //m_targets_and_options.push_back( std::make_pair(target_name, options) );
+            s_build_config.add_target_config( target_name, options );
         }
         return true;
     }

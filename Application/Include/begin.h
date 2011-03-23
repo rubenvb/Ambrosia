@@ -33,7 +33,7 @@ namespace ambrosia
         bool m_first_dashless_argument; // true if no arguments without '-' was processed
         std::vector<std::string> m_arguments;
         // internal functions
-        const std::string find_project_file( const std::string &path );
+        void find_project_file( const std::string &path );
         bool add_build_target( const std::string &target );
         void print_help_information();
         void print_version_information();

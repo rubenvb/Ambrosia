@@ -33,3 +33,16 @@ in the project.
         int m_member
         B m_b;
     }
+6. Includes and namespaces:
+    - never use a using statement in a header.
+    - always use using <namespace>::typename statements under the relevant header include line.
+    - include only the necessary headers. Avoid double includes, also if they're not evident.
+       Example:
+       class.h
+       #include <string>
+       #include <vector>
+       class.cpp
+       /* <string> */
+           using std::string;
+       /* <vector> */
+           using std::vector;

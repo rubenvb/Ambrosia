@@ -11,6 +11,8 @@
 
 // libAmbrosia includes
 #include "end_state.h"
+#include "Ambrosia/nectar.h"
+#include "Ambrosia/status.h"
 
 // C++ includes
 /* <fstream> */
@@ -22,15 +24,17 @@ namespace ambrosia
 {
     reader::reader( state* parent )
     :   state( parent ),
-        m_stream()
+        m_stream(),
+        m_targets()
     {   }
 
     state* reader::event()
     {
-        const string &project_file( s_build_config.path_to_project_file() );
-        m_stream.open( project_file );
-        if( !m_stream )
-            return new end_state( "Unable to open file: " + project_file, this );
+        ambrosia::drink_nectar( s_build_config.path_to_project_file(), std::back_inserter(m_targets) );
+
+        if( ambrosia::current_status() == status::error )
+            return new end_state( this );
+
 
         return new end_state( "reader::reader does little for now.", this );
     }

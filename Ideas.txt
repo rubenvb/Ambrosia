@@ -1,0 +1,4 @@
+TODO marks all sections of code with a known limitation. These are not bugs, just algorithmic oddities
+ or incomplete functionality in the wide sense of the word.
+
+ - Directory seperators: perhaps an extern const map<ambrosia::os, char> would do the trick.

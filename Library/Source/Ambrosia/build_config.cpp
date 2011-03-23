@@ -13,7 +13,7 @@
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/debug.h"
-#include "Ambrosia/error.h"
+#include "Ambrosia/status.h"
 #include "Ambrosia/platform.h"
 /* "Ambrosia/typedefs.h" */
 
@@ -60,7 +60,7 @@ namespace ambrosia
         // verify format
         if( !wildcard_compare( "*-*-*", cross) )
         {
-            error::emit_error( "Ambrosia cross-compile specification should be of the form \'OS-Architecture-Toolchain\'.\n" );
+            ambrosia::emit_error( "Ambrosia cross-compile specification should be of the form \'OS-Architecture-Toolchain\'.\n" );
             return;
         }
         else
@@ -83,32 +83,34 @@ namespace ambrosia
         // set the appropriate internal options
         const auto os_it = os_map.find( os );
         if( os_it == os_map.end() )
-            error::emit_error( "Specified invalid target OS: " + os );
+            ambrosia::emit_error( "Specified invalid target OS: " + os );
         else
             m_target_os = (*os_it).second;
         const auto architecture_it = architecture_map.find( architecture );
         if( architecture_it == architecture_map.end() )
-            error::emit_error( "Specified invalid target bitness: " + architecture );
+            ambrosia::emit_error( "Specified invalid target bitness: " + architecture );
         else
             m_target_architecture = (*architecture_it).second;
         const auto toolchain_it = toolchain_map.find( toolchain );
         if( toolchain_it == toolchain_map.end() )
-            error::emit_error( "Specified invalid target toolchain: " + toolchain );
+            ambrosia::emit_error( "Specified invalid target toolchain: " + toolchain );
         else
             m_target_toolchain = (*toolchain_it).second;
     }
     void build_config::set_gnu_prefix( const std::string & )
     {
         // TODO: detect and set common GNU/GCC target triplets
-        error::emit_error( "Cross-compiling through GNU prefix has not been implemented yet." );
+        ambrosia::emit_error( "Cross-compiling through GNU prefix has not been implemented yet." );
     }
     void build_config::add_target_config( const std::string &target, const string_set &options )
     {
         const auto it = m_target_config.find( target );
         if( it == m_target_config.end() )
-            throw runtime_error( "build_config::Internal logic error: invalid target name given to build_config::add_target_config: " + target );
-
-        merge_options( *it, options );
+        {
+            m_target_config.insert( {target, options} );
+        }
+        else
+            merge_options( *it, options );
     }
     void build_config::add_general_config( const string_set &options )
     {
@@ -117,6 +119,11 @@ namespace ambrosia
         {
             merge_options( *it, options );
         }
+    }
+    void build_config::set_user_option( const std::string &option, const std::string &value )
+    {
+        if( !m_user_options.insert({option, value}).second )
+            ambrosia::emit_error( "Option: " + option + " previously specified." );
     }
 
 /*
@@ -154,11 +161,11 @@ namespace ambrosia
                                insert_iterator<string_set>(duplicate_options, duplicate_options.begin()) );
         if( !duplicate_options.empty() )
         {
-            error::emit_warning( "Warning: duplicate configuration options (for target " + target.first + "): " );
+            ambrosia::emit_warning( "Warning: duplicate configuration options (for target " + target.first + "): " );
             const auto end = duplicate_options.end();
             for( auto it = duplicate_options.begin(); it != end; ++it )
             {
-                error::emit_warning( "Warning: duplicate configuration options: " + *it + "\n" );
+                ambrosia::emit_warning( "Warning: duplicate configuration options: " + *it + "\n" );
             }
         }
         // set new options

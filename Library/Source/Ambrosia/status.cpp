@@ -1,5 +1,5 @@
 /**
-  * Ambrosia/error.cpp
+  * Ambrosia/status.cpp
   * Function implementations + private error/warning string variable.
   *
   * Author: Ruben Van Boxem
@@ -7,7 +7,7 @@
   **/
 
 // Function include
-#include "Ambrosia/error.h"
+#include "Ambrosia/status.h"
 
 // C++ includes
 #include <iostream>
@@ -17,28 +17,28 @@
 
 namespace ambrosia
 {
-    // static member initialization
-    error::status error::s_status = error::status::none;
-    string error::s_errors = string();
-    string error::s_warnings = string();
+    // "private" members
+    status s_status = status::none;
+    string s_errors = string();
+    string s_warnings = string();
 
-    error::status & error::current_status()
+    status & current_status()
     {
         return s_status;
     }
 
-    void error::emit_error( const std::string &message )
+    void emit_error( const string &message )
     {
         s_errors += "\nError: " + message;
         s_status = status::error;
     }
-    void error::emit_warning( const std::string &message )
+    void emit_warning( const string &message )
     {
         s_warnings += "\nWarning: " + message;
         s_status = std::max( s_status, status::warning );
     }
 
-    void error::print_errors()
+    void print_errors()
     {
         cerr << s_errors;
         s_errors.clear();
@@ -47,7 +47,7 @@ namespace ambrosia
         else
            s_status = status::warning;
     }
-    void error::print_warnings()
+    void print_warnings()
     {
         cerr << s_warnings;
         s_warnings.clear();

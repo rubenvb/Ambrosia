@@ -10,8 +10,8 @@
 #include "end_state.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Debug.h"
-#include "Ambrosia/Error.h"
+#include "Ambrosia/debug.h"
+#include "Ambrosia/status.h"
 
 // C++ includes
 #include <iostream>
@@ -28,7 +28,7 @@ namespace ambrosia
     :   state( parent )
     {
         cerr << "Error: ";
-        error::print_errors();
+        ambrosia::print_errors();
     }
 
     end_state::end_state( const string &message, state* parent )

@@ -1,6 +1,6 @@
 /**
-  * nectar.h
-  * Functions to handle Ambrosia's project files.
+  * nectar_loader.h
+  * Class to handle read and disect Ambrosia's project files
   *
   * Author: Ruben Van Boxem
   *
@@ -24,16 +24,14 @@ namespace ambrosia
 {
     class nectar_loader
     {
-        nectar_loader( const std::string &filename );
-
     public:
-        // read the nectar.txt files and store all seperate targets.
-        template<class output_iterator>
-        void load_nectar( const std::string &filename, output_iterator &it );
+        nectar_loader( std::ifstream &stream );
+
+        // sort the targets in correct build order
         void dependency_sort();
 
     private:
-        std::ifstream m_fstream;
+        std::ifstream &m_stream;
     };
 } // namespace ambrosia
 

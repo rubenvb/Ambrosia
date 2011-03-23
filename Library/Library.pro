@@ -24,31 +24,33 @@ HEADERS += \
     Include/Ambrosia/algorithm.h \
     Include/Ambrosia/debug.h \
     Include/Ambrosia/enums.h \
-    Include/Ambrosia/error.h \
     Include/Ambrosia/global.h \
     Include/Ambrosia/platform.h \
     Include/Ambrosia/typedefs.h \
     Include/Ambrosia/state.h \
-    Include/file_store.h \
     Include/project.h \
-    Include/target.h \
     Include/Ambrosia/enum_maps.h \
+    Include/Ambrosia/build_config.h \
+    Include/parser.h \
+    Include/Ambrosia/status.h \
     Include/nectar_loader.h \
-    Include/Ambrosia/build_config.h
+    Include/Ambrosia/nectar.h \
+    Include/Ambrosia/target.h
 
 SOURCES += \
     Source/Ambrosia/Platform/common.cpp \
     Source/Ambrosia/Platform/linux.cpp \
     Source/Ambrosia/Platform/windows.cpp \
     Source/Ambrosia/algorithm.cpp \
-    Source/Ambrosia/error.cpp \
     Source/Ambrosia/state.cpp \
-    Source/file_store.cpp \
     Source/project.cpp \
-    Source/target.cpp \
     Source/Ambrosia/enum_maps.cpp \
     Source/nectar_loader.cpp \
-    Source/Ambrosia/build_config.cpp
+    Source/Ambrosia/build_config.cpp \
+    Source/parser.cpp \
+    Source/Ambrosia/status.cpp \
+    Source/Ambrosia/nectar.cpp \
+    Source/Ambrosia/target.cpp
 
 *win32*:SOURCES +=
 *linux*:SOURCES +=

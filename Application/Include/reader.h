@@ -14,6 +14,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/state.h"
+#include "Ambrosia/target.h"
 
 // C++ includes
 #include <fstream>
@@ -29,6 +30,8 @@ namespace ambrosia
 
     private:
         std::ifstream m_stream;
+        std::vector<target> m_targets;
+
     };
 } // namespace
 

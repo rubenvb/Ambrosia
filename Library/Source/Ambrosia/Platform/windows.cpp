@@ -131,7 +131,7 @@ namespace ambrosia
         {
             if( !(find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
             {
-                it = convert_to_utf8(find_data.cFileName);
+                it = convert_to_utf8( find_data.cFileName );
             }
             if( !FindNextFileW(handle, &find_data) && GetLastError() == ERROR_NO_MORE_FILES )
                 break;
@@ -176,9 +176,9 @@ namespace ambrosia
             else
             {
                 if( directory_name.empty() )
-                    it = make_pair( convert_to_utf8(find_data.cFileName), getTime(find_data.ftLastWriteTime) );
+                    it = { convert_to_utf8(find_data.cFileName), getTime(find_data.ftLastWriteTime) };
                 else
-                    it = make_pair( directory_name+"/"+convert_to_utf8(find_data.cFileName), getTime(find_data.ftLastWriteTime) );
+                    it = { directory_name+"/"+convert_to_utf8(find_data.cFileName), getTime(find_data.ftLastWriteTime) };
 
             }
             if( !FindNextFileW(handle, &find_data) && GetLastError() == ERROR_NO_MORE_FILES )
