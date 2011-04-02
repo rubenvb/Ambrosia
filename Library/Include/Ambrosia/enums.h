@@ -1,5 +1,5 @@
 /**
-  * enums.h
+  * Ambrosia/enums.h
   * Ambrosia's handy enums.
   *
   * Author: Ruben Van Boxem
@@ -10,7 +10,7 @@
 #define ENUMS_H
 
 // Global include
-#include "Ambrosia/Global.h"
+#include "global.h"
 
 namespace ambrosia
 {

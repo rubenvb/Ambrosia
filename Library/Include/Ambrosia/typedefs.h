@@ -1,5 +1,5 @@
 /**
-  * typedefs.h
+  * Ambrosia/typedefs.h
   * Handy typedefs used throughout Ambrosia code as shorthand notation.
   *
   * Author: Ruben Van Boxem
@@ -10,7 +10,7 @@
 #define TYPEDEFS_H
 
 // Global includes
-#include "Ambrosia/Global.h"
+#include "global.h"
 
 // C++ includes
 #include <map>

@@ -1,5 +1,5 @@
 /**
-  * nectar.h
+  * Ambrosia/nectar.h
   * Functions to facilitate working with *.nectar.txt files
   *
   * Author: Ruben Van Boxem
@@ -10,7 +10,7 @@
 #define NECTAR_H
 
 // Global include
-#include "Ambrosia/global.h"
+#include "global.h"
 
 // C++ includes
 #include <string>
@@ -21,6 +21,7 @@ namespace ambrosia
 
     template<class output_iterator>
     void drink_nectar( const std::string &filename, output_iterator it );
+
 } // namespace ambrosia
 
 #endif // NECTAR_H

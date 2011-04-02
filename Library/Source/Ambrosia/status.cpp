@@ -7,7 +7,7 @@
   **/
 
 // Function include
-#include "Ambrosia/status.h"
+#include "status.h"
 
 // C++ includes
 #include <iostream>

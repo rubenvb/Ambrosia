@@ -1,40 +1,48 @@
 /**
-  * parser.cpp
+  * Parser/nectar loader.h
   * Class implementation.
   *
   * Author: Ruben Van Boxem
   *
   **/
 
+
 // Class include
-#include "parser.h"
+#include "nectar_loader.h"
 
 // libAmbrosia includes
-#include "Ambrosia/debug.h"
+#include "debug.h"
+#include "target.h"
 
 // C++ includes
 #include <istream>
     using std::istream;
+#include <iterator>
+    using std::back_insert_iterator;
 /* <set> */
     using std::set;
 /* <string> */
     using std::string;
+#include <vector>
+    using std::vector;
 
 namespace ambrosia
 {
     const set<char> s_special_characters = { '(', ')', '{', '}', ':' };
 
-    parser::parser( istream &stream, const size_t line_number )
-    :   m_comment(),
-        m_token(),
-        m_line_number( line_number ),
-        m_stream( stream ),
-        m_buffer()
-    {   }
-    parser::~parser()
+    nectar_loader::nectar_loader( istream &stream )
+    :   m_stream( stream )
     {   }
 
-    bool parser::next_token()
+    template<class output_iterator>
+    void nectar_loader::extract_nectar( output_iterator it )
+    {
+
+
+    }
+    template void nectar_loader::extract_nectar<back_insert_iterator<vector<target> > >( back_insert_iterator<vector<target> > );
+
+    bool parser_state::next_token()
     {
         string token;
         if( fetch_token(token) )
@@ -54,7 +62,7 @@ namespace ambrosia
             return false;
     }
 
-    void parser::strip_comments( string &line )
+    void parser_state::strip_comments( string &line )
     {
         size_t index = line.find("#");
         if( index < string::npos )
@@ -63,7 +71,7 @@ namespace ambrosia
             line.resize( index ); // cut off comments
         }
     }
-    bool parser::strip_newline_escape( string &line )
+    bool parser_state::strip_newline_escape( string &line )
     {
         const size_t index = line.find( "\\" );
         if( index < string::npos )
@@ -75,7 +83,7 @@ namespace ambrosia
             return false;
     }
 
-    bool parser::fetch_line()
+    bool parser_state::fetch_line()
     {
         debug() << "fetchLine called (line " << m_line_number+1 << ").\n";
         string line;
@@ -92,7 +100,7 @@ namespace ambrosia
         else
             return false;
     }
-    bool parser::fetch_token( string &token )
+    bool parser_state::fetch_token( string &token )
     {
         do // read new line until valid token can be extracted
         {
@@ -107,7 +115,7 @@ namespace ambrosia
         // if no tokens can be extracted from the whole file, return false
         return false;
     }
-    void parser::tokenize( string &line, const set<char> &special_characters )
+    void parser_state::tokenize( string &line, const set<char> &special_characters )
     {
         auto it = line.begin();
         const auto not_found = special_characters.end();
@@ -133,4 +141,5 @@ namespace ambrosia
             ++it;
         }
     }
+
 } // namespace ambrosia

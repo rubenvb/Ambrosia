@@ -1,5 +1,5 @@
 /**
-  * enum_maps.cpp
+  * Ambrosia/enum_maps.cpp
   * Enum map definitions.
   *
   * Author: Ruben Van Boxem
@@ -7,7 +7,7 @@
   **/
 
 // map declarations
-#include "Ambrosia/enum_maps.h"
+#include "enum_maps.h"
 
 // C++ includes
 /* <map> */

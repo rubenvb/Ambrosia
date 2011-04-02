@@ -1,0 +1,19 @@
+These are aspects of Ambrosia operation that need to be sufficiently tested and verified as functional
+before they can be classified as "feature" or, in the case of correct error reporting, correct.
+
+1. Error reporting
+
+   1) Project file location
+       - file specified on commandline
+       - directory or nothing specified on commandline
+         -> no project file found
+         -> multiple project files found
+   2) Malformed project files need to report correct line number and the exact problem
+       - Testcases should be added as people report problems, it is undoable to test each possible case.
+
+2. Unicode support
+
+   1) Project file encoding is UTF8
+   2) Project directories may contain any unicode character
+       - important that file_exists and directory_exists works for unicode paths
+

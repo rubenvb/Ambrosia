@@ -1,5 +1,5 @@
 /***
-  * debug.h
+  * Ambrosia/debug.h
   * Class designed to be used as temporary output stream for debugging purposes.
   *
   * Author: Ruben Van Boxem
@@ -10,7 +10,7 @@
 #define DEBUG_H
 
 // Ambrosia includes
-#include "Ambrosia/global.h"
+#include "global.h"
 
 // C++ includes
 #include <iostream>

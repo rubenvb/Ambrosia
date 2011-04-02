@@ -1,5 +1,5 @@
 /**
-  * algorithm.h
+  * Ambrosia/algorithm.h
   * Ambrosia's handy semi-generic algorithms.
   *
   * Author: Ruben Van Boxem
@@ -10,11 +10,11 @@
 #define ALGORITHM_H
 
 // Global include
-#include "Ambrosia/global.h"
+#include "global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/platform.h"
-#include "Ambrosia/typedefs.h"
+#include "platform.h"
+#include "typedefs.h"
 
 namespace ambrosia
 {

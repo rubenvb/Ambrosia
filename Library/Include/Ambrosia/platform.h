@@ -1,5 +1,5 @@
 /**
-  * platform.h
+  * Ambrosia/platform.h
   * Ambrosia's platform dependent functions.
   *
   * Author: Ruben Van Boxem
@@ -10,10 +10,10 @@
 #define PLATFORM_H
 
 // Global include
-#include "Ambrosia/Global.h"
+#include "global.h"
 
 // libAmbrosia includes
-#include "Enums.h"
+#include "enums.h"
 
 // C++ include
 #include <string>

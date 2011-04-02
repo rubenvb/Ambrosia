@@ -1,5 +1,5 @@
 /**
-  * ambrosia/platform/windows.cpp
+  * Ambrosia/Platform/windows.cpp
   * Function implementations for Windows.
   *
   * Author: Ruben Van Boxem

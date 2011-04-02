@@ -10,7 +10,7 @@
 #include "state.h"
 
 // libAmbrosia includes
-#include "Ambrosia/debug.h"
+#include "debug.h"
 
 namespace ambrosia
 {

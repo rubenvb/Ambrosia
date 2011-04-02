@@ -1,5 +1,5 @@
 /**
-  * parser.H
+  * Ambrosia/Parser/parser_state.h
   * Abstract parser class that provides solid tokenization and
   *  other useful functionality.
   *
@@ -11,7 +11,10 @@
 #define PARSER_H
 
 // Global include
-#include "Ambrosia/global.h"
+#include "global.h"
+
+// libAmbrosia includes
+#include "state.h"
 
 // C++ includes
 #include <iosfwd>
@@ -21,13 +24,11 @@
 
 namespace ambrosia
 {
-    extern const std::set<char> s_special_characters;
-
-    class parser
+    class parser_state : public state
     {
     public:
-        parser( std::istream &stream, const size_t line_number );
-        virtual ~parser() = 0; // pure virtual to make class abstract
+        parser_state( std::istream &stream, const size_t line_number, state* parent = 0 );
+        virtual ~parser_state();
 
     protected:
         std::string m_comment;

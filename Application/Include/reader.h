@@ -31,7 +31,6 @@ namespace ambrosia
     private:
         std::ifstream m_stream;
         std::vector<target> m_targets;
-
     };
 } // namespace
 

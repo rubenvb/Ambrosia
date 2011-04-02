@@ -1,5 +1,5 @@
 /**
-  * build_config.h
+  * Ambrosia/build_config.h
   * Information required to set up a chain of build commands from the Target list.
   *  It contains the following:
   *   - cross-compile prefix,
@@ -16,11 +16,11 @@
 #define BUILDCONFIG_H
 
 // Global include
-#include "Ambrosia/global.h"
+#include "global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/enums.h"
-#include "Ambrosia/typedefs.h"
+#include "enums.h"
+#include "typedefs.h"
 
 // C++ includes
 #include <iterator>

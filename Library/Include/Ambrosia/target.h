@@ -16,12 +16,18 @@
 #define TARGET_H
 
 // Global include
-#include "Ambrosia/global.h"
+#include "global.h"
 
-class target
+namespace ambrosia
 {
-public:
-    target();
-};
+    class target
+    {
+    public:
+        target();
+
+    private:
+        bool m_parsed; // true if text contents have been converted to internal representation.
+    };
+} // namespace ambrosia
 
 #endif // TARGET_H

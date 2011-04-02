@@ -1,5 +1,5 @@
 /**
-  * global.h
+  * Ambrosia/global.h
   * Global header included by all other Ambrosia library headers.
   *
   * Author: Ruben Van Boxem

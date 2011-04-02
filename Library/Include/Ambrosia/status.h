@@ -1,5 +1,5 @@
 /**
-  * error.h
+  * Ambrosia/error.h
   * libAmbrosia's error handling system. Users of the library functions must
   *  check ambrosia::error::status after every libAmbrosia class function call.
   *  Additionally,
@@ -12,7 +12,7 @@
 #define ERROR_H
 
 // Global include
-#include "Ambrosia/Global.h"
+#include "global.h"
 
 // C++ includes
 #include <string>

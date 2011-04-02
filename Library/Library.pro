@@ -17,7 +17,7 @@ TARGET = Ambrosia$${LIBSUFFIX}
 
 #DEFINES += AMBROSIA_DLL AMRBOSIA_BUILD_DLL
 
-INCLUDEPATH += . Include Include/Ambrosia Include/Parser
+INCLUDEPATH += . Include Include/Ambrosia
 DEPENDPATH += . Include Source
 
 HEADERS += \
@@ -28,14 +28,13 @@ HEADERS += \
     Include/Ambrosia/platform.h \
     Include/Ambrosia/typedefs.h \
     Include/Ambrosia/state.h \
-    Include/project.h \
     Include/Ambrosia/enum_maps.h \
     Include/Ambrosia/build_config.h \
-    Include/parser.h \
     Include/Ambrosia/status.h \
-    Include/nectar_loader.h \
     Include/Ambrosia/nectar.h \
-    Include/Ambrosia/target.h
+    Include/Ambrosia/target.h \
+    Include/Ambrosia/Parser/parser_state.h \
+    Include/Ambrosia/nectar_loader.h
 
 SOURCES += \
     Source/Ambrosia/Platform/common.cpp \
@@ -43,14 +42,13 @@ SOURCES += \
     Source/Ambrosia/Platform/windows.cpp \
     Source/Ambrosia/algorithm.cpp \
     Source/Ambrosia/state.cpp \
-    Source/project.cpp \
     Source/Ambrosia/enum_maps.cpp \
-    Source/nectar_loader.cpp \
     Source/Ambrosia/build_config.cpp \
-    Source/parser.cpp \
     Source/Ambrosia/status.cpp \
     Source/Ambrosia/nectar.cpp \
-    Source/Ambrosia/target.cpp
+    Source/Ambrosia/target.cpp \
+    Source/Ambrosia/Parser/parser_state.cpp \
+    Source/Ambrosia/nectar_loader.cpp
 
 *win32*:SOURCES +=
 *linux*:SOURCES +=

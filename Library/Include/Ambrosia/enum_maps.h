@@ -1,5 +1,5 @@
 /**
-  * enum_maps.h
+  * Ambrosia/enum_maps.h
   * Ambrosia's handy enums mapped to their string for input parsing and output.
   *
   * Author: Ruben Van Boxem
@@ -10,10 +10,10 @@
 #define ENUM_MAPS_H
 
 // Global include
-#include "Ambrosia/global.h"
+#include "global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/enums.h"
+#include "enums.h"
 
 // C++ includes
 #include <map>

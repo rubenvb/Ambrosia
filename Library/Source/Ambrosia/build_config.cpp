@@ -1,5 +1,5 @@
 /**
-  * build_config.cpp
+  * Ambrosia/build_config.cpp
   * Class implementation.
   *
   * Author: Ruben Van Boxem
@@ -7,15 +7,15 @@
   **/
 
 // Class include
-#include "Ambrosia/build_config.h"
+#include "build_config.h"
 
 // libAmbrosia includes
-#include "Ambrosia/algorithm.h"
-#include "Ambrosia/enum_maps.h"
-#include "Ambrosia/debug.h"
-#include "Ambrosia/status.h"
-#include "Ambrosia/platform.h"
-/* "Ambrosia/typedefs.h" */
+#include "algorithm.h"
+#include "enum_maps.h"
+#include "debug.h"
+#include "status.h"
+#include "platform.h"
+/* "typedefs.h" */
 
 // C++ includes
 #include <algorithm>

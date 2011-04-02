@@ -31,9 +31,11 @@ namespace ambrosia
     state* reader::event()
     {
         ambrosia::drink_nectar( s_build_config.path_to_project_file(), std::back_inserter(m_targets) );
-
         if( ambrosia::current_status() == status::error )
             return new end_state( this );
+
+        // parse only targets requested and their dependencies
+        // TODO
 
 
         return new end_state( "reader::reader does little for now.", this );

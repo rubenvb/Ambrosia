@@ -7,7 +7,7 @@
   **/
 
 // Function include
-#include "Ambrosia/platform.h"
+#include "platform.h"
 
 // Common platform includes
 #include <io.h>   // For access()

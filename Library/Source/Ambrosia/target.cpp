@@ -1,5 +1,5 @@
 /**
-  * Ambrosia/target.cpp
+  * target.cpp
   * Class implementation.
   *
   * Author: Ruben Van Boxem
@@ -7,7 +7,10 @@
   **/
 
 // Class include
-#include "Ambrosia\target.h"
+#include "target.h"
 
-target::target()
-{   }
+namespace ambrosia
+{
+    target::target()
+    {   }
+} // namespace ambrosia

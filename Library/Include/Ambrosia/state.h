@@ -1,5 +1,5 @@
 /**
-  * state.h
+  * Ambrosia/state.h
   * Abstract base class for all States of Ambrosia.
   *
   * Author: Ruben Van Boxem
@@ -10,7 +10,7 @@
 #define STATE_H
 
 // Global include
-#include "Ambrosia/Global.h"
+#include "global.h"
 
 namespace ambrosia
 {
