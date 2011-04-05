@@ -12,23 +12,30 @@
 // libAmbrosia includes
 #include "typedefs.h"
 
+// Platform includes
+#include "dirent.h"
+#include "sys/stat.h"
+
 // C++ includes
 #include <iterator>
+    using std::back_insert_iterator;
     using std::insert_iterator;
 #include <stdexcept>
     using std::runtime_error;
 /* <string> */
     using std::string;
+/* <vector> */
+    using std::vector;
 
-// Platform includes
-#include "dirent.h"
-#include "sys/stat.h"
+// C-ish includes
+#include <cstring>
 
 namespace ambrosia
 {
 /*
  * Constants
  ************/
+    const char directory_seperator = '/';
     const std::string executableSuffix = "";
     const os build_os = os::Linux;
     // this works for GCC:
@@ -41,6 +48,36 @@ namespace ambrosia
 /*
  * Functions
  ************/
+    template<class output_iterator>
+    void scan_directory( output_iterator it, const string &directory_name )
+    {
+        DIR* dir;
+        struct dirent* entry;
+        struct stat attributes;
+
+        if( (dir=opendir(directory_name.c_str())) == 0 )
+            throw runtime_error( "unable to open file: " + directory_name );
+
+        // store cwd to return to original directory when finished
+        string cwd( current_working_directory() );
+
+        chdir( directory_name.c_str() );
+
+        while( (entry=readdir(dir)) != 0 )
+        {
+            const string name = entry->d_name;
+            int result = stat( entry->d_name, &attributes );
+            if( result == -1 )
+                throw runtime_error( "lstat failed..." );
+
+            if( S_ISREG(attributes.st_mode) )
+                it = name;
+        }
+        chdir( cwd.c_str() );
+        closedir( dir );
+    }
+    template void scan_directory<back_insert_iterator<vector<string> > >( back_insert_iterator<vector<string> >, const string & );
+
     template<class output_iterator>
     void recursive_scan_directory( output_iterator it, const string &relative_directory, const string &directory_name )
     {
@@ -58,7 +95,7 @@ namespace ambrosia
 
         while( (entry=readdir(dir)) != 0 )
         {
-            string name = entry->d_name;
+            const string name = entry->d_name;
             int result = stat( entry->d_name, &attributes );
             if( result == -1 )
                 throw runtime_error( "lstat failed..." );

@@ -10,7 +10,7 @@
 #include "platform.h"
 
 // Common platform includes
-#include <io.h>   // For access()
+#include <sys/io.h>   // For access()
 #include <sys/types.h>  // For stat()
 #include <sys/stat.h>   // For stat()
 

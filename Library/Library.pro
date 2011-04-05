@@ -40,8 +40,6 @@ HEADERS += \
 
 SOURCES += \
     Source/Ambrosia/Platform/common.cpp \
-    Source/Ambrosia/Platform/linux.cpp \
-    Source/Ambrosia/Platform/windows.cpp \
     Source/Ambrosia/algorithm.cpp \
     Source/Ambrosia/state.cpp \
     Source/Ambrosia/enum_maps.cpp \
@@ -52,5 +50,5 @@ SOURCES += \
     Source/Ambrosia/Parser/parser_state.cpp \
     Source/Ambrosia/nectar_loader.cpp
 
-*win32*:SOURCES +=
-*linux*:SOURCES +=
+*win32*:SOURCES += Source/Ambrosia/Platform/windows.cpp
+*linux*:SOURCES += Source/Ambrosia/Platform/linux.cpp

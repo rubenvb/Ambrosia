@@ -46,6 +46,6 @@ namespace ambrosia
     template<class output_iterator>
     void recursive_scan_directory( output_iterator it, const std::string &relative_directory,
                                    const std::string &directory_name = "" );
-}
+} // namespace ambrosia
 
 #endif // PLATFORM_H

@@ -11,11 +11,14 @@ DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
 INCLUDEPATH += ../Library/Include
 CONFIG( debug, debug|release ) {
     LIBSUFFIX = d
-    LIBS += -L../Library/debug
+    win32:LIBS += -L../Library/debug
+    unix:LIBS += -L../Library
+    QMAKE_CXXFLAGS += -g3
     DEFINES += AMBROSIA_DEBUG
 } else {
     LIBSUFFIX =
-    LIBS += -L../Library/release
+    win32:LIBS += -L../Library/release
+    unix:LIBS += -L ../Library
 }
 LIBS += -lAmbrosia$${LIBSUFFIX}
 #DEFINES += AMBROSIA_DLL
