@@ -10,6 +10,8 @@ DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
 CONFIG( debug, debug|release ) {
     LIBSUFFIX = d
     DEFINES += AMBROSIA_DEBUG
+    QMAKE_CXXFLAGS += -g3
+    QMAKE_LFLAGS -= -s
 } else {
     LIBSUFFIX =
 }

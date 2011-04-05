@@ -12,5 +12,6 @@
 namespace ambrosia
 {
     target::target()
+    :   m_parsed( false )
     {   }
 } // namespace ambrosia

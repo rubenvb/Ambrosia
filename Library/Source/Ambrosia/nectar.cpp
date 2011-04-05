@@ -70,6 +70,7 @@ namespace ambrosia
         if( !stream )
             ambrosia::emit_error( "Unable to open nectar file: " + filename );
 
+        debug() << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
         nectar_loader loader( stream );
         loader.extract_nectar( it );
 

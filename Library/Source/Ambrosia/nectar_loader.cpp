@@ -31,47 +31,63 @@ namespace ambrosia
     const set<char> s_special_characters = { '(', ')', '{', '}', ':' };
 
     nectar_loader::nectar_loader( istream &stream )
-    :   m_stream( stream )
+    :   m_stream( stream ),
+        m_buffer(),
+        m_token(),
+        m_line_number()
     {   }
 
     template<class output_iterator>
     void nectar_loader::extract_nectar( output_iterator it )
     {
+        while( next_token() )
+        {
+            debug() << "nectar_loader::processing token: \'" << m_token << "\'.\n";
+            if( "global" == m_token )
+            {
+                debug() << "nectar_loader::global section found at line " << m_line_number << ".\n";
+            }
+            else if( "app" == m_token )
+            {
+                debug() << "nectar_loader::app section found at line " << m_line_number << ".\n";
+            }
+            else if( "lib" == m_token )
+            {
+                debug() << "nectar_loader::lib section found at line " << m_line_number << ".\n";
+            }
+            else if( "sub" == m_token )
+            {
+                debug() << "nectar_loader::sub section found at line " << m_line_number << ".\n";
+            }
+
+        }
 
 
     }
     template void nectar_loader::extract_nectar<back_insert_iterator<vector<target> > >( back_insert_iterator<vector<target> > );
 
-    bool parser_state::next_token()
+    bool nectar_loader::next_token()
     {
         string token;
         if( fetch_token(token) )
         {
-            if( "(" == token )
-            {
-                debug() << "Conditionals not implemented yet.\n";
-                return false;
-            }
-            else
-            {
-                m_token = token;
-                return true;
-            }
+            m_token = token;
+            return true;
         }
         else
             return false;
     }
 
-    void parser_state::strip_comments( string &line )
+    void nectar_loader::strip_comments( string &line )
     {
         size_t index = line.find("#");
         if( index < string::npos )
         {
-            m_comment = line.substr( index, string::npos ); // save comments on current line for an unknown reason :)
+            //m_comment = line.substr( index, string::npos ); // save comments on current line for an unknown reason :)
             line.resize( index ); // cut off comments
         }
     }
-    bool parser_state::strip_newline_escape( string &line )
+    bool nectar_loader::strip_newline_escape( string &line )
     {
         const size_t index = line.find( "\\" );
         if( index < string::npos )
@@ -83,7 +99,7 @@ namespace ambrosia
             return false;
     }
 
-    bool parser_state::fetch_line()
+    bool nectar_loader::fetch_line()
     {
         debug() << "fetchLine called (line " << m_line_number+1 << ").\n";
         string line;
@@ -100,7 +116,7 @@ namespace ambrosia
         else
             return false;
     }
-    bool parser_state::fetch_token( string &token )
+    bool nectar_loader::fetch_token( string &token )
     {
         do // read new line until valid token can be extracted
         {
@@ -115,7 +131,7 @@ namespace ambrosia
         // if no tokens can be extracted from the whole file, return false
         return false;
     }
-    void parser_state::tokenize( string &line, const set<char> &special_characters )
+    void nectar_loader::tokenize( string &line, const set<char> &special_characters )
     {
         auto it = line.begin();
         const auto not_found = special_characters.end();

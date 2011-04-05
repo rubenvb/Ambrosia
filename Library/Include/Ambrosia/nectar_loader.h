@@ -37,7 +37,8 @@ namespace ambrosia
 
     private:
         std::istream &m_stream;
-        std::string m_line;
+        std::stringstream m_buffer;
+        std::string m_token;
         size_t m_line_number;
         // functions
         bool next_token();

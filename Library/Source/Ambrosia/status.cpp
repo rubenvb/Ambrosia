@@ -17,7 +17,7 @@
 
 namespace ambrosia
 {
-    // "private" members
+    // "private" variables
     status s_status = status::none;
     string s_errors = string();
     string s_warnings = string();
