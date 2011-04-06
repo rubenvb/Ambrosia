@@ -46,7 +46,7 @@ namespace ambrosia
         bool strip_newline_escape( std::string &line );
         bool fetch_line();
         bool fetch_token( std::string &token );
-        void tokenize( std::string &line, const std::set<char> &special_characters );
+        const std::string tokenize( const std::string &line, const std::set<char> &special_characters );
     };
 } // namespace ambrosia
 

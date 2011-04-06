@@ -109,7 +109,7 @@ namespace ambrosia
             strip_comments( line );
             if( line.empty() || line.find_first_not_of( " \v\t\r\n" ) == string::npos )
                 return fetch_line();
-            tokenize( line, s_special_characters );
+            line = tokenize( line, s_special_characters );
             m_buffer << line;
             return true;
         }
@@ -131,31 +131,29 @@ namespace ambrosia
         // if no tokens can be extracted from the whole file, return false
         return false;
     }
-    void nectar_loader::tokenize( string &line, const set<char> &special_characters )
+    const string nectar_loader::tokenize( const string &line, const set<char> &special_characters )
     {
-        auto it = line.begin();
         const auto not_found = special_characters.end();
+        const auto end = line.end();
+        string result;
 
-        // first character special case
-        if( special_characters.find( *it ) != not_found )
-            it = line.insert( it+1, ' ' ) + 1;
-
-        while( it != line.end() )
+        if( !line.empty() )
         {
-            // check if we're dealing with a special character
-            if( special_characters.find(*it) != not_found )
-            {
-                // ensure a space before
-                if( *(it-1) != ' ' )
-                    it = line.insert( it, ' ' ) + 1;
-                // ensure a space after
-                if( (it+1) != line.end() && *(it+1) != ' ' )
-                    it = line.insert( it+1, ' ');
-                else
-                    line.append(" ");
-            }
-            ++it;
-        }
-    }
+            // copy first character
+            result += line[0];
 
+            char previous = line[0];
+            for( auto it = line.begin()+1; it != end; ++it )
+            {
+                const char current = *it;
+
+                if( special_characters.find(previous) != not_found )
+                    result += ' ';
+
+                result += current;
+                previous = current;
+            }
+        }
+        return result;
+    }
 } // namespace ambrosia
