@@ -10,7 +10,11 @@
 #include "platform.h"
 
 // Common platform includes
-#include <sys/io.h>   // For access()
+#if __linux__
+    #include <sys/io.h>   // For access()
+#else
+    #include <io.h>
+#endif
 #include <sys/types.h>  // For stat()
 #include <sys/stat.h>   // For stat()
 
@@ -27,7 +31,7 @@ namespace ambrosia
  **********************************/
     const std::string current_working_directory()
     {
-        const size_t chunkSize=255;
+        const int chunkSize=255;
         const int maxChunks=10240; // 2550 KiBs of current path are more than enough
 
         char stackBuffer[chunkSize]; // Stack buffer for the "normal" case
@@ -39,7 +43,7 @@ namespace ambrosia
         for(int chunks=2; chunks<maxChunks ; chunks++)
         {
             std::unique_ptr<char> cwd(new char[chunkSize*chunks]);
-            if( getcwd(cwd.get(),chunkSize*chunks) != NULL )
+            if( getcwd(cwd.get(),chunkSize*chunks) != 0 )
                 return cwd.get();
 
             if(errno!=ERANGE)

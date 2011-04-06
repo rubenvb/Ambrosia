@@ -4,7 +4,7 @@ CONFIG += console warn_on
 CONFIG -= qt
 DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
 
-*g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic -Wextra \
+*g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic -Wextra -Wconversion \
                         -Weffc++ -Wmissing-include-dirs -Wstrict-aliasing
 
 # Ambrosia Library
