@@ -15,13 +15,13 @@
 // C++ includes
 #include <string>
 
-namespace ambrosia
-{
-    const std::string find_nectar_file( const std::string &directory );
+libambrosia_namespace_begin
 
-    template<class output_iterator>
-    void drink_nectar( const std::string &filename, output_iterator it );
+const std::string find_nectar_file( const std::string &directory );
 
-} // namespace ambrosia
+template<class output_iterator>
+void drink_nectar( const std::string &filename, output_iterator it );
+
+libambrosia_namespace_end
 
 #endif // NECTAR_H

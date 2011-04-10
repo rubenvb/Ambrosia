@@ -25,12 +25,12 @@ namespace ambrosia
     {
         // Welcome message
         output() << "Welcome to Ambrosia, version "
-                   << app_version_major << "."
-                   << app_version_minor << "."
-                   << app_version_bugfix << ", using libAmbrosia version "
-                   << lib_version_major << "."
-                   << lib_version_minor << "."
-                   << lib_version_bugfix << ".\n"
+                   << app::version_major << "."
+                   << app::version_minor << "."
+                   << app::version_bugfix << ", using libAmbrosia version "
+                   << lib::version_major << "."
+                   << lib::version_minor << "."
+                   << lib::version_bugfix << ".\n"
                    << "This version of Ambrosia was built for TODO OS, Platform, architecture.\n";
     }
 } // namespace ambrosia

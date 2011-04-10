@@ -21,7 +21,7 @@
 
 namespace ambrosia
 {
-    class end_state : public state
+    class end_state : public lib::state
     {
     public:
         // print "Error:" followed by libAmbrosia's error::print_errors

@@ -18,12 +18,10 @@
 
 namespace ambrosia
 {
-    class builder : public state
+    class builder : public lib::state
     {
     public:
         builder( state* parent = 0 );
-
-        static build_config s_build_config;
     };
 } // namespace ambrosia
 

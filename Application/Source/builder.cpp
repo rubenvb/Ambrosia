@@ -14,9 +14,6 @@
 
 namespace ambrosia
 {
-    // static variable instantiation
-    build_config s_build_config = build_config();
-
     builder::builder( state* parent )
     :   state( parent )
     {   }

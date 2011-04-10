@@ -14,26 +14,23 @@
 // Global include
 #include "global.h"
 
+// libAmbrosia includes
+#include "enums.h"
+
 // C++ includes
 #include <string>
 
-namespace ambrosia
-{
-    enum class status
-    {
-        none,
-        warning,
-        error // perhaps with warning
-    };
+libambrosia_namespace_begin
 
-    // set error status with appropriate messages
-    void emit_error( const std::string &message );
-    void emit_warning( const std::string &message );
-    // retrieve current status
-    extern status & current_status();
-    // print messages currently stored
-    void print_errors();
-    void print_warnings();
-} // namespace ambrosia
+// set error status with appropriate messages
+void emit_error( const std::string &message );
+void emit_warning( const std::string &message );
+// retrieve current status
+extern status & current_status();
+// print messages currently stored
+void print_errors();
+void print_warnings();
+
+libambrosia_namespace_end
 
 #endif // ERROR_H

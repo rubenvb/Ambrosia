@@ -11,6 +11,8 @@
 
 // libAmbrosia includes
 #include "Ambrosia/debug.h"
+/* "Ambrosia/state.h" */
+    using libambrosia::state;
 #include "Ambrosia/status.h"
 
 // C++ includes
@@ -28,7 +30,7 @@ namespace ambrosia
     :   state( parent )
     {
         cerr << "Error: ";
-        ambrosia::print_errors();
+        libambrosia::print_errors();
     }
 
     end_state::end_state( const string &message, state* parent )

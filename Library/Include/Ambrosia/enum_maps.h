@@ -19,12 +19,13 @@
 #include <map>
 #include <string>
 
-namespace ambrosia
-{
-    extern const std::map<std::string, os> os_map;
-    extern const std::map<std::string, architecture> architecture_map;
-    extern const std::map<std::string, toolchain> vendor_map;
-    extern const std::map<std::string, toolchain> toolchain_map;
-} // namespace ambrosia
+libambrosia_namespace_begin
+
+extern const std::map<std::string, os> os_map;
+extern const std::map<std::string, architecture> architecture_map;
+extern const std::map<std::string, toolchain> vendor_map;
+extern const std::map<std::string, toolchain> toolchain_map;
+
+libambrosia_namespace_end
 
 #endif // ENUM_MAPS_H

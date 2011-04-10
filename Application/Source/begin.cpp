@@ -13,6 +13,10 @@
 
 // libAmbrosia includes
 #include "Ambrosia/debug.h"
+    using ambrosia::debug;
+#include "Ambrosia/enums.h"
+/* "Ambrosia/state.h" */
+    using libambrosia::state;
 #include "Ambrosia/status.h"
 #include "help_and_version_output.h"
 #include "Ambrosia/platform.h"
@@ -73,10 +77,10 @@ namespace ambrosia
 
                         find_project_file( current );
 
-                        if( ambrosia::current_status() == status::error )
+                        if( libambrosia::current_status() == status::error )
                             return new end_state( this );
-                        else if( ambrosia::current_status() == status::warning )
-                            ambrosia::print_warnings();    // warning emitted when in-source build is performed
+                        else if( libambrosia::current_status() == status::warning )
+                            libambrosia::print_warnings();    // warning emitted when in-source build is performed
 
                         // if project_file is still empty, "current" is really a target name to be built, skip to below next else
                         if( s_build_config.project_file().empty() )
@@ -112,7 +116,7 @@ namespace ambrosia
                         const string value( current.substr(index+1, string::npos) );
                         set_internal_option( option, value );
                         // check for any error that may have happened in the above call to libAmbrosia
-                        if( ambrosia::current_status() == status::error )
+                        if( libambrosia::current_status() == status::error )
                             return new end_state( this );
                     }
                     else if( current[0] == ':' )
@@ -133,20 +137,20 @@ namespace ambrosia
         // if project file is not yet set, search current directory
         if( s_build_config.project_file().empty() )
         {
-            const string project_file = ambrosia::find_nectar_file( "." );
+            const string project_file = libambrosia::find_nectar_file( "." );
             if( !project_file.empty() )
             {
                 debug() << "begin::Project file found in current directory \'.\': " << project_file << ".\n";
-                ambrosia::emit_warning( "Ambrosia does not recommend an in-source build." );
+                libambrosia::emit_warning( "Ambrosia does not recommend an in-source build." );
                 s_build_config.set_source_directory( "");
                 s_build_config.set_project_file( project_file );
             }
-            else if( ambrosia::current_status() != status::error )
-                ambrosia::emit_error( "No project file found in specified path or current directory." );
+            else if( libambrosia::current_status() != status::error )
+                libambrosia::emit_error( "No project file found in specified path or current directory." );
         }
         debug() << "begin::Checking if project file was found.\n";
         // Ensure that a valid project file has been found
-        if( file_exists(s_build_config.path_to_project_file()) )
+        if( libambrosia::file_exists(s_build_config.path_to_project_file()) )
             return new reader( this );
         else
             return new end_state( "No project file was found. Please specify a project file or a directory containing a single project file.", this );
@@ -156,7 +160,7 @@ namespace ambrosia
     {
         debug() << "begin::find_project_file called for " << path << ".\n";
 
-        if( ambrosia::file_exists(path) )
+        if( libambrosia::file_exists(path) )
         {
             debug() << "begin::find_project_file detected file.\n";
             // TODO: generalize the directory seperators list
@@ -166,13 +170,13 @@ namespace ambrosia
             s_build_config.set_source_directory( path.substr(0, index) );
             return true;
         }
-        else if( ambrosia::directory_exists(path) )
+        else if( libambrosia::directory_exists(path) )
         {
-            const string project_file = ambrosia::find_nectar_file( path );
+            const string project_file = libambrosia::find_nectar_file( path );
             // if the directory contains a *.nectar.txt file, set source directory as well
             if( !project_file.empty() )
             {
-                debug() << "begin::Project file found: " <<  path << ambrosia::directory_seperator << project_file << ".\n";
+                debug() << "begin::Project file found: " <<  path << libambrosia::directory_seperator << project_file << ".\n";
                 s_build_config.set_source_directory( path );
                 s_build_config.set_project_file( project_file );
                 return true;

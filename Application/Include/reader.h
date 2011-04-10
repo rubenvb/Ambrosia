@@ -18,10 +18,12 @@
 
 // C++ includes
 #include <fstream>
+#include <memory>
+#include <vector>
 
 namespace ambrosia
 {
-    class reader : public state
+    class reader : public lib::state
     {
     public:
         reader( state* parent = 0 );
@@ -30,7 +32,7 @@ namespace ambrosia
 
     private:
         std::ifstream m_stream;
-        std::vector<target> m_targets;
+        std::vector<std::unique_ptr<lib::target> > m_targets;
     };
 } // namespace
 

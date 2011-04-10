@@ -11,6 +11,7 @@
 
 // libAmbrosia includes
 #include "end_state.h"
+    using libambrosia::state;
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/status.h"
 
@@ -30,9 +31,9 @@ namespace ambrosia
 
     state* reader::event()
     {
-        ambrosia::drink_nectar( s_build_config.path_to_project_file(), std::back_inserter(m_targets) );
+        libambrosia::drink_nectar( s_build_config.path_to_project_file(), std::back_inserter(m_targets) );
 
-        if( ambrosia::current_status() == status::error )
+        if( libambrosia::current_status() == status::error )
             return new end_state( this );
 
         // parse only targets requested and their dependencies

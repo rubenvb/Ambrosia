@@ -9,13 +9,29 @@
 #ifndef GLOBAL_LIBRARY_H
 #define GLOBAL_LIBRARY_H
 
-namespace ambrosia
-{
-    // Versioning
-    const int lib_version_major = 0;
-    const int lib_version_minor = 0;
-    const int lib_version_bugfix = 1;
-}
+// namespace definition
+#define ambrosia_namespace_begin namespace ambrosia {
+#define ambrosia_namespace_end }
+#define libambrosia_namespace_begin namespace ambrosia { namespace lib {
+#define libambrosia_namespace_end } }
+
+libambrosia_namespace_begin
+
+// Versioning
+const int version_major = 0;
+const int version_minor = 0;
+const int version_bugfix = 1;
+
+// global run build configuration
+class build_config;
+extern build_config s_build_config;
+
+libambrosia_namespace_end
+
+#include "build_config.h"
+
+// namespace shortcut
+namespace libambrosia = ambrosia::lib;
 
 // Windows DLL magic
 #if defined(AMBROSIA_DLL)

@@ -10,11 +10,12 @@
 #include "algorithm.h"
 
 // C++ includes
+/* <set> */
+    using std::set;
 /* <string> */
     using std::string;
 
-namespace ambrosia
-{
+libambrosia_namespace_begin
 
 bool wildcard_compare( const string &wild_string, const string &full_string )
 {
@@ -118,5 +119,30 @@ bool wildcard_directory_compare( const string &wild_string, const string &full_s
     }
     return ( wild==wild_end );
 }
+const string tokenize( const string &line, const set<char> &special_characters )
+{
+    const auto not_found = special_characters.end();
+    const auto end = line.end();
+    string result;
 
-} // namespace ambrosia
+    if( !line.empty() )
+    {
+        // copy first character
+        result += line[0];
+
+        char previous = line[0];
+        for( auto it = line.begin()+1; it != end; ++it )
+        {
+            const char current = *it;
+
+            if( special_characters.find(previous) != not_found )
+                result += ' ';
+
+            result += current;
+            previous = current;
+        }
+    }
+    return result;
+}
+
+libambrosia_namespace_end

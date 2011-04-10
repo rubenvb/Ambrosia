@@ -15,29 +15,29 @@
 /* <string> */
     using std::string;
 
-namespace ambrosia
-{
-    const map<string, architecture> architecture_map =
-             { {"x86",   architecture::x86},
-               {"amd64", architecture::amd64} };
+libambrosia_namespace_begin
 
-    const map<string, os> os_map =
-             { {"windows", os::Windows},
-               {"linux",   os::Linux},
-               {"mac",     os::MacOSX} };
+const map<string, architecture> architecture_map =
+         { {"x86",   architecture::x86},
+           {"amd64", architecture::amd64} };
 
-    // toolchain has two maps: one for the ambrosia cross specification,
-    //  another for true vendor name output. Both map to the same internal
-    //  representation (i.e. the vendor name).
-    const map<string, toolchain> vendor_map =
-             { {"GNU",       toolchain::GNU},
-               {"Microsoft", toolchain::Microsoft},
-               {"LLVM",      toolchain::LLVM},
-               {"Intel",     toolchain::Intel} };
-    const map<string, toolchain> toolchain_map =
-             { {"gcc",   toolchain::GNU},
-               {"msvc",  toolchain::Microsoft},
-               {"clang", toolchain::LLVM},
-               {"icc",   toolchain::Intel} };
-} // namespace ambrosia
+const map<string, os> os_map =
+         { {"windows", os::Windows},
+           {"linux",   os::Linux},
+           {"mac",     os::MacOSX} };
 
+// toolchain has two maps: one for the ambrosia cross specification,
+//  another for true vendor name output. Both map to the same internal
+//  representation (i.e. the vendor name).
+const map<string, toolchain> vendor_map =
+         { {"GNU",       toolchain::GNU},
+           {"Microsoft", toolchain::Microsoft},
+           {"LLVM",      toolchain::LLVM},
+           {"Intel",     toolchain::Intel} };
+const map<string, toolchain> toolchain_map =
+         { {"gcc",   toolchain::GNU},
+           {"msvc",  toolchain::Microsoft},
+           {"clang", toolchain::LLVM},
+           {"icc",   toolchain::Intel} };
+
+libambrosia_namespace_end

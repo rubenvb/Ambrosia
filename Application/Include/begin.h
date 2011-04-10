@@ -21,7 +21,7 @@
 
 namespace ambrosia
 {
-    class begin : public state
+    class begin : public lib::state
     {
     public:
         begin( const int argc, const char* const argv[], state* parent = 0 );

@@ -12,27 +12,28 @@
 // Global include
 #include "global.h"
 
-namespace ambrosia
+libambrosia_namespace_begin
+
+class state
 {
-    class state
-    {
-    public:
-        state( state* parent = 0 );
-        state( const state &s );
-        virtual ~state();
-        state & operator=( const state &s );
+public:
+    state( state* parent = 0 );
+    state( const state &s );
+    virtual ~state();
+    state & operator=( const state &s );
 
-        virtual bool end() const;
-        virtual state* end_of_state();
+    virtual bool end() const;
+    virtual state* end_of_state();
 
-        virtual state* event() = 0;
+    virtual state* event() = 0;
 
-        // Setters
-        void set_parent( state* parent = 0 );
+    // Setters
+    void set_parent( state* parent = 0 );
 
-    private:
-        state* p_parent;
-    };
-} // namespace ambrosia
+private:
+    state* p_parent;
+};
+
+libambrosia_namespace_end
 
 #endif // STATE_H

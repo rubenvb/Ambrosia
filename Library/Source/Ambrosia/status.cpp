@@ -15,43 +15,44 @@
 /* <string> */
     using std::string;
 
-namespace ambrosia
+libambrosia_namespace_begin
+
+// "private" variables
+status s_status = status::none;
+string s_errors = string();
+string s_warnings = string();
+
+status & current_status()
 {
-    // "private" variables
-    status s_status = status::none;
-    string s_errors = string();
-    string s_warnings = string();
+    return s_status;
+}
 
-    status & current_status()
-    {
-        return s_status;
-    }
+void emit_error( const string &message )
+{
+    s_errors += "\nError: " + message;
+    s_status = status::error;
+}
+void emit_warning( const string &message )
+{
+    s_warnings += "\nWarning: " + message;
+    s_status = std::max( s_status, status::warning );
+}
 
-    void emit_error( const string &message )
-    {
-        s_errors += "\nError: " + message;
-        s_status = status::error;
-    }
-    void emit_warning( const string &message )
-    {
-        s_warnings += "\nWarning: " + message;
-        s_status = std::max( s_status, status::warning );
-    }
+void print_errors()
+{
+    cerr << s_errors << "\n";
+    s_errors.clear();
+    if( s_warnings.empty() )
+        s_status = status::none;
+    else
+       s_status = status::warning;
+}
+void print_warnings()
+{
+    cerr << s_warnings;
+    s_warnings.clear();
+    if( s_status != status::error )
+        s_status = status::none;
+}
 
-    void print_errors()
-    {
-        cerr << s_errors;
-        s_errors.clear();
-        if( s_warnings.empty() )
-            s_status = status::none;
-        else
-           s_status = status::warning;
-    }
-    void print_warnings()
-    {
-        cerr << s_warnings;
-        s_warnings.clear();
-        if( s_status != status::error )
-            s_status = status::none;
-    }
-} // namespace ambrosia
+libambrosia_namespace_end

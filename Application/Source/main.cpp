@@ -27,12 +27,14 @@
 #include <vector>
 
 using namespace std;
+using namespace ambrosia;
+using namespace libambrosia;
 
 int main( int argc, char* argv[] )
 {
     time_t t = time(0);
 
-    ambrosia::state* current_state = new ambrosia::begin( argc, argv );
+    state* current_state = new begin( argc, argv );
     // Main event loop
     while( !current_state->end() )
     {
@@ -41,7 +43,7 @@ int main( int argc, char* argv[] )
     const double exec_time = difftime( time(0), t );
     t = time(0);
     // Cleanup all remaining states in the chain
-    ambrosia::debug() << "State cleanup...\n";
+    debug() << "State cleanup...\n";
     while( current_state != NULL )
     {
         current_state = current_state->end_of_state();

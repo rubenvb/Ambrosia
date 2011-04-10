@@ -16,40 +16,41 @@
 #include <iostream>
 #include <string>
 
-namespace ambrosia
+ambrosia_namespace_begin
+
+typedef std::ostream& (*STRFUNC)(std::ostream&);
+
+class debug
 {
-    typedef std::ostream& (*STRFUNC)(std::ostream&);
+public:
+    debug()
+    {}
 
-    class debug
+    template<typename T>
+    #ifdef AMBROSIA_DEBUG
+    debug& operator<<( const T &output )
     {
-    public:
-        debug()
-        {}
+        std::cerr << output;
+    #else
+    debug& operator<<( const T & )
+    {
+    #endif // AMBROSIA_DEBUG
+        return *this;
+    }
+    // for std::endl and other manipulators
+    typedef std::ostream& (*STRFUNC)(std::ostream&);
+    #ifdef AMBROSIA_DEBUG
+    debug& operator<<( STRFUNC func )
+    {
+        func(std::cerr);
+    #else
+    debug& operator<<( STRFUNC )
+    {
+    #endif // AMBROSIA_DEBUG
+        return *this;
+    }
+};
 
-        template<typename T>
-        #ifdef AMBROSIA_DEBUG
-        debug& operator<<( const T &output )
-        {
-            std::cerr << output;
-        #else
-        debug& operator<<( const T & )
-        {
-        #endif // AMBROSIA_DEBUG
-            return *this;
-        }
-        // for std::endl and other manipulators
-        typedef std::ostream& (*STRFUNC)(std::ostream&);
-        #ifdef AMBROSIA_DEBUG
-        debug& operator<<( STRFUNC func )
-        {
-            func(std::cerr);
-        #else
-        debug& operator<<( STRFUNC )
-        {
-        #endif // AMBROSIA_DEBUG
-            return *this;
-        }
-    };
-} // namespace ambrosia
+ambrosia_namespace_end
 
 #endif // DEBUG_H
