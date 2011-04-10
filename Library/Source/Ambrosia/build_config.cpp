@@ -31,14 +31,14 @@
 namespace ambrosia
 {
     build_config::build_config()
-    :   m_source_directory( "." ),
-        m_project_file( string() ),
+    :   m_source_directory(),
+        m_project_file(),
         m_target_os( build_os ),
         m_target_architecture( build_architecture ),
         m_target_toolchain( toolchain::GNU ),
-        m_gnu_prefix( string() ),
-        m_user_options( string_map() ),
-        m_target_config( map_const_string_set_string() )
+        m_gnu_prefix(),
+        m_user_options(),
+        m_target_config()
     {   }
 
 /*

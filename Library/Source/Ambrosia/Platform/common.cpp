@@ -53,24 +53,30 @@ namespace ambrosia
     }
     bool directory_exists( const std::string &directory )
     {
-        if( access(directory.c_str(), 0) == 0 )
+        if( !directory.empty() )
         {
-            struct stat status;
-            stat( directory.c_str(), &status );
-            if( status.st_mode & S_IFDIR )
-                return true;
+            if( access(directory.c_str(), 0) == 0 )
+            {
+                struct stat status;
+                stat( directory.c_str(), &status );
+                if( status.st_mode & S_IFDIR )
+                    return true;
+            }
         }
-        // if any condition
+        // if any condition fails
         return false;
     }
     bool file_exists( const std::string &filename )
     {
-        if( access(filename.c_str(), 0) == 0 )
+        if( !filename.empty() )
         {
-           struct stat status;
-           stat( filename.c_str(), &status );
-           if( !(status.st_mode & S_IFDIR) )
-               return true;
+            if( access(filename.c_str(), 0) == 0 )
+            {
+               struct stat status;
+               stat( filename.c_str(), &status );
+               if( !(status.st_mode & S_IFDIR) )
+                   return true;
+            }
         }
         // if any condition fails
         return false;

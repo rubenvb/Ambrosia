@@ -55,11 +55,9 @@ namespace ambrosia
         debug() << "begin::Processing commandline arguments.\n";
 
         const auto end = m_arguments.end();
-        auto it = m_arguments.begin();
-        string current = *it;
+        string current;
 
         // Options to be filled in, with default values, if any
-        string project_file;
         for( auto it = m_arguments.begin(); it != end; ++it )
         {
             current = *it;
@@ -78,12 +76,11 @@ namespace ambrosia
                         if( ambrosia::current_status() == status::error )
                             return new end_state( this );
                         else if( ambrosia::current_status() == status::warning )
-                        {
-                            // warning emitted when in-source build is performed
-                            ambrosia::print_warnings();
-                            // "current" is really a target name to be built, skip to below next else
+                            ambrosia::print_warnings();    // warning emitted when in-source build is performed
+
+                        // if project_file is still empty, "current" is really a target name to be built, skip to below next else
+                        if( s_build_config.project_file().empty() )
                             goto add_target;
-                        }
                     }
                     else
                     {
@@ -133,10 +130,29 @@ namespace ambrosia
                     return new end_state( "Invalid commandline argument: \'" + current + "\'.", this );
             }
         }
-        return new reader( this );
+        // if project file is not yet set, search current directory
+        if( s_build_config.project_file().empty() )
+        {
+            const string project_file = ambrosia::find_nectar_file( "." );
+            if( !project_file.empty() )
+            {
+                debug() << "begin::Project file found in current directory \'.\': " << project_file << ".\n";
+                ambrosia::emit_warning( "Ambrosia does not recommend an in-source build." );
+                s_build_config.set_source_directory( "");
+                s_build_config.set_project_file( project_file );
+            }
+            else if( ambrosia::current_status() != status::error )
+                ambrosia::emit_error( "No project file found in specified path or current directory." );
+        }
+        debug() << "begin::Checking if project file was found.\n";
+        // Ensure that a valid project file has been found
+        if( file_exists(s_build_config.path_to_project_file()) )
+            return new reader( this );
+        else
+            return new end_state( "No project file was found. Please specify a project file or a directory containing a single project file.", this );
     }
 
-    void begin::find_project_file( const std::string &path )
+    bool begin::find_project_file( const std::string &path )
     {
         debug() << "begin::find_project_file called for " << path << ".\n";
 
@@ -148,6 +164,7 @@ namespace ambrosia
             const size_t index = path.find_last_of( "/\\" );
             s_build_config.set_project_file( path.substr(index+1, string::npos) );
             s_build_config.set_source_directory( path.substr(0, index) );
+            return true;
         }
         else if( ambrosia::directory_exists(path) )
         {
@@ -158,23 +175,12 @@ namespace ambrosia
                 debug() << "begin::Project file found: " <<  path << ambrosia::directory_seperator << project_file << ".\n";
                 s_build_config.set_source_directory( path );
                 s_build_config.set_project_file( project_file );
+                return true;
             }
         }
-        else
-        {
-            // no project file found, search current directory "."
-            debug() << "begin::No *.nectar.txt file found in " << path << ".\n";
-            const string project_file = ambrosia::find_nectar_file( "." );
-            if( !project_file.empty() )
-            {
-                debug() << "begin::Project file found in current directory \'.\': " << project_file << ".\n";
-                ambrosia::emit_warning( "Ambrosia does not recommend an in-source build." );
-                s_build_config.set_source_directory( "");
-                s_build_config.set_project_file( project_file );
-            }
-            else if( ambrosia::current_status() != status::error )
-                ambrosia::emit_error( "No project file found in " + path + " or current directory." );
-        }
+        // return failure if some condition failed
+        debug() << "begin::No *.nectar.txt file found in " << path << ".\n";
+        return false;
     }
 
     bool begin::add_build_target( const std::string &target )
