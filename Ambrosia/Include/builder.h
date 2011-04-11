@@ -22,6 +22,7 @@ namespace ambrosia
     {
     public:
         builder( state* parent = 0 );
+        ~builder();
     };
 } // namespace ambrosia
 

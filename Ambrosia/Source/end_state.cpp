@@ -24,45 +24,46 @@
 /* <string> */
     using std::string;
 
-namespace ambrosia
+ambrosia_namespace_begin
+
+end_state::end_state( state *parent )
+:   state( parent )
 {
-    end_state::end_state( state *parent )
-    :   state( parent )
-    {
-        cerr << "Error: ";
-        libambrosia::print_errors();
-    }
+    debug() << "end_state::end_state created.\n";
+    libambrosia::print_errors();
+}
 
-    end_state::end_state( const string &message, state* parent )
-    :   state( parent )
+end_state::end_state( const string &message, state* parent )
+:   state( parent )
+{
+    debug() << "end::end created.\n";
+    cerr << message << endl;
+}
+end_state::end_state( const string &message, const string_vector &list,
+          state* parent )
+:   state( parent )
+{
+    cerr << "end_state::" << message << "\n";
+    const auto end = list.end();
+    for( auto it = list.begin(); it != end; ++it )
     {
-        debug() << "end::end created.\n";
-        cerr << message << endl;
+        cerr << " " << *it;
     }
-    end_state::end_state( const string &message, const string_vector &list,
-              state* parent )
-    :   state( parent )
-    {
-        cerr << "end_state::" << message << "\n";
-        const auto end = list.end();
-        for( auto it = list.begin(); it != end; ++it )
-        {
-            cerr << " " << *it;
-        }
-    }
+}
 
-    end_state::~end_state()
-    {
-        debug() << "end_state::Destroyed.\n";
-    }
+end_state::~end_state()
+{
+    debug() << "end_state::Destroyed.\n";
+}
 
-    bool end_state::end() const
-    {
-        return true;
-    }
-    state* end_state::event()
-    {
-        cerr << "end's event() shouldn't be called..." << endl;
-        return end_of_state();
-    }
-} // namespace ambrosia
+bool end_state::end() const
+{
+    return true;
+}
+state* end_state::event()
+{
+    cerr << "end's event() shouldn't be called..." << endl;
+    return end_of_state();
+}
+
+ambrosia_namespace_end

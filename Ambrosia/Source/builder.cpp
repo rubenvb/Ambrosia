@@ -11,10 +11,18 @@
 
 // libAmbrosia includes
 #include "Ambrosia/build_config.h"
+#include "Ambrosia/debug.h"
 
-namespace ambrosia
+ambrosia_namespace_begin
+
+builder::builder( state* parent )
+:   state( parent )
 {
-    builder::builder( state* parent )
-    :   state( parent )
-    {   }
-} // namespace ambrosia
+    debug() << "builder::Builder state created.\n";
+}
+builder::~builder()
+{
+    debug() << "builder::Destroyed.\n";
+}
+
+ambrosia_namespace_end

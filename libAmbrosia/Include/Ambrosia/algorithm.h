@@ -17,6 +17,7 @@
 #include "typedefs.h"
 
 // C++ includes
+#include <algorithm>
 #include <sstream>
 
 libambrosia_namespace_begin
@@ -27,6 +28,13 @@ bool wildcard_compare( const std::string &wildcard_string, const std::string &fu
 bool wildcard_directory_compare( const std::string &wildcard_string, const std::string &full_string );
 // puts whitespace around every occurrence of the char's in the set<char>
 const std::string tokenize( const std::string &line, const std::set<char> &special_characters );
+// returns true if container contains element
+template <class container>
+bool contains(const container &cont, const typename container::value_type & elem)
+{
+   return( std::find(cont.begin(), cont.end(), elem) != cont.end() );
+}
+
 // conversion to string
 template <class T>
 inline std::string to_string (const T& t)

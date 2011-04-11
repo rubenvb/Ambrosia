@@ -44,6 +44,7 @@ private:
     size_t m_line_number;
     bool m_global_processed;
     // functions
+    void syntax_error( const std::string &message ) const;
     bool next_token();
     void strip_comments( std::string &line );
     bool strip_newline_escape( std::string &line );

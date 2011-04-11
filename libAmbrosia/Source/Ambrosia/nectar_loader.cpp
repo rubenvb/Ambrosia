@@ -65,8 +65,7 @@ void nectar_loader::extract_nectar( output_iterator it )
                                        string( ), m_line_number) ) );
             }
             else
-                emit_error( m_filename + "line " + to_string(m_line_number)
-                            + ":Syntax error: \'global\' must be followed by \'{\'." );
+                return syntax_error( "\'global\' must be followed by \'{\'." );
         }
         else if( "app" == m_token )
         {
@@ -82,24 +81,37 @@ void nectar_loader::extract_nectar( output_iterator it )
             // get name and dependencies of sub target
             if( next_token() )
             {
-                const string sub_file = find_nectar_file( s_build_config.source_directory()
-                                                          + directory_seperator + m_token);
+                const string sub_directory = s_build_config.source_directory()
+                                             + directory_seperator + m_token;
+                const string sub_file = find_nectar_file( sub_directory );
                 if( libambrosia::current_status() == status::error )
                     return;
 
-                ifstream stream( sub_file );
-                if( !stream )
+                ifstream stream( sub_directory + directory_seperator + sub_file );
+                if( stream )
+                {
+                    nectar_loader sub_loader( sub_file, stream );
+                    sub_loader.extract_nectar( it );
+                }
+                else // opening file failed
+                {
+                    emit_error( "Error opening subproject file: " + sub_file + ". (line " + to_string(m_line_number) + ")" );
                     return;
+                }
             }
+            else
+                return syntax_error( "\'sub\' must be followed by the name of the subproject." );
         }
         else
-        {
-            emit_error( "Syntax error (line " + to_string(m_line_number) + ") Expected global, app, lib, or sub." );
-            return;
-        }
+            return syntax_error( "Expected global, app, lib, or sub." );
     }
 }
 template void nectar_loader::extract_nectar<back_insert_iterator<vector<unique_ptr<target> > > >( back_insert_iterator<vector<unique_ptr<target> > > );
+
+void nectar_loader::syntax_error( const string &message ) const
+{
+    emit_error( "Syntax error (line " + to_string(m_line_number) + ") " + message );
+}
 
 bool nectar_loader::next_token()
 {

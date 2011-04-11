@@ -19,28 +19,27 @@
 // C++ includes
 #include <string>
 
-namespace ambrosia
+ambrosia_namespace_begin
+
+class begin : public lib::state
 {
-    class begin : public lib::state
-    {
-    public:
-        begin( const int argc, const char* const argv[], state* parent = 0 );
-        ~begin();
+public:
+    begin( const int argc, const char* const argv[], state* parent = 0 );
+    ~begin();
 
-        state* event();
+    state* event();
 
-    private:
-        bool m_first_dashless_argument; // true if no arguments without '-' was processed
-        std::vector<std::string> m_arguments;
-        // internal functions
-        bool find_project_file( const std::string &path );
-        bool add_build_target( const std::string &target );
-        void print_help_information();
-        void print_version_information();
-        // TODO: implement internal Ambrosia options
-        void set_internal_option( const std::string &option, const std::string &value );
-        bool add_configuration_options( const std::string &options );
-    };
-} // namespace ambrosia
+private:
+    bool m_first_dashless_argument; // true if no arguments without '-' was processed
+    std::vector<std::string> m_arguments;
+    // internal functions
+    bool find_project_file( const std::string &path );
+    bool add_build_target( const std::string &target );
+    // TODO: implement internal Ambrosia options
+    void set_internal_option( const std::string &option, const std::string &value );
+    bool add_configuration_options( const std::string &options );
+};
+
+ambrosia_namespace_end
 
 #endif // BEGIN_H
