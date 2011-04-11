@@ -37,7 +37,7 @@ libambrosia_namespace_begin
 
 const string find_nectar_file( const string &directory )
 {
-    debug() << "nectar::find_nectar_file called.\n";
+    debug() << "nectar::find_nectar_file called for: " << directory << ".\n";
     string_vector file_list;
     scan_directory( std::back_inserter(file_list), directory );
     debug() << "nectar::found " << file_list.size() << " files:\n";

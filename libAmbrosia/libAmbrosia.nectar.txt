@@ -1,0 +1,16 @@
+#
+# libAmbrosia executable project file
+###################################
+
+lib Ambrosia
+{
+    HEADER_DIRS Inlcude/Ambrosia \
+                Include/Ambrosia/Parser
+    SOURCE_DIRS Source/Ambrosia \
+                Source/Ambrosia/Parser
+    SOURCES *.cpp
+
+    (win32)SOURCES Source/Ambrosia/Platform/windows.cpp
+    (linux)SOURCES Source/Ambrosia/Platform/linux.cpp
+    (macos)SOURCES Source/Ambrosia/Platform/mac.cpp
+}

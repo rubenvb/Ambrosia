@@ -8,17 +8,18 @@ DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
                         -Weffc++ -Wmissing-include-dirs -Wstrict-aliasing
 
 # Ambrosia Library
-INCLUDEPATH += ../Library/Include
+PRE_TARGETDEPS += libAmbrosia
+INCLUDEPATH += ../libAmbrosia/Include
 CONFIG( debug, debug|release ) {
     LIBSUFFIX = d
-    win32:LIBS += -L../Library/debug
-    unix:LIBS += -L../Library
+    win32:LIBS += -L../libAmbrosia/debug
+    unix:LIBS += -L../libAmbrosia
     QMAKE_CXXFLAGS += -g3
     DEFINES += AMBROSIA_DEBUG
 } else {
     LIBSUFFIX =
-    win32:LIBS += -L../Library/release
-    unix:LIBS += -L ../Library
+    win32:LIBS += -L../libAmbrosia/release
+    unix:LIBS += -L ../libAmbrosia
 }
 LIBS += -lAmbrosia$${LIBSUFFIX}
 #DEFINES += AMBROSIA_DLL
@@ -44,3 +45,5 @@ HEADERS += \
     Include/help_and_version_output.h \
     Include/reader.h \
     Include/builder.h
+
+OTHER_FILES += Ambrosia.nectar.txt

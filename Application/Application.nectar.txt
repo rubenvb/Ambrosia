@@ -1,5 +1,0 @@
-#
-# Ambrosia executable project file
-###################################
-
-app Ambrosia : lib libAmbrosia

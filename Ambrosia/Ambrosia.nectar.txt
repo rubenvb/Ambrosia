@@ -1,0 +1,10 @@
+#
+# Ambrosia executable project file
+###################################
+
+app Ambrosia : lib Ambrosia
+{
+    SOURCE_DIRS Source
+    HEADER_DIRS Include
+    SOURCES *.cpp
+}

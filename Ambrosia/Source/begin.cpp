@@ -76,11 +76,10 @@ namespace ambrosia
                         debug() << "begin::Possible project file or directory: \'" << current << "\'.\n";
 
                         find_project_file( current );
+                        libambrosia::print_warnings();
 
                         if( libambrosia::current_status() == status::error )
                             return new end_state( this );
-                        else if( libambrosia::current_status() == status::warning )
-                            libambrosia::print_warnings();    // warning emitted when in-source build is performed
 
                         // if project_file is still empty, "current" is really a target name to be built, skip to below next else
                         if( s_build_config.project_file().empty() )
@@ -172,6 +171,7 @@ namespace ambrosia
         }
         else if( libambrosia::directory_exists(path) )
         {
+            debug() << "begin::find_project_file detected directory.\n";
             const string project_file = libambrosia::find_nectar_file( path );
             // if the directory contains a *.nectar.txt file, set source directory as well
             if( !project_file.empty() )

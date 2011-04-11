@@ -1,9 +1,9 @@
 TEMPLATE = subdirs
 
-SUBDIRS += Library \
-           Application
+SUBDIRS += libAmbrosia \
+           Ambrosia
 
-Application.depends = Library
+Application.depends = libAmbrosia
 
 OTHER_FILES += Ambrosia.nectar.txt \
                "Environment detection.txt" \

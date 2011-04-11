@@ -52,3 +52,5 @@ SOURCES += \
 
 *win32*:SOURCES += Source/Ambrosia/Platform/windows.cpp
 *linux*:SOURCES += Source/Ambrosia/Platform/linux.cpp
+
+OTHER_FILES += libAmbrosia.nectar.txt

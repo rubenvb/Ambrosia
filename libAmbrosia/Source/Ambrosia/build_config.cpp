@@ -49,6 +49,7 @@ build_config::build_config()
 void build_config::set_source_directory( const string &source_directory )
 {
     m_source_directory = source_directory;
+    std::replace( m_source_directory.begin(), m_source_directory.end(), '/', directory_seperator );
 }
 void build_config::set_project_file( const string &project_file )
 {
