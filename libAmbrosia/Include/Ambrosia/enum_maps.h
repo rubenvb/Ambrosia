@@ -21,10 +21,14 @@
 
 libambrosia_namespace_begin
 
-extern const std::map<std::string, os> os_map;
 extern const std::map<std::string, architecture> architecture_map;
+extern const std::map<architecture, std::string> architecture_map_inverse;
+extern const std::map<std::string, os> os_map;
+extern const std::map<os, std::string> os_map_inverse;
 extern const std::map<std::string, toolchain> vendor_map;
+extern const std::map<toolchain, std::string> vendor_map_inverse;
 extern const std::map<std::string, toolchain> toolchain_map;
+extern const std::map<toolchain, std::string> toolchain_map_inverse;
 
 libambrosia_namespace_end
 

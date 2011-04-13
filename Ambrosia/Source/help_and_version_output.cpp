@@ -10,7 +10,8 @@
 #include "help_and_version_output.h"
 
 // libAmbrosia includes
-#include "Ambrosia/global.h"
+#include "Ambrosia/enum_maps.h"
+#include "Ambrosia/platform.h"
 
 // Ambrosia includes
 #include "output.h"
@@ -31,7 +32,9 @@ void print_version_information()
                << lib::version_major << "."
                << lib::version_minor << "."
                << lib::version_bugfix << ".\n"
-               << "This version of Ambrosia was built for TODO OS, Platform, architecture.\n";
+               << "This version of Ambrosia was built for "
+               << (*lib::os_map_inverse.find(lib::build_os)).second << " "
+               << (*lib::architecture_map_inverse.find(lib::build_architecture)).second << ".\n";
 }
 
 ambrosia_namespace_end

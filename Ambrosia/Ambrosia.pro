@@ -8,7 +8,6 @@ DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
                         -Weffc++ -Wmissing-include-dirs -Wstrict-aliasing
 
 # Ambrosia Library
-PRE_TARGETDEPS += libAmbrosia
 INCLUDEPATH += ../libAmbrosia/Include
 CONFIG( debug, debug|release ) {
     LIBSUFFIX = d

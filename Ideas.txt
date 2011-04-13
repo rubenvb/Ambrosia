@@ -5,3 +5,7 @@ TODO marks all sections of code with a known limitation. These are not bugs, jus
     Ambrosia ../source/ambrosia.nectar.txt
     Ambrosia ../source/ambrosia.nectar
     Ambrosia ../source/ambrosia
+- Error reporting at syntax errors needs to do it Clang-wise, and point to the exact place where the problem is at
+   these are the classes that need upgrading:
+    nectar_loader
+    everything in Parser/*

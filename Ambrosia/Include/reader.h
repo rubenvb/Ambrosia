@@ -21,19 +21,20 @@
 #include <memory>
 #include <vector>
 
-namespace ambrosia
+ambrosia_namespace_begin
+
+class reader : public lib::state
 {
-    class reader : public lib::state
-    {
-    public:
-        reader( state* parent = 0 );
+public:
+    reader( state* parent = 0 );
 
-        state* event();
+    state* event();
 
-    private:
-        std::ifstream m_stream;
-        std::vector<std::unique_ptr<lib::target> > m_targets;
-    };
-} // namespace
+private:
+    std::ifstream m_stream;
+    std::vector<std::unique_ptr<lib::target> > m_targets;
+};
+
+ambrosia_namespace_end
 
 #endif // READER_H

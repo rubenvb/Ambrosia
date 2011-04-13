@@ -21,25 +21,25 @@
 /* <string> */
     using std::string;
 
-namespace ambrosia
+ambrosia_namespace_begin
+
+reader::reader( state* parent )
+:   state( parent ),
+    m_stream(),
+    m_targets()
+{   }
+
+state* reader::event()
 {
-    reader::reader( state* parent )
-    :   state( parent ),
-        m_stream(),
-        m_targets()
-    {   }
+    libambrosia::drink_nectar( s_build_config.path_to_project_file(), std::back_inserter(m_targets) );
 
-    state* reader::event()
-    {
-        libambrosia::drink_nectar( s_build_config.path_to_project_file(), std::back_inserter(m_targets) );
+    if( libambrosia::current_status() == status::error )
+        return new end_state( this );
 
-        if( libambrosia::current_status() == status::error )
-            return new end_state( this );
+    // parse only targets requested and their dependencies
+    // TODO
 
-        // parse only targets requested and their dependencies
-        // TODO
+    return new end_state( "reader::reader does little for now.", this );
+}
 
-        return new end_state( "reader::reader does little for now.", this );
-    }
-
-} // namespace ambrosia
+ambrosia_namespace_end

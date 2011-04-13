@@ -16,14 +16,15 @@
 #include "Ambrosia/state.h"
 #include "Ambrosia/build_config.h"
 
-namespace ambrosia
+ambrosia_namespace_begin
+
+class builder : public lib::state
 {
-    class builder : public lib::state
-    {
-    public:
-        builder( state* parent = 0 );
-        ~builder();
-    };
-} // namespace ambrosia
+public:
+    builder( state* parent = 0 );
+    ~builder();
+};
+
+ambrosia_namespace_end
 
 #endif // BUILDER_H

@@ -42,6 +42,10 @@ begin::begin( const int argc, const char* const argv[], state* parent )
     m_arguments()
 {
     debug() << "begin::Begin state created.\n";
+
+    // Welcome message
+    print_version_information();
+
     // serialize arguments in a string members
     m_arguments.reserve( argc );
     for( int i=1; i<argc; ++i )
@@ -65,7 +69,7 @@ state* begin::event()
     // execution ending arguments
     if( lib::contains(m_arguments, string("-v")) || lib::contains(m_arguments, "-version") )
     {
-        print_version_information();
+        // version info already printed
         return new end_state( this );
     }
     else if( lib::contains(m_arguments, "-h") || lib::contains(m_arguments, "-help") )

@@ -14,7 +14,6 @@
 
 // libAmbrosia includes
 #include "platform.h"
-#include "typedefs.h"
 
 // C++ includes
 #include <algorithm>

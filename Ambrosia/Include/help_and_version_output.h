@@ -12,10 +12,11 @@
 // Global include
 #include "global.h"
 
-namespace ambrosia
-{
-    void print_help_information();
-    void print_version_information();
-} // namespace ambrosia
+ambrosia_namespace_begin
+
+void print_help_information();
+void print_version_information();
+
+ambrosia_namespace_end
 
 #endif // HELP_AND_VERSION_OUTPUT_H

@@ -83,11 +83,20 @@ void nectar_loader::extract_nectar( output_iterator it )
             {
                 const string sub_directory = s_build_config.source_directory()
                                              + directory_seperator + m_token;
-                const string sub_file = find_nectar_file( sub_directory );
-                if( libambrosia::current_status() == status::error )
-                    return;
+                string sub_file( m_token + ".nectar.txt" );
+                string sub_project_file( sub_directory + directory_seperator + sub_file );
+                if( !file_exists(sub_project_file) )
+                {
+                    debug() << "nectar_loader::sub target name and subproject file name do not match.\n";
+                    sub_file = find_nectar_file( sub_directory );
+                    if( libambrosia::current_status() == status::error )
+                        return; // no *.nectar.txt file found
 
-                ifstream stream( sub_directory + directory_seperator + sub_file );
+                    debug() << "nectar_loader::found sub-.nectar.txt file: " << sub_file << ".\n";
+                    sub_project_file = sub_directory + directory_seperator + sub_file;
+                }
+                debug() << "nectar_loader:: Opening subproject file: " << sub_project_file << ".\n";
+                ifstream stream( sub_project_file );
                 if( stream )
                 {
                     nectar_loader sub_loader( sub_file, stream );

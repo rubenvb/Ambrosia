@@ -23,7 +23,6 @@ INCLUDEPATH += . Include Include/Ambrosia
 DEPENDPATH += . Include Source
 
 HEADERS += \
-    Include/Ambrosia/algorithm.h \
     Include/Ambrosia/debug.h \
     Include/Ambrosia/enums.h \
     Include/Ambrosia/global.h \
@@ -36,11 +35,11 @@ HEADERS += \
     Include/Ambrosia/nectar.h \
     Include/Ambrosia/target.h \
     Include/Ambrosia/Parser/parser_state.h \
-    Include/Ambrosia/nectar_loader.h
+    Include/Ambrosia/nectar_loader.h \
+    Include/Ambrosia/algorithm.h
 
 SOURCES += \
     Source/Ambrosia/Platform/common.cpp \
-    Source/Ambrosia/algorithm.cpp \
     Source/Ambrosia/state.cpp \
     Source/Ambrosia/enum_maps.cpp \
     Source/Ambrosia/build_config.cpp \
@@ -48,7 +47,8 @@ SOURCES += \
     Source/Ambrosia/nectar.cpp \
     Source/Ambrosia/target.cpp \
     Source/Ambrosia/Parser/parser_state.cpp \
-    Source/Ambrosia/nectar_loader.cpp
+    Source/Ambrosia/nectar_loader.cpp \
+    Source/Ambrosia/algorithm.cpp
 
 *win32*:SOURCES += Source/Ambrosia/Platform/windows.cpp
 *linux*:SOURCES += Source/Ambrosia/Platform/linux.cpp
