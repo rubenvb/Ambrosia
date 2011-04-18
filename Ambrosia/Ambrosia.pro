@@ -12,14 +12,17 @@ INCLUDEPATH += ../libAmbrosia/Include
 CONFIG( debug, debug|release ) {
     LIBSUFFIX = d
     win32:LIBS += -L../libAmbrosia/debug
-    unix:LIBS += -L../libAmbrosia
+    win32:PRE_TARGETDEPS += ../libAmbrosia/debug/libAmbrosiad.a
     QMAKE_CXXFLAGS += -g3
     DEFINES += AMBROSIA_DEBUG
 } else {
     LIBSUFFIX =
     win32:LIBS += -L../libAmbrosia/release
-    unix:LIBS += -L ../libAmbrosia
+    win32:PRE_TARGETDEPS += ../libAmbrosia/release/libAmbrosia.a
+
 }
+unix:LIBS += -L ../libAmbrosia
+unix:PRE_TARGETDEPS += ../libAmbrosia/libAmbrosia$${LIBSUFFIX}.a
 LIBS += -lAmbrosia$${LIBSUFFIX}
 #DEFINES += AMBROSIA_DLL
 

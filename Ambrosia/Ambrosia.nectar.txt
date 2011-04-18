@@ -2,9 +2,10 @@
 # Ambrosia executable project file
 ###################################
 
-app Ambrosia : lib Ambrosia
+app Ambrosia : lib libAmbrosia
 {
     SOURCE_DIRS Source
     HEADER_DIRS Include
     SOURCES *.cpp
+    LIBS -lAmbrosia # library path is automatically added if libAmbrosia is another project in the same tree
 }

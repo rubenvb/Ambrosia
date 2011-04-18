@@ -22,6 +22,9 @@
 
 // C++ includes
 #include <iosfwd>
+/* <utility> */
+/* <vector> */
+
 
 libambrosia_namespace_begin
 
@@ -43,8 +46,10 @@ private:
     // functions
     void syntax_error( const std::string &message ) const;
     bool next_token( std::string &token );
+    // reads colon-lists of dependencies, ends at first '{'
+    const std::vector<std::pair<target_type, std::string> > read_dependency_list();
     // finds matching curly brace and stores all stream contents in between in return value.
-    const std::string read_code_block( std::istream &stream );
+    const std::string read_code_block();
 };
 
 libambrosia_namespace_end

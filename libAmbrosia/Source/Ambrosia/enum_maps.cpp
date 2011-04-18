@@ -58,4 +58,20 @@ const map<toolchain, string> toolchain_map_inverse =
            {toolchain::LLVM,      "clang"},
            {toolchain::Intel,     "icc"} };
 
+const map<string, target_type> target_type_map =
+         { {"global",  target_type::global},
+           {"app",     target_type::app},
+           {"lib",     target_type::lib},
+           {"sub",     target_type::sub},
+           {"install", target_type::install},
+           {"test",    target_type::test} };
+
+const map<target_type, string> target_type_map_inverse =
+         { {target_type::global,  "global"},
+           {target_type::app,     "app"},
+           {target_type::lib,     "lib"},
+           {target_type::sub,     "sub"},
+           {target_type::install, "install"},
+           {target_type::test,    "test"} };
+
 libambrosia_namespace_end

@@ -37,7 +37,7 @@
 
 libambrosia_namespace_begin
 
-const set<char> s_special_characters = { '(', ')', '{', '}', ':' };
+const set<char> s_special_characters = { '(', ')', '{', '}', ':', ',' };
 const set<char>::const_iterator s_special_characters_end = s_special_characters.end();
 
 const string find_nectar_file( const string &directory )
