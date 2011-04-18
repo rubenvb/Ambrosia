@@ -36,7 +36,7 @@ bool contains(const container &cont, const typename container::value_type & elem
 
 // conversion to string
 template <class T>
-inline std::string to_string (const T& t)
+const std::string to_string (const T& t)
 {
     std::stringstream ss;
     ss << t;

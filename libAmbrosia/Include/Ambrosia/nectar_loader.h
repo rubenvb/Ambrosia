@@ -22,11 +22,8 @@
 
 // C++ includes
 #include <iosfwd>
-/* <set> */
 
 libambrosia_namespace_begin
-
-extern const std::set<char> s_special_characters;
 
 class nectar_loader
 {
@@ -45,12 +42,9 @@ private:
     bool m_global_processed;
     // functions
     void syntax_error( const std::string &message ) const;
-    bool next_token();
-    void strip_comments( std::string &line );
-    bool strip_newline_escape( std::string &line );
-    bool fetch_line();
-    bool fetch_token( std::string &token );
-    const std::string tokenize( const std::string &line, const std::set<char> &special_characters );
+    bool next_token( std::string &token );
+    // finds matching curly brace and stores all stream contents in between in return value.
+    const std::string read_code_block( std::istream &stream );
 };
 
 libambrosia_namespace_end

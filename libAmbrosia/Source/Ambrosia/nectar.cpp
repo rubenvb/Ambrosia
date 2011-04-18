@@ -25,6 +25,8 @@
     using std::back_insert_iterator;
 #include <memory>
     using std::unique_ptr;
+/* <set> */
+    using std::set;
 /* <string> */
     using std::string;
 /* <vector> */
@@ -34,6 +36,9 @@
 #include <ctime>
 
 libambrosia_namespace_begin
+
+const set<char> s_special_characters = { '(', ')', '{', '}', ':' };
+const set<char>::const_iterator s_special_characters_end = s_special_characters.end();
 
 const string find_nectar_file( const string &directory )
 {
@@ -75,7 +80,6 @@ void drink_nectar( const std::string &filename, output_iterator it )
     debug() << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
     nectar_loader loader( filename, stream );
     loader.extract_nectar( it );
-
 }
 // Explicit template instantiation
 template void drink_nectar<back_insert_iterator<vector<unique_ptr<target> > > >( const string &, back_insert_iterator<vector<unique_ptr<target> > > );

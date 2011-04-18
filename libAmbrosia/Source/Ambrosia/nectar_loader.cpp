@@ -23,12 +23,13 @@
     using std::ifstream;
 #include <istream>
     using std::istream;
+    using std::istream_iterator;
 #include <iterator>
     using std::back_insert_iterator;
+#include <locale>
+    using std::isspace;
 #include <memory>
     using std::unique_ptr;
-/* <set> */
-    using std::set;
 /* <string> */
     using std::string;
 #include <vector>
@@ -36,30 +37,29 @@
 
 libambrosia_namespace_begin
 
-const set<char> s_special_characters = { '(', ')', '{', '}', ':' };
-
 nectar_loader::nectar_loader( const string &filename, istream &stream )
 :   m_filename( filename ),
     m_stream( stream ),
     m_buffer(),
     m_token(),
-    m_line_number(),
+    m_line_number( 1 ),
     m_global_processed( false )
 {   }
 
 template<class output_iterator>
 void nectar_loader::extract_nectar( output_iterator it )
 {
-    while( next_token() )
+    string token;
+    while( next_token(token) )
     {
-        debug() << "nectar_loader::processing token: \'" << m_token << "\'.\n";
-        if( "global" == m_token )
+        debug() << "nectar_loader::processing token: \'" << token << "\'.\n";
+        if( "global" == token )
         {
             debug() << "nectar_loader::global section found at line " << m_line_number << ".\n";
             if( m_global_processed )
                 emit_error( "Second global section found in nectar file. Only one global section per *.nectar.txt file is allowed." );
 
-            if( next_token() && "{" == m_token )
+            if( next_token(token) && "{" == token )
             {
             it = std::move( unique_ptr<target>( new target("global", target_type::global,
                                        string( ), m_line_number) ) );
@@ -67,23 +67,23 @@ void nectar_loader::extract_nectar( output_iterator it )
             else
                 return syntax_error( "\'global\' must be followed by \'{\'." );
         }
-        else if( "app" == m_token )
+        else if( "app" == token )
         {
             debug() << "nectar_loader::app section found at line " << m_line_number << ".\n";
         }
-        else if( "lib" == m_token )
+        else if( "lib" == token )
         {
             debug() << "nectar_loader::lib section found at line " << m_line_number << ".\n";
         }
-        else if( "sub" == m_token )
+        else if( "sub" == token )
         {
             debug() << "nectar_loader::sub section found at line " << m_line_number << ".\n";
             // get name and dependencies of sub target
-            if( next_token() )
+            if( next_token(token) )
             {
                 const string sub_directory = s_build_config.source_directory()
-                                             + directory_seperator + m_token;
-                string sub_file( m_token + ".nectar.txt" );
+                                             + directory_seperator + token;
+                string sub_file( token + ".nectar.txt" );
                 string sub_project_file( sub_directory + directory_seperator + sub_file );
                 if( !file_exists(sub_project_file) )
                 {
@@ -117,97 +117,86 @@ void nectar_loader::extract_nectar( output_iterator it )
 }
 template void nectar_loader::extract_nectar<back_insert_iterator<vector<unique_ptr<target> > > >( back_insert_iterator<vector<unique_ptr<target> > > );
 
+bool nectar_loader::next_token( string &token )
+{
+    token.clear();
+    char c;
+
+    while( m_stream.get(c) )
+    {
+        debug() << "nectar_loader::next_token::line number " << m_line_number << ", character: \'" << c << "\'.\n";
+        if( token.empty() )
+        {
+            if( '\n' == c )
+                m_line_number++;
+            else if( isspace(c,m_stream.getloc()) )
+                continue;
+            else if( '#' == c )
+            {   // skip over preceding comments
+                string temp;
+                std::getline( m_stream, temp );
+                m_line_number++;
+            }
+            else if( contains(s_special_characters, c) )
+            {   // special characters are tokens of their own
+                token.append( 1, c );
+                break;
+            }
+            else if( '\\' == c )
+            {
+                string temp;
+                std::getline( m_stream, temp );
+                m_line_number++;
+                continue;
+            }
+            else if( '\\' == c )
+                goto newline_escape;
+            else
+                goto add_char;
+        }
+        else if( isspace(c, m_stream.getloc()) )
+        {   // new whitespace == end of token
+            m_stream.putback( c );
+            break;
+        }
+        else if( '\\' == c )
+        {   // newline escapes end current token
+            newline_escape:
+            string temp;
+            std::getline( m_stream, temp );
+            m_line_number++;
+            break;
+        }
+        else
+            add_char:
+            token.append( 1, c );
+    }
+
+    return !token.empty();
+}
+
+const std::string nectar_loader::read_code_block( std::istream &stream )
+{
+    string block;
+    size_t curly_brace_count = 1; // stream pointer starts inside of curly brace block
+    size_t parenthesis_count = 0;
+    bool inside_quotes = false;
+
+    istream_iterator<char> it( stream );
+
+    if( inside_quotes )
+        emit_error( "Unmatched quoted string detected." );
+    else if( parenthesis_count != 0 )
+        syntax_error( "Unmatched parenthesis detected." );
+    else if( curly_brace_count > 0 )
+        syntax_error( "Unmatched curly braces detected." );
+
+    return block;
+}
+
 void nectar_loader::syntax_error( const string &message ) const
 {
     emit_error( "Syntax error (line " + to_string(m_line_number) + ") " + message );
-}
-
-bool nectar_loader::next_token()
-{
-    string token;
-    if( fetch_token(token) )
-    {
-        m_token = token;
-        return true;
-    }
-    else
-        return false;
-}
-
-void nectar_loader::strip_comments( string &line )
-{
-    size_t index = line.find("#");
-    if( index < string::npos )
-    {
-        line.resize( index ); // cut off comments
-    }
-}
-bool nectar_loader::strip_newline_escape( string &line )
-{
-    const size_t index = line.find( "\\" );
-    if( index > string::npos )
-        return false;
-
-    line.resize( index ); // cut off right before '\'
-    return true;
-}
-
-bool nectar_loader::fetch_line()
-{
-    debug() << "nectar_loader::fetch_line called (line " << m_line_number+1 << ").\n";
-    string line;
-    if( std::getline(m_stream, line) )
-    {
-        ++m_line_number;
-        strip_comments( line );
-        if( line.empty() || line.find_first_not_of( " \v\t\r\n" ) == string::npos )
-            return fetch_line();
-        line = tokenize( line, s_special_characters );
-        m_buffer << line;
-        return true;
-    }
-    else
-        return false;
-}
-bool nectar_loader::fetch_token( string &token )
-{
-    do // read new line until valid token can be extracted
-    {
-        if( m_buffer >> token )
-        {
-            debug() << "nectar_loader::Token extracted: " << token << "\n";
-            m_token = token;
-            return true; // return when token found
-        }
-        m_buffer.clear();
-    } while( fetch_line() );
-    // if no tokens can be extracted from the whole file, return false
-    return false;
-}
-const string nectar_loader::tokenize( const string &line, const set<char> &special_characters )
-{
-    const auto not_found = special_characters.end();
-    const auto end = line.end();
-    string result;
-
-    if( !line.empty() )
-    {
-        // copy first character
-        result += line[0];
-
-        char previous = line[0];
-        for( auto it = line.begin()+1; it != end; ++it )
-        {
-            const char current = *it;
-
-            if( special_characters.find(previous) != not_found )
-                result += ' ';
-
-            result += current;
-            previous = current;
-        }
-    }
-    return result;
 }
 
 libambrosia_namespace_end
