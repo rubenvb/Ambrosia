@@ -58,7 +58,7 @@ void build_config::set_project_file( const string &project_file )
 
 void build_config::set_ambrosia_cross( const std::string &cross )
 {
-    debug() << "build_config::Checking and setting cross-compilation options through Ambrosia specification.\n";
+    debug(4) << "build_config::Checking and setting cross-compilation options through Ambrosia specification.\n";
 
     // verify format
     if( !wildcard_compare( "*-*-*", cross) )
@@ -67,7 +67,7 @@ void build_config::set_ambrosia_cross( const std::string &cross )
         return;
     }
     else
-        debug() << "build_config::cross has correct format.\n";
+        debug(4) << "build_config::cross has correct format.\n";
 
     // find relevant parts and complain if somethin's wrong
     const size_t architecture_index = cross.find( "-" ) + 1;
@@ -78,10 +78,10 @@ void build_config::set_ambrosia_cross( const std::string &cross )
     const string os( cross.substr(0, architecture_index-1) );
     const string architecture( cross.substr(architecture_index, toolchain_index-architecture_index-1) );
     const string toolchain( cross.substr(toolchain_index, string::npos ) );
-    debug() << "build_config::cross options specified:\n"
-            << "              os = " << os << ".\n"
-            << "              architecture = " << architecture << ".\n"
-            << "              toolchain = " << toolchain << ".\n";
+    debug(4) << "build_config::cross options specified:\n"
+             << "              os = " << os << ".\n"
+             << "              architecture = " << architecture << ".\n"
+             << "              toolchain = " << toolchain << ".\n";
 
     // set the appropriate internal options
     const auto os_it = os_map.find( os );

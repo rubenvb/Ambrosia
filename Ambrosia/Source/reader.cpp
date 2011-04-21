@@ -10,10 +10,13 @@
 #include "reader.h"
 
 // libAmbrosia includes
-#include "end_state.h"
-    using libambrosia::state;
+#include "Ambrosia/debug.h"
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/status.h"
+
+// Ambrosia includes
+#include "end_state.h"
+    using libambrosia::state;
 
 // C++ includes
 /* <fstream> */
@@ -27,7 +30,13 @@ reader::reader( state* parent )
 :   state( parent ),
     m_stream(),
     m_targets()
-{   }
+{
+    debug(0) << "reader::reader created.\n";
+}
+reader::~reader()
+{
+    debug(0) << "reader destroyed.\n";
+}
 
 state* reader::event()
 {

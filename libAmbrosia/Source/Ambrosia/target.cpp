@@ -11,23 +11,33 @@
 
 // Ambrosia includes
 #include "debug.h"
+#include "enum_maps.h"
 
 // C++ includes
 /* <string> */
     using std::string;
+/* <utility> */
+    using std::pair;
+/* <vector> */
+    using std::vector;
 
 libambrosia_namespace_begin
 
 target::target( const string &name, const target_type type,
-                const string & text,
+                const vector<pair<target_type, string> > &dependencies, const string & text,
                 const size_t line_number, const size_t column_number )
-:   m_parsed( false ),
+:   m_type( type ),
     m_name( name ),
-    m_type( type ),
+    m_dependencies( dependencies ),
     m_text( text ),
     m_line_number( line_number ),
-    m_column_number( column_number )
-{   }
+    m_column_number( column_number ),
+    m_parsed( false )
+{
+    debug(6) << "target::Created " << map_value(target_type_map_inverse, type) << ": "
+             << name << " with following text:\n"
+             << text << "\n";
+}
 
 /*bool target::next_token()
 {
@@ -91,6 +101,5 @@ bool target::fetch_token( string &token )
     // if no tokens can be extracted from the whole file, return false
     return false;
 }*/
-
 
 libambrosia_namespace_end

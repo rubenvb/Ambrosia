@@ -21,6 +21,12 @@
 
 libambrosia_namespace_begin
 
+template<class T, class Y>
+const T & map_value( const std::map<Y,T> &map, const Y &key )
+{
+    return (*map.find(key)).second;
+}
+
 extern const std::map<std::string, architecture> architecture_map;
 extern const std::map<architecture, std::string> architecture_map_inverse;
 extern const std::map<std::string, os> os_map;

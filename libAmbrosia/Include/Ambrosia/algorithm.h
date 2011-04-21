@@ -33,7 +33,15 @@ bool contains(const container &cont, const typename container::value_type & elem
 {
    return( std::find(cont.begin(), cont.end(), elem) != cont.end() );
 }
-
+// conversion from string to numeric type
+template<class T>
+T from_string( const std::string &s )
+{
+     std::istringstream stream( s );
+     T t;
+     stream >> t;
+     return t;
+}
 // conversion to string
 template <class T>
 const std::string to_string (const T& t)

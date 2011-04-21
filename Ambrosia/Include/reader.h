@@ -27,6 +27,7 @@ class reader : public lib::state
 {
 public:
     reader( state* parent = 0 );
+    ~reader();
 
     state* event();
 

@@ -29,20 +29,21 @@ ambrosia_namespace_begin
 end_state::end_state( state *parent )
 :   state( parent )
 {
-    debug() << "end_state::end_state created.\n";
+    debug(0) << "end_state::end_state created.\n";
     libambrosia::print_errors();
 }
 
 end_state::end_state( const string &message, state* parent )
 :   state( parent )
 {
-    debug() << "end::end created.\n";
+    debug(0) << "end_state::end_state created.\n";
     cerr << message << endl;
 }
 end_state::end_state( const string &message, const string_vector &list,
           state* parent )
 :   state( parent )
 {
+    debug(0) << "end_state::end_state created.\n";
     cerr << "end_state::" << message << "\n";
     const auto end = list.end();
     for( auto it = list.begin(); it != end; ++it )
@@ -53,7 +54,7 @@ end_state::end_state( const string &message, const string_vector &list,
 
 end_state::~end_state()
 {
-    debug() << "end_state::Destroyed.\n";
+    debug(0) << "end_state::Destroyed.\n";
 }
 
 bool end_state::end() const

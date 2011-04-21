@@ -41,7 +41,7 @@ begin::begin( const int argc, const char* const argv[], state* parent )
     m_first_dashless_argument( true ),
     m_arguments()
 {
-    debug() << "begin::Begin state created.\n";
+    debug(0) << "begin::Begin state created.\n";
 
     // Welcome message
     print_version_information();
@@ -51,18 +51,18 @@ begin::begin( const int argc, const char* const argv[], state* parent )
     for( int i=1; i<argc; ++i )
     {
         m_arguments.push_back(argv[i]);
-        debug() << "begin::argument: " << i << ": " << argv[i] << ".\n";
+        debug(1) << "begin::argument: " << i << ": " << argv[i] << ".\n";
     }
-    debug() << "begin::Number of commandline arguments: " << m_arguments.size() << ".\n";
+    debug(1) << "begin::Number of commandline arguments: " << m_arguments.size() << ".\n";
 }
 begin::~begin()
 {
-    debug() << "begin::Destroyed.\n";
+    debug(0) << "begin::Destroyed.\n";
 }
 
 state* begin::event()
 {
-    debug() << "begin::Processing commandline arguments.\n";
+    debug(1) << "begin::Processing commandline arguments.\n";
 
     const auto end = m_arguments.end();
 
@@ -91,7 +91,7 @@ state* begin::event()
                 if( m_first_dashless_argument )
                 {
                     m_first_dashless_argument = false;
-                    debug() << "begin::Possible project file or directory: \'" << current << "\'.\n";
+                    debug(2) << "begin::Possible project file or directory: \'" << current << "\'.\n";
 
                     find_project_file( current );
                     libambrosia::print_warnings();
@@ -115,13 +115,13 @@ state* begin::event()
                 {
                     if( "-h" == current || "-help" == current )
                     {
-                        debug() << "begin::Printing help information.\n";
+                        debug(2) << "begin::Printing help information.\n";
                         ambrosia::print_help_information();
                         return new end_state( "All good", this );
                     }
                     else if( "-v" == current || "-version" == current)
                     {
-                        debug() << "begin::Printing version information.\n";
+                        debug(2) << "begin::Printing version information.\n";
                         ambrosia::print_version_information();
                         return new end_state( "All good", this );
                     }
@@ -157,7 +157,7 @@ state* begin::event()
         const string project_file = libambrosia::find_nectar_file( "." );
         if( !project_file.empty() )
         {
-            debug() << "begin::Project file found in current directory \'.\': " << project_file << ".\n";
+            debug(2) << "begin::Project file found in current directory \'.\': " << project_file << ".\n";
             libambrosia::emit_warning( "Ambrosia does not recommend an in-source build." );
             s_build_config.set_source_directory( "");
             s_build_config.set_project_file( project_file );
@@ -175,11 +175,11 @@ state* begin::event()
 
 bool begin::find_project_file( const std::string &path )
 {
-    debug() << "begin::find_project_file called for " << path << ".\n";
+    debug(3) << "begin::find_project_file called for " << path << ".\n";
 
     if( libambrosia::file_exists(path) )
     {
-        debug() << "begin::find_project_file detected file.\n";
+        debug(4) << "begin::find_project_file detected file.\n";
         // TODO: generalize the directory seperators list
         // seperate filename from (realtive) path
         const size_t index = path.find_last_of( "/\\" );
@@ -189,19 +189,19 @@ bool begin::find_project_file( const std::string &path )
     }
     else if( libambrosia::directory_exists(path) )
     {
-        debug() << "begin::find_project_file detected directory.\n";
+        debug(4) << "begin::find_project_file detected directory.\n";
         const string project_file = libambrosia::find_nectar_file( path );
         // if the directory contains a *.nectar.txt file, set source directory as well
         if( !project_file.empty() )
         {
-            debug() << "begin::Project file found: " <<  path << libambrosia::directory_seperator << project_file << ".\n";
+            debug(4) << "begin::Project file found: " <<  path << libambrosia::directory_seperator << project_file << ".\n";
             s_build_config.set_source_directory( path );
             s_build_config.set_project_file( project_file );
             return true;
         }
     }
     // return failure if some condition failed
-    debug() << "begin::No *.nectar.txt file found in " << path << ".\n";
+    debug(4) << "begin::No *.nectar.txt file found in " << path << ".\n";
     return false;
 }
 
@@ -211,13 +211,13 @@ bool begin::add_build_target( const std::string &target )
     const size_t index = target.find( ":" );
     if( index == string::npos )
     {
-        debug() << "begin::Target to be built: " << target << ".\n";
+        debug(3) << "begin::Target to be built: " << target << ".\n";
         s_build_config.add_target_config( target, string_set() );
     }
     else
     {
         const string target_name( target.substr(0, index) );
-        debug() << "begin::Target to be built: " << target_name << ".\n";
+        debug(3) << "begin::Target to be built: " << target_name << ".\n";
         string_set options;
         string_set duplicates;
         istringstream stream( target );
@@ -234,23 +234,34 @@ bool begin::add_build_target( const std::string &target )
 }
 void begin::set_internal_option( const std::string &option, const std::string &value )
 {
-    debug() << "begin::Ambrosia internal option: " << option
-            << " with value " << value << " being set.\n";
+    debug(3) << "begin::Ambrosia internal option: " << option
+             << " with value " << value << " being set.\n";
 
     if( "cross" == option )
     {
-        debug() << "begin::Cross-compiling for " << value << ".\n";
+        debug(4) << "begin::Cross-compiling for " << value << ".\n";
         s_build_config.set_ambrosia_cross( value );
     }
+    #ifdef AMBROSIA_DEBUG
+    else if( "d" == option || "debug" == option )
+    {
+        const int level = lib::from_string<int>( value );
+        // check validity, partial check on input as well
+        if( level > s_max_debug_level || level < 0 )
+            lib::emit_error( "Debug level must be a number between 0 and 9." );
+        debug(0) << "begin::Setting debug level to " << level << ".\n";
+        debug::s_level = level;
+    }
+    #endif // AMBROSIA_DEBUG
     else if( "gnu-prefix" == option )
     {
-        debug() << "begin::Cross-compiling with GNU prefix " << value << ".\n";
+        debug(4) << "begin::Cross-compiling with GNU prefix " << value << ".\n";
         s_build_config.set_gnu_prefix( value );
     }
 }
 bool begin::add_configuration_options( const std::string &options )
 {
-    debug() << "begin::Target configuration option: " << options << " set.\n";
+    debug(3) << "begin::Target configuration option: " << options << " set.\n";
     // put them in a set
     istringstream stream( options );
     string temp;

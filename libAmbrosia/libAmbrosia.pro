@@ -48,7 +48,8 @@ SOURCES += \
     Source/Ambrosia/target.cpp \
     Source/Ambrosia/Parser/parser_state.cpp \
     Source/Ambrosia/nectar_loader.cpp \
-    Source/Ambrosia/algorithm.cpp
+    Source/Ambrosia/algorithm.cpp \
+    Source/Ambrosia/debug.cpp
 
 *win32*:SOURCES += Source/Ambrosia/Platform/windows.cpp
 *linux*:SOURCES += Source/Ambrosia/Platform/linux.cpp

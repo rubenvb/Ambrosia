@@ -20,7 +20,7 @@
 libambrosia_namespace_begin
 
 extern const std::set<char> s_special_characters;
-extern const std::set<char>::const_iterator s_special_characters_end;
+extern const std::set<char> s_special_characters_newline;
 
 const std::string find_nectar_file( const std::string &directory );
 

@@ -19,19 +19,20 @@
 // libAmbrosia includes
 #include "build_config.h"
 #include "Parser/parser_state.h"
+#include "nectar.h"
 
 // C++ includes
 #include <iosfwd>
 /* <utility> */
 /* <vector> */
 
-
 libambrosia_namespace_begin
 
 class nectar_loader
 {
 public:
-    nectar_loader( const std::string &filename, std::istream &stream );
+    nectar_loader( const std::string &filename, std::istream &stream,
+                   const dependency_list &list = dependency_list() );
 
     template<class output_iterator>
     void extract_nectar( output_iterator it );
@@ -39,15 +40,14 @@ public:
 private:
     const std::string &m_filename;
     std::istream &m_stream;
-    std::stringstream m_buffer;
-    std::string m_token;
+    const dependency_list &m_dependency_list;
     size_t m_line_number;
     bool m_global_processed;
     // functions
     void syntax_error( const std::string &message ) const;
-    bool next_token( std::string &token );
+    bool next_token( std::string &token, const std::set<char> &special_characters = s_special_characters );
     // reads colon-lists of dependencies, ends at first '{'
-    const std::vector<std::pair<target_type, std::string> > read_dependency_list();
+    void read_dependency_list( std::vector<std::pair<target_type, std::string> > &dependency_list );
     // finds matching curly brace and stores all stream contents in between in return value.
     const std::string read_code_block();
 };

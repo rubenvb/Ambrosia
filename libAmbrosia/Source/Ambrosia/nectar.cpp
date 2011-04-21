@@ -38,7 +38,7 @@
 libambrosia_namespace_begin
 
 const set<char> s_special_characters = { '(', ')', '{', '}', ':', ',' };
-const set<char>::const_iterator s_special_characters_end = s_special_characters.end();
+const set<char> s_special_characters_newline = { '(', ')', '{', '}', ':', ',', '\n' };
 
 const string find_nectar_file( const string &directory )
 {
@@ -77,7 +77,7 @@ void drink_nectar( const std::string &filename, output_iterator it )
     if( !stream )
         emit_error( "Unable to open nectar file: " + filename );
 
-    debug() << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
+    debug(2) << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
     nectar_loader loader( filename, stream );
     loader.extract_nectar( it );
 }

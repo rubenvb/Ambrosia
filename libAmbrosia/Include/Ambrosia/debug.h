@@ -18,19 +18,23 @@
 
 ambrosia_namespace_begin
 
-typedef std::ostream& (*STRFUNC)(std::ostream&);
+extern const int s_max_debug_level;
 
 class debug
 {
 public:
-    debug()
-    {}
+    typedef std::ostream& (*stream_function)(std::ostream&);
+
+    static int s_level;
+
+    debug( const int debug_level = s_level );
 
     template<typename T>
     #ifdef AMBROSIA_DEBUG
     debug& operator<<( const T &output )
     {
-        std::cerr << output;
+        if( m_output )
+            std::cerr << output;
     #else
     debug& operator<<( const T & )
     {
@@ -38,17 +42,20 @@ public:
         return *this;
     }
     // for std::endl and other manipulators
-    typedef std::ostream& (*STRFUNC)(std::ostream&);
     #ifdef AMBROSIA_DEBUG
-    debug& operator<<( STRFUNC func )
+    debug& operator<<( stream_function func )
     {
-        func(std::cerr);
-    #else
-    debug& operator<<( STRFUNC )
+        if( m_output )
+            func(std::cerr);
+    #else // AMBROSIA_DEBUG
+    debug& operator<<( stream_function )
     {
     #endif // AMBROSIA_DEBUG
         return *this;
     }
+
+private:
+    const bool m_output;
 };
 
 ambrosia_namespace_end
