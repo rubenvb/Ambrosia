@@ -14,13 +14,17 @@
 
 // libAmbrosia includes
 #include "platform.h"
+#include "target.h"
 
 // C++ includes
 #include <algorithm>
+#include <memory>
 #include <sstream>
 
 libambrosia_namespace_begin
 
+/* Freestanding functions (libAmbrosia independent, including no untransparent error handling)
+ *************************/
 // returns true if expanding '?' or '*' produces a match
 bool wildcard_compare( const std::string &wildcard_string, const std::string &full_string );
 // returns true if expanding '?' or '*' between forward slashes '/' produces a match
@@ -50,6 +54,11 @@ const std::string to_string (const T& t)
     ss << t;
     return ss.str();
 }
+
+/* Ambrosia dependent functions (use one or more of libAmbrosia's functions/classes)
+ *******************************/
+// Dependency resolving sort
+void dependency_sort( std::vector<std::unique_ptr<target> > &targets );
 
 libambrosia_namespace_end
 

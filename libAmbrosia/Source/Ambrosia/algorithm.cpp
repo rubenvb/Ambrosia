@@ -8,15 +8,22 @@
 
 // Function include
 #include "algorithm.h"
+#include "target.h"
 
 // C++ includes
+/* <memory> */
+    using std::unique_ptr;
 /* <set> */
     using std::set;
 /* <string> */
     using std::string;
+/* <vector> */
+    using std::vector;
 
 libambrosia_namespace_begin
 
+/* Freestanding functions
+ *************************/
 bool wildcard_compare( const string &wild_string, const string &full_string )
 {
     auto wild = wild_string.begin();
@@ -144,5 +151,33 @@ const string tokenize( const string &line, const set<char> &special_characters )
     }
     return result;
 }
+/* libAmbrosia dependent functions
+ **********************************/
+/*
+def dep_resolve(node, resolved, unresolved):
+   unresolved.append(node)
+   for edge in node.edges:
+      if edge not in resolved:
+         if edge in unresolved:
+            raise Exception('Circular reference detected: %s -> %s' % (node.name, edge.name))
+         dep_resolve(edge, resolved, unresolved)
+   resolved.append(node)
+   unresolved.remove(node)
+*/
+//template<class node>
+void dependency_sort( vector<unique_ptr<target> > &unsorted )
+{
+    vector<unique_ptr<target> > sorted;
+    sorted.reserve( unsorted.size() );
+
+    // Go through unsorted until it is empty, moving the unique_ptr's as they are processed.
+    while( unsorted.size() > 0 )
+    {
+        // TODO
+        unsorted.erase(unsorted.begin());
+    }
+}
+//template void dependency_sort<target>( vector<unique_ptr<target> > & );
+
 
 libambrosia_namespace_end

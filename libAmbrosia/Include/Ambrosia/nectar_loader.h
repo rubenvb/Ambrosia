@@ -47,7 +47,7 @@ private:
     void syntax_error( const std::string &message ) const;
     bool next_token( std::string &token, const std::set<char> &special_characters = s_special_characters );
     // reads colon-lists of dependencies, ends at first '{'
-    void read_dependency_list( std::vector<std::pair<target_type, std::string> > &dependency_list );
+    void read_dependency_list( dependency_list &dependencies );
     // finds matching curly brace and stores all stream contents in between in return value.
     const std::string read_code_block();
 };

@@ -67,7 +67,7 @@ void nectar_loader::extract_nectar( output_iterator it )
 
             if( next_token(token) && "{" == token )
             {
-                it = std::move( unique_ptr<target>( new target("global", target_type::global, vector<pair<target_type, string> >(),
+                it = std::move( unique_ptr<target>( new target("global", target_type::global, dependency_list(),
                                                                read_code_block(), m_line_number) ) );
             }
             else
@@ -86,7 +86,7 @@ void nectar_loader::extract_nectar( output_iterator it )
                     debug(4) << "nectar_loader::Processing "
                              << map_value(target_type_map_inverse, type) << ": " << token << ".\n";
                     const string name( token );
-                    vector<pair<target_type, string> > dependencies( m_dependency_list );
+                    dependency_list dependencies( m_dependency_list );
                     read_dependency_list( dependencies );
                     if( status::error == current_status() )
                         return;
@@ -124,7 +124,7 @@ void nectar_loader::extract_nectar( output_iterator it )
                 ifstream stream( sub_project_file );
                 if( stream )
                 {
-                    vector<pair<target_type, string> > dependencies;
+                    dependency_list dependencies;
                     read_dependency_list( dependencies );
                     nectar_loader sub_loader( sub_file, stream );
                     sub_loader.extract_nectar( it );
@@ -208,7 +208,7 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
     return !token.empty();
 }
 
-void nectar_loader::read_dependency_list( vector<pair<target_type, string> > &dependency_list )
+void nectar_loader::read_dependency_list( dependency_list &dependencies )
 {
     debug(4) << "nectar_loader::read_dependency_list::Reading dependencies.\n";
     bool in_list = false;
@@ -219,7 +219,7 @@ void nectar_loader::read_dependency_list( vector<pair<target_type, string> > &de
         debug(6) << "nectar_loader::read_dependency_list::token: " << token << ".\n";
         if( "{" == token || "\n" == token )
         {
-            debug(4) << "nectar_loader::read_dependency_list::" << dependency_list.size() << " dependencies.\n";
+            debug(4) << "nectar_loader::read_dependency_list::" << dependencies.size() << " dependencies.\n";
             return;
         }
         else if( !in_list )
@@ -235,7 +235,7 @@ void nectar_loader::read_dependency_list( vector<pair<target_type, string> > &de
 
                     debug(6) << "nectar_loader::read_dependency_list::Detected " << token << " dependencies.\n";
                     in_list = true;
-                    goto list;
+                    goto insert_dependency;
                 }
                 else
                     return syntax_error( "Expected list of target names after \':\'." );
@@ -245,8 +245,10 @@ void nectar_loader::read_dependency_list( vector<pair<target_type, string> > &de
         }
         else if( "," == token )
         {
-            list:
-            dependency_list.push_back( {type, token} );
+            insert_dependency:
+            if( !dependencies.insert({type, token}).second )
+                return syntax_error( "Double dependency listed: "
+                                     + map_value(target_type_map_inverse, type) + " " + token + "."  );
         }
         else
             in_list = false;

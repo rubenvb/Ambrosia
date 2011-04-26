@@ -7,3 +7,7 @@ code cleanup.
     states. Apart from the ugly syntax, it works quite well except in:
      - begin::event(), in case 0, where a lot of checks need to be made because
      this is the only place where an end_state can be returned.
+
+2. target and node
+    dependency_list is copied to node, when it is completely unnecessary to
+    have this info in two seperate places.

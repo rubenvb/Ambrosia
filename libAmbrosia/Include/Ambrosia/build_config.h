@@ -66,7 +66,7 @@ private:
     toolchain m_target_toolchain;
     std::string m_gnu_prefix; // GNU triplet for platform
     string_map m_user_options; // user option --> value
-    map_const_string_set_string m_target_config; // Target name --> optional config list
+    map_string_set_string m_target_config; // Target name --> optional config list
     // internal functions
     static void merge_options( std::pair<const std::string, string_set> &old_options, const string_set &new_options );
 };

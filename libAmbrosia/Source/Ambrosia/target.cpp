@@ -24,10 +24,10 @@
 libambrosia_namespace_begin
 
 target::target( const string &name, const target_type type,
-                const vector<pair<target_type, string> > &dependencies, const string & text,
+                const dependency_list &dependencies, const string & text,
                 const size_t line_number, const size_t column_number )
-:   m_type( type ),
-    m_name( name ),
+:   node( name, dependencies ),
+    m_type( type ),
     m_dependencies( dependencies ),
     m_text( text ),
     m_line_number( line_number ),
@@ -35,8 +35,26 @@ target::target( const string &name, const target_type type,
     m_parsed( false )
 {
     debug(6) << "target::Created " << map_value(target_type_map_inverse, type) << ": "
-             << name << " with following text:\n"
-             << text << "\n";
+             << name << ".\n";
+
+}
+
+const string & target::name() const
+{
+    return m_name;
+}
+const target_type & target::type() const
+{
+    return m_type;
+}
+const dependency_list & target::dependencies() const
+{
+    return m_dependencies;
+}
+
+bool target::operator<( const target &t )
+{
+    return m_name < t.name();
 }
 
 /*bool target::next_token()

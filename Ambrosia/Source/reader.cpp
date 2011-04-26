@@ -12,6 +12,8 @@
 // libAmbrosia includes
 #include "Ambrosia/debug.h"
 #include "Ambrosia/nectar.h"
+#include "Ambrosia/node.h"
+    using libambrosia::node;
 #include "Ambrosia/status.h"
 
 // Ambrosia includes
@@ -40,13 +42,12 @@ reader::~reader()
 
 state* reader::event()
 {
-    libambrosia::drink_nectar( s_build_config.path_to_project_file(), std::back_inserter(m_targets) );
-
+    // load project files
+    libambrosia::drink_nectar( s_build_config.path_to_project_file(), m_targets );
     if( libambrosia::current_status() == status::error )
         return new end_state( this );
 
-    // parse only targets requested and their dependencies
-    // TODO
+
 
     return new end_state( "reader::reader does little for now.", this );
 }

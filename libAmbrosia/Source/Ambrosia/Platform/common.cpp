@@ -14,6 +14,7 @@
     #include <sys/io.h>   // For access()
 #else
     #include <io.h>
+    #include <stdio.h>
 #endif
 #include <sys/types.h>  // For stat()
 #include <sys/stat.h>   // For stat()

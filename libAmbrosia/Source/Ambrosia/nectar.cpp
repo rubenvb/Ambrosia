@@ -10,6 +10,7 @@
 #include "nectar.h"
 
 // libAmbrosia includes
+#include "algorithm.h"
 #include "status.h"
 #include "debug.h"
 #include "platform.h"
@@ -70,18 +71,26 @@ const string find_nectar_file( const string &directory )
     return string();
 }
 
-template<class output_iterator>
-void drink_nectar( const std::string &filename, output_iterator it )
+void drink_nectar( const std::string &filename, vector<unique_ptr<target> > &targets )
 {
+    // open file
     ifstream stream( filename );
     if( !stream )
-        emit_error( "Unable to open nectar file: " + filename );
+        return emit_error( "Unable to open nectar file: " + filename );
 
+    // read targets
     debug(2) << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
     nectar_loader loader( filename, stream );
-    loader.extract_nectar( it );
+    loader.extract_nectar( std::back_inserter(targets) );
+    if( status::error == current_status() )
+        return;
+
+    // dependency sort
+    dependency_sort( targets );
+    if( status::error == current_status() )
+        return;
 }
 // Explicit template instantiation
-template void drink_nectar<back_insert_iterator<vector<unique_ptr<target> > > >( const string &, back_insert_iterator<vector<unique_ptr<target> > > );
+//template void drink_nectar<back_insert_iterator<vector<unique_ptr<target> > > >( const string &, back_insert_iterator<vector<unique_ptr<target> > > );
 
 libambrosia_namespace_end
