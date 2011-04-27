@@ -8,11 +8,12 @@
 
 // Function include
 #include "algorithm.h"
+#include "status.h"
 #include "target.h"
 
 // C++ includes
-/* <memory> */
-    using std::unique_ptr;
+#include <functional>
+    using namespace std::placeholders;
 /* <set> */
     using std::set;
 /* <string> */
@@ -164,20 +165,34 @@ def dep_resolve(node, resolved, unresolved):
    resolved.append(node)
    unresolved.remove(node)
 */
-//template<class node>
-void dependency_sort( vector<unique_ptr<target> > &unsorted )
+void dependency_sort( vector<target> &unsorted )
 {
-    vector<unique_ptr<target> > sorted;
-    sorted.reserve( unsorted.size() );
+    // set internal dependency pointers from names to (node's) pointers
+    const auto end = unsorted.end();
+    for( auto it = unsorted.begin(); it != end; ++it )
+    {
+        const auto &current = *it;
+        const auto &dependencies = current.dependencies();
+        const auto dep_end = dependencies.end();
+        for( auto dep_it = dependencies.begin(); dep_it != dep_end; ++dep_it )
+        {
+            // find the target by name
+            const string name( (*dep_it).second );
+            std::find_if( unsorted.begin(), unsorted.end(),
+                          [&name](const target &t) { return name == t.name(); } );
+            // add it to the node edges reference vector
+        }
+    }
+
+    if( status::error == current_status() )
+        return;
 
     // Go through unsorted until it is empty, moving the unique_ptr's as they are processed.
-    while( unsorted.size() > 0 )
-    {
-        // TODO
-        unsorted.erase(unsorted.begin());
-    }
+
+    if( status::error == current_status() )
+        return;
 }
-//template void dependency_sort<target>( vector<unique_ptr<target> > & );
+
 
 
 libambrosia_namespace_end

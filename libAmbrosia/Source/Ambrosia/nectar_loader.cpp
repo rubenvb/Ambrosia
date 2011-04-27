@@ -51,8 +51,7 @@ nectar_loader::nectar_loader( const string &filename, istream &stream,
     m_global_processed( false )
 {   }
 
-template<class output_iterator>
-void nectar_loader::extract_nectar( output_iterator it )
+void nectar_loader::extract_nectar( vector<target> &targets )
 {
     debug(2) << "nectar_loader::Processing file: " << m_filename << ".\n";
     string token;
@@ -67,8 +66,8 @@ void nectar_loader::extract_nectar( output_iterator it )
 
             if( next_token(token) && "{" == token )
             {
-                it = std::move( unique_ptr<target>( new target("global", target_type::global, dependency_list(),
-                                                               read_code_block(), m_line_number) ) );
+                targets.push_back( target("global", target_type::global, dependency_list(),
+                                          read_code_block(), m_line_number) );
             }
             else
                 return syntax_error( "\'global\' must be followed by \'{\'." );
@@ -95,8 +94,8 @@ void nectar_loader::extract_nectar( output_iterator it )
                     if( status::error == current_status() )
                         return;
 
-                    it = std::move( unique_ptr<target>(new target(name, type, dependencies,
-                                                                  text, m_line_number)) );
+                    targets.push_back( target(name, type, dependencies,
+                                       text, m_line_number) );
                 }
             }
         }
@@ -127,7 +126,7 @@ void nectar_loader::extract_nectar( output_iterator it )
                     dependency_list dependencies;
                     read_dependency_list( dependencies );
                     nectar_loader sub_loader( sub_file, stream );
-                    sub_loader.extract_nectar( it );
+                    sub_loader.extract_nectar( targets );
                     if( status::error == current_status() )
                         return;
                 }
@@ -145,7 +144,7 @@ void nectar_loader::extract_nectar( output_iterator it )
     }
     debug(3) << "nectar_loader::Finished with file: " << m_filename << ".\n";
 }
-template void nectar_loader::extract_nectar<back_insert_iterator<vector<unique_ptr<target> > > >( back_insert_iterator<vector<unique_ptr<target> > > );
+//template void nectar_loader::extract_nectar<back_insert_iterator<vector<unique_ptr<target> > > >( back_insert_iterator<vector<unique_ptr<target> > > );
 
 bool nectar_loader::next_token( string &token, const std::set<char> &special_characters )
 {

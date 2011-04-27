@@ -33,7 +33,7 @@ public:
 
 private:
     std::ifstream m_stream;
-    std::vector<std::unique_ptr<lib::target> > m_targets;
+    std::vector<lib::target> m_targets;
 };
 
 ambrosia_namespace_end

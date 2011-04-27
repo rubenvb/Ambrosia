@@ -58,7 +58,7 @@ const std::string to_string (const T& t)
 /* Ambrosia dependent functions (use one or more of libAmbrosia's functions/classes)
  *******************************/
 // Dependency resolving sort
-void dependency_sort( std::vector<std::unique_ptr<target> > &targets );
+void dependency_sort( std::vector<target> &targets );
 
 libambrosia_namespace_end
 

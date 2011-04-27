@@ -34,8 +34,7 @@ public:
     nectar_loader( const std::string &filename, std::istream &stream,
                    const dependency_list &list = dependency_list() );
 
-    template<class output_iterator>
-    void extract_nectar( output_iterator it );
+    void extract_nectar( std::vector<target> &targets );
 
 private:
     const std::string &m_filename;

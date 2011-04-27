@@ -71,7 +71,7 @@ const string find_nectar_file( const string &directory )
     return string();
 }
 
-void drink_nectar( const std::string &filename, vector<unique_ptr<target> > &targets )
+void drink_nectar( const std::string &filename, vector<target> &targets )
 {
     // open file
     ifstream stream( filename );
@@ -81,7 +81,7 @@ void drink_nectar( const std::string &filename, vector<unique_ptr<target> > &tar
     // read targets
     debug(2) << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
     nectar_loader loader( filename, stream );
-    loader.extract_nectar( std::back_inserter(targets) );
+    loader.extract_nectar( targets );
     if( status::error == current_status() )
         return;
 

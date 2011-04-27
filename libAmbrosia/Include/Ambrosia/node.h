@@ -14,22 +14,24 @@
 /* "typedefs.h" */
 
 // C++ includes
+#include <memory>
 #include <set>
 #include <string>
 
 libambrosia_namespace_begin
 
+// Forward declarations
+class target;
+
 class node
 {
 public:
     node( const std::string &name );
-     // can set status::error if there are double dependencies
-    node( const std::string &name, const dependency_list &dependencies );
     virtual ~node();
 
-    bool add_node( const node &dependency );
+    void add_node( const target &dependency ); // sets error status in event of duplicates
     const std::string &name() const;
-    const std::set<node> edges() const;
+    const std::set<const target*> edges() const;
     bool operator<( const node &n ) const;
     bool operator==( const node &n ) const;
 
@@ -37,7 +39,7 @@ protected:
     std::string m_name;
 
 private:
-    std::set<node> m_edges;
+    std::set<const target*> m_edges; // pointers should not be deleted, as the pointed to objects are owned elsewhere
 };
 
 libambrosia_namespace_end
