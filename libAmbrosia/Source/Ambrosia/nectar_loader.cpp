@@ -84,7 +84,7 @@ void nectar_loader::extract_nectar( target_list &targets )
                 {
                     debug(4) << "nectar_loader::Processing "
                              << map_value(target_type_map_inverse, type) << ": " << token << ".\n";
-                    const string name( token );
+                    const string target_name( token );
                     dependency_list dependencies( m_dependency_list );
                     read_dependency_list( dependencies );
                     if( error_status() )
@@ -94,7 +94,7 @@ void nectar_loader::extract_nectar( target_list &targets )
                     if( error_status() )
                         return;
 
-                    targets.push_back( std::move(unique_ptr<target>(new target(name, type, dependencies,
+                    targets.push_back( std::move(unique_ptr<target>(new target(target_name, type, dependencies,
                                                                                text, m_line_number))) );
                 }
             }
@@ -252,11 +252,16 @@ void nectar_loader::read_dependency_list( dependency_list &dependencies )
             insert_dependency:
             if( next_token(token) )
             {
-
                 debug(6) << "nectar_loader::read_dependency_list::Inserting dependency: " << token << ".\n";
-                if( !dependencies.insert({type, token}).second )
-                    return syntax_error( "Double dependency listed: "
-                                         + map_value(target_type_map_inverse, type) + " " + token + "."  );
+                const pair<target_type, string> element = { type, token };
+                if( !dependencies.insert(element).second )
+                {
+                    if( !contains(m_dependency_list, element) )
+                        return syntax_error( "Double dependency listed: "
+                                             + map_value(target_type_map_inverse, type) + " " + token + "."  );
+                    else
+                        syntax_warning( "Dependency specified at \'sub\' target, which is repeated in the subproject file here." );
+                }
             }
         }
         else
@@ -319,6 +324,10 @@ const std::string nectar_loader::read_code_block()
 void nectar_loader::syntax_error( const string &message ) const
 {
     emit_error( "Syntax error: " + m_filename + ": line " + to_string(m_line_number) + "\n\t" + message );
+}
+void nectar_loader::syntax_warning( const string &message ) const
+{
+    emit_warning( "Syntax warning: " + m_filename + ": line " + to_string(m_line_number) + ": " + message );
 }
 
 libambrosia_namespace_end

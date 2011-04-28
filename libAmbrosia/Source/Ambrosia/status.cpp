@@ -38,7 +38,7 @@ void emit_error( const string &message )
 }
 void emit_warning( const string &message )
 {
-    s_warnings += "\nWarning: " + message;
+    s_warnings += "\nWarning: " + message + "\n";
     s_status = std::max( s_status, status::warning );
 }
 
