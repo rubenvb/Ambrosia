@@ -15,6 +15,7 @@
 #include "Ambrosia/node.h"
     using libambrosia::node;
 #include "Ambrosia/status.h"
+#include "Ambrosia/target.h"
 
 // Ambrosia includes
 #include "end_state.h"
@@ -44,7 +45,7 @@ state* reader::event()
 {
     // load project files
     libambrosia::drink_nectar( s_build_config.path_to_project_file(), m_targets );
-    if( libambrosia::current_status() == status::error )
+    if( libambrosia::error_status() )
         return new end_state( this );
 
 

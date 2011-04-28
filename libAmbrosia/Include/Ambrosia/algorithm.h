@@ -15,6 +15,7 @@
 // libAmbrosia includes
 #include "platform.h"
 #include "target.h"
+#include "typedefs.h"
 
 // C++ includes
 #include <algorithm>
@@ -58,7 +59,7 @@ const std::string to_string (const T& t)
 /* Ambrosia dependent functions (use one or more of libAmbrosia's functions/classes)
  *******************************/
 // Dependency resolving sort
-void dependency_sort( std::vector<target> &targets );
+void dependency_sort( target_list &targets );
 
 libambrosia_namespace_end
 

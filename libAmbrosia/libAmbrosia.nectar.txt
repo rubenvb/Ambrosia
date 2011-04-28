@@ -2,7 +2,7 @@
 # libAmbrosia executable project file
 ###################################
 
-lib Ambrosia
+lib libAmbrosia
 {
     HEADER_DIRS Inlcude/Ambrosia \
                 Include/Ambrosia/Parser

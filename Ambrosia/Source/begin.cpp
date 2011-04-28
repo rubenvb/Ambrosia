@@ -96,7 +96,7 @@ state* begin::event()
                     find_project_file( current );
                     libambrosia::print_warnings();
 
-                    if( libambrosia::current_status() == status::error )
+                    if( libambrosia::error_status() )
                         return new end_state( this );
 
                     // if project_file is still empty, "current" is really a target name to be built, skip to below next else
@@ -133,7 +133,7 @@ state* begin::event()
                     const string value( current.substr(index+1, string::npos) );
                     set_internal_option( option, value );
                     // check for any error that may have happened in the above call to libAmbrosia
-                    if( libambrosia::current_status() == status::error )
+                    if( libambrosia::error_status() )
                         return new end_state( this );
                 }
                 else if( current[0] == ':' )
@@ -162,7 +162,7 @@ state* begin::event()
             s_build_config.set_source_directory( "");
             s_build_config.set_project_file( project_file );
         }
-        else if( libambrosia::current_status() != status::error )
+        else if( !libambrosia::error_status() )
             libambrosia::emit_error( "No project file found in specified path or current directory." );
     }
     debug() << "begin::Checking if project file was found.\n";

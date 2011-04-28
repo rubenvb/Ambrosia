@@ -51,7 +51,7 @@ nectar_loader::nectar_loader( const string &filename, istream &stream,
     m_global_processed( false )
 {   }
 
-void nectar_loader::extract_nectar( vector<target> &targets )
+void nectar_loader::extract_nectar( target_list &targets )
 {
     debug(2) << "nectar_loader::Processing file: " << m_filename << ".\n";
     string token;
@@ -66,8 +66,8 @@ void nectar_loader::extract_nectar( vector<target> &targets )
 
             if( next_token(token) && "{" == token )
             {
-                targets.push_back( target("global", target_type::global, dependency_list(),
-                                          read_code_block(), m_line_number) );
+                targets.push_back( std::move(unique_ptr<target>(new target("global", target_type::global, dependency_list(),
+                                                                           read_code_block(), m_line_number))) );
             }
             else
                 return syntax_error( "\'global\' must be followed by \'{\'." );
@@ -87,15 +87,15 @@ void nectar_loader::extract_nectar( vector<target> &targets )
                     const string name( token );
                     dependency_list dependencies( m_dependency_list );
                     read_dependency_list( dependencies );
-                    if( status::error == current_status() )
+                    if( error_status() )
                         return;
 
                     const string text( read_code_block() );
-                    if( status::error == current_status() )
+                    if( error_status() )
                         return;
 
-                    targets.push_back( target(name, type, dependencies,
-                                       text, m_line_number) );
+                    targets.push_back( std::move(unique_ptr<target>(new target(name, type, dependencies,
+                                                                               text, m_line_number))) );
                 }
             }
         }
@@ -113,7 +113,7 @@ void nectar_loader::extract_nectar( vector<target> &targets )
                 {
                     debug(4) << "nectar_loader::sub target name and subproject file name do not match.\n";
                     sub_file = find_nectar_file( sub_directory );
-                    if( status::error == current_status() )
+                    if( error_status() )
                         return; // no *.nectar.txt file found
 
                     debug(4) << "nectar_loader::found sub-.nectar.txt file: " << sub_file << ".\n";
@@ -125,9 +125,12 @@ void nectar_loader::extract_nectar( vector<target> &targets )
                 {
                     dependency_list dependencies;
                     read_dependency_list( dependencies );
-                    nectar_loader sub_loader( sub_file, stream );
+                    if( error_status() )
+                        return;
+
+                    nectar_loader sub_loader( sub_project_file, stream, dependencies );
                     sub_loader.extract_nectar( targets );
-                    if( status::error == current_status() )
+                    if( error_status() )
                         return;
                 }
                 else // opening file failed
@@ -144,7 +147,7 @@ void nectar_loader::extract_nectar( vector<target> &targets )
     }
     debug(3) << "nectar_loader::Finished with file: " << m_filename << ".\n";
 }
-//template void nectar_loader::extract_nectar<back_insert_iterator<vector<unique_ptr<target> > > >( back_insert_iterator<vector<unique_ptr<target> > > );
+//template void nectar_loader::extract_nectar<back_insert_iterator<target_list>( back_insert_iterator<target_list> );
 
 bool nectar_loader::next_token( string &token, const std::set<char> &special_characters )
 {
@@ -154,7 +157,7 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
 
     while( m_stream.get(c) )
     {
-        debug(6) << "nectar_loader::next_token::line number " << m_line_number << ", character: \'" << c << "\', token so far: " << token << "\n";
+        debug(7) << "nectar_loader::next_token::line number " << m_line_number << ", character: \'" << c << "\', token so far: " << token << "\n";
         if( token.empty() )
         {
             if( '\n' == c )
@@ -203,12 +206,14 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
             add_char:
             token.append( 1, c );
     }
-    debug(6) << "nectar_loader::next_token:Token extracted: " << token << ".\n";
+    debug(7) << "nectar_loader::next_token:Token extracted: " << token << ".\n";
     return !token.empty();
 }
 
 void nectar_loader::read_dependency_list( dependency_list &dependencies )
 {
+    // copy "parent" dependencies
+    dependencies = m_dependency_list;
     debug(4) << "nectar_loader::read_dependency_list::Reading dependencies.\n";
     bool in_list = false;
     target_type type;
@@ -245,9 +250,14 @@ void nectar_loader::read_dependency_list( dependency_list &dependencies )
         else if( "," == token )
         {
             insert_dependency:
-            if( !dependencies.insert({type, token}).second )
-                return syntax_error( "Double dependency listed: "
-                                     + map_value(target_type_map_inverse, type) + " " + token + "."  );
+            if( next_token(token) )
+            {
+
+                debug(6) << "nectar_loader::read_dependency_list::Inserting dependency: " << token << ".\n";
+                if( !dependencies.insert({type, token}).second )
+                    return syntax_error( "Double dependency listed: "
+                                         + map_value(target_type_map_inverse, type) + " " + token + "."  );
+            }
         }
         else
             in_list = false;
@@ -308,7 +318,7 @@ const std::string nectar_loader::read_code_block()
 
 void nectar_loader::syntax_error( const string &message ) const
 {
-    emit_error( "Syntax error (line " + to_string(m_line_number) + ") " + message );
+    emit_error( "Syntax error: " + m_filename + ": line " + to_string(m_line_number) + "\n\t" + message );
 }
 
 libambrosia_namespace_end

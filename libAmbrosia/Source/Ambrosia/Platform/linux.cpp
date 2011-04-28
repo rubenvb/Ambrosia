@@ -76,7 +76,7 @@ void scan_directory( output_iterator it, const string &directory_name )
     chdir( cwd.c_str() );
     closedir( dir );
 }
-template void scan_directory<back_insert_iterator<vector<string> > >( back_insert_iterator<vector<string> >, const string & );
+template void scan_directory<back_insert_iterator<vector<string>>>( back_insert_iterator<vector<string>>, const string & );
 
 template<class output_iterator>
 void recursive_scan_directory( output_iterator it, const string &relative_directory, const string &directory_name )
@@ -121,6 +121,6 @@ void recursive_scan_directory( output_iterator it, const string &relative_direct
     closedir( dir );
 }
 // explicit instantiation
-template void recursive_scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string &, const string & );
+template void recursive_scan_directory<insert_iterator<file_set>>( insert_iterator<file_set>, const string &, const string & );
 
 libambrosia_namespace_end

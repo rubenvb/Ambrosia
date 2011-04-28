@@ -29,7 +29,7 @@ extern const std::set<char> s_special_characters_newline;
 const std::string find_nectar_file( const std::string &directory );
 
 // converts all project file content to internal representation, adding to the container where "it" outputs to
-void drink_nectar( const std::string &filename, std::vector<target> &targets );
+void drink_nectar( const std::string &filename, target_list &targets );
 
 libambrosia_namespace_end
 

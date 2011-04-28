@@ -14,12 +14,10 @@
 
 // libAmbrosia includes
 #include "Ambrosia/state.h"
-#include "Ambrosia/target.h"
+#include "Ambrosia/typedefs.h"
 
 // C++ includes
 #include <fstream>
-#include <memory>
-#include <vector>
 
 ambrosia_namespace_begin
 
@@ -33,7 +31,7 @@ public:
 
 private:
     std::ifstream m_stream;
-    std::vector<lib::target> m_targets;
+    lib::target_list m_targets;
 };
 
 ambrosia_namespace_end

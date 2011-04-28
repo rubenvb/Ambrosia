@@ -34,7 +34,7 @@ public:
     nectar_loader( const std::string &filename, std::istream &stream,
                    const dependency_list &list = dependency_list() );
 
-    void extract_nectar( std::vector<target> &targets );
+    void extract_nectar( target_list &targets );
 
 private:
     const std::string &m_filename;

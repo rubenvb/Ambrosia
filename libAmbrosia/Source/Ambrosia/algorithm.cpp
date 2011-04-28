@@ -8,12 +8,13 @@
 
 // Function include
 #include "algorithm.h"
+#include "debug.h"
 #include "status.h"
 #include "target.h"
 
 // C++ includes
-#include <functional>
-    using namespace std::placeholders;
+#include <memory>
+    using std::unique_ptr;
 /* <set> */
     using std::set;
 /* <string> */
@@ -165,32 +166,64 @@ def dep_resolve(node, resolved, unresolved):
    resolved.append(node)
    unresolved.remove(node)
 */
-void dependency_sort( vector<target> &unsorted )
+void dependency_resolve( target_list &unsorted, target_list::iterator node,
+                         target_list &resolved, target_list &unresolved )
 {
-    // set internal dependency pointers from names to (node's) pointers
-    const auto end = unsorted.end();
-    for( auto it = unsorted.begin(); it != end; ++it )
+    debug(6) << "dependency_resolve::Resolving: " << (*node)->name() << ".\n";
+    unresolved.push_back( std::move(*node) );
+    unsorted.erase( unsorted.begin() );
+
+    const auto edges = unresolved.back()->dependencies();
+    const auto end = edges.end();
+    for( auto it = edges.begin(); it != end; ++it )
     {
-        const auto &current = *it;
-        const auto &dependencies = current.dependencies();
-        const auto dep_end = dependencies.end();
-        for( auto dep_it = dependencies.begin(); dep_it != dep_end; ++dep_it )
+        const string name( (*it).second );
+        debug(6) << "dependency_resolve::Processing edge: " << name << ".\n";
+        const auto find_functor = [&name](const target_list::value_type &t)
+                                  {   return name == t->name();   };
+
+        if( resolved.end() == find_if(resolved.begin(), resolved.end(),
+                                      find_functor) )
         {
-            // find the target by name
-            const string name( (*dep_it).second );
-            std::find_if( unsorted.begin(), unsorted.end(),
-                          [&name](const target &t) { return name == t.name(); } );
-            // add it to the node edges reference vector
+            if( unresolved.end() != find_if(unresolved.begin(), unresolved.end(),
+                                          find_functor) )
+                return emit_error( "Circular dependency detected: " + unresolved.back()->name() + " -> " + name + "." );
+
+            // check if dependency is already resolved or still needs to be processed
+            auto new_node = std::find_if( unsorted.begin(), unsorted.end(),
+                                          find_functor );
+            if( new_node != unsorted.end() )
+                dependency_resolve( unsorted, new_node,
+                                    resolved, unresolved );
+            else
+            {
+                new_node = std::find_if( resolved.begin(), resolved.end(),
+                                         find_functor );
+                if( new_node == resolved.end() )
+                    return emit_error( "Dependency not defined: " + name );
+            }
         }
     }
+    resolved.push_back( std::move(unresolved.back()) );
+    unresolved.erase( unresolved.end()-1 );
+}
 
-    if( status::error == current_status() )
+void dependency_sort( target_list &unsorted )
+{
+    target_list resolved;
+    target_list unresolved;
+    resolved.reserve( unsorted.size() );
+    unresolved.reserve( unsorted.size() );
+
+    while( !unsorted.empty() )
+    {
+        dependency_resolve( unsorted, unsorted.begin(),
+                            resolved, unresolved );
+    }
+    if( error_status() )
         return;
 
-    // Go through unsorted until it is empty, moving the unique_ptr's as they are processed.
-
-    if( status::error == current_status() )
-        return;
+    unsorted.swap(resolved);
 }
 
 

@@ -22,9 +22,13 @@ status s_status = status::none;
 string s_errors = string();
 string s_warnings = string();
 
-status & current_status()
+bool error_status()
 {
-    return s_status;
+    return s_status == status::error;
+}
+bool warning_status()
+{
+    return s_status >= status::warning;
 }
 
 void emit_error( const string &message )

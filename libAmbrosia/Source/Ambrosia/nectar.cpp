@@ -71,7 +71,7 @@ const string find_nectar_file( const string &directory )
     return string();
 }
 
-void drink_nectar( const std::string &filename, vector<target> &targets )
+void drink_nectar( const std::string &filename, target_list &targets )
 {
     // open file
     ifstream stream( filename );
@@ -82,15 +82,15 @@ void drink_nectar( const std::string &filename, vector<target> &targets )
     debug(2) << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
     nectar_loader loader( filename, stream );
     loader.extract_nectar( targets );
-    if( status::error == current_status() )
+    if( error_status() )
         return;
 
     // dependency sort
     dependency_sort( targets );
-    if( status::error == current_status() )
+    if( error_status() )
         return;
 }
 // Explicit template instantiation
-//template void drink_nectar<back_insert_iterator<vector<unique_ptr<target> > > >( const string &, back_insert_iterator<vector<unique_ptr<target> > > );
+//template void drink_nectar<back_insert_iterator<vector<unique_ptr<target>>>>( const string &, back_insert_iterator<target_list> );
 
 libambrosia_namespace_end
