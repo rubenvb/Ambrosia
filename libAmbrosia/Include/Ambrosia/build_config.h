@@ -57,6 +57,11 @@ public:
     const std::string &source_directory() const;
     const std::string &project_file() const;
     const std::string path_to_project_file() const;
+    const os & target_os() const;
+    const architecture & target_architecture() const;
+    const toolchain & target_toolchain() const;
+    const string_map & user_options() const;
+    const map_string_set_string & target_config() const;
 
 private:
     std::string m_source_directory;
@@ -64,7 +69,6 @@ private:
     os m_target_os;
     architecture m_target_architecture;
     toolchain m_target_toolchain;
-    std::string m_gnu_prefix; // GNU triplet for platform
     string_map m_user_options; // user option --> value
     map_string_set_string m_target_config; // Target name --> optional config list
     // internal functions

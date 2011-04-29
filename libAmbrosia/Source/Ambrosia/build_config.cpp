@@ -38,7 +38,6 @@ build_config::build_config()
     m_target_os( build_os ),
     m_target_architecture( build_architecture ),
     m_target_toolchain( toolchain::GNU ),
-    m_gnu_prefix(),
     m_user_options(),
     m_target_config()
 {   }
@@ -143,6 +142,26 @@ const string & build_config::project_file() const
 const std::string build_config::path_to_project_file() const
 {
     return m_source_directory + directory_seperator + m_project_file;
+}
+const os & build_config::target_os() const
+{
+    return m_target_os;
+}
+const architecture & build_config::target_architecture() const
+{
+    return m_target_architecture;
+}
+const toolchain & build_config::target_toolchain() const
+{
+    return m_target_toolchain;
+}
+const string_map & build_config::user_options() const
+{
+    return m_user_options;
+}
+const map_string_set_string & build_config::target_config() const
+{
+    return m_target_config;
 }
 
 /*

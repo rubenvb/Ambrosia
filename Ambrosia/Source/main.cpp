@@ -34,7 +34,7 @@ int main( int argc, char* argv[] )
 {
     time_t t = time(0);
 
-    state* current_state = new begin( argc, argv );
+    state* current_state = new ambrosia::begin( argc, argv );
     // Main event loop
     while( !current_state->end() )
     {

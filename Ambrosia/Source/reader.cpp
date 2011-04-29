@@ -10,6 +10,8 @@
 #include "reader.h"
 
 // libAmbrosia includes
+#include "Ambrosia/algorithm.h"
+#include "Ambrosia/build_config.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/node.h"
@@ -48,7 +50,10 @@ state* reader::event()
     if( libambrosia::error_status() )
         return new end_state( this );
 
-
+    // delete unrequested targets
+    libambrosia::filter_dependency_sort( m_targets );
+    if( libambrosia::error_status() )
+        return new end_state( this );
 
     return new end_state( "reader::reader does little for now.", this );
 }

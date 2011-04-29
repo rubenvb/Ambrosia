@@ -259,8 +259,6 @@ void nectar_loader::read_dependency_list( dependency_list &dependencies )
                     if( !contains(m_dependency_list, element) )
                         return syntax_error( "Double dependency listed: "
                                              + map_value(target_type_map_inverse, type) + " " + token + "."  );
-                    else
-                        syntax_warning( "Dependency specified at \'sub\' target, which is repeated in the subproject file here." );
                 }
             }
         }

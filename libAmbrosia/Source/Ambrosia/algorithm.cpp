@@ -8,6 +8,9 @@
 
 // Function include
 #include "algorithm.h"
+
+// libAmbrosia includes
+#include "build_config.h"
 #include "debug.h"
 #include "status.h"
 #include "target.h"
@@ -226,6 +229,32 @@ void dependency_sort( target_list &unsorted )
     unsorted.swap(resolved);
 }
 
+void filter_dependency_sort( target_list &unsorted )
+{
+    target_list resolved;
+    target_list unresolved;
+    resolved.reserve( unsorted.size() );
+    unresolved.reserve( unsorted.size() );
 
+    const auto &target_config = s_build_config.target_config();
+    const auto end = target_config.end();
+    for( auto it = target_config.begin(); it != end; ++it )
+    {
+        const string name( (*it).first );
+        const auto item = std::find_if( unsorted.begin(), unsorted.end(),
+                                        [&name](const unique_ptr<target> &t) {return name == t->name();} );
+        if( item == unsorted.end() )
+        {
+            unsorted.erase( item );
+            continue; // skip dependency_resolve, of course
+        }
+        dependency_resolve( unsorted, unsorted.begin(),
+                            resolved, unresolved );
+    }
+    if( error_status() )
+        return;
+
+    unsorted.swap(resolved);
+}
 
 libambrosia_namespace_end

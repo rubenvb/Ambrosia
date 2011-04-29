@@ -86,13 +86,11 @@ void drink_nectar( const std::string &filename, target_list &targets )
         print_warnings();
     if( error_status() )
         return;
-
-    // dependency sort
-    dependency_sort( targets );
-    if( error_status() )
-        return;
 }
-// Explicit template instantiation
-//template void drink_nectar<back_insert_iterator<vector<unique_ptr<target>>>>( const string &, back_insert_iterator<target_list> );
+
+void apply_build_config( target_list &targets )
+{
+
+}
 
 libambrosia_namespace_end

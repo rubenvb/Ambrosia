@@ -23,13 +23,17 @@ libambrosia_namespace_begin
 // forward declarations
 class target;
 
+// characters that are read as seperate tokens in Ambrosia .nectar.txt files.
 extern const std::set<char> s_special_characters;
 extern const std::set<char> s_special_characters_newline;
 
+// locates a unique .nectar.txt file in file. More than one emits an error
 const std::string find_nectar_file( const std::string &directory );
 
 // converts all project file content to internal representation, adding to the container where "it" outputs to
 void drink_nectar( const std::string &filename, target_list &targets );
+// uses s_build_config to apply the requested build configuration
+void apply_build_config( target_list &targets );
 
 libambrosia_namespace_end
 

@@ -58,8 +58,13 @@ const std::string to_string (const T& t)
 
 /* Ambrosia dependent functions (use one or more of libAmbrosia's functions/classes)
  *******************************/
+// Dependency resolving algorithm
+void dependency_resolve( target_list &unsorted, target_list::iterator node,
+                         target_list &resolved, target_list &unresolved );
 // Dependency resolving sort
-void dependency_sort( target_list &targets );
+void dependency_sort( target_list &unsorted );
+// Dependency resolving sort that filters out targets not present in s_build_config::targets_config
+void filter_dependency_sort( target_list &unsorted );
 
 libambrosia_namespace_end
 

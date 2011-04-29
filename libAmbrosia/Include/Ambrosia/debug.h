@@ -55,7 +55,9 @@ public:
     }
 
 private:
+    #ifdef AMBROSIA_DEBUG
     const bool m_output;
+    #endif // AMBROSIA_DEBUG
 };
 
 ambrosia_namespace_end
