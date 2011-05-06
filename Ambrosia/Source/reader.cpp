@@ -55,6 +55,18 @@ state* reader::event()
     if( libambrosia::error_status() )
         return new end_state( this );
 
+    // parse target text
+    const auto end = m_targets.end();
+    istringstream stream;
+    for( auto it = m_targets.begin(); it != end; ++it )
+    {
+        target &t = *it;
+        stream.str( t.text() );
+        target_parser p( t, stream );
+
+        p.parse();
+    }
+
     return new end_state( "reader::reader does little for now.", this );
 }
 

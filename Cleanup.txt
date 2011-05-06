@@ -8,6 +8,9 @@ code cleanup.
      - begin::event(), in case 0, where a lot of checks need to be made because
      this is the only place where an end_state can be returned.
 
-2. target and node
-    dependency_list is copied to node, when it is completely unnecessary to
-    have this info in two seperate places.
+2. target_parser integration into nectar_loader
+    It should be perfectly possible to integrate target_parser into nectar_loader,
+     or at least integrate the text parsing into nectar_loader and have target_parser
+     as a utility class/function set. Currently, the real parsing is handled in reader,
+     and thus must be called externally, while it's a normal step of the "nectar
+     loading" process

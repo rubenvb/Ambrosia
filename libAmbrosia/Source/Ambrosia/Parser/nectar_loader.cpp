@@ -1,5 +1,5 @@
 /**
-  * Parser/nectar loader.h
+  * Parser/nectar_loader.h
   * Class implementation.
   *
   * Author: Ruben Van Boxem
@@ -7,7 +7,7 @@
   **/
 
 // Class include
-#include "nectar_loader.h"
+#include "Parser/nectar_loader.h"
 
 // libAmbrosia includes
 #include "algorithm.h"
@@ -44,10 +44,8 @@ libambrosia_namespace_begin
 
 nectar_loader::nectar_loader( const string &filename, istream &stream,
                               const dependency_list &list)
-:   m_filename( filename ),
-    m_stream( stream ),
+:   parser( filename, stream ),
     m_dependency_list( list ),
-    m_line_number( 1 ),
     m_global_processed( false )
 {   }
 
@@ -66,7 +64,7 @@ void nectar_loader::extract_nectar( target_list &targets )
 
             if( next_token(token) && "{" == token )
             {
-                targets.push_back( std::move(unique_ptr<target>(new target("global", target_type::global, dependency_list(),
+                targets.push_back( std::move(unique_ptr<target>(new target(m_filename, "global", target_type::global, dependency_list(),
                                                                            read_code_block(), m_line_number))) );
             }
             else
@@ -94,7 +92,7 @@ void nectar_loader::extract_nectar( target_list &targets )
                     if( error_status() )
                         return;
 
-                    targets.push_back( std::move(unique_ptr<target>(new target(target_name, type, dependencies,
+                    targets.push_back( std::move(unique_ptr<target>(new target(m_filename, target_name, type, dependencies,
                                                                                text, m_line_number))) );
                 }
             }
@@ -146,68 +144,6 @@ void nectar_loader::extract_nectar( target_list &targets )
             return syntax_error( "Expected global, app, lib, or sub." );
     }
     debug(3) << "nectar_loader::Finished with file: " << m_filename << ".\n";
-}
-//template void nectar_loader::extract_nectar<back_insert_iterator<target_list>( back_insert_iterator<target_list> );
-
-bool nectar_loader::next_token( string &token, const std::set<char> &special_characters )
-{
-    // TODO: test the hell out of this function
-    token.clear();
-    char c;
-
-    while( m_stream.get(c) )
-    {
-        debug(7) << "nectar_loader::next_token::line number " << m_line_number << ", character: \'" << c << "\', token so far: " << token << "\n";
-        if( token.empty() )
-        {
-            if( '\n' == c )
-                ++m_line_number;
-
-            if( contains(special_characters, c) )
-            {   // special characters are tokens of their own
-                debug(6) << "nectar_loader::next_token::Detected special character.\n";
-                token.append( 1, c );
-                return true;
-            }
-            else if( isspace(c, m_stream.getloc()) )
-                continue;
-            else if( '#' == c )
-            {   // skip over preceding comments
-                string temp;
-                std::getline( m_stream, temp );
-                ++m_line_number;
-            }
-            else if( '\\' == c )
-            {
-                string temp;
-                std::getline( m_stream, temp );
-                ++m_line_number;
-                continue;
-            }
-            else if( '\\' == c )
-                goto newline_escape;
-            else
-                goto add_char;
-        }
-        else if( isspace(c, m_stream.getloc()) )
-        {   // new whitespace == end of token
-            m_stream.putback( c );
-            break;
-        }
-        else if( '\\' == c )
-        {   // newline escapes end current token
-            newline_escape:
-            string temp;
-            std::getline( m_stream, temp );
-            ++m_line_number;
-            break;
-        }
-        else
-            add_char:
-            token.append( 1, c );
-    }
-    debug(7) << "nectar_loader::next_token:Token extracted: " << token << ".\n";
-    return !token.empty();
 }
 
 void nectar_loader::read_dependency_list( dependency_list &dependencies )
@@ -317,15 +253,6 @@ const std::string nectar_loader::read_code_block()
         }
     }
     return block;
-}
-
-void nectar_loader::syntax_error( const string &message ) const
-{
-    emit_error( "Syntax error: " + m_filename + ": line " + to_string(m_line_number) + "\n\t" + message );
-}
-void nectar_loader::syntax_warning( const string &message ) const
-{
-    emit_warning( "Syntax warning: " + m_filename + ": line " + to_string(m_line_number) + ": " + message );
 }
 
 libambrosia_namespace_end

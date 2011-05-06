@@ -17,7 +17,7 @@
 #include "target.h"
 #include "typedefs.h"
     using ambrosia::string_vector;
-#include "nectar_loader.h"
+#include "Parser/nectar_loader.h"
 
 // C++ includes
 #include <fstream>
@@ -37,9 +37,6 @@
 #include <ctime>
 
 libambrosia_namespace_begin
-
-const set<char> s_special_characters = { '(', ')', '{', '}', ':', ',' };
-const set<char> s_special_characters_newline = { '(', ')', '{', '}', ':', ',', '\n' };
 
 const string find_nectar_file( const string &directory )
 {

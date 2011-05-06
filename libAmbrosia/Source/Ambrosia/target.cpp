@@ -23,15 +23,15 @@
 
 libambrosia_namespace_begin
 
-target::target( const string &name, const target_type type,
-                const dependency_list &dependencies, const string & text,
-                const size_t line_number, const size_t column_number )
+target::target( const string &filename, const string &name,
+                const target_type type, const dependency_list &dependencies,
+                const string & text, const size_t line_number )
 :   node( name ),
     m_type( type ),
     m_dependencies( dependencies ),
+    m_filename( filename ),
     m_text( text ),
     m_line_number( line_number ),
-    m_column_number( column_number ),
     m_parsed( false )
 {
     debug(6) << "target::Created " << map_value(target_type_map_inverse, type) << ": "
@@ -49,6 +49,22 @@ const target_type & target::type() const
 const dependency_list & target::dependencies() const
 {
     return m_dependencies;
+}
+const std::string & target::filename() const
+{
+    return m_filename;
+}
+const std::string & target::text() const
+{
+    return m_text;
+}
+size_t target::line_number() const
+{
+    return m_line_number;
+}
+bool target::is_parsed() const
+{
+    return m_parsed;
 }
 
 /*bool target::next_token()
