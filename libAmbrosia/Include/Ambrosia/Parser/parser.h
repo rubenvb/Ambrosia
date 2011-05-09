@@ -35,6 +35,7 @@ protected:
     size_t m_line_number;
     // Functions
     bool next_token( std::string &token, const std::set<char> &special_characters = s_special_characters );
+    bool process_conditional();
     void syntax_error( const std::string &message ) const; // emit_error wrapper
     void syntax_warning( const std::string &message ) const; // emit_warning wrapper
 };

@@ -18,6 +18,8 @@
 /* "typedefs.h" */
 
 // C++ includes
+#include <iterator>
+    using std::insert_iterator;
 #include <algorithm>
 /* <map> */
     using std::map;
@@ -108,9 +110,7 @@ void build_config::add_target_config( const std::string &target, const string_se
 {
     const auto it = m_target_config.find( target );
     if( it == m_target_config.end() )
-    {
         m_target_config.insert( {target, options} );
-    }
     else
         merge_options( *it, options );
 }
@@ -183,11 +183,11 @@ void build_config::merge_options( pair<const string, string_set> &target, const 
                            insert_iterator<string_set>(duplicate_options, duplicate_options.begin()) );
     if( !duplicate_options.empty() )
     {
-        emit_warning( "Warning: duplicate configuration options (for target " + target.first + "): " );
+        emit_warning( "Duplicate configuration options (for target " + target.first + "): " );
         const auto end = duplicate_options.end();
         for( auto it = duplicate_options.begin(); it != end; ++it )
         {
-            emit_warning( "Warning: duplicate configuration options: " + *it + "\n" );
+            emit_warning( "Duplicate configuration options: " + *it + "\n" );
         }
     }
     // set new options

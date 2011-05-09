@@ -13,4 +13,7 @@ code cleanup.
      or at least integrate the text parsing into nectar_loader and have target_parser
      as a utility class/function set. Currently, the real parsing is handled in reader,
      and thus must be called externally, while it's a normal step of the "nectar
-     loading" process
+     loading" process.
+    On the other hand, the split functionality allows "skipping over" the unbuilt
+     targets. The "skipping" won't be very performant, as everything still goes through
+     a lexer of sorts. Perhaps nectar_loader is the place for this.

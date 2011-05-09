@@ -19,6 +19,7 @@
 #include "global.h"
 
 // libAmbrosia includes
+/* "build_config.h" */
 #include "enums.h"
 #include "nectar.h"
 #include "node.h"
@@ -33,26 +34,25 @@ libambrosia_namespace_begin
 class target : public node
 {
 public:
-    target( const std::string &filename, const std::string &name,
-            const target_type type, const dependency_list &dependencies,
-            const std::string & text, const size_t line_number );
+    target( const std::string &name, const target_type type,
+            const dependency_list &dependencies, const build_config &config = s_build_config );
 
     // Getters
     const std::string & name() const;
     const target_type & type() const;
     const dependency_list & dependencies() const;
     const std::string &filename() const;
-    const std::string &text() const;
-    size_t line_number() const;
-    bool is_parsed() const;
+
+    // Setters
+    void add_config( const std::string &config ); // forwards to m_build_config::add_config
+    void add_file( const file_type, const std::string &file );
+    void add_files( const file_type, const std::set<std::string> &files );
+
 
 private:
-    target_type m_type; // target type
-    dependency_list m_dependencies;
-    std::string m_filename;
-    std::string m_text; // unmodified target text without outer braces
-    size_t m_line_number; // line number of first line in m_text in the *.nectar.txt file
-    bool m_parsed; // true if text contents have been converted to internal representation.
+    const target_type m_type; // target type
+    const dependency_list m_dependencies; // dependency+type
+    const build_config m_build_config;
 };
 
 libambrosia_namespace_end

@@ -33,20 +33,6 @@ enum class architecture
     amd64
     //...
 };
-enum class file_type
-{
-    source,
-    source_c,
-    source_cxx,
-    source_java,
-    source_fortran,
-    header,
-    resource,
-    Qt_ui,
-    Qt_moc,
-    Qt_rc
-    // ...
-};
 enum class toolchain
 {
     GNU,
@@ -63,6 +49,20 @@ enum class target_type
     sub,
     install,
     test
+};
+enum class file_type
+{
+    source,
+    source_c,
+    source_cxx,
+    source_java,
+    source_fortran,
+    header,
+    resource,
+    Qt_ui,
+    Qt_moc,
+    Qt_rc
+    // ...
 };
 
 ambrosia_namespace_end

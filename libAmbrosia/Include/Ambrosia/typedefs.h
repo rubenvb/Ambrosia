@@ -41,7 +41,8 @@ libambrosia_namespace_begin
 
 // libAmbrosia typedefs
 class target;
-typedef std::vector<std::unique_ptr<target>> target_list;
+typedef std::unique_ptr<target> target_ptr;
+typedef std::vector<target_ptr> target_list;
 
 libambrosia_namespace_end
 

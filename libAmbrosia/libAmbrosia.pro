@@ -37,8 +37,7 @@ HEADERS += \
     Include/Ambrosia/algorithm.h \
     Include/Ambrosia/node.h \
     Include/Ambrosia/Parser/parser.h \
-    Include/Ambrosia/Parser/nectar_loader.h \
-    Include/Ambrosia/Parser/target_parser.h
+    Include/Ambrosia/Parser/nectar_loader.h
 
 SOURCES += \
     Source/Ambrosia/Platform/common.cpp \
@@ -52,8 +51,7 @@ SOURCES += \
     Source/Ambrosia/debug.cpp \
     Source/Ambrosia/node.cpp \
     Source/Ambrosia/Parser/parser.cpp \
-    Source/Ambrosia/Parser/nectar_loader.cpp \
-    Source/Ambrosia/Parser/target_parser.cpp
+    Source/Ambrosia/Parser/nectar_loader.cpp
 
 *win32*:SOURCES += Source/Ambrosia/Platform/windows.cpp
 *linux*:SOURCES += Source/Ambrosia/Platform/linux.cpp

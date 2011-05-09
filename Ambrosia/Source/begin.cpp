@@ -94,8 +94,6 @@ state* begin::event()
                     debug(2) << "begin::Possible project file or directory: \'" << current << "\'.\n";
 
                     find_project_file( current );
-                    libambrosia::print_warnings();
-
                     if( libambrosia::error_status() )
                         return new end_state( this );
 

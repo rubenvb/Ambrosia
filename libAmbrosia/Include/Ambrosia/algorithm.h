@@ -34,9 +34,13 @@ bool wildcard_directory_compare( const std::string &wildcard_string, const std::
 const std::string tokenize( const std::string &line, const std::set<char> &special_characters );
 // returns true if container contains element
 template <class container>
-bool contains(const container &cont, const typename container::value_type & elem)
+bool contains(const container &cont, const typename container::value_type &elem )
 {
    return( std::find(cont.begin(), cont.end(), elem) != cont.end() );
+}
+inline bool has_space( const std::string &str )
+{
+    return contains( str, ' ' );
 }
 // conversion from string to numeric type
 template<class T>

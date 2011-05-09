@@ -24,6 +24,7 @@ string s_warnings = string();
 
 bool error_status()
 {
+    print_warnings();
     return s_status == status::error;
 }
 bool warning_status()

@@ -26,7 +26,7 @@ libambrosia_namespace_begin
 void emit_error( const std::string &message );
 void emit_warning( const std::string &message );
 // retrieve current status
-extern bool error_status();
+extern bool error_status(); // also prints warnings (less code)
 extern bool warning_status();
 // print messages currently stored
 void print_errors();

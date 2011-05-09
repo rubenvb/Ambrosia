@@ -23,8 +23,6 @@
 #include "typedefs.h"
 
 // C++ includes
-#include <iterator>
-    using std::insert_iterator;
 /* <map> */
 /* <string> */
 /* <utility> */

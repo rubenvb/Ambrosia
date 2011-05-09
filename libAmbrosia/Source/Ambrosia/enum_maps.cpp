@@ -33,9 +33,9 @@ const map<os, string> os_map_inverse =
            {os::Linux,   "Linux"},
            {os::MacOSX,  "mac"} };
 
-// toolchain has two maps: one for the ambrosia cross specification,
-//  another for true vendor name output. Both map to the same internal
-//  representation (i.e. the vendor name).
+// libambrosia::toolchain has two maps: one for the ambrosia cross
+// specification, another for true vendor name output. Both map to
+// the same internal representation (i.e. the vendor name).
 const map<string, toolchain> vendor_map =
          { {"GNU",       toolchain::GNU},
            {"Microsoft", toolchain::Microsoft},
@@ -65,7 +65,6 @@ const map<string, target_type> target_type_map =
            {"sub",     target_type::sub},
            {"install", target_type::install},
            {"test",    target_type::test} };
-
 const map<target_type, string> target_type_map_inverse =
          { {target_type::global,  "global"},
            {target_type::app,     "app"},
@@ -73,5 +72,28 @@ const map<target_type, string> target_type_map_inverse =
            {target_type::sub,     "sub"},
            {target_type::install, "install"},
            {target_type::test,    "test"} };
+
+const map<string, file_type> file_type_map =
+         { {"SOURCES",         file_type::source},
+           {"SOURCES_C",       file_type::source_c},
+           {"SOURCES_CXX",     file_type::source_cxx},
+           {"SOURCES_JAVA",    file_type::source_java},
+           {"SOURCES_FORTRAN", file_type::source_fortran},
+           {"HEADERS",         file_type::header},
+           {"RESOURCES",       file_type::resource},
+           {"QT_UI",           file_type::Qt_ui},
+           {"QT_MOC",          file_type::Qt_moc},
+           {"Qt_RC",           file_type::Qt_rc} };
+const map<file_type, string> file_type_map_inverse =
+         { {file_type::source,         "SOURCES"},
+           {file_type::source_c,       "SOURCES_C"},
+           {file_type::source_cxx,     "SOURCES_CXX"},
+           {file_type::source_java,    "SOURCES_JAVA"},
+           {file_type::source_fortran, "SOURCES_FORTRAN"},
+           {file_type::header,         "HEADERS"},
+           {file_type::resource,       "RESOURCES"},
+           {file_type::Qt_ui,          "QT_UI"},
+           {file_type::Qt_moc,         "QT_MOC"},
+           {file_type::Qt_rc,          "Qt_RC"} };
 
 libambrosia_namespace_end

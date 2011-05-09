@@ -11,6 +11,7 @@
 
 // libAmbrosia includes
 #include "algorithm.h"
+#include "build_config.h"
 #include "debug.h"
 #include "global.h"
 #include "enums.h"
@@ -46,8 +47,14 @@ nectar_loader::nectar_loader( const string &filename, istream &stream,
                               const dependency_list &list)
 :   parser( filename, stream ),
     m_dependency_list( list ),
-    m_global_processed( false )
+    m_global_processed( false ),
+    p_target()
 {   }
+nectar_loader::~nectar_loader()
+{
+    if( p_target != nullptr )
+        emit_error( "Internal error: Unfinished target in nectar_loader." );
+}
 
 void nectar_loader::extract_nectar( target_list &targets )
 {
@@ -60,12 +67,17 @@ void nectar_loader::extract_nectar( target_list &targets )
         {
             debug(4) << "nectar_loader::global section found at line " << m_line_number << ".\n";
             if( m_global_processed )
-                emit_error( "Second global section found in nectar file. Only one global section per *.nectar.txt file is allowed." );
+                return syntax_error( "Second global section found in nectar file. Only one global section per *.nectar.txt file is allowed." );
 
             if( next_token(token) && "{" == token )
             {
-                targets.push_back( std::move(unique_ptr<target>(new target(m_filename, "global", target_type::global, dependency_list(),
-                                                                           read_code_block(), m_line_number))) );
+                p_target = std::unique_ptr<target>( new target("global", target_type::global, dependency_list()) );
+
+                parse_global();
+                if( error_status() )
+                    return;
+
+                targets.emplace_back( std::move(p_target) );
             }
             else
                 return syntax_error( "\'global\' must be followed by \'{\'." );
@@ -88,12 +100,16 @@ void nectar_loader::extract_nectar( target_list &targets )
                     if( error_status() )
                         return;
 
-                    const string text( read_code_block() );
+                    if( !next_token(token) && "{" == token )
+                        return emit_error( "Expected '{' after " + map_value(target_type_map_inverse, type) + " target name." );
+
+                    p_target = std::unique_ptr<target>(new target(target_name, type, dependencies) );
+
+                    parse_binary();
                     if( error_status() )
                         return;
 
-                    targets.push_back( std::move(unique_ptr<target>(new target(m_filename, target_name, type, dependencies,
-                                                                               text, m_line_number))) );
+                    targets.emplace_back( std::move(p_target) );
                 }
             }
         }
@@ -132,10 +148,7 @@ void nectar_loader::extract_nectar( target_list &targets )
                         return;
                 }
                 else // opening file failed
-                {
-                    emit_error( "Error opening subproject file: " + sub_file + ". (line " + to_string(m_line_number) + ")" );
-                    return;
-                }
+                    return emit_error( "Error opening subproject file: " + sub_file + ". (line " + to_string(m_line_number) + ")" );
             }
             else
                 return syntax_error( "\'sub\' must be followed by the name of the subproject." );
@@ -253,6 +266,53 @@ const std::string nectar_loader::read_code_block()
         }
     }
     return block;
+}
+
+bool nectar_loader::parse_list( pair<string_set, string_set> &items )
+{
+
+}
+
+void nectar_loader::parse_global()
+{
+    const std::string target_name( p_target->name() );
+    size_t curly_brace_count = 1; // parsing starts inside curly braces block
+    string token;
+    while( curly_brace_count > 0 && next_token(token) )
+    {
+        if( "}" == token )
+            --curly_brace_count;
+        else if( "{" == token )
+            ++curly_brace_count;
+        else if( "CONFIG" == token)
+        {
+            string_set config_items;
+            // get the list
+            if( !parse_list(config_items) )
+                return;
+
+            s_build_config->add_target_config( config_items );
+            print_warnings(); // duplicate items emit warnings
+        }
+        else
+        {
+
+        }
+    }
+}
+
+void nectar_loader::parse_binary()
+{
+
+}
+
+void nectar_loader::parse_install()
+{
+
+}
+
+void nectar_loader::parse_test()
+{
 }
 
 libambrosia_namespace_end
