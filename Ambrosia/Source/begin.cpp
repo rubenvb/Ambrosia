@@ -64,8 +64,6 @@ state* begin::event()
 {
     debug(1) << "begin::Processing commandline arguments.\n";
 
-    const auto end = m_arguments.end();
-
     // execution ending arguments
     if( lib::contains(m_arguments, string("-v")) || lib::contains(m_arguments, "-version") )
     {
@@ -80,6 +78,7 @@ state* begin::event()
 
     // Options to be filled in, with default values, if any
     string current;
+    const auto end = m_arguments.end();
     for( auto it = m_arguments.begin(); it != end; ++it )
     {
         current = *it;

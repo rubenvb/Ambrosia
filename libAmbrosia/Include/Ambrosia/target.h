@@ -23,6 +23,7 @@
 #include "enums.h"
 #include "nectar.h"
 #include "node.h"
+/* "typedefs.h" */
 
 // C++ includes
 /* <string> */
@@ -30,6 +31,9 @@
 /* <vector> */
 
 libambrosia_namespace_begin
+
+// temporary variable before all targets have their own build_config member with the
+static map_string_set_string s_target_config;
 
 class target : public node
 {
@@ -44,10 +48,10 @@ public:
     const std::string &filename() const;
 
     // Setters
-    void add_config( const std::string &config ); // forwards to m_build_config::add_config
+    void add_config( const string_set &config ); // forwards to m_build_config::add_config
     void add_file( const file_type, const std::string &file );
     void add_files( const file_type, const std::set<std::string> &files );
-
+    void set_output_name( const std::string &name );
 
 private:
     const target_type m_type; // target type

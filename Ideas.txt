@@ -10,3 +10,6 @@ TODO marks all sections of code with a known limitation. These are not bugs, jus
     nectar_loader
     everything in Parser/*
 - Improve next_token to allow it to read tokens surrounded by qoutes.
+- Compiler options:
+   GCC/ld can improve final link size in (among others) a static link when they use: -ffunction-sections -fdata-sections and -Wl,--gc-sections.
+   MSVC does this using /Gy and link.exe's /OPT:REF

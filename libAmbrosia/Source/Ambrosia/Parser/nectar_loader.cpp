@@ -286,15 +286,22 @@ void nectar_loader::parse_global()
             ++curly_brace_count;
         else if( "CONFIG" == token)
         {
-            string_set config_items;
+            pair<string_set, string_set> config_items;
             // get the list
             if( !parse_list(config_items) )
-                return;
+                return; // do something with duplicates???
 
-            s_build_config->add_target_config( config_items );
+            p_target->add_config( config_items.second );
             print_warnings(); // duplicate items emit warnings
         }
-        else
+        else if ( "NAME" == token )
+        {
+            if( next_token(token) )
+                p_target->set_output_name( token );
+            else
+                return syntax_error( "NAME must be followed by the target's output name (without prefix/suffix" );
+        }
+        //else if( map_value )
         {
 
         }
