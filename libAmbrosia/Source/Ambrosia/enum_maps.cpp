@@ -83,7 +83,7 @@ const map<string, file_type> file_type_map =
            {"RESOURCES",       file_type::resource},
            {"QT_UI",           file_type::Qt_ui},
            {"QT_MOC",          file_type::Qt_moc},
-           {"Qt_RC",           file_type::Qt_rc} };
+           {"QT_RC",           file_type::Qt_rc} };
 const map<file_type, string> file_type_map_inverse =
          { {file_type::source,         "SOURCES"},
            {file_type::source_c,       "SOURCES_C"},

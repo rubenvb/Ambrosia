@@ -48,9 +48,10 @@ public:
     const std::string &filename() const;
 
     // Setters
-    void add_config( const string_set &config ); // forwards to m_build_config::add_config
-    void add_file( const file_type, const std::string &file );
-    void add_files( const file_type, const std::set<std::string> &files );
+    bool add_config( const string_set &config );
+    bool remove_config( const string_set &config );
+    bool add_files( const file_type, const string_set &files );
+    bool remove_files( const file_type, const string_set &files );
     void set_output_name( const std::string &name );
 
 private:

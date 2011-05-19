@@ -26,6 +26,18 @@ const T & map_value( const std::map<Y,T> &map, const Y &key )
 {
     return (*map.find(key)).second;
 }
+template<class T, class Y>
+bool map_value( const std::map<Y,T> &map, const Y &key, const T &value )
+{
+    const auto it = map.find(key);
+    if( it != map.end() )
+    {
+        value = *it;
+        return true;
+    }
+    else
+        return false;
+}
 
 extern const std::map<std::string, architecture> architecture_map;
 extern const std::map<architecture, std::string> architecture_map_inverse;

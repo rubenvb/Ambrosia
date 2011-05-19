@@ -54,12 +54,24 @@ const dependency_list & target::dependencies() const
 /*
  * Setters
  **********/
-void target::add_config( const string_set &config )
+bool target::add_config( const string_set &config )
 {
+    return false;
+}
+bool target::remove_config( const string_set &config )
+{
+    return false;
 }
 
-void add_file( const file_type, const std::string &file );
-void add_files( const file_type, const std::set<std::string> &files );
+bool target::add_files( const file_type, const string_set &files )
+{
+    return false;
+}
+bool target::remove_files( const file_type, const string_set &files )
+{
+    return false;
+}
+
 void target::set_output_name( const std::string &name )
 {
 

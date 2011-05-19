@@ -21,6 +21,9 @@
 #include "target.h"
 
 // C++ includes
+#include <functional>
+    using std::function;
+    using namespace std::placeholders;
 #include <fstream>
     using std::ifstream;
 #include <ios>
@@ -268,9 +271,9 @@ const std::string nectar_loader::read_code_block()
     return block;
 }
 
-bool nectar_loader::parse_list( pair<string_set, string_set> &items )
+bool nectar_loader::parse_list( function<bool(const string_set &)> &insert,
+                                function<bool(const string_set &)> &remove )
 {
-
 }
 
 void nectar_loader::parse_global()
@@ -278,6 +281,7 @@ void nectar_loader::parse_global()
     const std::string target_name( p_target->name() );
     size_t curly_brace_count = 1; // parsing starts inside curly braces block
     string token;
+
     while( curly_brace_count > 0 && next_token(token) )
     {
         if( "}" == token )
@@ -286,12 +290,9 @@ void nectar_loader::parse_global()
             ++curly_brace_count;
         else if( "CONFIG" == token)
         {
-            pair<string_set, string_set> config_items;
-            // get the list
-            if( !parse_list(config_items) )
-                return; // do something with duplicates???
+            if( !parse_list(std::bind(&target::add_config, p_target.get()), std::bind(&target::remove_config, p_target, _2)) )
+                return;
 
-            p_target->add_config( config_items.second );
             print_warnings(); // duplicate items emit warnings
         }
         else if ( "NAME" == token )
@@ -301,9 +302,14 @@ void nectar_loader::parse_global()
             else
                 return syntax_error( "NAME must be followed by the target's output name (without prefix/suffix" );
         }
-        //else if( map_value )
+        else
         {
-
+            file_type type;
+            if( map_value(file_type_map, token, type) )
+            {
+            }
+            else
+                return syntax_error( "Unknown token: " + token );
         }
     }
 }
