@@ -54,20 +54,28 @@ const dependency_list & target::dependencies() const
 /*
  * Setters
  **********/
-bool target::add_config( const string_set &config )
+bool target::add_config( const string &config )
 {
     return false;
 }
-bool target::remove_config( const string_set &config )
+bool target::remove_config( const string &config )
 {
     return false;
 }
 
-bool target::add_files( const file_type, const string_set &files )
+bool target::add_file( const file_type, const string &filename )
 {
     return false;
 }
-bool target::remove_files( const file_type, const string_set &files )
+bool target::remove_file( const file_type, const string &filename )
+{
+    return false;
+}
+bool target::add_directory( const file_type, const string &directory )
+{
+    return false;
+}
+bool target::remove_directory( const file_type, const string &directory )
 {
     return false;
 }

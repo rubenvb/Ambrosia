@@ -95,5 +95,19 @@ const map<file_type, string> file_type_map_inverse =
            {file_type::Qt_ui,          "QT_UI"},
            {file_type::Qt_moc,         "QT_MOC"},
            {file_type::Qt_rc,          "Qt_RC"} };
+const map<string, file_type> directory_type_map =
+         { {"SOURCE_DIRS", file_type::source},
+           {"HEADER_DIRS", file_type::header},
+           {"RESOURCE_DIRS", file_type::resource},
+           {"QT_UI_DIRS", file_type::Qt_ui},
+           {"QT_MOC_DIRS", file_type::Qt_moc},
+           {"QT_RC_DIRS", file_type::Qt_rc} };
+const map<file_type, string> directory_type_map_inverse =
+         { {file_type::source, "SOURCE_DIRS"},
+           {file_type::header, "HEADER_DIRS"},
+           {file_type::resource, "RESOURCE_DIRS"},
+           {file_type::Qt_ui, "QT_UI_DIRS"},
+           {file_type::Qt_moc, "QT_MOC_DIRS"},
+           {file_type::Qt_rc, "QT_RC_DIRS"} };
 
 libambrosia_namespace_end

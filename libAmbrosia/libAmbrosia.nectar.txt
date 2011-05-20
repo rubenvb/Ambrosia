@@ -9,7 +9,7 @@ lib libAmbrosia
     SOURCE_DIRS Source/Ambrosia \
                 Source/Ambrosia/Parser
     SOURCES *.cpp
-
+    # Platform files
     (win32)SOURCES Source/Ambrosia/Platform/windows.cpp
     (linux)SOURCES Source/Ambrosia/Platform/linux.cpp
     (macos)SOURCES Source/Ambrosia/Platform/mac.cpp

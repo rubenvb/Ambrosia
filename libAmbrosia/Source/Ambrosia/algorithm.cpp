@@ -131,30 +131,17 @@ bool wildcard_directory_compare( const string &wild_string, const string &full_s
     }
     return ( wild==wild_end );
 }
-const string tokenize( const string &line, const set<char> &special_characters )
+void filter_duplicates( set<string> &unfiltered, const set<string> &reference,
+                        set<string> &duplicates )
 {
-    const auto not_found = special_characters.end();
-    const auto end = line.end();
-    string result;
-
-    if( !line.empty() )
-    {
-        // copy first character
-        result += line[0];
-
-        char previous = line[0];
-        for( auto it = line.begin()+1; it != end; ++it )
-        {
-            const char current = *it;
-
-            if( special_characters.find(previous) != not_found )
-                result += ' ';
-
-            result += current;
-            previous = current;
-        }
-    }
-    return result;
+    set_intersection( unfiltered.begin(), unfiltered.end(),
+                      reference.begin(), reference.end(),
+                      inserter(duplicates, duplicates.begin()) );
+    set<string> difference;
+    set_difference( unfiltered.begin(), unfiltered.end(),
+                    duplicates.begin(), duplicates.end(),
+                    inserter(difference, difference.begin()) );
+    unfiltered = difference;
 }
 /* libAmbrosia dependent functions
  **********************************/

@@ -30,8 +30,9 @@ libambrosia_namespace_begin
 bool wildcard_compare( const std::string &wildcard_string, const std::string &full_string );
 // returns true if expanding '?' or '*' between forward slashes '/' produces a match
 bool wildcard_directory_compare( const std::string &wildcard_string, const std::string &full_string );
-// puts whitespace around every occurrence of the char's in the set<char>
-const std::string tokenize( const std::string &line, const std::set<char> &special_characters );
+// compares unfiltered to reference, extracts duplicates and leaves unfiltered orthogonal on reference
+void filter_duplicates( std::set<std::string> &unfiltered, const std::set<std::string> &reference,
+                        std::set<std::string> &duplicates );
 // returns true if container contains element
 template <class container>
 bool contains(const container &cont, const typename container::value_type &elem )

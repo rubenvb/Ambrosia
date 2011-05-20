@@ -271,9 +271,34 @@ const std::string nectar_loader::read_code_block()
     return block;
 }
 
-bool nectar_loader::parse_list( function<bool(const string_set &)> &insert,
-                                function<bool(const string_set &)> &remove )
+bool nectar_loader::parse_list( function<bool(const string &)> insert,
+                                function<bool(const string &)> remove )
 {
+    debug(4) << "nectar_loader::parse_list::Parsing list.\n";
+    size_t curly_braces_count = 0;
+    string token;
+    while( next_token(token, s_special_characters_newline) )
+    {
+        if( "\n" == token )
+            break; // list has ended
+        else if( "(" == token )
+            debug(0) << "Conditional processing not implemented yet.\n";
+        else if( "}" == token )
+        {
+            if( curly_braces_count > 0 )
+                curly_braces_count--;
+            else
+            {
+                syntax_error( "Unexpected closing curly brace." );
+                return false;
+            }
+        }
+        else if( "~" == token && next_token(token, s_special_characters_newline) )
+        {
+            if( !remove(token) )
+                emit_warning( token + " is not present in the list (check the global target(s))." );
+        }
+    }
 }
 
 void nectar_loader::parse_global()
@@ -281,6 +306,7 @@ void nectar_loader::parse_global()
     const std::string target_name( p_target->name() );
     size_t curly_brace_count = 1; // parsing starts inside curly braces block
     string token;
+    bool modified_NAME = false;
 
     while( curly_brace_count > 0 && next_token(token) )
     {
@@ -290,13 +316,21 @@ void nectar_loader::parse_global()
             ++curly_brace_count;
         else if( "CONFIG" == token)
         {
-            if( !parse_list(std::bind(&target::add_config, p_target.get()), std::bind(&target::remove_config, p_target, _2)) )
-                return;
-
+            debug(5) << "nectar_loader::parse_global::CONFIG detected.\n";
+            if( !parse_list(std::bind(&target::add_config, p_target.get(), _1),
+                            std::bind(&target::remove_config, p_target.get(), _1)) )
+                return; // failures
             print_warnings(); // duplicate items emit warnings
         }
         else if ( "NAME" == token )
         {
+            debug(5) << "nectar_loader::parse_global::NAME detected.\n";
+            if( modified_NAME )
+            {
+                syntax_warning( "NAME is being modified twice in this target section." );
+                print_warnings();
+            }
+            modified_NAME = true;
             if( next_token(token) )
                 p_target->set_output_name( token );
             else
@@ -305,11 +339,23 @@ void nectar_loader::parse_global()
         else
         {
             file_type type;
+            // is it a list of files?
             if( map_value(file_type_map, token, type) )
             {
+                debug(5) << "nectar_loader::parse_global::" << token << " file list detected.\n";
+                if( !parse_list(std::bind(&target::add_file, p_target.get(), type, _1),
+                                std::bind(&target::remove_file, p_target.get(), type, _1)) )
+                    return; // failure
+            } // or a list of directories
+            else if( map_value(directory_type_map, token, type) )
+            {
+                debug(5) << "nectar_loader::parse_global::" << map_value(file_type_map_inverse, type) << " file list detected.\n";
+                if( !parse_list(std::bind(&target::add_directory, p_target.get(), type, _1),
+                                std::bind(&target::remove_directory, p_target.get(), type, _1)) )
+                    return; // failure
             }
             else
-                return syntax_error( "Unknown token: " + token );
+                return syntax_error( "Unexpected token: " + token );
         }
     }
 }

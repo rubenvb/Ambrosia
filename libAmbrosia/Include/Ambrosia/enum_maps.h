@@ -27,12 +27,12 @@ const T & map_value( const std::map<Y,T> &map, const Y &key )
     return (*map.find(key)).second;
 }
 template<class T, class Y>
-bool map_value( const std::map<Y,T> &map, const Y &key, const T &value )
+bool map_value( const std::map<Y,T> &map, const Y &key, T &value )
 {
     const auto it = map.find(key);
     if( it != map.end() )
     {
-        value = *it;
+        value = (*it).second;
         return true;
     }
     else
@@ -52,6 +52,8 @@ extern const std::map<std::string, target_type> target_type_map;
 extern const std::map<target_type, std::string> target_type_map_inverse;
 extern const std::map<std::string, file_type> file_type_map;
 extern const std::map<file_type, std::string> file_type_map_inverse;
+extern const std::map<std::string, file_type> directory_type_map;
+extern const std::map<file_type, std::string> directory_type_map_inverse;
 
 libambrosia_namespace_end
 
