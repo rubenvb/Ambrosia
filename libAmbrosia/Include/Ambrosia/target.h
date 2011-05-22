@@ -50,16 +50,18 @@ public:
     // Setters
     bool add_config( const std::string &config );
     bool remove_config( const std::string &config );
-    bool add_file( const file_type, const std::string &filename );
-    bool remove_file( const file_type, const std::string &filename );
-    bool add_directory( const file_type, const std::string &directory );
-    bool remove_directory( const file_type, const std::string &directory );
+    bool add_file( const file_type type, const std::string &filename );
+    bool remove_file( const file_type type, const std::string &filename );
+    bool add_directory( const file_type type, const std::string &directory );
+    bool remove_directory( const file_type type, const std::string &directory );
     void set_output_name( const std::string &name );
 
 private:
     const target_type m_type; // target type
     const dependency_list m_dependencies; // dependency+type
     const build_config m_build_config;
+    directory_map m_directories;
+    map_file_type_map_string_file_set m_files_on_disk; // directories with contained files read from disk when added.
 };
 
 libambrosia_namespace_end

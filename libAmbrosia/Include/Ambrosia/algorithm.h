@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <algorithm>
+#include <iosfwd>
 #include <memory>
 #include <sstream>
 
@@ -63,6 +64,7 @@ const std::string to_string (const T& t)
 
 /* Ambrosia dependent functions (use one or more of libAmbrosia's functions/classes)
  *******************************/
+void skip_BOM( std::istream &stream );
 // Dependency resolving algorithm
 void dependency_resolve( target_list &unsorted, target_list::iterator node,
                          target_list &resolved, target_list &unresolved );
@@ -70,6 +72,9 @@ void dependency_resolve( target_list &unsorted, target_list::iterator node,
 void dependency_sort( target_list &unsorted );
 // Dependency resolving sort that filters out targets not present in s_build_config::targets_config
 void filter_dependency_sort( target_list &unsorted );
+// find files that match the (wildcard) string in a list of files
+const file_set find_matching_files( const std::string &filename, const string_set &directories,
+                                    const file_set &files );
 
 libambrosia_namespace_end
 

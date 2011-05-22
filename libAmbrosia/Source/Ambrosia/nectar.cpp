@@ -41,14 +41,14 @@ libambrosia_namespace_begin
 const string find_nectar_file( const string &directory )
 {
     debug() << "nectar::find_nectar_file called for: " << directory << ".\n";
-    string_vector file_list;
-    scan_directory( std::back_inserter(file_list), directory );
+    file_set file_list;
+    scan_directory( std::inserter(file_list, file_list.begin()), directory );
     debug() << "nectar::found " << file_list.size() << " files:\n";
     const auto end = file_list.end();
     string_vector nectar_files;
     for( auto it = file_list.begin(); it != end; ++it )
     {
-        const string file( *it );
+        const string file( (*it).first );
         // find the first *.nectar.txt file in main source directory (not a subdirectory)
         size_t index = file.rfind( ".nectar.txt" );
         if( index < string::npos )

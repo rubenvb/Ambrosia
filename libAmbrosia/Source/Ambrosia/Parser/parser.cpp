@@ -94,7 +94,6 @@ bool parser::next_token( string &token, const std::set<char> &special_characters
                     string temp;
                     std::getline( m_stream, temp );
                     ++m_line_number;
-                    break;
                 }
                 else
                     goto add_char;
@@ -114,7 +113,7 @@ bool parser::next_token( string &token, const std::set<char> &special_characters
                 token.append( 1, c );
         }
     }
-    debug(7) << "nectar_loader::next_token:Token extracted: " << token << ".\n";
+    debug(6) << "nectar_loader::next_token:Token extracted: \'" << token << "\'\n";
     return !token.empty();
 }
 bool parser::process_conditional()

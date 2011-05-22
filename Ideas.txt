@@ -13,3 +13,6 @@ TODO marks all sections of code with a known limitation. These are not bugs, jus
 - Compiler options:
    GCC/ld can improve final link size in (among others) a static link when they use: -ffunction-sections -fdata-sections and -Wl,--gc-sections.
    MSVC does this using /Gy and link.exe's /OPT:REF
+- Improve target::add_directory to read cached file data from somewhere. Only fix if performance sucks.
+   This would make it so that scan_directory is only called once per Ambrosia run, instead of once, per occurence.
+   Of course the user should work around that by adding the directory in the global target if possible.

@@ -61,14 +61,18 @@ nectar_loader::~nectar_loader()
 
 void nectar_loader::extract_nectar( target_list &targets )
 {
-    debug(2) << "nectar_loader::Processing file: " << m_filename << ".\n";
+    debug(2) << "nectar_loader::extract_nectar::Processing file: " << m_filename << ".\n";
+
+    // Remove leading BOM
+    skip_BOM( m_stream );
+
     string token;
     while( next_token(token) )
     {
-        debug(3) << "nectar_loader::processing token: \'" << token << "\'.\n";
+        debug(3) << "nectar_loader::extract_nectar::processing token: \'" << token << "\'.\n";
         if( "global" == token )
         {
-            debug(4) << "nectar_loader::global section found at line " << m_line_number << ".\n";
+            debug(4) << "nectar_loader::extract_nectar::global section found at line " << m_line_number << ".\n";
             if( m_global_processed )
                 return syntax_error( "Second global section found in nectar file. Only one global section per *.nectar.txt file is allowed." );
 
@@ -76,7 +80,7 @@ void nectar_loader::extract_nectar( target_list &targets )
             {
                 p_target = std::unique_ptr<target>( new target("global", target_type::global, dependency_list()) );
 
-                parse_global();
+                parse_binary_or_global();
                 if( error_status() )
                     return;
 
@@ -88,14 +92,14 @@ void nectar_loader::extract_nectar( target_list &targets )
         else if( "app" == token || "lib" == token )
         {
             const target_type type( (*target_type_map.find(token)).second );
-            debug(4) << "nectar_loader::" << token << " section found at line " << m_line_number << ".\n";
+            debug(4) << "nectar_loader::extract_nectar::" << token << " section found at line " << m_line_number << ".\n";
             if( next_token(token) )
             {
                 if( "{" == token )
                     return syntax_error( "Expected " + token + " name after " + token + "." );
                 else
                 {
-                    debug(4) << "nectar_loader::Processing "
+                    debug(4) << "nectar_loader::extract_nectar::Processing "
                              << map_value(target_type_map_inverse, type) << ": " << token << ".\n";
                     const string target_name( token );
                     dependency_list dependencies( m_dependency_list );
@@ -108,7 +112,7 @@ void nectar_loader::extract_nectar( target_list &targets )
 
                     p_target = std::unique_ptr<target>(new target(target_name, type, dependencies) );
 
-                    parse_binary();
+                    parse_binary_or_global();
                     if( error_status() )
                         return;
 
@@ -118,7 +122,7 @@ void nectar_loader::extract_nectar( target_list &targets )
         }
         else if( "sub" == token )
         {
-            debug(4) << "nectar_loader::sub section found at line " << m_line_number << ".\n";
+            debug(4) << "nectar_loader::extract_nectar::sub section found at line " << m_line_number << ".\n";
             // get name and dependencies of sub target
             if( next_token(token) )
             {
@@ -128,15 +132,15 @@ void nectar_loader::extract_nectar( target_list &targets )
                 string sub_project_file( sub_directory + directory_seperator + sub_file );
                 if( !file_exists(sub_project_file) )
                 {
-                    debug(4) << "nectar_loader::sub target name and subproject file name do not match.\n";
+                    debug(4) << "nectar_loader::extract_nectar::sub target name and subproject file name do not match.\n";
                     sub_file = find_nectar_file( sub_directory );
                     if( error_status() )
                         return; // no *.nectar.txt file found
 
-                    debug(4) << "nectar_loader::found sub-.nectar.txt file: " << sub_file << ".\n";
+                    debug(4) << "nectar_loader::extract_nectar::found sub-.nectar.txt file: " << sub_file << ".\n";
                     sub_project_file = sub_directory + directory_seperator + sub_file;
                 }
-                debug(4) << "nectar_loader:: Opening subproject file: " << sub_project_file << ".\n";
+                debug(4) << "nectar_loader::extract_nectar::Opening subproject file: " << sub_project_file << ".\n";
                 ifstream stream( sub_project_file );
                 if( stream )
                 {
@@ -157,7 +161,7 @@ void nectar_loader::extract_nectar( target_list &targets )
                 return syntax_error( "\'sub\' must be followed by the name of the subproject." );
         }
         else
-            return syntax_error( "Expected global, app, lib, or sub." );
+            return syntax_error( "Unexpected token: " + token + ". Expected global, app, lib, or sub." );
     }
     debug(3) << "nectar_loader::Finished with file: " << m_filename << ".\n";
 }
@@ -277,8 +281,10 @@ bool nectar_loader::parse_list( function<bool(const string &)> insert,
     debug(4) << "nectar_loader::parse_list::Parsing list.\n";
     size_t curly_braces_count = 0;
     string token;
+    bool list_empty = true;
     while( next_token(token, s_special_characters_newline) )
     {
+        debug(4) << "nectar_loader::parse_list::token: " << token << ".\n";
         if( "\n" == token )
             break; // list has ended
         else if( "(" == token )
@@ -295,15 +301,39 @@ bool nectar_loader::parse_list( function<bool(const string &)> insert,
         }
         else if( "~" == token && next_token(token, s_special_characters_newline) )
         {
+            debug(5) << "nectar_loader::parse_list::removing item from list: " << token << ".\n";
             if( !remove(token) )
-                emit_warning( token + " is not present in the list (check the global target(s))." );
+                syntax_warning( "\"" + token + "\" is not present in the list (check the global target(s) for possible previous occurences)." );
+
+            list_empty = false;
+        }
+        else
+        {
+            debug(5) << "nectar_loader::parse_list::adding item to list: " << token << ".\n";
+            if( !insert(token) )
+                return false;
+            list_empty = false;
         }
     }
+    debug(4) << "nectar_loader::parse_list::Done with list.\n";
+    if( curly_braces_count > 0 )
+    {
+        syntax_error( "Unclosed curly braces." );
+        return false;
+    }
+    else if( list_empty )
+    {
+        syntax_error( "A list must not be empty. Place the conditional before the list name." );
+        return false;
+    }
+    else
+        return true;
 }
 
-void nectar_loader::parse_global()
+void nectar_loader::parse_binary_or_global()
 {
     const std::string target_name( p_target->name() );
+    debug(4) << "nectar_loader::parse_binary_or_global::Processing named target section: " << target_name << ".\n";
     size_t curly_brace_count = 1; // parsing starts inside curly braces block
     string token;
     bool modified_NAME = false;
@@ -349,7 +379,7 @@ void nectar_loader::parse_global()
             } // or a list of directories
             else if( map_value(directory_type_map, token, type) )
             {
-                debug(5) << "nectar_loader::parse_global::" << map_value(file_type_map_inverse, type) << " file list detected.\n";
+                debug(5) << "nectar_loader::parse_global::" << map_value(file_type_map_inverse, type) << " directory list detected.\n";
                 if( !parse_list(std::bind(&target::add_directory, p_target.get(), type, _1),
                                 std::bind(&target::remove_directory, p_target.get(), type, _1)) )
                     return; // failure
@@ -358,11 +388,6 @@ void nectar_loader::parse_global()
                 return syntax_error( "Unexpected token: " + token );
         }
     }
-}
-
-void nectar_loader::parse_binary()
-{
-
 }
 
 void nectar_loader::parse_install()

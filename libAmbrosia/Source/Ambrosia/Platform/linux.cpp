@@ -71,12 +71,12 @@ void scan_directory( output_iterator it, const string &directory_name )
             throw runtime_error( "lstat failed..." );
 
         if( S_ISREG(attributes.st_mode) )
-            it = name;
+            it = { name, attributes.st_mtime };
     }
     chdir( cwd.c_str() );
     closedir( dir );
 }
-template void scan_directory<back_insert_iterator<vector<string>>>( back_insert_iterator<vector<string>>, const string & );
+template void scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string & );
 
 template<class output_iterator>
 void recursive_scan_directory( output_iterator it, const string &relative_directory, const string &directory_name )
@@ -112,9 +112,9 @@ void recursive_scan_directory( output_iterator it, const string &relative_direct
         else
         {
             if( directory_name.empty() )
-                it = make_pair( name, attributes.st_mtime );
+                it = { name, attributes.st_mtime };
             else
-                it = make_pair( directory_name + "/" + name, attributes.st_mtime );
+                it = { directory_name + "/" + name, attributes.st_mtime };
         }
     }
     chdir( cwd.c_str() );

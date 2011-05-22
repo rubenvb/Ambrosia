@@ -32,8 +32,8 @@ typedef std::map<std::string, std::set<std::string> > map_string_set_string;
 typedef std::vector<std::string> string_vector;
 typedef std::set<std::string> string_set;
 typedef std::map<std::string, std::string> string_map;
+typedef std::pair<std::string, time_t> file;
 typedef std::map<std::string, time_t> file_set;
-typedef std::set<std::pair<target_type, std::string> > dependency_list;
 
 ambrosia_namespace_end
 
@@ -43,6 +43,9 @@ libambrosia_namespace_begin
 class target;
 typedef std::unique_ptr<target> target_ptr;
 typedef std::vector<target_ptr> target_list;
+typedef std::set<std::pair<target_type, std::string> > dependency_list;
+typedef std::map<file_type, string_set> directory_map;
+typedef std::map<file_type, std::multimap<std::string, file> > map_file_type_map_string_file_set;
 
 libambrosia_namespace_end
 

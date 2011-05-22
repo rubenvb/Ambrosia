@@ -16,6 +16,8 @@
 #include "target.h"
 
 // C++ includes
+#include <istream>
+    using std::istream;
 #include <memory>
     using std::unique_ptr;
 /* <set> */
@@ -24,6 +26,9 @@
     using std::string;
 /* <vector> */
     using std::vector;
+
+// C-ish includes
+#include <cstring>
 
 libambrosia_namespace_begin
 
@@ -145,6 +150,18 @@ void filter_duplicates( set<string> &unfiltered, const set<string> &reference,
 }
 /* libAmbrosia dependent functions
  **********************************/
+void skip_BOM( istream &stream )
+{
+    const unsigned char BOM[] = { 0xef, 0xbb, 0xbf };
+
+    char first_3_chars[3];
+    if( !stream.read( first_3_chars, 3 ) )
+        return emit_error( "Unexpected end of file." );
+
+    if( memcmp(reinterpret_cast<const char*>(BOM), first_3_chars, 3) )
+        stream.seekg( 0, std::ios::beg ); // reset to beginning of file
+}
+
 /*
 def dep_resolve(node, resolved, unresolved):
    unresolved.append(node)
@@ -242,6 +259,11 @@ void filter_dependency_sort( target_list &unsorted )
         return;
 
     unsorted.swap(resolved);
+}
+const string_set find_matching_files( const std::string &filename, const string_set &directories,
+                                      const file_set &files )
+{
+
 }
 
 libambrosia_namespace_end

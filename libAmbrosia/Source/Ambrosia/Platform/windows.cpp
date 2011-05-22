@@ -103,7 +103,7 @@ const wstring convert_to_utf16( const string &utf8_string )
     }
 }
 // FILETIME to time_t conversion
-time_t getTime( const FILETIME &filetime )
+time_t get_time( const FILETIME &filetime )
 {
     time_t t2 = filetime.dwHighDateTime;
     t2 <<= 32;
@@ -131,13 +131,13 @@ void scan_directory( output_iterator it, const std::string &directory_name )
     {
         if( !(find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
         {
-            it = convert_to_utf8( find_data.cFileName );
+            it = { convert_to_utf8(find_data.cFileName), get_time(find_data.ftLastWriteTime) };
         }
         if( !FindNextFileW(handle, &find_data) && GetLastError() == ERROR_NO_MORE_FILES )
             break;
     }
 }
-template void scan_directory<back_insert_iterator<vector<string>>>( back_insert_iterator<vector<string>>, const string & );
+template void scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string & );
 
 template<class output_iterator>
 void recursive_scan_directory( output_iterator it, const string &relative_directory, const string &directory_name )
@@ -176,9 +176,10 @@ void recursive_scan_directory( output_iterator it, const string &relative_direct
         else
         {
             if( directory_name.empty() )
-                it = { convert_to_utf8(find_data.cFileName), getTime(find_data.ftLastWriteTime) };
+                it = { convert_to_utf8(find_data.cFileName), get_time(find_data.ftLastWriteTime) };
             else
-                it = { directory_name + directory_seperator +convert_to_utf8(find_data.cFileName), getTime(find_data.ftLastWriteTime) };
+                it = { directory_name + directory_seperator + convert_to_utf8(find_data.cFileName),
+                       get_time(find_data.ftLastWriteTime) };
 
         }
         if( !FindNextFileW(handle, &find_data) && GetLastError() == ERROR_NO_MORE_FILES )
@@ -186,6 +187,6 @@ void recursive_scan_directory( output_iterator it, const string &relative_direct
     }
 }
 // explicit instantiation
-template void recursive_scan_directory<insert_iterator<file_set>>( insert_iterator<file_set>, const string &, const string & );
+template void recursive_scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string &, const string & );
 
 libambrosia_namespace_end
