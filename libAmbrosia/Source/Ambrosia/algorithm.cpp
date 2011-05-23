@@ -12,12 +12,17 @@
 // libAmbrosia includes
 #include "build_config.h"
 #include "debug.h"
+#include "platform.h"
 #include "status.h"
 #include "target.h"
 
 // C++ includes
 #include <istream>
     using std::istream;
+/* <iterator> */
+    using std::insert_iterator;
+/* <map> */
+    using std::map;
 #include <memory>
     using std::unique_ptr;
 /* <set> */
@@ -260,10 +265,59 @@ void filter_dependency_sort( target_list &unsorted )
 
     unsorted.swap(resolved);
 }
-const string_set find_matching_files( const std::string &filename, const string_set &directories,
-                                      const file_set &files )
+template<class output_iterator>
+void find_matching_files( const string &filename, const map<string, file_set> &directories,
+                          output_iterator it )
 {
+    size_t number_of_matches = 0;
+    const auto end = directories.end();
+    if( filename.find_first_of("*?") != string::npos )
+    {
+        debug(5) << "Algorithm::find_matching_files::Matching wildcard filename.\n";
+        for( auto directory_it = directories.begin(); directory_it != end; ++directory_it )
+        {
+            const string &directory = (*directory_it).first;
+            const file_set &files = (*directory_it).second;
+            const auto files_end = files.end();
+            debug(6) << "Algorithm::find_matching_files::Matching files in " << directory << ".\n";
+            for( auto files_it = files.begin(); files_it != files_end; ++files_it)
+            {
+                const string &file = (*files_it).first;
+                debug(6) << "Algorithm::find_matching_files::Matching " << filename << " to " << file << ".\n";
+                if( wildcard_compare(filename, file) )
+                {
+                    debug(6) << "Algorithm::find_matching_files::Found match: " << directory << directory_seperator << file << ".\n";
+                    it = { directory + directory_seperator + file, (*files_it).second };
+                    ++number_of_matches;
+                }
+            }
 
+        }
+    }
+    else
+    {
+        for( auto directory_it = directories.begin(); directory_it != end; ++directory_it )
+        {
+            const string &directory = (*directory_it).first;
+            const file_set &files = (*directory_it).second;
+            const auto files_end = files.end();
+            for( auto files_it = files.begin(); files_it != files_end; ++files_it )
+            {
+                const string &file = (*files_it).first;
+                if( file == filename )
+                {
+                    if( number_of_matches > 0 )
+                        emit_error( "Ambiguous filename match: directory=\"" + directory + "\", filename=\"" + filename + "\""  );
+                    else
+                    {
+                        it = { directory + directory_seperator + file, (*files_it).second };
+                        ++number_of_matches;
+                    }
+                }
+            }
+        }
+    }
 }
+template void find_matching_files<insert_iterator<file_set> >( const string &, const map<string, file_set> &, insert_iterator<file_set> );
 
 libambrosia_namespace_end

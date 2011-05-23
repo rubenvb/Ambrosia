@@ -135,7 +135,7 @@ state* begin::event()
                 }
                 else if( current[0] == ':' )
                 {
-                    if( !add_configuration_options(current) )
+                    if( !add_configuration_options(current.substr(1)) )
                         return new end_state( this );
                 }
                 break;

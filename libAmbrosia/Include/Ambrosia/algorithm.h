@@ -73,8 +73,9 @@ void dependency_sort( target_list &unsorted );
 // Dependency resolving sort that filters out targets not present in s_build_config::targets_config
 void filter_dependency_sort( target_list &unsorted );
 // find files that match the (wildcard) string in a list of files
-const file_set find_matching_files( const std::string &filename, const string_set &directories,
-                                    const file_set &files );
+template<class output_iterator>
+void find_matching_files( const std::string &filename, const std::map<std::string, file_set> &directories,
+                          output_iterator it );
 
 libambrosia_namespace_end
 

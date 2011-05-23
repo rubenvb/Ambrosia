@@ -14,6 +14,7 @@
 #include "debug.h"
 #include "enum_maps.h"
 #include "platform.h"
+#include "status.h"
 
 // C++ includes
 #include <stdexcept>
@@ -35,7 +36,6 @@ target::target( const string &name, const target_type type,
     m_type( type ),
     m_dependencies( dependencies ),
     m_build_config( config ),
-    m_directories(),
     m_files_on_disk()
 {
     debug(6) << "target::Created " << map_value(target_type_map_inverse, type) << ": "
@@ -71,9 +71,19 @@ bool target::remove_config( const string &config )
 
 bool target::add_file( const file_type type, const string &filename )
 {
-    file_set matches = find_matching_files( filename, m_directories[type], m_files_on_disk[type]  );
-    if( )
-    return false;
+    file_set matches;
+    const file_type general_type = get_general_type( type );
+
+    find_matching_files( filename, m_files_on_disk[type],
+                         std::inserter(matches, matches.begin()));
+    if( general_type != type )
+        find_matching_files( filename, m_files_on_disk[general_type],
+                             std::inserter(matches, matches.begin()));
+
+    if( error_status() )
+        return false;
+    else
+        return true;
 }
 bool target::remove_file( const file_type type, const string &filename )
 {
@@ -82,8 +92,6 @@ bool target::remove_file( const file_type type, const string &filename )
 bool target::add_directory( const file_type type, const string &directory )
 {
     auto result = m_files_on_disk[type].insert({directory, file_set()});
-    if( m_directories[type].insert( directory ).second )
-        throw std::runtime_error( "target::add_directory::Internal logic error.");
 
     if( result.second )
     {

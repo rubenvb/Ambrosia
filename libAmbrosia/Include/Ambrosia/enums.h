@@ -64,6 +64,20 @@ enum class file_type
     Qt_rc
     // ...
 };
+inline file_type get_general_type( const file_type type )
+{
+    switch( type )
+    {
+        case file_type::source:
+        case file_type::source_c:
+        case file_type::source_cxx:
+        case file_type::source_java:
+        case file_type::source_fortran:
+            return file_type::source;
+        default:
+            return type;
+    }
+}
 
 ambrosia_namespace_end
 

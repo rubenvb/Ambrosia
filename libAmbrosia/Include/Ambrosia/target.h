@@ -60,7 +60,6 @@ private:
     const target_type m_type; // target type
     const dependency_list m_dependencies; // dependency+type
     const build_config m_build_config;
-    directory_map m_directories;
     map_file_type_map_string_file_set m_files_on_disk; // directories with contained files read from disk when added.
 };
 
