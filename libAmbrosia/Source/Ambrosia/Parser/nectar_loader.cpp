@@ -274,6 +274,31 @@ const std::string nectar_loader::read_code_block()
     }
     return block;
 }
+/*
+ * Parsing
+ **********/
+void nectar_loader::process_outer_conditional()
+{
+    string token;
+    emit_error( "Outer conditional statements not implemented yet." );
+    while( next_token(token) && ")" != token )
+    {   }
+}
+
+void nectar_loader::process_inner_conditional()
+{
+    bool result = true;
+    string token;
+    while( next_token(token) && ")" != token )
+    {
+
+    }
+    if( !result )
+    {
+
+    }
+}
+
 
 bool nectar_loader::parse_list( function<bool(const string &)> insert,
                                 function<bool(const string &)> remove )
@@ -288,7 +313,10 @@ bool nectar_loader::parse_list( function<bool(const string &)> insert,
         if( "\n" == token )
             break; // list has ended
         else if( "(" == token )
-            debug(0) << "Conditional processing not implemented yet.\n";
+        {
+            process_conditional();
+
+        }
         else if( "}" == token )
         {
             if( curly_braces_count > 0 )

@@ -51,6 +51,8 @@ private:
     // finds matching curly brace and stores all stream contents in between in return value.
     const std::string read_code_block();
     // Parsing
+    void process_outer_conditional();
+    void process_inner_conditional();
     bool parse_list( std::function<bool(const std::string &)> insert,
                      std::function<bool(const std::string &)> remove ); // helper function to read item lists
     void parse_binary_or_global();
