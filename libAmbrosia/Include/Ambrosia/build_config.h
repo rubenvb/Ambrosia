@@ -29,48 +29,31 @@
 
 libambrosia_namespace_begin
 
+// Forward declarations
+class ambrosia_config;
+
 class build_config
 {
 public:
     build_config();
+    build_config( const ambrosia_config &config ); // conversion constructor
 
 /*
  * Setters
  ***************/
-    void set_source_directory( const std::string &source_directory );
-    void set_project_file( const std::string &project_file );
-    // set cross-compilation options
-    void set_ambrosia_cross( const std::string &cross );
-    void set_gnu_prefix( const std::string &prefix ); // handles a lot of standard GU triplets
-    // add target or add additional config options to one target
-    void add_target_config( const std::string &target, const string_set &options );
-    // add config options to all present targets
-    void add_general_config( const string_set &options );
-    // add user option settings
-    void set_user_option( const std::string &option, const std::string &value );
+
 
 /*
  * Getters
  **********/
-    const std::string &source_directory() const;
-    const std::string &project_file() const;
-    const std::string path_to_project_file() const;
-    const os & target_os() const;
-    const architecture & target_architecture() const;
-    const toolchain & target_toolchain() const;
+
+    bool contains( const std::string &config ) const;
     const string_map & user_options() const;
-    const map_string_set_string & target_config() const;
+
 
 private:
-    std::string m_source_directory;
-    std::string m_project_file;
-    os m_target_os;
-    architecture m_target_architecture;
-    toolchain m_target_toolchain;
-    string_map m_user_options; // user option --> value
-    map_string_set_string m_target_config; // Target name --> optional config list
-    // internal functions
-    static void merge_options( std::pair<const std::string, string_set> &old_options, const string_set &new_options );
+    string_set m_config; // CONFIG
+    string_map m_user_variables; // user option --> value
 };
 
 libambrosia_namespace_end

@@ -11,7 +11,7 @@
 
 // libAmbrosia includes
 #include "algorithm.h"
-#include "build_config.h"
+#include "ambrosia_config.h"
 #include "debug.h"
 #include "global.h"
 #include "enums.h"
@@ -37,6 +37,8 @@
     using std::isspace;
 #include <memory>
     using std::unique_ptr;
+#include <stack>
+    using std::stack;
 #include <string>
     using std::string;
 /* <utility> */
@@ -277,26 +279,32 @@ const std::string nectar_loader::read_code_block()
 /*
  * Parsing
  **********/
-void nectar_loader::process_outer_conditional()
+bool nectar_loader::resolve_conditional( const build_config &config )
 {
     string token;
-    emit_error( "Outer conditional statements not implemented yet." );
-    while( next_token(token) && ")" != token )
-    {   }
+    if( next_token(token) )
+    {
+
+    }
+    return true;
+}
+
+void nectar_loader::process_outer_conditional()
+{
+    emit_error( "Outer conditionals not implemented yet." );
+}
+void nectar_loader::process_dependency_list_conditional()
+{
+    emit_error( "Outer list conditionals not implemented yet." );
 }
 
 void nectar_loader::process_inner_conditional()
 {
-    bool result = true;
-    string token;
-    while( next_token(token) && ")" != token )
-    {
-
-    }
-    if( !result )
-    {
-
-    }
+    emit_error( "Inner conditionals not implemented yet." );
+}
+void nectar_loader::process_inner_list_conditional()
+{
+    emit_error( "Innet list conditionals not implemented yet." );
 }
 
 
@@ -314,7 +322,7 @@ bool nectar_loader::parse_list( function<bool(const string &)> insert,
             break; // list has ended
         else if( "(" == token )
         {
-            process_conditional();
+            process_inner_list_conditional();
 
         }
         else if( "}" == token )

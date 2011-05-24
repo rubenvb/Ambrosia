@@ -23,8 +23,8 @@ const int version_minor = 0;
 const int version_bugfix = 1;
 
 // global run build configuration
-class build_config;
-extern build_config s_build_config;
+class ambrosia_config;
+extern ambrosia_config s_build_config;
 
 libambrosia_namespace_end
 

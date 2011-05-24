@@ -37,7 +37,7 @@ public:
 
     void extract_nectar( target_list &targets );
 
-    // disallow copy(constructor)ing and assignment
+    // disallow copy(constructor)ing and assignment (shuts up warning of -Weffc++)
     nectar_loader & operator=( const nectar_loader & ) = delete;
     nectar_loader( const nectar_loader & ) = delete;
 
@@ -50,11 +50,19 @@ private:
     void read_dependency_list( dependency_list &dependencies );
     // finds matching curly brace and stores all stream contents in between in return value.
     const std::string read_code_block();
-    // Parsing
-    void process_outer_conditional();
-    void process_inner_conditional();
+/*
+ * Parsing
+ **********/
+    // conditionals
+    bool resolve_conditional( const build_config& config ); //
+    void process_outer_conditional();      // evaluated against s_build_config, skips full target
+    void process_dependency_list_conditional(); // evaluated against s_build_config, skips dependenc(y/ies)
+    void process_inner_conditional();      // evaluated against m_build_config, skips whole list
+    void process_inner_list_conditional(); // evaluated against m_build_config, skips item in list
+    // item list
     bool parse_list( std::function<bool(const std::string &)> insert,
                      std::function<bool(const std::string &)> remove ); // helper function to read item lists
+    // main target parsers
     void parse_binary_or_global();
     void parse_install();
     void parse_test();

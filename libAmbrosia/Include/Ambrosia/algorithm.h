@@ -76,6 +76,7 @@ void filter_dependency_sort( target_list &unsorted );
 template<class output_iterator>
 void find_matching_files( const std::string &filename, const std::map<std::string, file_set> &directories,
                           output_iterator it );
+void merge_options( std::pair<const std::string, string_set> &old_options, const string_set &new_options );
 
 libambrosia_namespace_end
 

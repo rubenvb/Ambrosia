@@ -10,7 +10,7 @@
 #include "algorithm.h"
 
 // libAmbrosia includes
-#include "build_config.h"
+#include "ambrosia_config.h"
 #include "debug.h"
 #include "platform.h"
 #include "status.h"
@@ -29,6 +29,8 @@
     using std::set;
 /* <string> */
     using std::string;
+/* <utility> */
+    using std::pair;
 /* <vector> */
     using std::vector;
 
@@ -319,5 +321,32 @@ void find_matching_files( const string &filename, const map<string, file_set> &d
     }
 }
 template void find_matching_files<insert_iterator<file_set> >( const string &, const map<string, file_set> &, insert_iterator<file_set> );
+
+void merge_options( pair<const string, string_set> &target, const string_set &new_options )
+{
+    // TODO: redo two-pass algorithm for ultimate performance
+    string_set &old_options( target.second );
+    string_set merged_options;
+    string_set duplicate_options;
+    // get merged set
+    std::set_union( old_options.begin(), old_options.end(),
+                    new_options.begin(), new_options.end(),
+                    insert_iterator<string_set>(merged_options, merged_options.begin()) );
+    // get duplicates
+    std::set_intersection( old_options.begin(), old_options.end(),
+                           new_options.begin(), new_options.end(),
+                           insert_iterator<string_set>(duplicate_options, duplicate_options.begin()) );
+    if( !duplicate_options.empty() )
+    {
+        emit_warning( "Duplicate configuration options (for target " + target.first + "): " );
+        const auto end = duplicate_options.end();
+        for( auto it = duplicate_options.begin(); it != end; ++it )
+        {
+            emit_warning( "Duplicate configuration options: " + *it + "\n" );
+        }
+    }
+    // set new options
+    old_options = merged_options;
+}
 
 libambrosia_namespace_end
