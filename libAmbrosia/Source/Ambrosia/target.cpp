@@ -11,6 +11,7 @@
 
 // Ambrosia includes
 #include "algorithm.h"
+#include "ambrosia_config.h"
 #include "debug.h"
 #include "enum_maps.h"
 #include "platform.h"
@@ -97,7 +98,7 @@ bool target::add_directory( const file_type type, const string &directory )
     {
         debug(4) << "target::add_directory::Scanning directory: " << directory << ".\n";
         auto & set_of_files = (*result.first).second;
-        scan_directory( std::inserter(set_of_files, set_of_files.begin()), m_build_config.path_to_project_file()+directory );
+        scan_directory( std::inserter(set_of_files, set_of_files.begin()), s_build_config.path_to_project_file()+directory );
         return true;
     }
     else

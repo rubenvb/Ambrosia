@@ -11,6 +11,7 @@
 
 // libAmbrosia includes
 #include "algorithm.h"
+#include "ambrosia_config.h"
 #include "enum_maps.h"
 #include "debug.h"
 #include "status.h"
@@ -34,6 +35,11 @@ libambrosia_namespace_begin
 
 build_config::build_config()
 :   m_config(),
+    m_user_variables()
+{   }
+
+build_config::build_config( const ambrosia_config &config )
+:   m_config( config.m_config ),
     m_user_variables()
 {   }
 

@@ -56,6 +56,8 @@ public:
     const toolchain & target_toolchain() const;
     const map_string_set_string & target_config() const;
 
+    friend class build_config;
+
 private:
     string_set m_config; // mostly platform dependent stuff
     std::string m_source_directory;

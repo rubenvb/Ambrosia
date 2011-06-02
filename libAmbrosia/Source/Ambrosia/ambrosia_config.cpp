@@ -12,6 +12,7 @@
 // libAmbrosia includes
 #include "algorithm.h"
 #include "debug.h"
+#include "enum_maps.h"
 #include "platform.h"
 #include "status.h"
 
@@ -24,7 +25,8 @@ libambrosia_namespace_begin
 ambrosia_config s_build_config = ambrosia_config();
 
 ambrosia_config::ambrosia_config()
-:   m_source_directory(),
+:   m_config(),
+    m_source_directory(),
     m_project_file(),
     m_target_os( build_os ),
     m_target_architecture( build_architecture ),
@@ -67,9 +69,9 @@ void ambrosia_config::set_ambrosia_cross( const std::string &cross )
     const string architecture_string( cross.substr(architecture_index, toolchain_index-architecture_index-1) );
     const string toolchain_string( cross.substr(toolchain_index, string::npos ) );
     debug(4) << "ambrosia_config::cross options specified:\n"
-             << "              os = " << os << ".\n"
-             << "              architecture = " << architecture << ".\n"
-             << "              toolchain = " << toolchain << ".\n";
+             << "              os = " << os_string << ".\n"
+             << "              architecture = " << architecture_string << ".\n"
+             << "              toolchain = " << toolchain_string << ".\n";
 
     // set the appropriate internal options
     os new_os;
@@ -128,6 +130,10 @@ const architecture & ambrosia_config::target_architecture() const
 const toolchain & ambrosia_config::target_toolchain() const
 {
     return m_target_toolchain;
+}
+const map_string_set_string & ambrosia_config::target_config() const
+{
+    return m_target_config;
 }
 
 libambrosia_namespace_end
