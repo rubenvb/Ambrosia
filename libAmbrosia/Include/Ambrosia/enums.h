@@ -41,6 +41,14 @@ enum class toolchain
     Intel
     // ...
 };
+enum class conditional_operator
+{   // defines operator precedence
+    right_parenthesis, // )
+    left_parenthesis,  // (
+    plus_op,           // +
+    or_op,             // |
+    not_op             // !
+};
 enum class target_type
 {
     global,
@@ -78,12 +86,7 @@ inline file_type get_general_type( const file_type type )
             return type;
     }
 }
-enum class conditional_operator
-{
-    plus_op,
-    or_op,
-    not_op
-};
+
 
 ambrosia_namespace_end
 

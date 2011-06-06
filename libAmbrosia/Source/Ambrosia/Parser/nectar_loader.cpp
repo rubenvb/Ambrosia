@@ -21,6 +21,8 @@
 #include "target.h"
 
 // C++ includes
+#include <deque>
+    using std::deque;
 #include <functional>
     using std::function;
     using namespace std::placeholders;
@@ -284,15 +286,39 @@ bool nectar_loader::resolve_conditional( const build_config &config )
     bool result = true;
     // Dijkstra's Shunting yard
     // Step 1: convert conditional expression to Reverse Polish notation
-    stack<string> operators;
-    stack<string> reverse_polish_output;
-
+    // TODO fix implementation, is pretty shitty for now
+    stack<conditional_operator> operator_stack;
+    deque<string> output;
 
     string token;
     bool success = false;
+    // Taken from http://en.wikipedia.org/wiki/Shunting-yard_algorithm#The_algorithm_in_detail
     while( next_token(token) )
     {
-
+        conditional_operator op;
+        if( map_value(conditional_operator_map, token, op) )
+        {
+            switch( op )
+            {
+                case conditional_operator::left_parenthesis:
+                    operator_stack.push( op );
+                    break;
+                case conditional_operator::right_parenthesis:
+                    break;
+                default: // real operators: + | !
+                    while( !operator_stack.empty() )
+                    {
+                        // Check precedence by comparing precedence ordered enum values
+                        if( op <= operator_stack.top() )
+                        {
+                            output.push_back( map_value(conditional_operator_map_inverse, operator_stack.top()) );
+                            operator_stack.pop();
+                        }
+                    }
+            }
+        }
+        else // token is neither op ("+","|" or "!") or parenthesis
+            output.push_back( token );
     }
     // check success
     if( !success )
