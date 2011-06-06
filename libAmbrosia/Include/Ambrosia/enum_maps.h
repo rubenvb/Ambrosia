@@ -55,6 +55,9 @@ extern const std::map<file_type, std::string> file_type_map_inverse;
 extern const std::map<std::string, file_type> directory_type_map;
 extern const std::map<file_type, std::string> directory_type_map_inverse;
 
+extern const std::map<std::string, conditional_operator> conditional_operator_map;
+extern const std::map<conditional_operator, std::function<bool(bool,bool)> > conditional_function_map;
+
 libambrosia_namespace_end
 
 #endif // ENUM_MAPS_H

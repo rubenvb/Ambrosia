@@ -74,17 +74,17 @@ void ambrosia_config::set_ambrosia_cross( const std::string &cross )
              << "              toolchain = " << toolchain_string << ".\n";
 
     // set the appropriate internal options
-    os new_os;
+    os new_os = build_os; // shut up uninitialized warning
     if( !map_value(os_map, os_string, new_os) )
         emit_error( "Specified invalid target OS: " + os_string );
     else
         m_target_os = new_os;
-    architecture new_architecture;
+    architecture new_architecture = build_architecture; // shut up uninitialized warning
     if( map_value(architecture_map, architecture_string, new_architecture) )
         emit_error( "Specified invalid target bitness: " + architecture_string );
     else
         m_target_architecture = new_architecture;
-    toolchain new_toolchain;
+    toolchain new_toolchain = toolchain::GNU; // shut up uninitialized warning
     if( map_value(toolchain_map, toolchain_string, new_toolchain) )
         emit_error( "Specified invalid target toolchain: " + toolchain_string );
     else

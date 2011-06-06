@@ -10,6 +10,8 @@
 #include "enum_maps.h"
 
 // C++ includes
+/* <functional> */
+    using std::binary_function;
 /* <map> */
     using std::map;
 /* <string> */
@@ -109,5 +111,14 @@ const map<file_type, string> directory_type_map_inverse =
            {file_type::Qt_ui, "QT_UI_DIRS"},
            {file_type::Qt_moc, "QT_MOC_DIRS"},
            {file_type::Qt_rc, "QT_RC_DIRS"} };
+
+const map<string, conditional_operator> conditional_operator_map =
+         { {"+", conditional_operator::plus_op},
+           {"|", conditional_operator::or_op},
+           {"!", conditional_operator::not_op} };
+const map<conditional_operator, std::function<bool(bool,bool)> > conditional_function_map =
+         { {conditional_operator::plus_op, [](bool a, bool b){ return a && b; } },
+           {conditional_operator::or_op,   [](bool a, bool b){ return a || b; } },
+           {conditional_operator::not_op,  [](bool a, bool=true){ return !a;} } };
 
 libambrosia_namespace_end

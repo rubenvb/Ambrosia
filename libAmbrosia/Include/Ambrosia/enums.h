@@ -78,6 +78,12 @@ inline file_type get_general_type( const file_type type )
             return type;
     }
 }
+enum class conditional_operator
+{
+    plus_op,
+    or_op,
+    not_op
+};
 
 ambrosia_namespace_end
 

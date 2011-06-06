@@ -58,7 +58,7 @@ nectar_loader::nectar_loader( const string &filename, istream &stream,
 nectar_loader::~nectar_loader()
 {
     if( p_target != nullptr )
-        emit_error( "Internal error: Unfinished target in nectar_loader." );
+        emit_error( "Parsing " + p_target->name() + " in file " + m_filename + " failed." );
 }
 
 void nectar_loader::extract_nectar( target_list &targets )
@@ -281,30 +281,42 @@ const std::string nectar_loader::read_code_block()
  **********/
 bool nectar_loader::resolve_conditional( const build_config &config )
 {
+    bool result = true;
+    // Dijkstra's Shunting yard
+    // Step 1: convert conditional expression to Reverse Polish notation
+    stack<string> operators;
+    stack<string> reverse_polish_output;
+
+
     string token;
-    if( next_token(token) )
+    bool success = false;
+    while( next_token(token) )
     {
 
     }
-    return true;
+    // check success
+    if( !success )
+        emit_error( "Failed to parse conditional." );
+
+    return result;
 }
 
-void nectar_loader::process_outer_conditional()
+bool nectar_loader::process_outer_conditional()
 {
-    emit_error( "Outer conditionals not implemented yet." );
+    syntax_error( "Outer conditionals not implemented yet." );
 }
-void nectar_loader::process_dependency_list_conditional()
+bool nectar_loader::process_dependency_list_conditional()
 {
-    emit_error( "Outer list conditionals not implemented yet." );
+    syntax_error( "Outer list conditionals not implemented yet." );
 }
 
-void nectar_loader::process_inner_conditional()
+bool nectar_loader::process_inner_conditional()
 {
-    emit_error( "Inner conditionals not implemented yet." );
+    syntax_error( "Inner conditionals not implemented yet." );
 }
-void nectar_loader::process_inner_list_conditional()
+bool nectar_loader::process_inner_list_conditional()
 {
-    emit_error( "Innet list conditionals not implemented yet." );
+    syntax_error( "Innet list conditionals not implemented yet." );
 }
 
 
@@ -322,8 +334,8 @@ bool nectar_loader::parse_list( function<bool(const string &)> insert,
             break; // list has ended
         else if( "(" == token )
         {
-            process_inner_list_conditional();
-
+            if( !process_inner_list_conditional() )
+                return false;
         }
         else if( "}" == token )
         {
@@ -380,6 +392,11 @@ void nectar_loader::parse_binary_or_global()
             --curly_brace_count;
         else if( "{" == token )
             ++curly_brace_count;
+        else if( "(" == token )
+        {
+            if( !process_inner_conditional() )
+                return;
+        }
         else if( "CONFIG" == token)
         {
             debug(5) << "nectar_loader::parse_global::CONFIG detected.\n";

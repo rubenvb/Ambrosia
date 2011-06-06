@@ -55,10 +55,10 @@ private:
  **********/
     // conditionals
     bool resolve_conditional( const build_config& config ); //
-    void process_outer_conditional();      // evaluated against s_build_config, skips full target
-    void process_dependency_list_conditional(); // evaluated against s_build_config, skips dependenc(y/ies)
-    void process_inner_conditional();      // evaluated against m_build_config, skips whole list
-    void process_inner_list_conditional(); // evaluated against m_build_config, skips item in list
+    bool process_outer_conditional();      // evaluated against s_build_config, skips full target
+    bool process_dependency_list_conditional(); // evaluated against s_build_config, skips dependenc(y/ies)
+    bool process_inner_conditional();      // evaluated against m_build_config, skips whole list
+    bool process_inner_list_conditional(); // evaluated against m_build_config, skips item in list
     // item list
     bool parse_list( std::function<bool(const std::string &)> insert,
                      std::function<bool(const std::string &)> remove ); // helper function to read item lists
