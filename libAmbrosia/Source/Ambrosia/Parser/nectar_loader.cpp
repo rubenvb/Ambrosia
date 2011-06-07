@@ -284,6 +284,49 @@ const std::string nectar_loader::read_code_block()
 bool nectar_loader::resolve_conditional( const build_config &config )
 {
     bool result = true;
+
+    bool previous_was_operator = true;
+    string token;
+    while( next_token(token) )
+    {
+        bool current = false;
+        conditional_operator op;
+        if( map_value(conditional_operator_map, token, op) )
+        {
+            if( previous_was_operator )
+            {
+                if( op == conditional_operator::not_op )
+                    current ^= current; // negate next
+                else
+                {
+                    syntax_error( "Conditional operators \'+\', \'|\', \')\', and \'(\' must be followed by a CONFIG string." );
+                    break;
+                }
+            }
+            else
+            {
+                switch(op)
+                {
+                    case conditional_operator::right_parenthesis:
+                    case conditional_operator::left_parenthesis:
+                    case conditional_operator::plus_op:
+                    case conditional_operator::or_op:
+                    case conditional_operator::not_op:
+                        throw runtime_error( "Internal logic error in nectar_loader::resolve_conditional" );
+                }
+            }
+            previous_was_operator = true;
+        }
+        else if( !previous_was_operator )
+        {
+            syntax_error( "In a conditional all CONFIG strings must be seperated by a conditional operator \'+\', \'|\', \')\', or \'(\'." );
+            break;
+        }
+        else if( )
+
+    }
+
+/*
     // Dijkstra's Shunting yard
     // Step 1: convert conditional expression to Reverse Polish notation
     // TODO fix implementation, is pretty shitty for now
@@ -304,6 +347,16 @@ bool nectar_loader::resolve_conditional( const build_config &config )
                     operator_stack.push( op );
                     break;
                 case conditional_operator::right_parenthesis:
+                    while( !operator_stack.empty() && operator_stack.top() != conditional_operator::left_parenthesis )
+                    {
+                        output.push_back( map_value(conditional_operator_map_inverse, operator_stack.top()) );
+                        operator_stack.pop();
+                    }
+                    if( operator_stack.empty() )
+                    {
+                        syntax_error( "No matching right parenthesis in conditional." );
+                        goto end;
+                    }
                     break;
                 default: // real operators: + | !
                     while( !operator_stack.empty() )
@@ -320,10 +373,11 @@ bool nectar_loader::resolve_conditional( const build_config &config )
         else // token is neither op ("+","|" or "!") or parenthesis
             output.push_back( token );
     }
+    end:
     // check success
     if( !success )
         emit_error( "Failed to parse conditional." );
-
+*/
     return result;
 }
 
