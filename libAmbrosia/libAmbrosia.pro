@@ -4,14 +4,12 @@ CONFIG += static
 CONFIG -= qt
 DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
 
-*g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic -Wextra -Wall -Wconversion \
+*g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic-errors -Wextra -Wall -Wconversion \
                         -Weffc++ -Wmissing-include-dirs -Wstrict-aliasing
 
 CONFIG( debug, debug|release ) {
     LIBSUFFIX = d
     DEFINES += AMBROSIA_DEBUG
-    QMAKE_CXXFLAGS += -g3
-    QMAKE_LFLAGS -= -s
 } else {
     LIBSUFFIX =
 }
@@ -38,7 +36,8 @@ HEADERS += \
     Include/Ambrosia/node.h \
     Include/Ambrosia/Parser/parser.h \
     Include/Ambrosia/Parser/nectar_loader.h \
-    Include/Ambrosia/ambrosia_config.h
+    Include/Ambrosia/ambrosia_config.h \
+    Include/Ambrosia/file_store.h
 
 SOURCES += \
     Source/Ambrosia/Platform/common.cpp \
@@ -53,7 +52,8 @@ SOURCES += \
     Source/Ambrosia/node.cpp \
     Source/Ambrosia/Parser/parser.cpp \
     Source/Ambrosia/Parser/nectar_loader.cpp \
-    Source/Ambrosia/ambrosia_config.cpp
+    Source/Ambrosia/ambrosia_config.cpp \
+    Source/Ambrosia/file_store.cpp
 
 *win32*:SOURCES += Source/Ambrosia/Platform/windows.cpp
 *linux*:SOURCES += Source/Ambrosia/Platform/linux.cpp

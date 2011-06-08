@@ -30,9 +30,7 @@ class ambrosia_config
 public:
     ambrosia_config();
 
-/*
- * Setters
- **********/
+    // Setters
     void set_source_directory( const std::string &source_directory );
     void set_project_file( const std::string &project_file );
     // set cross-compilation options
@@ -45,9 +43,8 @@ public:
     // add user option settings
     void set_user_option( const std::string &option, const std::string &value );
 
-/*
- * Getters
- **********/
+
+    // getters;
     const std::string & source_directory() const;
     const std::string & project_file() const;
     const std::string path_to_project_file() const;

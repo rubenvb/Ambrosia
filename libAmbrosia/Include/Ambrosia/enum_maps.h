@@ -21,6 +21,11 @@
 
 libambrosia_namespace_begin
 
+template<class T>
+const T & map_value( const std::vector<T> &map, const size_t key )
+{
+    return map[key];
+}
 template<class T, class Y>
 const T & map_value( const std::map<Y,T> &map, const Y &key )
 {

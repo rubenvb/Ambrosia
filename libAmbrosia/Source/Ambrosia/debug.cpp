@@ -1,4 +1,4 @@
-/***
+/**
   * Ambrosia/debug.cpp
   * Class implementation.
   *

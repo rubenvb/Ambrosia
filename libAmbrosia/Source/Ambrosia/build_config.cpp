@@ -43,4 +43,16 @@ build_config::build_config( const ambrosia_config &config )
     m_user_variables()
 {   }
 
+/*
+ * Setters
+ **********/
+bool build_config::add_config( const std::string &config )
+{
+    return m_config.insert( config ).second;
+}
+bool build_config::remove_config( const std::string &config )
+{
+    return m_config.erase( config );
+}
+
 libambrosia_namespace_end

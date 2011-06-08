@@ -41,6 +41,8 @@
     using std::unique_ptr;
 #include <stack>
     using std::stack;
+#include <stdexcept>
+    using std::runtime_error;
 #include <string>
     using std::string;
 /* <utility> */
@@ -281,15 +283,26 @@ const std::string nectar_loader::read_code_block()
 /*
  * Parsing
  **********/
-bool nectar_loader::resolve_conditional( const build_config &config )
+bool nectar_loader::resolve_conditional( const std::function<bool(const string&)> &config_contains )
 {
     bool result = true;
 
+    // My very own recursive implementation
+    /*
+      - each set of parenthesis is handled recursively
+      - logical AND: +
+      - logical OR:  |
+      - logical NOT: !
+      - two bools: "result" and "current"
+      - "result" keeps global result, and is modified by "+"
+      - "current" keeps results for "|" and "!"
+      - syntax checking for invalid
+    */
     bool previous_was_operator = true;
+    bool current = false; // keep track of current state
     string token;
     while( next_token(token) )
     {
-        bool current = false;
         conditional_operator op;
         if( map_value(conditional_operator_map, token, op) )
         {
@@ -308,10 +321,18 @@ bool nectar_loader::resolve_conditional( const build_config &config )
                 switch(op)
                 {
                     case conditional_operator::right_parenthesis:
-                    case conditional_operator::left_parenthesis:
+                        // TODO: allow conditionals without outer parenthesis of the form (a+b)|(c)
+                        return result;
+                    case conditional_operator::left_parenthesis: // recurse
+                        return resolve_conditional( config_contains );
                     case conditional_operator::plus_op:
-                    case conditional_operator::or_op:
-                    case conditional_operator::not_op:
+                        result = result && current; // "current" -> "result"
+                        if( !result ) // negative when an element of a "+" expression
+                        current = false; // reset "current"
+                        break;
+                    case conditional_operator::or_op: // combine with "current"
+
+                    case conditional_operator::not_op: // unreachable
                         throw runtime_error( "Internal logic error in nectar_loader::resolve_conditional" );
                 }
             }
@@ -322,9 +343,14 @@ bool nectar_loader::resolve_conditional( const build_config &config )
             syntax_error( "In a conditional all CONFIG strings must be seperated by a conditional operator \'+\', \'|\', \')\', or \'(\'." );
             break;
         }
-        else if( )
-
+        else // previous was operator, so now we have a CONFIG string
+        {
+            // check CONFIG string, and perform a logical OR
+            // TODO: check effect of "!"
+            current = current || config_contains(token);
+        }
     }
+
 
 /*
     // Dijkstra's Shunting yard
@@ -384,19 +410,23 @@ bool nectar_loader::resolve_conditional( const build_config &config )
 bool nectar_loader::process_outer_conditional()
 {
     syntax_error( "Outer conditionals not implemented yet." );
+    return false;
 }
 bool nectar_loader::process_dependency_list_conditional()
 {
     syntax_error( "Outer list conditionals not implemented yet." );
+    return false;
 }
 
 bool nectar_loader::process_inner_conditional()
 {
     syntax_error( "Inner conditionals not implemented yet." );
+    return false;
 }
 bool nectar_loader::process_inner_list_conditional()
 {
     syntax_error( "Innet list conditionals not implemented yet." );
+    return false;
 }
 
 

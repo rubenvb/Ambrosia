@@ -37,7 +37,8 @@ target::target( const string &name, const target_type type,
     m_type( type ),
     m_dependencies( dependencies ),
     m_build_config( config ),
-    m_files_on_disk()
+    m_source_directories(),
+    m_source_files()
 {
     debug(6) << "target::Created " << map_value(target_type_map_inverse, type) << ": "
              << name << ".\n";
@@ -63,28 +64,19 @@ const dependency_list & target::dependencies() const
  **********/
 bool target::add_config( const string &config )
 {
-    return false;
+    return m_build_config.add_config( config );
 }
 bool target::remove_config( const string &config )
 {
-    return false;
+    return m_build_config.remove_config( config );
 }
 
 bool target::add_file( const file_type type, const string &filename )
 {
     file_set matches;
-    const file_type general_type = get_general_type( type );
 
-    find_matching_files( filename, m_files_on_disk[type],
-                         std::inserter(matches, matches.begin()));
-    if( general_type != type )
-        find_matching_files( filename, m_files_on_disk[general_type],
-                             std::inserter(matches, matches.begin()));
 
-    if( error_status() )
-        return false;
-    else
-        return true;
+    return false;
 }
 bool target::remove_file( const file_type type, const string &filename )
 {
@@ -92,17 +84,7 @@ bool target::remove_file( const file_type type, const string &filename )
 }
 bool target::add_directory( const file_type type, const string &directory )
 {
-    auto result = m_files_on_disk[type].insert({directory, file_set()});
-
-    if( result.second )
-    {
-        debug(4) << "target::add_directory::Scanning directory: " << directory << ".\n";
-        auto & set_of_files = (*result.first).second;
-        scan_directory( std::inserter(set_of_files, set_of_files.begin()), s_build_config.path_to_project_file()+directory );
-        return true;
-    }
-    else
-        return false;
+    return false;
 }
 bool target::remove_directory( const file_type type, const string &directory )
 {

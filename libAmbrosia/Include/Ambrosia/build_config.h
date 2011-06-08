@@ -38,22 +38,17 @@ public:
     build_config();
     build_config( const ambrosia_config &config ); // conversion constructor
 
-/*
- * Setters
- ***************/
+    // Setters
+    bool add_config( const std::string &config );
+    bool remove_config( const std::string &config );
 
-
-/*
- * Getters
- **********/
-
+    //Getters
     bool contains( const std::string &config ) const;
     const string_map & user_options() const;
 
-
 private:
     string_set m_config; // CONFIG
-    string_map m_user_variables; // user option --> value
+    string_map m_user_variables; // user string --> value
 };
 
 libambrosia_namespace_end

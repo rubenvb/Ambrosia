@@ -124,9 +124,5 @@ const map<conditional_operator, std::string> conditional_operator_map_inverse =
            {conditional_operator::plus_op,           "+"},
            {conditional_operator::or_op,             "|"},
            {conditional_operator::not_op,            "!"} };
-const map<conditional_operator, std::function<bool(bool,bool)> > conditional_function_map =
-         { {conditional_operator::plus_op, [](bool a, bool b){ return a && b; } },
-           {conditional_operator::or_op,   [](bool a, bool b){ return a || b; } },
-           {conditional_operator::not_op,  [](bool a, bool=true){ return !a;} } };
 
 libambrosia_namespace_end

@@ -4,7 +4,7 @@ CONFIG += console warn_on
 CONFIG -= qt
 DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
 
-*g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic -Wextra -Wconversion \
+*g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic-errors -Wextra -Wconversion \
                         -Weffc++ -Wmissing-include-dirs -Wstrict-aliasing
 
 # Ambrosia Library
@@ -13,13 +13,11 @@ CONFIG( debug, debug|release ) {
     LIBSUFFIX = d
     win32:LIBS += -L../libAmbrosia/debug
     win32:PRE_TARGETDEPS += ../libAmbrosia/debug/libAmbrosiad.a
-    QMAKE_CXXFLAGS += -g3
     DEFINES += AMBROSIA_DEBUG
 } else {
     LIBSUFFIX =
     win32:LIBS += -L../libAmbrosia/release
     win32:PRE_TARGETDEPS += ../libAmbrosia/release/libAmbrosia.a
-
 }
 unix:LIBS += -L ../libAmbrosia
 unix:PRE_TARGETDEPS += ../libAmbrosia/libAmbrosia$${LIBSUFFIX}.a
