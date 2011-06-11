@@ -98,7 +98,7 @@ state* begin::event()
                         return new end_state( this );
 
                     // if project_file is still empty, "current" is really a target name to be built, skip to below next else
-                    if( s_build_config.project_file().empty() )
+                    if( s_ambrosia_config.project_file().empty() )
                         goto add_target;
                 }
                 else
@@ -150,22 +150,22 @@ state* begin::event()
         }
     }
     // if project file is not yet set, search current directory
-    if( s_build_config.project_file().empty() )
+    if( s_ambrosia_config.project_file().empty() )
     {
         const string project_file = libambrosia::find_nectar_file( "." );
         if( !project_file.empty() )
         {
             debug(2) << "begin::Project file found in current directory \'.\': " << project_file << ".\n";
             libambrosia::emit_warning( "Ambrosia does not recommend an in-source build." );
-            s_build_config.set_source_directory( "");
-            s_build_config.set_project_file( project_file );
+            s_ambrosia_config.set_source_directory( "");
+            s_ambrosia_config.set_project_file( project_file );
         }
         else if( !libambrosia::error_status() )
             libambrosia::emit_error( "No project file found in specified path or current directory." );
     }
     debug() << "begin::Checking if project file was found.\n";
     // Ensure that a valid project file has been found
-    if( libambrosia::file_exists(s_build_config.path_to_project_file()) )
+    if( libambrosia::file_exists(s_ambrosia_config.path_to_project_file()) )
         return new reader( this );
     else
         return new end_state( "No project file was found. Please specify a project file or a directory containing a single project file.", this );
@@ -181,8 +181,8 @@ bool begin::find_project_file( const std::string &path )
         // TODO: generalize the directory seperators list
         // seperate filename from (realtive) path
         const size_t index = path.find_last_of( "/\\" );
-        s_build_config.set_project_file( path.substr(index+1, string::npos) );
-        s_build_config.set_source_directory( path.substr(0, index) );
+        s_ambrosia_config.set_project_file( path.substr(index+1, string::npos) );
+        s_ambrosia_config.set_source_directory( path.substr(0, index) );
         return true;
     }
     else if( libambrosia::directory_exists(path) )
@@ -193,8 +193,8 @@ bool begin::find_project_file( const std::string &path )
         if( !project_file.empty() )
         {
             debug(4) << "begin::Project file found: " <<  path << libambrosia::directory_seperator << project_file << ".\n";
-            s_build_config.set_source_directory( path );
-            s_build_config.set_project_file( project_file );
+            s_ambrosia_config.set_source_directory( path );
+            s_ambrosia_config.set_project_file( project_file );
             return true;
         }
     }
@@ -210,7 +210,7 @@ bool begin::add_build_target( const std::string &target )
     if( index == string::npos )
     {
         debug(3) << "begin::Target to be built: " << target << ".\n";
-        s_build_config.add_target_config( target, string_set() );
+        s_ambrosia_config.add_target_config( target, string_set() );
     }
     else
     {
@@ -226,7 +226,7 @@ bool begin::add_build_target( const std::string &target )
             if( options.insert(temp).second == false )
                 duplicates.insert( temp );
         }
-        s_build_config.add_target_config( target_name, options );
+        s_ambrosia_config.add_target_config( target_name, options );
     }
     return true;
 }
@@ -238,7 +238,7 @@ void begin::set_internal_option( const std::string &option, const std::string &v
     if( "cross" == option )
     {
         debug(4) << "begin::Cross-compiling for " << value << ".\n";
-        s_build_config.set_ambrosia_cross( value );
+        s_ambrosia_config.set_ambrosia_cross( value );
     }
     #ifdef AMBROSIA_DEBUG
     else if( "d" == option || "debug" == option )
@@ -254,7 +254,7 @@ void begin::set_internal_option( const std::string &option, const std::string &v
     else if( "gnu-prefix" == option )
     {
         debug(4) << "begin::Cross-compiling with GNU prefix " << value << ".\n";
-        s_build_config.set_gnu_prefix( value );
+        s_ambrosia_config.set_gnu_prefix( value );
     }
 }
 bool begin::add_configuration_options( const std::string &options )

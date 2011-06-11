@@ -28,7 +28,7 @@ const std::string find_nectar_file( const std::string &directory );
 
 // converts all project file content to internal representation, adding to the container where "it" outputs to
 void drink_nectar( const std::string &filename, target_list &targets );
-// uses s_build_config to apply the requested build configuration
+// uses s_ambrosia_config to apply the requested build configuration
 void apply_build_config( target_list &targets );
 
 libambrosia_namespace_end

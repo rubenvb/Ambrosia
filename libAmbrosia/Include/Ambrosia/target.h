@@ -39,7 +39,7 @@ class target : public node
 {
 public:
     target( const std::string &name, const target_type type,
-            const dependency_list &dependencies, const build_config &config = s_build_config );
+            const dependency_list &dependencies, const build_config &config = s_ambrosia_config );
 
     // Getters
     const std::string & name() const;
@@ -62,6 +62,7 @@ private:
     build_config m_build_config; // build configuration, inherited from s_ambrosia_config
     map_file_type_string_set m_source_directories; // source directories per file type
     map_file_type_file_set m_source_files; // source files per file type with last modified time
+    std::string m_output_name;
 };
 
 libambrosia_namespace_end

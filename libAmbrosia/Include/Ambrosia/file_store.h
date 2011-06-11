@@ -22,9 +22,14 @@ class file_store
 public:
     file_store();
 
+    void find_matches( const string_set &directories, const std::string &filename,
+                       file_set &matches ); // match filename with all directories and match wildcards
+    void add_source_directory( const std::string &directory ); // read directory contents from disk (don't complain if already present).
+    void add_build_directory( const std::string &directory );
+
 private:
-    file_set m_source_files;
-    file_set m_build_files;
+    map_string_file_set m_source_files; // all files in s_ambrosia_config::m_source_directory
+    map_string_file_set m_build_files;  // all files in s_ambrosia_config::m_build_directory
 };
 
 libambrosia_namespace_end

@@ -38,7 +38,8 @@ target::target( const string &name, const target_type type,
     m_dependencies( dependencies ),
     m_build_config( config ),
     m_source_directories(),
-    m_source_files()
+    m_source_files(),
+    m_output_name( name )
 {
     debug(6) << "target::Created " << map_value(target_type_map_inverse, type) << ": "
              << name << ".\n";
@@ -73,28 +74,43 @@ bool target::remove_config( const string &config )
 
 bool target::add_file( const file_type type, const string &filename )
 {
+    // TODO: make an add_files function so that directories_to_search doesn't have
+    //         to be made each time a file is added
+    // search for all possible matches!
     file_set matches;
+
+    file_type general_type = get_general_type( type );
+    string_set directories_to_search; // directories in general SOURCE and specialized SOURCE_* file_type's
+    std::set_union( m_source_directories[type].begin(), m_source_directories[type].end(),
+                    m_source_directories[general_type].begin(), m_source_directories[general_type].end(),
+                    std::inserter(directories_to_search, directories_to_search.begin()) );
+
+    const auto end = directories_to_search.end();
+    for( auto it = directories_to_search.begin(); it != end; ++it )
+    {
+        s_file_store;
+    }
 
 
     return false;
 }
 bool target::remove_file( const file_type type, const string &filename )
 {
+    // search all possible matches!
     return false;
 }
 bool target::add_directory( const file_type type, const string &directory )
 {
-    return false;
+    return m_source_directories[type].insert( directory ).second;
 }
 bool target::remove_directory( const file_type type, const string &directory )
 {
-    return false;
+    return m_source_directories[type].erase( directory );
 }
 
 void target::set_output_name( const std::string &name )
 {
-
+    m_output_name = name;
 }
-
 
 libambrosia_namespace_end

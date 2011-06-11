@@ -43,7 +43,6 @@ public:
     // add user option settings
     void set_user_option( const std::string &option, const std::string &value );
 
-
     // getters;
     const std::string & source_directory() const;
     const std::string & project_file() const;
@@ -59,6 +58,7 @@ private:
     string_set m_config; // mostly platform dependent stuff
     std::string m_source_directory;
     std::string m_project_file;
+    std::string m_build_directory; // if source and build dir are equal, this is ./build
     os m_target_os;
     architecture m_target_architecture;
     toolchain m_target_toolchain;

@@ -55,8 +55,8 @@ private:
  **********/
     // conditionals
     bool resolve_conditional( const std::function<bool(const std::string&)> &config_contains );
-    bool process_outer_conditional();      // evaluated against s_build_config, skips full target
-    bool process_dependency_list_conditional(); // evaluated against s_build_config, skips dependenc(y/ies)
+    bool process_outer_conditional();      // evaluated against s_ambrosia_config, skips full target
+    bool process_dependency_list_conditional(); // evaluated against s_ambrosia_config, skips dependenc(y/ies)
     bool process_inner_conditional();      // evaluated against m_build_config, skips whole list
     bool process_inner_list_conditional(); // evaluated against m_build_config, skips item in list
     // item list

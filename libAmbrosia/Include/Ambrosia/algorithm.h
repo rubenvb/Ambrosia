@@ -70,7 +70,7 @@ void dependency_resolve( target_list &unsorted, target_list::iterator node,
                          target_list &resolved, target_list &unresolved );
 // Dependency resolving sort
 void dependency_sort( target_list &unsorted );
-// Dependency resolving sort that filters out targets not present in s_build_config::targets_config
+// Dependency resolving sort that filters out targets not present in s_ambrosia_config::targets_config
 void filter_dependency_sort( target_list &unsorted );
 // find files that match the (wildcard) string in a list of files
 template<class output_iterator>

@@ -247,7 +247,7 @@ void filter_dependency_sort( target_list &unsorted )
     resolved.reserve( unsorted.size() );
     unresolved.reserve( unsorted.size() );
 
-    const auto &target_config = s_build_config.target_config();
+    const auto &target_config = s_ambrosia_config.target_config();
     const auto end = target_config.end();
     for( auto it = target_config.begin(); it != end; ++it )
     {

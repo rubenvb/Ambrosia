@@ -46,7 +46,7 @@ reader::~reader()
 state* reader::event()
 {
     // load project files
-    libambrosia::drink_nectar( s_build_config.path_to_project_file(), m_targets );
+    libambrosia::drink_nectar( s_ambrosia_config.path_to_project_file(), m_targets );
     if( libambrosia::error_status() )
         return new end_state( this );
 

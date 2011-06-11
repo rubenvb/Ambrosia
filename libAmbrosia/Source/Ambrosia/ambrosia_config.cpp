@@ -7,7 +7,7 @@
   **/
 
 // Class include
-#include "Ambrosia/ambrosia_config.h"
+#include "ambrosia_config.h"
 
 // libAmbrosia includes
 #include "algorithm.h"
@@ -17,28 +17,37 @@
 #include "status.h"
 
 // C++ includes
+#include <stdexcept>
+    using std::logic_error;
 /* <string> */
     using std::string;
 
 libambrosia_namespace_begin
 
-ambrosia_config s_build_config = ambrosia_config();
+ambrosia_config s_ambrosia_config; // declared in global.h
 
 ambrosia_config::ambrosia_config()
 :   m_config(),
     m_source_directory(),
     m_project_file(),
+    m_build_directory( "." ),
     m_target_os( build_os ),
     m_target_architecture( build_architecture ),
     m_target_toolchain( toolchain::GNU ),
     m_target_config()
-{   }
+{    }
 
 /*
  * Setters
  **********/
 void ambrosia_config::set_source_directory( const string &source_directory )
 {
+    if( !m_source_directory.empty() )
+        throw logic_error( "ambrosia_config::set_source_directory called a second time." );
+
+    if( source_directory != "." )
+        m_build_directory = "build";
+
     m_source_directory = source_directory;
     std::replace( m_source_directory.begin(), m_source_directory.end(), '/', directory_seperator );
 }

@@ -132,7 +132,7 @@ void nectar_loader::extract_nectar( target_list &targets )
             // get name and dependencies of sub target
             if( next_token(token) )
             {
-                const string sub_directory = s_build_config.source_directory()
+                const string sub_directory = s_ambrosia_config.source_directory()
                                              + directory_seperator + token;
                 string sub_file( token + ".nectar.txt" );
                 string sub_project_file( sub_directory + directory_seperator + sub_file );
