@@ -63,7 +63,7 @@ private:
     bool parse_list( std::function<bool(const std::string &)> insert,
                      std::function<bool(const std::string &)> remove ); // helper function to read item lists
     // main target parsers
-    void parse_binary_or_global();
+    void parse_target(); // default to current target
     void parse_install();
     void parse_test();
 };

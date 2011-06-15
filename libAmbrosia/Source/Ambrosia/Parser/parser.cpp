@@ -40,6 +40,8 @@ parser::~parser()
 bool parser::next_token( string &token, const std::set<char> &special_characters )
 {
     // TODO: test the *full* hell out of this function
+    // FIXME: ugly as hell, fixes welcome.
+    //        - check for special char's in two places
     token.clear();
     bool inside_quotes = false;
     char c;
@@ -49,6 +51,7 @@ bool parser::next_token( string &token, const std::set<char> &special_characters
         debug(7) << "nectar_loader::next_token::line number " << m_line_number << ", character: \'" << c << "\', token so far: " << token << "\n";
         if( inside_quotes )
         {
+            debug(7) << "nectar_loader::next_token::Inside quotes.\n";
             if( '\"' == c )
                 break; // end of token at end of quotes
             else if( '\n' == c )
@@ -76,6 +79,7 @@ bool parser::next_token( string &token, const std::set<char> &special_characters
                 }
                 else if( '\"' == c )
                 {
+                    debug(7) << "nectar_loader::next_token::Quote detected.\n";
                     inside_quotes = true;
                     continue;
                 }
@@ -83,6 +87,7 @@ bool parser::next_token( string &token, const std::set<char> &special_characters
                     continue;
                 else if( '#' == c )
                 {   // skip over comments
+                    debug(7) << "nectar_loader::next_token::Skipping over comments.\n";
                     string temp;
                     std::getline( m_stream, temp );
                     ++m_line_number;
@@ -97,6 +102,12 @@ bool parser::next_token( string &token, const std::set<char> &special_characters
                 }
                 else
                     goto add_char;
+            }
+            else if( contains(special_characters, c) )
+            {   // special characters are tokens of their own
+                debug(6) << "nectar_loader::next_token::Detected special character.\n";
+                token.append( 1, c );
+                return true;
             }
             else if( isspace(c, m_stream.getloc()) )
             {   // new whitespace == end of token

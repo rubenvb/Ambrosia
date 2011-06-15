@@ -40,18 +40,16 @@ ambrosia_namespace_begin
 begin::begin( const int argc, const char* const argv[], state* parent )
 :   state( parent ),
     m_first_dashless_argument( true ),
-    m_arguments()
+    m_arguments( argv + 1, argv + argc )
 {
     debug(0) << "begin::Begin state created.\n";
 
     // Welcome message
     print_version_information();
 
-    // serialize arguments in a string members
-    m_arguments.reserve( argc );
+    // other debug stuff
     for( int i=1; i<argc; ++i )
     {
-        m_arguments.push_back(argv[i]);
         debug(1) << "begin::argument: " << i << ": " << argv[i] << ".\n";
     }
     debug(1) << "begin::Number of commandline arguments: " << m_arguments.size() << ".\n";

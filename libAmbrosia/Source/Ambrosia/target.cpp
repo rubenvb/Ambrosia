@@ -52,7 +52,7 @@ const string & target::name() const
 {
     return m_name;
 }
-const target_type & target::type() const
+target_type target::type() const
 {
     return m_type;
 }

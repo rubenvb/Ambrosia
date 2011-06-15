@@ -43,7 +43,7 @@ public:
 
     // Getters
     const std::string & name() const;
-    const target_type & type() const;
+    target_type type() const;
     const dependency_list & dependencies() const;
     const std::string &filename() const;
 

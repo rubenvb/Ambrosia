@@ -75,8 +75,13 @@ void nectar_loader::extract_nectar( target_list &targets )
     string token;
     while( next_token(token) )
     {
+        if( error_status() )
+            return;
+
         debug(3) << "nectar_loader::extract_nectar::processing token: \'" << token << "\'.\n";
-        if( "global" == token )
+        if( "(" == token )
+            process_outer_conditional();
+        else if( "global" == token )
         {
             debug(4) << "nectar_loader::extract_nectar::global section found at line " << m_line_number << ".\n";
             if( m_global_processed )
@@ -86,7 +91,7 @@ void nectar_loader::extract_nectar( target_list &targets )
             {
                 p_target = std::unique_ptr<target>( new target("global", target_type::global, dependency_list()) );
 
-                parse_binary_or_global();
+                parse_target();
                 if( error_status() )
                     return;
 
@@ -118,7 +123,7 @@ void nectar_loader::extract_nectar( target_list &targets )
 
                     p_target = std::unique_ptr<target>(new target(target_name, type, dependencies) );
 
-                    parse_binary_or_global();
+                    parse_target();
                     if( error_status() )
                         return;
 
@@ -425,7 +430,7 @@ bool nectar_loader::process_inner_conditional()
 }
 bool nectar_loader::process_inner_list_conditional()
 {
-    syntax_error( "Innet list conditionals not implemented yet." );
+    syntax_error( "Inner list conditionals not implemented yet." );
     return false;
 }
 
@@ -488,8 +493,9 @@ bool nectar_loader::parse_list( function<bool(const string &)> insert,
         return true;
 }
 
-void nectar_loader::parse_binary_or_global()
+void nectar_loader::parse_target()
 {
+    const target_type type = p_target->type();
     const std::string target_name( p_target->name() );
     debug(4) << "nectar_loader::parse_binary_or_global::Processing named target section: " << target_name << ".\n";
     size_t curly_brace_count = 1; // parsing starts inside curly braces block
@@ -498,6 +504,7 @@ void nectar_loader::parse_binary_or_global()
 
     while( curly_brace_count > 0 && next_token(token) )
     {
+        debug(4) << "nectar_loader::parse_binary_or_global::token: " << token << ".\n";
         if( "}" == token )
             --curly_brace_count;
         else if( "{" == token )
@@ -517,7 +524,10 @@ void nectar_loader::parse_binary_or_global()
         }
         else if ( "NAME" == token )
         {
-            debug(5) << "nectar_loader::parse_global::NAME detected.\n";
+            debug(5) << "nectar_loader::parse_target::NAME detected.\n";
+            if( type == target_type::global )
+                return syntax_error( "global target does not need a name");
+
             if( modified_NAME )
             {
                 syntax_warning( "NAME is being modified twice in this target section." );
@@ -535,17 +545,23 @@ void nectar_loader::parse_binary_or_global()
             // is it a list of files?
             if( map_value(file_type_map, token, type) )
             {
-                debug(5) << "nectar_loader::parse_global::" << token << " file list detected.\n";
+                debug(5) << "nectar_loader::parse_target::" << token << " file list detected.\n";
                 if( !parse_list(std::bind(&target::add_file, p_target.get(), type, _1),
                                 std::bind(&target::remove_file, p_target.get(), type, _1)) )
-                    return; // failure
+                {
+                    debug(6) << "nectar_loader::parse_target::Failed at inserting file(s).\n";
+                    return; // failure, assumes parse_list has called emit_error
+                }
             } // or a list of directories
             else if( map_value(directory_type_map, token, type) )
             {
-                debug(5) << "nectar_loader::parse_global::" << map_value(file_type_map_inverse, type) << " directory list detected.\n";
+                debug(5) << "nectar_loader::parse_target::" << map_value(file_type_map_inverse, type) << " directory list detected.\n";
                 if( !parse_list(std::bind(&target::add_directory, p_target.get(), type, _1),
                                 std::bind(&target::remove_directory, p_target.get(), type, _1)) )
-                    return; // failure
+                {
+                    debug(6) << "nectar_loader::parse_target::Failed at inserting directory/directories.\n";
+                    return; // failure, assumes parse_list has called emit_error
+                }
             }
             else
                 return syntax_error( "Unexpected token: " + token );

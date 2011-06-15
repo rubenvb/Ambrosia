@@ -128,6 +128,10 @@ const std::string ambrosia_config::path_to_project_file() const
 {
     return m_source_directory + directory_seperator + m_project_file;
 }
+const string & ambrosia_config::build_directory() const
+{
+    return m_build_directory;
+}
 const os & ambrosia_config::target_os() const
 {
     return m_target_os;

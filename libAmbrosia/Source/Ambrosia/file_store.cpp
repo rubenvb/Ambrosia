@@ -19,7 +19,6 @@
 /* <string> */
     using std::string;
 
-
 libambrosia_namespace_begin
 
 file_store s_file_store; // declared in global.h
@@ -64,6 +63,8 @@ void file_store::add_build_directory( const std::string &directory )
         debug(5) << "file_store::add_source_directory::Directory already present, and scanned.\n";
         return;
     }
+    file_set &entries = (*result.first).second;
+    scan_directory( std::inserter(entries, entries.begin()), full_path );
 }
 
 
