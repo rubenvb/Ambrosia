@@ -254,6 +254,8 @@ void begin::set_internal_option( const std::string &option, const std::string &v
         debug(4) << "begin::Cross-compiling with GNU prefix " << value << ".\n";
         s_ambrosia_config.set_gnu_prefix( value );
     }
+    else
+        lib::emit_error( "Unknown option passed to Ambrosia: \n\t-" + option + "=" + value );
 }
 bool begin::add_configuration_options( const std::string &options )
 {

@@ -10,6 +10,8 @@ before they can be classified as "feature" or, in the case of correct error repo
          -> multiple project files found
    2) Malformed project files need to report correct line number and the exact problem
        - Testcases should be added as people report problems, it is undoable to test each possible case.
+       - Testcases to check if the error is reported at the correct time (execution wise). This means
+          error_status() checks where necessary.
 
 2. Unicode support
 

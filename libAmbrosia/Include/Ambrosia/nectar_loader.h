@@ -18,7 +18,6 @@
 
 // libAmbrosia includes
 #include "build_config.h"
-#include "Parser/parser.h"
 #include "nectar.h"
 
 // C++ includes
@@ -28,7 +27,11 @@
 
 libambrosia_namespace_begin
 
-class nectar_loader : public parser
+// characters that are read as seperate tokens in Ambrosia .nectar.txt files.
+extern const std::set<char> s_special_characters;
+extern const std::set<char> s_special_characters_newline;
+
+class nectar_loader
 {
 public:
     nectar_loader( const std::string &filename, std::istream &stream,
@@ -37,15 +40,24 @@ public:
 
     void extract_nectar( target_list &targets );
 
-    // disallow copy(constructor)ing and assignment (shuts up warning of -Weffc++)
+    // Disallow copy(constructor)ing and assignment (shuts up warning of -Weffc++)
     nectar_loader & operator=( const nectar_loader & ) = delete;
     nectar_loader( const nectar_loader & ) = delete;
 
 private:
+    const std::string &m_filename;
+    std::istream &m_stream;
+    size_t m_line_number;
     const dependency_list &m_dependency_list;
     bool m_global_processed;
     std::unique_ptr<target> p_target; // temporary pointer to current target
-    // functions
+/*
+ * Token reading
+ ****************/
+    bool next_token( std::string &token, const std::set<char> &special_characters = s_special_characters );
+    bool process_conditional();
+    void syntax_error( const std::string &message ) const; // emit_error wrapper
+    void syntax_warning( const std::string &message ) const; // emit_warning wrapper
     // reads colon-lists of dependencies, ends at first '{'
     void read_dependency_list( dependency_list &dependencies );
     // finds matching curly brace and stores all stream contents in between in return value.
