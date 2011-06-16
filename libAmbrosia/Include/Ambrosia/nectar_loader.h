@@ -74,10 +74,8 @@ private:
     // item list
     bool parse_list( std::function<bool(const std::string &)> insert,
                      std::function<bool(const std::string &)> remove ); // helper function to read item lists
-    // main target parsers
-    void parse_target(); // default to current target
-    void parse_install();
-    void parse_test();
+    // main target parser
+    void parse_target();
 };
 
 libambrosia_namespace_end

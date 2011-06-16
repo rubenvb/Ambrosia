@@ -17,7 +17,7 @@
 #include "target.h"
 #include "typedefs.h"
     using ambrosia::string_vector;
-#include "Parser/nectar_loader.h"
+#include "nectar_loader.h"
 
 // C++ includes
 #include <fstream>

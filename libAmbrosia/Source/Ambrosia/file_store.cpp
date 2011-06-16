@@ -16,6 +16,8 @@
 #include "status.h"
 
 // C++ includes
+#include <stdexcept>
+    using std::logic_error;
 /* <string> */
     using std::string;
 
@@ -28,9 +30,22 @@ file_store::file_store()
     m_build_files()
 {   }
 
-void file_store::find_matches( const string_set &directories, const std::string &filename,
-                               file_set &matches )
+void file_store::match_source_files( const string_set &directories, const std::string &filename,
+                                     file_set &matches, file_set &duplicates )
 {
+    const auto end = directories.end();
+    for( auto it = directories.begin(); it != end; ++it )
+    {
+        const string &directory = *it;
+        auto result = m_source_files.find(directory);
+        if( result != m_source_files.end() )
+            const file_set &files_on_disk = (*result).second;
+        else
+            throw std::logic_error( "Internal logic error in file_store::match_source_files: directory "
+                                    + directory + "not added to s_file_store but present in target." );
+
+    }
+
 
 }
 

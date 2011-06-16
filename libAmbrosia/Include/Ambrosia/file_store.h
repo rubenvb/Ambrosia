@@ -22,9 +22,11 @@ class file_store
 public:
     file_store();
 
-    void find_matches( const string_set &directories, const std::string &filename,
-                       file_set &matches ); // match filename with all directories and match wildcards
-    void add_source_directory( const std::string &directory ); // read directory contents from disk (don't complain if already present).
+    // Match filename with all directories and match wildcards, and store duplicates
+    void match_source_files( const string_set &directories, const std::string &filename,
+                             file_set &matches, file_set &duplicates );
+    // Read directory contents from disk (don't complain if already present).
+    void add_source_directory( const std::string &directory );
     void add_build_directory( const std::string &directory );
 
 private:

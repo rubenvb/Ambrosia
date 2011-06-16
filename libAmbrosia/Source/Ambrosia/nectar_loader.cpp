@@ -81,12 +81,16 @@ void nectar_loader::extract_nectar( target_list &targets )
     string token;
     while( next_token(token) )
     {
+        debug(3) << "nectar_loader::extract_nectar::checking error_status.\n";
         if( error_status() )
             return;
 
         debug(3) << "nectar_loader::extract_nectar::processing token: \'" << token << "\'.\n";
         if( "(" == token )
-            process_outer_conditional();
+        {
+            if( !process_outer_conditional() )
+                return; // emit_error already called
+        }
         else if( "global" == token )
         {
             debug(4) << "nectar_loader::extract_nectar::global section found at line " << m_line_number << ".\n";
@@ -194,7 +198,9 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
 
     while( m_stream.get(c) )
     {
-        debug(7) << "nectar_loader::next_token::line number " << m_line_number << ", character: \'" << c << "\', token so far: " << token << "\n";
+        debug(7) << "nectar_loader::next_token::line number " << m_line_number
+                 << ", character: \'" << output_form(c)
+                 << "\', token so far: " << output_form(token) << "\n";
         if( inside_quotes )
         {
             debug(7) << "nectar_loader::next_token::Inside quotes.\n";
@@ -247,14 +253,9 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
                 else
                     goto add_char;
             }
-            else if( contains(special_characters, c) )
-            {   // special characters are tokens of their own
-                debug(6) << "nectar_loader::next_token::Detected special character.\n";
-                token.append( 1, c );
-                return true;
-            }
-            else if( std::isspace(c, m_stream.getloc()) )
-            {   // new whitespace == end of token
+            else if( std::isspace(c, m_stream.getloc()) || contains(special_characters, c) )
+            {   // special characters or whitespace seperate tokens
+                debug(6) << "nectar_loader::next_token::Detected special character or space.\n";
                 m_stream.putback( c );
                 break;
             }
@@ -268,7 +269,7 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
                 token.append( 1, c );
         }
     }
-    debug(6) << "nectar_loader::next_token:Token extracted: \'" << token << "\'\n";
+    debug(6) << "nectar_loader::next_token:Token extracted: \'" << output_form(token) << "\'\n";
     return !token.empty();
 }
 void nectar_loader::syntax_error( const string &message ) const
@@ -428,7 +429,7 @@ bool nectar_loader::resolve_conditional( const std::function<bool(const string&)
             }
             else
             {
-                switch(op)
+                switch( op )
                 {
                     case conditional_operator::right_parenthesis:
                         // TODO: allow conditionals without outer parenthesis of the form (a+b)|(c)
@@ -441,7 +442,7 @@ bool nectar_loader::resolve_conditional( const std::function<bool(const string&)
                         current = false; // reset "current"
                         break;
                     case conditional_operator::or_op: // combine with "current"
-
+                    throw runtime_error( "TODO" );
                     case conditional_operator::not_op: // unreachable
                         throw runtime_error( "Internal logic error in nectar_loader::resolve_conditional" );
                 }
@@ -463,7 +464,7 @@ bool nectar_loader::resolve_conditional( const std::function<bool(const string&)
 
 
 /*
-    // Dijkstra's Shunting yard
+    // (half of) Dijkstra's Shunting yard
     // Step 1: convert conditional expression to Reverse Polish notation
     // TODO fix implementation, is pretty shitty for now
     stack<conditional_operator> operator_stack;
@@ -617,7 +618,7 @@ void nectar_loader::parse_target()
         else if( "(" == token )
         {
             if( !process_inner_conditional() )
-                return;
+                return; // emit_error already called
         }
         else if( "CONFIG" == token)
         {
@@ -672,15 +673,6 @@ void nectar_loader::parse_target()
                 return syntax_error( "Unexpected token: " + token );
         }
     }
-}
-
-void nectar_loader::parse_install()
-{
-
-}
-
-void nectar_loader::parse_test()
-{
 }
 
 libambrosia_namespace_end

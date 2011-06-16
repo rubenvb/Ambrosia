@@ -61,6 +61,21 @@ const std::string to_string (const T& t)
     ss << t;
     return ss.str();
 }
+// convert a newline \n character string to \\n
+inline const std::string output_form( const char c )
+{
+    if( '\n' == c )
+        return std::string("\\n");
+    else
+        return std::string(1,c);
+}
+inline const std::string output_form( const std::string token )
+{
+    if( "\n" == token )
+        return std::string("\\n");
+    else
+        return token;
+}
 
 /* Ambrosia dependent functions (use one or more of libAmbrosia's functions/classes)
  *******************************/

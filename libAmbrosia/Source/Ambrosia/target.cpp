@@ -74,9 +74,7 @@ bool target::remove_config( const string &config )
 
 bool target::add_file( const file_type type, const string &filename )
 {
-    // TODO: make an add_files function so that directories_to_search doesn't have
-    //         to be made each time a file is added
-    // search for all possible matches!
+    // search for all possible matches in both general type and specific type directory list
     file_set matches;
 
     file_type general_type = get_general_type( type );
