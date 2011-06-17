@@ -10,6 +10,7 @@
 #include "file_store.h"
 
 // libAmbrosia includes
+#include "algorithm.h"
 #include "ambrosia_config.h"
 #include "debug.h"
 #include "platform.h"
@@ -31,19 +32,29 @@ file_store::file_store()
 {   }
 
 void file_store::match_source_files( const string_set &directories, const std::string &filename,
-                                     file_set &matches, file_set &duplicates )
+                                     file_set &matches, file_set &duplicates ) const
 {
+    const bool has_wildcards = contains( filename, "*?" );
     const auto end = directories.end();
     for( auto it = directories.begin(); it != end; ++it )
     {
         const string &directory = *it;
         auto result = m_source_files.find(directory);
-        if( result != m_source_files.end() )
-            const file_set &files_on_disk = (*result).second;
-        else
+        if( result == m_source_files.end() )
             throw std::logic_error( "Internal logic error in file_store::match_source_files: directory "
                                     + directory + "not added to s_file_store but present in target." );
 
+        const file_set &files_on_disk = (*result).second;
+
+        if( has_wildcards )
+        {
+            const auto end = files_on_disk.end();
+
+        }
+        else
+        {
+
+        }
     }
 
 

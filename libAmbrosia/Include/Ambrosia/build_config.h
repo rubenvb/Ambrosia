@@ -39,8 +39,8 @@ public:
     build_config( const ambrosia_config &config ); // conversion constructor
 
     // Setters
-    bool add_config( const std::string &config );
-    bool remove_config( const std::string &config );
+    bool add_config( const string_set &config );
+    bool remove_config( const string_set &config );
 
     //Getters
     bool contains( const std::string &config ) const;

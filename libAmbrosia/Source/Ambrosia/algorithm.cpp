@@ -143,18 +143,27 @@ bool wildcard_directory_compare( const string &wild_string, const string &full_s
     }
     return ( wild==wild_end );
 }
-void filter_duplicates( set<string> &unfiltered, const set<string> &reference,
-                        set<string> &duplicates )
+template<class T>
+const T merge_sets( T &old_set, const string_set &new_set )
 {
-    set_intersection( unfiltered.begin(), unfiltered.end(),
-                      reference.begin(), reference.end(),
-                      inserter(duplicates, duplicates.begin()) );
-    set<string> difference;
-    set_difference( unfiltered.begin(), unfiltered.end(),
-                    duplicates.begin(), duplicates.end(),
-                    inserter(difference, difference.begin()) );
-    unfiltered = difference;
+    // TODO: redo two-pass algorithm for ultimate performance
+    T merged;
+    T duplicates;
+    // get merged set
+    std::set_union( old_set.begin(), old_set.end(),
+                    new_set.begin(), new_set.end(),
+                    insert_iterator<string_set>(merged, merged.begin()) );
+    // get duplicates
+    std::set_intersection( old_set.begin(), old_set.end(),
+                           new_set.begin(), new_set.end(),
+                           insert_iterator<string_set>(duplicates, duplicates.begin()) );
+    // set new options
+    old_set.swap( merged_options );
+    // return duplicates for error handling
+    return duplicates;
 }
+template set<string> merge_string_sets<set<string> >( set<string> &, const set<string> & );
+
 /* libAmbrosia dependent functions
  **********************************/
 void skip_BOM( istream &stream )
@@ -321,32 +330,5 @@ void find_matching_files( const string &filename, const map<string, file_set> &d
     }
 }
 template void find_matching_files<insert_iterator<file_set> >( const string &, const map<string, file_set> &, insert_iterator<file_set> );
-
-void merge_options( pair<const string, string_set> &target, const string_set &new_options )
-{
-    // TODO: redo two-pass algorithm for ultimate performance
-    string_set &old_options( target.second );
-    string_set merged_options;
-    string_set duplicate_options;
-    // get merged set
-    std::set_union( old_options.begin(), old_options.end(),
-                    new_options.begin(), new_options.end(),
-                    insert_iterator<string_set>(merged_options, merged_options.begin()) );
-    // get duplicates
-    std::set_intersection( old_options.begin(), old_options.end(),
-                           new_options.begin(), new_options.end(),
-                           insert_iterator<string_set>(duplicate_options, duplicate_options.begin()) );
-    if( !duplicate_options.empty() )
-    {
-        emit_warning( "Duplicate configuration options (for target " + target.first + "): " );
-        const auto end = duplicate_options.end();
-        for( auto it = duplicate_options.begin(); it != end; ++it )
-        {
-            emit_warning( "Duplicate configuration options: " + *it + "\n" );
-        }
-    }
-    // set new options
-    old_options = merged_options;
-}
 
 libambrosia_namespace_end

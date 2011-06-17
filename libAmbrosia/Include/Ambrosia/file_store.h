@@ -24,7 +24,7 @@ public:
 
     // Match filename with all directories and match wildcards, and store duplicates
     void match_source_files( const string_set &directories, const std::string &filename,
-                             file_set &matches, file_set &duplicates );
+                             file_set &matches, file_set &duplicates ) const;
     // Read directory contents from disk (don't complain if already present).
     void add_source_directory( const std::string &directory );
     void add_build_directory( const std::string &directory );

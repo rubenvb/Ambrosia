@@ -63,52 +63,48 @@ const dependency_list & target::dependencies() const
 /*
  * Setters
  **********/
-bool target::add_config( const string &config )
+bool target::add_config( const string_set &config )
 {
     return m_build_config.add_config( config );
 }
-bool target::remove_config( const string &config )
+bool target::remove_config( const string_set &config )
 {
     return m_build_config.remove_config( config );
 }
 
-bool target::add_file( const file_type type, const string &filename )
+bool target::add_files( const file_type type, const string_set &filenames )
 {
-    // search for all possible matches in both general type and specific type directory list
-    file_set matches;
-
-    file_type general_type = get_general_type( type );
-    string_set directories_to_search; // directories in general SOURCE and specialized SOURCE_* file_type's
-    std::set_union( m_source_directories[type].begin(), m_source_directories[type].end(),
-                    m_source_directories[general_type].begin(), m_source_directories[general_type].end(),
-                    std::inserter(directories_to_search, directories_to_search.begin()) );
-
-    const auto end = directories_to_search.end();
-    for( auto it = directories_to_search.begin(); it != end; ++it )
-    {
-        s_file_store;
-    }
 
 
     return false;
 }
-bool target::remove_file( const file_type type, const string &filename )
+bool target::remove_files( const file_type type, const string_set &filenames )
 {
     // search all possible matches!
     return false;
 }
-bool target::add_directory( const file_type type, const string &directory )
+bool target::add_directories( const file_type type, const string_set &directories )
 {
-    return m_source_directories[type].insert( directory ).second;
+    string_set &old_directories = m_source_directories[type];
+    string_set duplicates = merge_sets( old_directories, directories );
+
+    if( duplicates.empty() )
+        return true;
+
 }
-bool target::remove_directory( const file_type type, const string &directory )
+bool target::remove_directories( const file_type type, const string_set &directories )
 {
-    return m_source_directories[type].erase( directory );
+    return m_source_directories[type].erase( directories );
 }
 
 void target::set_output_name( const std::string &name )
 {
     m_output_name = name;
 }
+
+/*
+ * Private functions
+ ********************/
+
 
 libambrosia_namespace_end

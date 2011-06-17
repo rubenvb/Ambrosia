@@ -31,14 +31,21 @@ libambrosia_namespace_begin
 bool wildcard_compare( const std::string &wildcard_string, const std::string &full_string );
 // returns true if expanding '?' or '*' between forward slashes '/' produces a match
 bool wildcard_directory_compare( const std::string &wildcard_string, const std::string &full_string );
-// compares unfiltered to reference, extracts duplicates and leaves unfiltered orthogonal on reference
-void filter_duplicates( std::set<std::string> &unfiltered, const std::set<std::string> &reference,
-                        std::set<std::string> &duplicates );
+// adds items in new_set to old_set, and returns any duplicates
+template<class T>
+const T merge_sets( T &old_set, T &new_set );
+
+inline bool contains( const std::string &token, const std::string &characters )
+{
+    return ( std::find_first_of(token.begin(), token.end(),
+                                characters.begin(), characters.end()) != token.end() );
+}
+
 // returns true if container contains element
 template <class container>
 bool contains(const container &cont, const typename container::value_type &elem )
 {
-   return( std::find(cont.begin(), cont.end(), elem) != cont.end() );
+   return ( std::find(cont.begin(), cont.end(), elem) != cont.end() );
 }
 inline bool has_space( const std::string &str )
 {
@@ -76,6 +83,28 @@ inline const std::string output_form( const std::string token )
     else
         return token;
 }
+template<class T>
+const T & map_value( const std::vector<T> &map, const size_t key )
+{
+    return map[key];
+}
+template<class T, class Y>
+const T & map_value( const std::map<Y,T> &map, const Y &key )
+{
+    return (*map.find(key)).second;
+}
+template<class T, class Y>
+bool map_value( const std::map<Y,T> &map, const Y &key, T &value )
+{
+    const auto it = map.find(key);
+    if( it != map.end() )
+    {
+        value = (*it).second;
+        return true;
+    }
+    else
+        return false;
+}
 
 /* Ambrosia dependent functions (use one or more of libAmbrosia's functions/classes)
  *******************************/
@@ -91,7 +120,6 @@ void filter_dependency_sort( target_list &unsorted );
 template<class output_iterator>
 void find_matching_files( const std::string &filename, const std::map<std::string, file_set> &directories,
                           output_iterator it );
-void merge_options( std::pair<const std::string, string_set> &old_options, const string_set &new_options );
 
 libambrosia_namespace_end
 
