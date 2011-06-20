@@ -24,13 +24,12 @@ libambrosia_namespace_begin
 
 // set error status with appropriate messages
 void emit_error( const std::string &message );
+// directly output warning messages immediately
 void emit_warning( const std::string &message );
 // retrieve current status
-extern bool error_status(); // also prints warnings (less code)
-extern bool warning_status();
+bool error_status();
 // print messages currently stored
 void print_errors();
-void print_warnings();
 
 libambrosia_namespace_end
 

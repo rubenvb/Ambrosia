@@ -144,26 +144,47 @@ bool wildcard_directory_compare( const string &wild_string, const string &full_s
     return ( wild==wild_end );
 }
 template<class T>
-const T merge_sets( T &old_set, const string_set &new_set )
+const T merge_sets( T &old_set, const T &add_set )
 {
-    // TODO: redo two-pass algorithm for ultimate performance
-    T merged;
+    // TODO: optimize
+    T result;
     T duplicates;
     // get merged set
     std::set_union( old_set.begin(), old_set.end(),
-                    new_set.begin(), new_set.end(),
-                    insert_iterator<string_set>(merged, merged.begin()) );
+                    add_set.begin(), add_set.end(),
+                    insert_iterator<string_set>(result, result.begin()) );
     // get duplicates
     std::set_intersection( old_set.begin(), old_set.end(),
-                           new_set.begin(), new_set.end(),
+                           add_set.begin(), add_set.end(),
                            insert_iterator<string_set>(duplicates, duplicates.begin()) );
     // set new options
-    old_set.swap( merged_options );
+    old_set.swap( result );
     // return duplicates for error handling
     return duplicates;
 }
-template set<string> merge_string_sets<set<string> >( set<string> &, const set<string> & );
+template const set<string> merge_sets<set<string> >( set<string> &, const set<string> & );
 
+template<class T>
+const T remove_set( T &old_set, const T &new_set )
+{
+    // TODO: optimize
+    T result;
+    T not_found;
+
+    // find elements in new_set that are not in old_set
+    std::set_symmetric_difference( new_set.begin(), new_set.end(),
+                                   old_set.begin(), old_set.end(),
+                                   std::inserter(not_found, not_found.begin()) );
+
+    // remove elements in new_set
+    std::set_difference( old_set.begin(), old_set.end(),
+                         new_set.begin(), new_set.end(),
+                         std::inserter(result, result.begin()) );
+    old_set.swap( result );
+    // return items not present in old_set
+    return not_found;
+}
+template const set<string> remove_set<set<string> >(set<string> &, const set<string> & );
 /* libAmbrosia dependent functions
  **********************************/
 void skip_BOM( istream &stream )

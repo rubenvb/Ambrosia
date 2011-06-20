@@ -64,9 +64,7 @@ nectar_loader::nectar_loader( const string &filename, istream &stream,
     m_dependency_list( list ),
     m_global_processed( false ),
     p_target()
-{
-    make_current(); // set static error reporting pointers
-}
+{   }
 nectar_loader::~nectar_loader()
 {
     if( p_target != nullptr )
@@ -176,8 +174,6 @@ void nectar_loader::extract_nectar( target_list &targets )
                     sub_loader.extract_nectar( targets );
                     if( error_status() )
                         return;
-
-                    make_current(); // reset static pointers for correct error reporting
                 }
                 else // opening file failed
                     return emit_error( "Error opening subproject file: " + sub_file + ". (line " + to_string(m_line_number) + ")" );
@@ -190,10 +186,16 @@ void nectar_loader::extract_nectar( target_list &targets )
     }
     debug(3) << "nectar_loader::Finished with file: " << m_filename << ".\n";
 }
-void nectar_loader::make_current()
+
+void nectar_loader::syntax_error( const string &message ) const
 {
-    s_filename = &m_filename;
-    s_line_number = &m_line_number;
+    debug(4) << "nectar_loader::syntax_error::Emitting a syntax error here.\n";
+    emit_error( "Syntax error: " + m_filename + ": line " + to_string(m_line_number) + "\n\t" + message );
+}
+void nectar_loader::syntax_warning( const string &message ) const
+{
+    debug(4) << "nectar_loader::syntax_warning::Emitting a syntax warning here.\n";
+    emit_warning( "Syntax warning: " + m_filename + ": line " + to_string(m_line_number) + ": " + message );
 }
 
 bool nectar_loader::next_token( string &token, const std::set<char> &special_characters )
@@ -280,16 +282,6 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
     }
     debug(6) << "nectar_loader::next_token:Token extracted: \'" << output_form(token) << "\'\n";
     return !token.empty();
-}
-void nectar_loader::syntax_error( const string &message ) const
-{
-    debug(4) << "nectar_loader::syntax_error::Emitting a syntax error here.\n";
-    emit_error( "Syntax error: " + s_filename + ": line " + to_string(s_line_number) + "\n\t" + message );
-}
-void nectar_loader::syntax_warning( const string &message ) const
-{
-    debug(4) << "nectar_loader::syntax_warning::Emitting a syntax warning here.\n";
-    emit_warning( "Syntax warning: " + s_filename + ": line " + to_string(s_line_number) + ": " + message );
 }
 
 void nectar_loader::read_dependency_list( dependency_list &dependencies )
@@ -549,10 +541,9 @@ bool nectar_loader::process_inner_list_conditional()
     return false;
 }
 
-
 bool nectar_loader::parse_list( function<bool(const string &)> validate,
-                                function<bool(const string &)> insert,
-                                function<bool(const string &)> remove )
+                                function<const string_set(const string &)> insert,
+                                function<const string_set(const string &)> remove )
 {
     debug(4) << "nectar_loader::parse_list::Parsing list.\n";
     size_t curly_braces_count = 0;
@@ -581,17 +572,51 @@ bool nectar_loader::parse_list( function<bool(const string &)> validate,
         else if( "~" == token && next_token(token, s_special_characters_newline) )
         {
             debug(5) << "nectar_loader::parse_list::removing item from list: " << token << ".\n";
-            if( !remove(token) )
-                syntax_warning( "\"" + token + "\" is not present in the list (check the global target(s) for possible previous occurences)." );
+            if( !validate(token) )
+                return false;
 
             list_empty = false;
+            const string_set result = remove( token );
+            switch( result.size() )
+            {
+                case 0:
+                    break; // all OK, continue
+                case 1:
+                    syntax_warning( "Item that is not in list cannot be deleted: " + token );
+                    break;
+                default:
+                    syntax_error( "Could not delete ambiguous item: " + token + "\n"
+                                  + "\tAmbiguous with:");
+                    std::for_each( result.begin(), result.end(),
+                                   [this](const string &item)
+                                   {
+                                       syntax_error( "\t" + item );
+                                   } );
+            }
         }
         else
         {
             debug(5) << "nectar_loader::parse_list::adding item to list: " << token << ".\n";
-            if( !insert(token) )
+            if( !validate(token) )
                 return false;
+
             list_empty = false;
+            const string_set result = insert( token );
+            switch( result.size() )
+            {
+                case 0:
+                    break; // all OK, continue
+                case 1:
+                    syntax_error( "Duplicate items not allowed in: " + *result.begin() );
+                    break;
+                default:
+                    syntax_error( "Could not resolve ambiguous item: " + token );
+                    std::for_each( result.begin(), result.end(),
+                               [this](const string &item)
+                               {
+                                   syntax_error( "\t" + item );
+                               } );
+            }
         }
     }
     debug(4) << "nectar_loader::parse_list::Done with list.\n";
@@ -605,8 +630,7 @@ bool nectar_loader::parse_list( function<bool(const string &)> validate,
         syntax_error( "A list must not be empty. Place the conditional before the list name." );
         return false;
     }
-    else
-        return true;
+    return true;
 }
 
 void nectar_loader::parse_target()
@@ -636,8 +660,7 @@ void nectar_loader::parse_target()
             if( !parse_list(&validate_CONFIG,
                             std::bind(&target::add_config, p_target.get(), _1),
                             std::bind(&target::remove_config, p_target.get(), _1)) )
-                return; // failures
-            print_warnings(); // duplicate items emit warnings
+                return; // failure
         }
         else if ( "NAME" == token )
         {
@@ -646,10 +669,8 @@ void nectar_loader::parse_target()
                 return syntax_error( "global target does not need a name");
 
             if( already_modified_NAME )
-            {
                 syntax_warning( "NAME is being modified twice in this target section." );
-                print_warnings();
-            }
+
             already_modified_NAME = true;
             if( next_token(token) )
                 p_target->set_output_name( token );
@@ -664,8 +685,8 @@ void nectar_loader::parse_target()
             {
                 debug(5) << "nectar_loader::parse_target::" << token << " file list detected.\n";
                 if( !parse_list(&validate_filename,
-                                std::bind(&target::add_file, p_target.get(), type, _1),
-                                std::bind(&target::remove_file, p_target.get(), type, _1)) )
+                                std::bind(&target::add_files, p_target.get(), type, _1),
+                                std::bind(&target::remove_files, p_target.get(), type, _1)) )
                 {
                     debug(6) << "nectar_loader::parse_target::Failed at inserting file(s).\n";
                     return; // failure, assumes parse_list has called emit_error
@@ -675,8 +696,8 @@ void nectar_loader::parse_target()
             {
                 debug(5) << "nectar_loader::parse_target::" << map_value(file_type_map_inverse, type) << " directory list detected.\n";
                 if( !parse_list(&validate_directory,
-                                std::bind(&target::add_directory, p_target.get(), type, _1),
-                                std::bind(&target::remove_directory, p_target.get(), type, _1)) )
+                                std::bind(&target::add_directories, p_target.get(), type, _1),
+                                std::bind(&target::remove_directories, p_target.get(), type, _1)) )
                 {
                     debug(6) << "nectar_loader::parse_target::Failed at inserting directory/directories.\n";
                     return; // failure, assumes parse_list has called emit_error
@@ -686,21 +707,6 @@ void nectar_loader::parse_target()
                 return syntax_error( "Unexpected token: " + token );
         }
     }
-}
-bool nectar_loader::resolve_file(const file_type type, const std::string &filename)
-{
-    file_type general_type = get_general_type( type );
-    string_set directories_to_search; // directories in general SOURCE and specialized SOURCE_* file_type's
-    std::set_union( m_source_directories[type].begin(), m_source_directories[type].end(),
-                    m_source_directories[general_type].begin(), m_source_directories[general_type].end(),
-                    std::inserter(directories_to_search, directories_to_search.begin()) );
-
-    const auto end = directories_to_search.end();
-    for( auto it = directories_to_search.begin(); it != end; ++it )
-    {
-        s_file_store;
-    }
-
 }
 
 bool nectar_loader::validate_CONFIG( const string &config )

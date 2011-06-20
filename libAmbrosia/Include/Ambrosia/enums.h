@@ -14,12 +14,6 @@
 
 ambrosia_namespace_begin
 
-enum class status
-{
-    none,
-    warning,
-    error // perhaps with warning
-};
 enum class os
 {
     Windows,

@@ -106,11 +106,9 @@ void ambrosia_config::set_gnu_prefix( const std::string & )
 }
 void ambrosia_config::add_target_config( const std::string &target, const string_set &options )
 {
-    const auto it = m_target_config.find( target );
-    if( it == m_target_config.end() )
-        m_target_config.insert( {target, options} );
-    else
-        merge_options( *it, options );
+    string_set duplicates = merge_sets( m_target_config[target], options );
+    if( !duplicates.empty() )
+        emit_warning( "" );
 }
 
 /*

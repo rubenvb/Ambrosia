@@ -48,12 +48,12 @@ public:
     const std::string &filename() const;
 
     // Setters
-    bool add_config( const string_set &config );
-    bool remove_config( const string_set &config );
-    bool add_files( const file_type type, const string_set &filenames );
-    bool remove_files( const file_type type, const string_set &filenames );
-    bool add_directories( const file_type type, const string_set &directories );
-    bool remove_directories( const file_type type, const string_set &directories );
+    const string_set add_config( const std::string &config );
+    const string_set remove_config( const std::string &config );
+    const string_set add_files( const file_type type, const std::string &filenames );
+    const string_set remove_files( const file_type type, const std::string &filenames );
+    const string_set add_directories( const file_type type, const std::string &directories );
+    const string_set remove_directories( const file_type type, const std::string &directories );
     void set_output_name( const std::string &name );
 
 private:

@@ -63,38 +63,42 @@ const dependency_list & target::dependencies() const
 /*
  * Setters
  **********/
-bool target::add_config( const string_set &config )
+const string_set target::add_config( const string &config )
 {
-    return m_build_config.add_config( config );
+    if( m_build_config.add_config(config) )
+        return string_set(); // empty return value is success
+    else
+        return {config}; // value already present
 }
-bool target::remove_config( const string_set &config )
+const string_set target::remove_config( const string &config )
 {
-    return m_build_config.remove_config( config );
+    if( m_build_config.remove_config(config) )
+        return string_set(); // empty retun value is success
+    else
+        return { config };
 }
 
-bool target::add_files( const file_type type, const string_set &filenames )
+const string_set target::add_files( const file_type type, const string &filename )
 {
-
-
-    return false;
+    return {"unimplemented"};
 }
-bool target::remove_files( const file_type type, const string_set &filenames )
+const string_set target::remove_files( const file_type type, const string &filename )
 {
-    // search all possible matches!
-    return false;
+    return {"unimplemented"};
 }
-bool target::add_directories( const file_type type, const string_set &directories )
+const string_set target::add_directories( const file_type type, const string &directory )
 {
-    string_set &old_directories = m_source_directories[type];
-    string_set duplicates = merge_sets( old_directories, directories );
-
-    if( duplicates.empty() )
-        return true;
-
+    if( m_source_directories[type].insert(directory).second )
+        return string_set();
+    else
+        return { directory };
 }
-bool target::remove_directories( const file_type type, const string_set &directories )
+const string_set target::remove_directories( const file_type type, const string &directory )
 {
-    return m_source_directories[type].erase( directories );
+    if( m_source_directories[type].erase(directory) )
+        return string_set();
+    else
+        return { directory };
 }
 
 void target::set_output_name( const std::string &name )

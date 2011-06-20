@@ -33,7 +33,10 @@ bool wildcard_compare( const std::string &wildcard_string, const std::string &fu
 bool wildcard_directory_compare( const std::string &wildcard_string, const std::string &full_string );
 // adds items in new_set to old_set, and returns any duplicates
 template<class T>
-const T merge_sets( T &old_set, T &new_set );
+const T merge_sets( T &old_set, const T &add_set );
+// removes items in new_set from old_set, and returns any items not found in old_set
+template<class T>
+const T remove_set( T &old_set, const T &remove_set );
 
 inline bool contains( const std::string &token, const std::string &characters )
 {

@@ -46,15 +46,25 @@ build_config::build_config( const ambrosia_config &config )
 /*
  * Setters
  **********/
-bool build_config::add_config( const string_set &config )
+bool build_config::add_config( const string &config )
 {
-    return false;
-    //return m_config.insert( config ).second;
+    return m_config.insert(config).second;
 }
-bool build_config::remove_config( const string_set &config )
+bool build_config::remove_config( const string &config )
 {
-    return false;
-    //return m_config.erase( config );
+    return m_config.erase(config);
+}
+
+/*
+ * Getters
+ **********/
+const string_set & build_config::config() const
+{
+    return m_config;
+}
+string_set & build_config::config()
+{
+    return m_config;
 }
 
 libambrosia_namespace_end
