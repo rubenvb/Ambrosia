@@ -84,9 +84,9 @@ private:
     // main target parser
     void parse_target();
     // input validation functions (see wiki for valid input requirements)
-    static bool validate_CONFIG( const std::string &config );
-    static bool validate_filename( const std::string &filename );
-    static bool validate_directory( const std::string &directory );
+    bool validate_CONFIG( const std::string &config );
+    bool validate_filename( const std::string &filename );
+    bool validate_directory( const std::string &directory );
 };
 
 libambrosia_namespace_end

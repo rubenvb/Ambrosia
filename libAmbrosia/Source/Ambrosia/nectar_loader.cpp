@@ -607,10 +607,10 @@ bool nectar_loader::parse_list( function<bool(const string &)> validate,
                 case 0:
                     break; // all OK, continue
                 case 1:
-                    syntax_error( "Duplicate items not allowed in: " + *result.begin() );
+                    syntax_error( "Duplicate item: " + *result.begin() );
                     break;
                 default:
-                    syntax_error( "Could not resolve ambiguous item: " + token );
+                    syntax_error( "Ambiguous item: " + token );
                     std::for_each( result.begin(), result.end(),
                                [this](const string &item)
                                {
@@ -621,16 +621,15 @@ bool nectar_loader::parse_list( function<bool(const string &)> validate,
     }
     debug(4) << "nectar_loader::parse_list::Done with list.\n";
     if( curly_braces_count > 0 )
-    {
         syntax_error( "Unclosed curly braces." );
-        return false;
-    }
     else if( list_empty )
-    {
         syntax_error( "A list must not be empty. Place the conditional before the list name." );
+
+    // gather any errors and make sure parsing does not continue
+    if( error_status() )
         return false;
-    }
-    return true;
+    else
+        return true;
 }
 
 void nectar_loader::parse_target()
@@ -657,7 +656,7 @@ void nectar_loader::parse_target()
         else if( "CONFIG" == token)
         {
             debug(5) << "nectar_loader::parse_global::CONFIG detected.\n";
-            if( !parse_list(&validate_CONFIG,
+            if( !parse_list(std::bind(&nectar_loader::validate_CONFIG, this, _1),
                             std::bind(&target::add_config, p_target.get(), _1),
                             std::bind(&target::remove_config, p_target.get(), _1)) )
                 return; // failure
@@ -684,7 +683,7 @@ void nectar_loader::parse_target()
             if( map_value(file_type_map, token, type) )
             {
                 debug(5) << "nectar_loader::parse_target::" << token << " file list detected.\n";
-                if( !parse_list(&validate_filename,
+                if( !parse_list(std::bind(&nectar_loader::validate_filename, this, _1),
                                 std::bind(&target::add_files, p_target.get(), type, _1),
                                 std::bind(&target::remove_files, p_target.get(), type, _1)) )
                 {
@@ -695,7 +694,7 @@ void nectar_loader::parse_target()
             else if( map_value(directory_type_map, token, type) )
             {
                 debug(5) << "nectar_loader::parse_target::" << map_value(file_type_map_inverse, type) << " directory list detected.\n";
-                if( !parse_list(&validate_directory,
+                if( !parse_list(std::bind(&nectar_loader::validate_directory, this, _1),
                                 std::bind(&target::add_directories, p_target.get(), type, _1),
                                 std::bind(&target::remove_directories, p_target.get(), type, _1)) )
                 {
@@ -719,13 +718,22 @@ bool nectar_loader::validate_filename( const string &filename )
     if( index != string::npos && '/' != filename[index])
     {   // there might be wildcards before a directory seperator
         if( filename.find('/',index+1) != string::npos )
+        {
+            syntax_error( "Wildcard characters ?* are not allowed in directory names." );
             return false;
+        }
     }
     return true;
 }
 bool nectar_loader::validate_directory( const string &directory )
 {
-    return ( directory.find_first_of("*?") == string::npos );
+    if( !(directory.find_first_of("*?") == string::npos) )
+    {
+        syntax_error( "Wildcard characters ?* are not allowed in directory names." );
+        return false;
+    }
+    else
+        return true;
 }
 
 libambrosia_namespace_end

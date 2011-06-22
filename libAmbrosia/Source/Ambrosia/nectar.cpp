@@ -16,7 +16,6 @@
 #include "platform.h"
 #include "target.h"
 #include "typedefs.h"
-    using ambrosia::string_vector;
 #include "nectar_loader.h"
 
 // C++ includes
