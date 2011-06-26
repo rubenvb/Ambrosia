@@ -70,7 +70,7 @@ const string find_nectar_file( const string &directory )
 void drink_nectar( const std::string &filename, target_list &targets )
 {
     // open file
-    ifstream stream( filename );
+    ifstream stream( transform_filename(filename) );
     if( !stream )
         return emit_error( "Unable to open nectar file: " + filename );
 

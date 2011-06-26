@@ -131,6 +131,7 @@ void scan_directory( output_iterator it, const std::string &directory_name )
     {
         if( !(find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
         {
+            debug(0) << convert_to_utf8(find_data.cFileName) << "\n";
             it = { convert_to_utf8(find_data.cFileName), get_time(find_data.ftLastWriteTime) };
         }
         if( !FindNextFileW(handle, &find_data) && GetLastError() == ERROR_NO_MORE_FILES )

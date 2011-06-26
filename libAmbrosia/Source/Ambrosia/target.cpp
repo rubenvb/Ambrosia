@@ -14,6 +14,7 @@
 #include "ambrosia_config.h"
 #include "debug.h"
 #include "enum_maps.h"
+#include "file_store.h"
 #include "platform.h"
 #include "status.h"
 
@@ -68,7 +69,7 @@ const string_set target::add_config( const string &config )
     if( m_build_config.add_config(config) )
         return string_set(); // empty return value is success
     else
-        return {config}; // value already present
+        return { config }; // value already present
 }
 const string_set target::remove_config( const string &config )
 {
@@ -80,6 +81,7 @@ const string_set target::remove_config( const string &config )
 
 const string_set target::add_files( const file_type type, const string &filename )
 {
+    s_file_store.match_source_files( m_source_directories[type], filename );
     return {"unimplemented"};
 }
 const string_set target::remove_files( const file_type type, const string &filename )

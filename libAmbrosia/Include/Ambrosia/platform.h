@@ -39,6 +39,16 @@ bool file_exists( const std::string &filename );
 /*
  * Mostly platform dependently implemented functions
  ****************************************************/
+#if _WIN32
+    const std::string convert_to_utf8( const std::wstring &utf16_string );
+    const std::wstring convert_to_utf16( const std::string &utf8_string );
+    inline const std::wstring transform_filename( const std::string &filename )
+    { return convert_to_utf16(filename); }
+#else // _WIN32
+    inline const std::string transform_filename( const std::string &filename )
+    { return filename; }
+#endif // _WIN32
+
 // Single level directory scan
 template<class output_iterator>
 void scan_directory( output_iterator it, const std::string &relative_directory );
