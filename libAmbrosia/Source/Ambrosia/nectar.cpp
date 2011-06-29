@@ -70,7 +70,8 @@ const string find_nectar_file( const string &directory )
 void drink_nectar( const std::string &filename, target_list &targets )
 {
     // open file
-    ifstream stream( transform_filename(filename) );
+    auto stream_ptr( open_ifstream(filename) );
+    auto &stream = *stream_ptr;
     if( !stream )
         return emit_error( "Unable to open nectar file: " + filename );
 
@@ -83,9 +84,9 @@ void drink_nectar( const std::string &filename, target_list &targets )
         return;
 }
 
-void apply_build_config( target_list &targets )
+void apply_build_config( target_list &/*targets*/ )
 {
-
+    emit_error( "nectar::apply_build_confi::Not implemented." );
 }
 
 libambrosia_namespace_end

@@ -143,14 +143,6 @@ bool wildcard_directory_compare( const string &wild_string, const string &full_s
     }
     return ( wild==wild_end );
 }
-const pair<string, string> split_preceding_directory( const string &path )
-{
-    const size_t index = path.find_last_of( "/" );
-    if( index != string::npos )
-        return { path.substr(0, index-1), path.substr(index+1) };
-    else
-        return { "", path };
-}
 
 template<class T>
 const T merge_sets( T &old_set, const T &add_set )
@@ -198,7 +190,20 @@ template const set<string> remove_set<set<string> >(set<string> &, const set<str
 /*
  * libAmbrosia dependent functions
  **********************************/
-
+const string_pair split_preceding_directory( const string &path )
+{
+    const size_t index = path.find_last_of( "/" );
+    if( index != string::npos )
+    {
+        // handle path ending in directory seperator
+        if( index == path.size()-1 )
+            return { "", path.substr(0,index-1)};
+        else
+            return { directory_seperator + path.substr(0, index-1), path.substr(index+1) };
+    }
+    else
+        return { "", path };
+}
 void skip_BOM( istream &stream )
 {
     const unsigned char BOM[] = { 0xef, 0xbb, 0xbf };

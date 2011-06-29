@@ -39,16 +39,6 @@ bool file_exists( const std::string &filename );
 /*
  * Mostly platform dependently implemented functions
  ****************************************************/
-#if _WIN32
-    const std::string convert_to_utf8( const std::wstring &utf16_string );
-    const std::wstring convert_to_utf16( const std::string &utf8_string );
-    inline const std::wstring transform_filename( const std::string &filename )
-    { return convert_to_utf16(filename); }
-#else // _WIN32
-    inline const std::string transform_filename( const std::string &filename )
-    { return filename; }
-#endif // _WIN32
-
 // Single level directory scan
 template<class output_iterator>
 void scan_directory( output_iterator it, const std::string &relative_directory );
@@ -56,6 +46,19 @@ void scan_directory( output_iterator it, const std::string &relative_directory )
 template<class output_iterator>
 void recursive_scan_directory( output_iterator it, const std::string &relative_directory,
                                const std::string &directory_name = "" );
+
+/*
+ * Ugly workarounds
+ *******************/
+#if _WIN32
+# if __GLIBCXX__
+    std::unique_ptr<std::istream> open_ifstream( const std::string &filename );
+    std::unique_ptr<std::ostream> open_ofstream( const std::string &filename );
+# endif
+#else
+    std::unique_ptr<std::ifstream> open_ifstream( const std::string &filename );
+    std::unique_ptr<std::ofstream> open_ofstream( const std::string &filename );
+#endif
 
 libambrosia_namespace_end
 

@@ -35,13 +35,17 @@ file_store::file_store()
 
 const file_set & file_store::get_source_file_set( const std::string &directory )
 {
+    debug(5) << "file_set::get_source_file_set::Finding directory listing for " << directory << ".\n";
     const auto result = m_source_files.find( directory );
     if( result != m_source_files.end() )
-        return (*result).second;
-
-    add_source_directory( directory );
-
-    return get_source_file_set( directory );
+        return m_source_files[directory];
+    else
+    {
+        debug(5) << "file_store::get_source_file_set::Directory not found, scanning now.\n";
+        add_source_directory( directory );
+        debug(5) << "file_store::get_source_file_set::Directory scanned.\n";
+        return m_source_files[directory];
+    }
 }
 
 const string_set file_store::find_source_file( const string_set &directories, const string &filename )
@@ -55,7 +59,7 @@ const string_set file_store::find_source_file( const string_set &directories, co
     const auto end = directories.end();
     for( auto it = directories.begin(); it != end; ++it )
     {
-        const string directory( *it + directory_seperator + preceding_directory );
+        const string directory( *it + preceding_directory );
 
         const file_set &files_on_disk = get_source_file_set( directory );
         if( error_status() )
@@ -83,7 +87,7 @@ const file_set file_store::match_source_files( const string_set &directories, co
     const auto directory_end = directories.end();
     for( auto directory_it = directories.begin(); directory_it != directory_end; ++directory_it )
     {
-        const string directory( *directory_it + directory_seperator + preceding_directory );
+        const string directory( *directory_it + preceding_directory );
         debug(5) << "file_store::match_source_files::Looking in " << directory << " for matches.\n";
 
         const file_set &files_on_disk = get_source_file_set( directory );
@@ -114,8 +118,8 @@ void file_store::add_source_directory( const std::string &directory )
         debug(5) << "file_store::add_source_directory::Directory already present, and scanned.\n";
     else
     {
-        file_set &entries = (*result.first).second;
-        scan_directory( std::inserter(entries, entries.begin()), full_path );
+        file_set &new_files = (*result.first).second;
+        scan_directory( std::inserter(new_files, new_files.begin()), full_path );
     }
 }
 void file_store::add_build_directory( const std::string &directory )
@@ -130,8 +134,8 @@ void file_store::add_build_directory( const std::string &directory )
         debug(5) << "file_store::add_source_directory::Directory already present, and scanned.\n";
     else
     {
-        file_set &entries = (*result.first).second;
-        scan_directory( std::inserter(entries, entries.begin()), full_path );
+        file_set &new_files = (*result.first).second;
+        scan_directory( std::inserter(new_files, new_files.begin()), full_path );
     }
 }
 

@@ -14,14 +14,22 @@
 #include "typedefs.h"
 
 // C++ includes
+#include <algorithm>
+/* <iostream> */
+    using std::istream;
+    using std::ostream;
+/* <fstream> */
+    using std::ifstream;
+    using std::ofstream;
 #include <iterator>
     using std::back_insert_iterator;
     using std::insert_iterator;
-#include <map>
+/* <map> */
     using std::map;
 #include <memory>
     using std::unique_ptr;
 #include <stdexcept>
+    using std::logic_error;
     using std::runtime_error;
 /* <string> */
     using std::string;
@@ -32,6 +40,11 @@
 // Windows includes
 #include "direct.h"
 #include "windows.h"
+
+// Includes for the last hackish section
+#ifdef __GLIBCXX__
+#include <ext/stdio_filebuf.h>
+#endif // __GLIBCXX__
 
 /*
  * Workarounds
@@ -72,11 +85,10 @@ const string convert_to_utf8( const wstring &utf16_string )
         if( WideCharToMultiByte(CP_UTF8, 0,
                                 utf16_string.c_str(), static_cast<int>(utf16_string.size()),
                                 &result[0], static_cast<int>(result.size()),
-                                NULL, NULL)
-                                           > 0 )
-            return result;
-        else
+                                NULL, NULL) == 0 )
             throw runtime_error( "Failure to execute toUTF8: conversion failed." );
+        else
+            return result;
     }
 }
 // UTF8 -> UTF16 conversion
@@ -95,11 +107,10 @@ const wstring convert_to_utf16( const string &utf8_string )
 
         if( MultiByteToWideChar(CP_UTF8, 0,
                                 utf8_string.c_str(), static_cast<int>(utf8_string.size()),
-                                &result[0], static_cast<int>(result.size()))
-                                                          > 0 )
-            return result;
-        else
+                                &result[0], static_cast<int>(result.size())) == 0 )
             throw runtime_error( "Failure to execute toUTF16: conversion failed." );
+        else
+            return result;
     }
 }
 // FILETIME to time_t conversion
@@ -189,5 +200,40 @@ void recursive_scan_directory( output_iterator it, const string &relative_direct
 }
 // explicit instantiation
 template void recursive_scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string &, const string & );
+
+/*
+ * Ugly workarounds
+ *******************/
+#if _WIN32
+# if __GLIBCXX__
+unique_ptr<istream> open_ifstream( const string &filename )
+{
+    debug(4) << "Opening input stream for file " << filename << ".\n";
+    FILE* c_file = _wfopen( convert_to_utf16(filename).c_str(), L"r" );
+    debug(4) << "OK" << "\n";
+    __gnu_cxx::stdio_filebuf<char>* buffer = new __gnu_cxx::stdio_filebuf<char>( c_file, std::ios_base::in, 1 );
+    debug(4) << "OK" << "\n";
+
+    return std::unique_ptr<istream>( new istream(buffer) );
+}
+unique_ptr<ostream> open_ofstream( const string &filename )
+{
+    FILE* c_file = _wfopen( convert_to_utf16(filename).c_str(), L"w+" );
+    __gnu_cxx::stdio_filebuf<char>* buffer = new __gnu_cxx::stdio_filebuf<char>( c_file, std::ios_base::out, 1 );
+    return unique_ptr<ostream>( new ostream(buffer) );
+}
+# elif _MSC_VER
+unique_ptr<ifstream> open_ifstream( const string &filename )
+{
+    return unique_ptr<ifstream>(new ifstream( convert_to_utf16(filename)) );
+}
+unique_ptr<ofstream> open_ofstream( const string &filename )
+{
+    return unique_ptr( new ofstream(convert_to_utf16(filename)) );
+}
+# else
+# error unknown fstream implementation
+# endif
+#endif
 
 libambrosia_namespace_end

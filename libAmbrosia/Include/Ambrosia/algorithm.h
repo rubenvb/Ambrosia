@@ -31,8 +31,6 @@ libambrosia_namespace_begin
 bool wildcard_compare( const std::string &wildcard_string, const std::string &full_string );
 // returns true if expanding '?' or '*' between forward slashes '/' produces a match
 bool wildcard_directory_compare( const std::string &wildcard_string, const std::string &full_string );
-// splits off everything before last forward slash
-const std::pair<std::string, std::string> split_preceding_directory( const std::string &path );
 // adds items in new_set to old_set, and returns any duplicates
 template<class T>
 const T merge_sets( T &old_set, const T &add_set );
@@ -113,6 +111,9 @@ bool map_value( const std::map<Y,T> &map, const Y &key, T &value )
 
 /* Ambrosia dependent functions (use one or more of libAmbrosia's functions/classes)
  *******************************/
+// splits off everything before last forward slash
+const string_pair split_preceding_directory( const std::string &path );
+// remove Byte Order Mark from stream
 void skip_BOM( std::istream &stream );
 // Dependency resolving algorithm
 void dependency_resolve( target_list &unsorted, target_list::iterator node,
