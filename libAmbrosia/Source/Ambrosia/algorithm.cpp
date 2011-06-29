@@ -190,6 +190,12 @@ template const set<string> remove_set<set<string> >(set<string> &, const set<str
 /*
  * libAmbrosia dependent functions
  **********************************/
+void replace_directory_seperators( string &original )
+{
+    replace_if( original.begin(), original.end(),
+                [](const char c) {   return c=='/'; },
+                directory_seperator );
+}
 const string_pair split_preceding_directory( const string &path )
 {
     const size_t index = path.find_last_of( "/" );

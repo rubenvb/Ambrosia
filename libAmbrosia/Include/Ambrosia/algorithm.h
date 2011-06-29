@@ -46,7 +46,7 @@ inline bool contains( const std::string &token, const std::string &characters )
 
 // returns true if container contains element
 template <class container>
-bool contains(const container &cont, const typename container::value_type &elem )
+bool contains( const container &cont, const typename container::value_type &elem )
 {
    return ( std::find(cont.begin(), cont.end(), elem) != cont.end() );
 }
@@ -111,6 +111,8 @@ bool map_value( const std::map<Y,T> &map, const Y &key, T &value )
 
 /* Ambrosia dependent functions (use one or more of libAmbrosia's functions/classes)
  *******************************/
+// replaces directory seperators ("/" or "\") with libambrosia::directory_seperator
+void replace_directory_seperators( std::string &original );
 // splits off everything before last forward slash
 const string_pair split_preceding_directory( const std::string &path );
 // remove Byte Order Mark from stream

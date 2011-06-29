@@ -38,8 +38,7 @@ libambrosia_namespace_begin
 const char directory_seperator = '/';
 const std::string executableSuffix = "";
 const os build_os = os::Linux;
-// this works for GCC:
-#if i386
+#if __i386__ // this works for GCC
     const architecture build_architecture = architecture::x86;
 #elif __x86_64__
     const architecture build_architecture = architecture::amd64;
@@ -121,6 +120,18 @@ void recursive_scan_directory( output_iterator it, const string &relative_direct
     closedir( dir );
 }
 // explicit instantiation
-template void recursive_scan_directory<insert_iterator<file_set>>( insert_iterator<file_set>, const string &, const string & );
+template void recursive_scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string &, const string & );
+
+/*
+ * Ugly workarounds
+ *******************/
+unique_ptr<ifstream> open_ifstream( const std::string &filename )
+{
+    return unique_ptr<ifstream>( new ifstream(filename) );
+}
+unique_ptr<ofstream> open_ofstream( const std::string &filename )
+{
+    return unique_ptr<ofstream>( new ofstream(filename) );
+}
 
 libambrosia_namespace_end

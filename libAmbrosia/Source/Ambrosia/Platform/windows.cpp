@@ -181,7 +181,7 @@ void recursive_scan_directory( output_iterator it, const string &relative_direct
                 if( directory_name.empty() )
                     subdirectory = convert_to_utf8( find_data.cFileName );
                 else
-                    subdirectory = directory_name + "/" + convert_to_utf8( find_data.cFileName );
+                    subdirectory = directory_name + "\\" + convert_to_utf8( find_data.cFileName );
                 recursive_scan_directory( it, relative_directory, subdirectory );
             }
         }
