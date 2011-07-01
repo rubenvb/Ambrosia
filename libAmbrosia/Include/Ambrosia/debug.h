@@ -11,10 +11,10 @@
 
 // Ambrosia includes
 #include "global.h"
+#include "typedefs.h"
 
 // C++ includes
 #include <iostream>
-#include <string>
 
 ambrosia_namespace_begin
 
@@ -46,7 +46,7 @@ public:
     debug& operator<<( stream_function func )
     {
         if( m_output )
-            func(std::cerr);
+            func( std::cerr );
     #else // AMBROSIA_DEBUG
     debug& operator<<( stream_function )
     {
@@ -59,6 +59,9 @@ private:
     const bool m_output;
     #endif // AMBROSIA_DEBUG
 };
+
+template<>
+debug& debug::operator<<( const string_set & );
 
 ambrosia_namespace_end
 

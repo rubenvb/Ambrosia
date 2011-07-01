@@ -208,11 +208,8 @@ template void recursive_scan_directory<insert_iterator<file_set> >( insert_itera
 # if __GLIBCXX__
 unique_ptr<istream> open_ifstream( const string &filename )
 {
-    debug(4) << "Opening input stream for file " << filename << ".\n";
     FILE* c_file = _wfopen( convert_to_utf16(filename).c_str(), L"r" );
-    debug(4) << "OK" << "\n";
     __gnu_cxx::stdio_filebuf<char>* buffer = new __gnu_cxx::stdio_filebuf<char>( c_file, std::ios_base::in, 1 );
-    debug(4) << "OK" << "\n";
 
     return std::unique_ptr<istream>( new istream(buffer) );
 }

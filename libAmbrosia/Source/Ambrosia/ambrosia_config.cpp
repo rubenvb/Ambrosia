@@ -13,6 +13,7 @@
 #include "algorithm.h"
 #include "debug.h"
 #include "enum_maps.h"
+#include "file_store.h"
 #include "platform.h"
 #include "status.h"
 
@@ -42,14 +43,13 @@ ambrosia_config::ambrosia_config()
  **********/
 void ambrosia_config::set_source_directory( const string &source_directory )
 {
-    if( !m_source_directory.empty() )
-        throw logic_error( "ambrosia_config::set_source_directory called a second time." );
-
-    if( source_directory != "." )
+    debug(5) << "ambrosia_config::set_source_directory::Setting source directory to: " << source_directory << "\n";
+    if( source_directory == "." )
         m_build_directory = "build";
 
-    m_source_directory = source_directory;
-    std::replace( m_source_directory.begin(), m_source_directory.end(), '/', directory_seperator );
+    m_source_directory = replace_directory_seperators( source_directory );
+    debug(5) << "ambrosia_config::set_source_directory::Adding " << m_source_directory << " to s_file_store.\n";
+    s_file_store.add_source_directory( m_source_directory );
 }
 void ambrosia_config::set_project_file( const string &project_file )
 {

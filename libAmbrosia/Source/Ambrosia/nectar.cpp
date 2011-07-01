@@ -11,9 +11,11 @@
 
 // libAmbrosia includes
 #include "algorithm.h"
-#include "status.h"
+#include "ambrosia_config.h"
 #include "debug.h"
+#include "file_store.h"
 #include "platform.h"
+#include "status.h"
 #include "target.h"
 #include "typedefs.h"
 #include "nectar_loader.h"
@@ -40,31 +42,25 @@ libambrosia_namespace_begin
 const string find_nectar_file( const string &directory )
 {
     debug() << "nectar::find_nectar_file called for: " << directory << ".\n";
-    file_set file_list;
-    scan_directory( std::inserter(file_list, file_list.begin()), directory );
-    debug() << "nectar::found " << file_list.size() << " files:\n";
-    const auto end = file_list.end();
-    string_vector nectar_files;
-    for( auto it = file_list.begin(); it != end; ++it )
+    s_ambrosia_config.set_source_directory( directory );
+    file_set candidates = s_file_store.find_source_file( {}, "*.nectar.txt" );
+    //scan_directory( std::inserter(file_list, file_list.begin()), directory );
+    switch( candidates.size() )
     {
-        const string file( (*it).first );
-        // find the first *.nectar.txt file in main source directory (not a subdirectory)
-        size_t index = file.rfind( ".nectar.txt" );
-        if( index < string::npos )
-        {
-            debug() << "nectar::searching for nectar.txt file... " << file << "\n";
-            nectar_files.push_back( file );
-        }
+        case 0:
+            emit_error( "No *.nectar.txt file found in " + directory );
+            break;
+        case 1:
+            return (*candidates.begin()).first; // first = filename, second = modified
+        default:
+            emit_error( "Multiple *.nectar.txt files found in directory: " + directory );
+            std::for_each( candidates.begin(), candidates.end(),
+                       [&candidates](const file &item)
+                       {
+                           emit_error( "\t" + item.first );
+                       } );
     }
-
-    if( nectar_files.size() == 1 )
-        return nectar_files[0]; // return the unique match
-    else if( !nectar_files.empty() )
-        emit_error( "More than one *.nectar.txt files found in specified directory: " + directory + ".\n"
-                    + "Ambrosia cannot decide which project file you want to use.\n"
-                    + "Specify a file on the commandline: \"Ambrosia path/to/project.nectar.txt\"." );
-    // If there are no or more than one match, return an empty string
-    return string();
+    return string("");
 }
 
 void drink_nectar( const std::string &filename, target_list &targets )

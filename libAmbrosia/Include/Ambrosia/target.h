@@ -50,10 +50,10 @@ public:
     // Setters
     const string_set add_config( const std::string &config );
     const string_set remove_config( const std::string &config );
-    const string_set add_files( const file_type type, const std::string &filenames );
-    const string_set remove_files( const file_type type, const std::string &filenames );
-    const string_set add_directories( const file_type type, const std::string &directories );
-    const string_set remove_directories( const file_type type, const std::string &directories );
+    const string_set add_file( const file_type type, const std::string &filename );
+    const string_set remove_file( const file_type type, const std::string &filename );
+    const string_set add_directory( const file_type type, const std::string &directory );
+    const string_set remove_directory( const file_type type, const std::string &directory );
     void set_output_name( const std::string &name );
 
 private:

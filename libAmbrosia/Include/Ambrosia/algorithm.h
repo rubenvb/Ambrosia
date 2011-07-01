@@ -112,7 +112,7 @@ bool map_value( const std::map<Y,T> &map, const Y &key, T &value )
 /* Ambrosia dependent functions (use one or more of libAmbrosia's functions/classes)
  *******************************/
 // replaces directory seperators ("/" or "\") with libambrosia::directory_seperator
-void replace_directory_seperators( std::string &original );
+const std::string replace_directory_seperators( const std::string &original );
 // splits off everything before last forward slash
 const string_pair split_preceding_directory( const std::string &path );
 // remove Byte Order Mark from stream

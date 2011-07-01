@@ -79,23 +79,24 @@ const string_set target::remove_config( const string &config )
         return { config };
 }
 
-const string_set target::add_files( const file_type type, const string &filename )
+const string_set target::add_file( const file_type type, const string &filename )
 {
-    s_file_store.match_source_files( m_source_directories[type], filename );
+    s_file_store.match_source_files( m_source_directories[type], replace_directory_seperators(filename) );
     return {"unimplemented"};
 }
-const string_set target::remove_files( const file_type type, const string &filename )
+const string_set target::remove_file( const file_type type, const string &filename )
 {
+    s_file_store.match_source_files( m_source_directories[type], replace_directory_seperators(filename) );
     return {"unimplemented"};
 }
-const string_set target::add_directories( const file_type type, const string &directory )
+const string_set target::add_directory( const file_type type, const string &directory )
 {
-    if( m_source_directories[type].insert(directory).second )
+    if( m_source_directories[type].insert(replace_directory_seperators(directory)).second )
         return string_set();
     else
-        return { directory };
+        return { replace_directory_seperators(directory) };
 }
-const string_set target::remove_directories( const file_type type, const string &directory )
+const string_set target::remove_directory( const file_type type, const string &directory )
 {
     if( m_source_directories[type].erase(directory) )
         return string_set();

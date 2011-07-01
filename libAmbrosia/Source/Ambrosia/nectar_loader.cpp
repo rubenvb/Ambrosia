@@ -294,7 +294,7 @@ void nectar_loader::read_dependency_list( dependency_list &dependencies )
     string token;
     while( next_token(token, s_special_characters_newline) )
     {
-        debug(6) << "nectar_loader::read_dependency_list::token: " << token << ".\n";
+        debug(6) << "nectar_loader::read_dependency_list::token: " << output_form(token) << ".\n";
         if( "{" == token || "\n" == token )
         {
             debug(4) << "nectar_loader::read_dependency_list::" << dependencies.size() << " dependencies.\n";
@@ -302,7 +302,7 @@ void nectar_loader::read_dependency_list( dependency_list &dependencies )
         }
         else if( !in_list )
         {
-            if( ":" == token)
+            if( ":" == token )
             {
                 if( next_token(token) )
                 {
@@ -551,7 +551,7 @@ bool nectar_loader::parse_list( function<bool(const string &)> validate,
     bool list_empty = true;
     while( next_token(token, s_special_characters_newline) )
     {
-        debug(4) << "nectar_loader::parse_list::token: " << token << ".\n";
+        debug(4) << "nectar_loader::parse_list::token: " << output_form(token) << ".\n";
         if( "\n" == token )
             break; // list has ended
         else if( "(" == token )
@@ -684,8 +684,8 @@ void nectar_loader::parse_target()
             {
                 debug(5) << "nectar_loader::parse_target::" << token << " file list detected.\n";
                 if( !parse_list(std::bind(&nectar_loader::validate_filename, this, _1),
-                                std::bind(&target::add_files, p_target.get(), type, _1),
-                                std::bind(&target::remove_files, p_target.get(), type, _1)) )
+                                std::bind(&target::add_file, p_target.get(), type, _1),
+                                std::bind(&target::remove_file, p_target.get(), type, _1)) )
                 {
                     debug(6) << "nectar_loader::parse_target::Failed at inserting file(s).\n";
                     return; // failure, assumes parse_list has called emit_error
@@ -695,8 +695,8 @@ void nectar_loader::parse_target()
             {
                 debug(5) << "nectar_loader::parse_target::" << map_value(file_type_map_inverse, type) << " directory list detected.\n";
                 if( !parse_list(std::bind(&nectar_loader::validate_directory, this, _1),
-                                std::bind(&target::add_directories, p_target.get(), type, _1),
-                                std::bind(&target::remove_directories, p_target.get(), type, _1)) )
+                                std::bind(&target::add_directory, p_target.get(), type, _1),
+                                std::bind(&target::remove_directory, p_target.get(), type, _1)) )
                 {
                     debug(6) << "nectar_loader::parse_target::Failed at inserting directory/directories.\n";
                     return; // failure, assumes parse_list has called emit_error

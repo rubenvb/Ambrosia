@@ -26,7 +26,7 @@ public:
     const file_set & get_source_file_set( const std::string &directory );
 
     // Find the unique relative path to the filename, otherwise return all matching duplicates
-    const string_set find_source_file( const string_set &directories, const std::string &filename );
+    const file_set find_source_file( const string_set &directories, const std::string &filename );
     // Match filename with all directories and match wildcards
     const file_set match_source_files( const string_set &directories, const std::string &filename );
     // Read directory contents from disk (don't complain if already present).

@@ -24,6 +24,7 @@ libambrosia_namespace_begin
 
 // set error status with appropriate messages
 void emit_error( const std::string &message );
+void emit_error( const std::string &message, const string_set &items );
 // directly output warning messages immediately
 void emit_warning( const std::string &message );
 // retrieve current status

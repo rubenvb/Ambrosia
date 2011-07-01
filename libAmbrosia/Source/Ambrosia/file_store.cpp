@@ -43,15 +43,14 @@ const file_set & file_store::get_source_file_set( const std::string &directory )
     {
         debug(5) << "file_store::get_source_file_set::Directory not found, scanning now.\n";
         add_source_directory( directory );
-        debug(5) << "file_store::get_source_file_set::Directory scanned.\n";
         return m_source_files[directory];
     }
 }
 
-const string_set file_store::find_source_file( const string_set &directories, const string &filename )
+const file_set file_store::find_source_file( const string_set &directories, const string &filename )
 {
-    debug(4) << "file_store::find_source_file::Looking for " << filename << "in all source directories.\n";
-    string_set result;
+    debug(4) << "file_store::find_source_file::Looking for " << filename << " in :\n" << directories;
+    file_set result;
     const string_pair directory_filename( split_preceding_directory(filename) );
     const string &preceding_directory( directory_filename.first );
     const string &true_filename( directory_filename.second );
@@ -108,9 +107,13 @@ const file_set file_store::match_source_files( const string_set &directories, co
 
 void file_store::add_source_directory( const std::string &directory )
 {
+    debug(0) << s_ambrosia_config.source_directory() << "\n";
     const string full_path( s_ambrosia_config.source_directory()+ directory_seperator + directory );
     if( !directory_exists(directory) )
+    {
+        debug(5) << "file_store::add_source_directory::Non-existing directory: " << full_path << "\n";
         return emit_error( "Directory does not exist: " + full_path );
+    }
 
     debug(5) << "file_store::add_source_directory::Scanning files in source directory: " << full_path << ".\n";
     const auto result = m_source_files.insert( {directory, file_set()} );
@@ -120,6 +123,7 @@ void file_store::add_source_directory( const std::string &directory )
     {
         file_set &new_files = (*result.first).second;
         scan_directory( std::inserter(new_files, new_files.begin()), full_path );
+        debug(5) << "file_store::add_source_directory::Directory scanned.\n";
     }
 }
 void file_store::add_build_directory( const std::string &directory )

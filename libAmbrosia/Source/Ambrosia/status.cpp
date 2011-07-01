@@ -10,6 +10,7 @@
 #include "status.h"
 
 // C++ includes
+#include <algorithm>
 #include <iostream>
     using std::cerr;
 /* <string> */
@@ -32,6 +33,14 @@ void emit_error( const string &message )
     error_messages += "\nError: " + message;
     error = true;
 }
+void emit_error( const string &message, const string_set &items )
+{
+    emit_error( message );
+    std::for_each( items.begin(), items.end(),
+                   [items]( const string &item)
+                   { error_messages += "\n\t" + item; } );
+}
+
 void emit_warning( const string &message )
 {
     cerr << "\nWarning: " + message + "\n";
