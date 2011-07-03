@@ -81,7 +81,7 @@ state* begin::event()
     for( auto it = m_arguments.begin(); it != end; ++it )
     {
         current = *it;
-        size_t index = current.find_first_not_of( "-:" );
+        string::size_type index = current.find_first_not_of( "-:" );
         switch( index )
         {
             case 0:
@@ -121,7 +121,7 @@ state* begin::event()
                         ambrosia::print_version_information();
                         return new end_state( "All good", this );
                     }
-                    const size_t index = current.find( "=",1 );
+                    const string::size_type index = current.find( "=",1 );
                     if( index == string::npos || index == current.size()-1 )
                         return new end_state( "Ambrosia internal options must be set by \'-option=value\' type arguments." );
 
@@ -178,7 +178,7 @@ bool begin::find_project_file( const std::string &path )
         debug(4) << "begin::find_project_file detected file.\n";
         // TODO: generalize the directory seperators list
         // seperate filename from (realtive) path
-        const size_t index = path.find_last_of( "/\\" );
+        const string::size_type index = path.find_last_of( "/\\" );
         s_ambrosia_config.set_project_file( path.substr(index+1, string::npos) );
         s_ambrosia_config.set_source_directory( path.substr(0, index) );
         return true;
@@ -204,7 +204,7 @@ bool begin::find_project_file( const std::string &path )
 bool begin::add_build_target( const std::string &target )
 {
     // TODO: fixme: this function does wrong things
-    const size_t index = target.find( ":" );
+    const string::size_type index = target.find( ":" );
     if( index == string::npos )
     {
         debug(3) << "begin::Target to be built: " << target << ".\n";

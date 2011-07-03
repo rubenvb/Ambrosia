@@ -87,7 +87,7 @@ inline const std::string output_form( const std::string token )
         return token;
 }
 template<class T>
-const T & map_value( const std::vector<T> &map, const size_t key )
+const T & map_value( const std::vector<T> &map, const typename std::vector<T>::size_type key )
 {
     return map[key];
 }

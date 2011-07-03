@@ -200,7 +200,7 @@ const string replace_directory_seperators( const string &original )
 
     string replaced;
     replaced.resize( original.size() );
-    for( size_t i = 0; i < original.size(); ++i )
+    for( string::size_type i = 0; i < original.size(); ++i )
     {
         if( '/' == original[i] )
             replaced[i] = directory_seperator;
@@ -211,7 +211,7 @@ const string replace_directory_seperators( const string &original )
 }
 const string_pair split_preceding_directory( const string &path )
 {
-    const size_t index = path.find_last_of( "/" );
+    const string::size_type index = path.find_last_of( "/" );
     if( index != string::npos )
     {
         // handle path ending in directory seperator
@@ -337,7 +337,7 @@ template<class output_iterator>
 void find_matching_files( const string &filename, const map<string, file_set> &directories,
                           output_iterator it )
 {
-    size_t number_of_matches = 0;
+    string::size_type number_of_matches = 0;
     const auto end = directories.end();
     if( filename.find_first_of("*?") != string::npos )
     {

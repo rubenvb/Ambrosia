@@ -70,8 +70,8 @@ void ambrosia_config::set_ambrosia_cross( const std::string &cross )
         debug(4) << "ambrosia_config::cross has correct format.\n";
 
     // find relevant parts and complain if somethin's wrong
-    const size_t architecture_index = cross.find( "-" ) + 1;
-    const size_t toolchain_index = cross.find( "-", architecture_index ) + 1;
+    const string::size_type architecture_index = cross.find( "-" ) + 1;
+    const string::size_type toolchain_index = cross.find( "-", architecture_index ) + 1;
 
     // split up the string
     const string os_string( cross.substr(0, architecture_index-1) );

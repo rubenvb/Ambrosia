@@ -714,7 +714,7 @@ bool nectar_loader::validate_CONFIG( const string &config )
 }
 bool nectar_loader::validate_filename( const string &filename )
 {
-    const size_t index = filename.find_first_of( "/?*" );
+    const string::size_type index = filename.find_first_of( "/?*" );
     if( index != string::npos && '/' != filename[index])
     {   // there might be wildcards before a directory seperator
         if( filename.find('/',index+1) != string::npos )
