@@ -49,18 +49,18 @@ const file_set & file_store::get_source_file_set( const std::string &directory )
 
 const file_set file_store::find_source_file( const string_set &directories, const string &filename )
 {
-    debug(4) << "file_store::find_source_file::Looking for " << filename << " in :\n" << directories;
+    debug(4) << "file_store::find_source_file::Looking for " << filename
+             << " in subdirectories of: " <<  s_ambrosia_config.source_directory() << "\n"
+             << directories;
     file_set result;
     const string_pair directory_filename( split_preceding_directory(filename) );
     const string &preceding_directory( directory_filename.first );
     const string &true_filename( directory_filename.second );
 
-    const auto end = directories.end();
-    for( auto it = directories.begin(); it != end; ++it )
+    // handle emtpty directories seperately
+    if( directories.empty() )
     {
-        const string directory( *it + preceding_directory );
-
-        const file_set &files_on_disk = get_source_file_set( directory );
+        const file_set &files_on_disk = get_source_file_set( s_ambrosia_config.source_directory() );
         if( error_status() )
             return result;
 
@@ -68,8 +68,30 @@ const file_set file_store::find_source_file( const string_set &directories, cons
         for( auto it = files_on_disk.begin(); it != end; ++it )
         {
             const file &entry = *it;
-            if( entry.first == true_filename )
-                result.insert( {directory + directory_seperator + true_filename, entry.second} );
+            debug(5) << "file_store::find_source_file::Matching " << entry.first << " vs " << true_filename << ".\n";
+            if( wildcard_compare(true_filename, entry.first) )
+                result.insert( { true_filename, entry.second} );
+        }
+    }
+    else
+    {
+        const auto end = directories.end();
+        for( auto it = directories.begin(); it != end; ++it )
+        {
+            const string directory( *it + preceding_directory );
+
+            const file_set &files_on_disk = get_source_file_set( directory );
+            if( error_status() )
+                return result;
+
+            const auto end = files_on_disk.end();
+            for( auto it = files_on_disk.begin(); it != end; ++it )
+            {
+                const file &entry = *it;
+                debug(5) << "file_store::find_source_file::Matching " << entry.first << " vs " << true_filename << ".\n";
+                if( wildcard_compare(true_filename, entry.first) )
+                    result.insert( {directory + directory_seperator + true_filename, entry.second} );
+            }
         }
     }
     return result;
