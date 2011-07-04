@@ -49,6 +49,7 @@ const file_set & file_store::get_source_file_set( const std::string &directory )
 
 const file_set file_store::find_source_file( const string_set &directories, const string &filename )
 {
+    string_set directories_to_search = directories;
     debug(4) << "file_store::find_source_file::Looking for " << filename
              << " in subdirectories of: " <<  s_ambrosia_config.source_directory() << "\n"
              << directories;
@@ -59,8 +60,15 @@ const file_set file_store::find_source_file( const string_set &directories, cons
 
     // handle emtpty directories seperately
     if( directories.empty() )
+        directories_to_search.insert("");
+
+    const auto end = directories_to_search.end();
+    for( auto it = directories_to_search.begin(); it != end; ++it )
     {
-        const file_set &files_on_disk = get_source_file_set( s_ambrosia_config.source_directory() );
+        const string directory = *it + preceding_directory;
+
+        debug(5) << "file_store::find_source_file::Loading directory contents for: " << directory << ".\n";
+        const file_set &files_on_disk = get_source_file_set( directory );
         if( error_status() )
             return result;
 
@@ -70,27 +78,9 @@ const file_set file_store::find_source_file( const string_set &directories, cons
             const file &entry = *it;
             debug(5) << "file_store::find_source_file::Matching " << entry.first << " vs " << true_filename << ".\n";
             if( wildcard_compare(true_filename, entry.first) )
-                result.insert( { true_filename, entry.second} );
-        }
-    }
-    else
-    {
-        const auto end = directories.end();
-        for( auto it = directories.begin(); it != end; ++it )
-        {
-            const string directory( *it + preceding_directory );
-
-            const file_set &files_on_disk = get_source_file_set( directory );
-            if( error_status() )
-                return result;
-
-            const auto end = files_on_disk.end();
-            for( auto it = files_on_disk.begin(); it != end; ++it )
             {
-                const file &entry = *it;
-                debug(5) << "file_store::find_source_file::Matching " << entry.first << " vs " << true_filename << ".\n";
-                if( wildcard_compare(true_filename, entry.first) )
-                    result.insert( {directory + directory_seperator + true_filename, entry.second} );
+                debug(5) << "file_store::find_source_file::Match found: " << entry.first << "\n";
+                result.insert( {directory + "/" + entry.first, entry.second} );
             }
         }
     }
@@ -121,7 +111,7 @@ const file_set file_store::match_source_files( const string_set &directories, co
         {
             const file &entry = *files_it; // filename and last moddified time
             if( wildcard_compare(true_filename, entry.first) )
-                result.insert( { directory + directory_seperator + entry.first, entry.second } );
+                result.insert( { directory + "/" + entry.first, entry.second } );
         }
     }
     return result;
@@ -129,9 +119,11 @@ const file_set file_store::match_source_files( const string_set &directories, co
 
 void file_store::add_source_directory( const std::string &directory )
 {
-    debug(0) << s_ambrosia_config.source_directory() << "\n";
-    const string full_path( s_ambrosia_config.source_directory()+ directory_seperator + directory );
-    if( !directory_exists(directory) )
+    string full_path = s_ambrosia_config.source_directory();
+    if( !directory.empty() )
+        full_path += "/" + directory;
+
+    if( !directory_exists(full_path) )
     {
         debug(5) << "file_store::add_source_directory::Non-existing directory: " << full_path << "\n";
         return emit_error( "Directory does not exist: " + full_path );
@@ -150,7 +142,7 @@ void file_store::add_source_directory( const std::string &directory )
 }
 void file_store::add_build_directory( const std::string &directory )
 {
-    const string full_path( s_ambrosia_config.build_directory() + directory_seperator + directory );
+    const string full_path( s_ambrosia_config.build_directory() + "/" + directory );
     if( !directory_exists(directory) )
         return emit_error( "Directory does not exist: " + full_path );
 

@@ -190,7 +190,7 @@ bool begin::find_project_file( const std::string &path )
         // if the directory contains a *.nectar.txt file, set source directory as well
         if( !project_file.empty() )
         {
-            debug(4) << "begin::Project file found: " <<  path << libambrosia::directory_seperator << project_file << ".\n";
+            debug(4) << "begin::Project file found: " << path << "/" << project_file << ".\n";
             s_ambrosia_config.set_source_directory( path );
             s_ambrosia_config.set_project_file( project_file );
             return true;

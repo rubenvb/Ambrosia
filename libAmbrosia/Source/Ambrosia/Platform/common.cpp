@@ -9,6 +9,9 @@
 // Function include
 #include "platform.h"
 
+// libAmbrosia includes
+#include "debug.h"
+
 // Common platform includes
 #if __linux__
     #include <sys/io.h>   // For access()
@@ -16,14 +19,24 @@
     #include <io.h>
     #include <stdio.h>
 #endif
-#include <sys/types.h>  // For stat()
-#include <sys/stat.h>   // For stat()
+#include <sys/types.h>  // For stat
+#include <sys/stat.h>   // For (_w)stat()
 
 // C++ includes
 #include <memory>
     using std::unique_ptr;
 #include <stdexcept>
     using std::runtime_error;
+#include <string>
+    using std::string;
+    using std::wstring;
+
+/*
+ * Workarounds
+ **************/
+#if _WIN32
+# define getcwd _getcwd
+#endif // _WIN32
 
 libambrosia_namespace_begin
 
@@ -52,34 +65,40 @@ const std::string current_working_directory()
     }
     throw std::runtime_error("Cannot determine the current path; the path is apparently unreasonably long");
 }
-bool directory_exists( const std::string &directory )
+bool directory_exists( const string &directory )
 {
-    if( !directory.empty() )
+#if _WIN32
+    wstring directoryW( convert_to_utf16(directory) );
+    struct _stat64 status;
+    if( _wstat64(directoryW.c_str(), &status) == 0 )
+#else // _WIN32
+    struct stat status;
+    if( stat(directory.c_str(), &status) == 0 )
+#endif //_WIN32
     {
-        if( access(directory.c_str(), 0) == 0 )
-        {
-            struct stat status;
-            stat( directory.c_str(), &status );
-            if( status.st_mode & S_IFDIR )
-                return true;
-        }
+        debug(6) << "platform::directory_exists::(_w)stat(64) succeeded for " << directory << ".\n";
+        if ( status.st_mode & S_IFDIR )
+            return true;
     }
-    // if any condition fails
+    debug(6) << "platform::directory_exists::" << directory << " is not a directory.\n";
     return false;
 }
-bool file_exists( const std::string &filename )
+bool file_exists( const string &filename )
 {
-    if( !filename.empty() )
+#if _WIN32
+    wstring filenameW( convert_to_utf16(filename) );
+    struct _stat64 status;
+    if( _wstat64(filenameW.c_str(), &status) == 0 )
+#else // _WIN32
+    struct stat status;
+    if( stat(filename.c_str(), &status) == 0 )
+#endif //_WIN32
     {
-        if( access(filename.c_str(), 0) == 0 )
-        {
-           struct stat status;
-           stat( filename.c_str(), &status );
-           if( !(status.st_mode & S_IFDIR) )
-               return true;
-        }
+        debug(6) << "platform::file_exists::(_w)stat(64) succeeded.\n";
+        if ( status.st_mode & _S_IFREG )
+            return true;
     }
-    // if any condition fails
+    debug(6) << "platform::file_exists::" << filename << " is not a file.\n";
     return false;
 }
 

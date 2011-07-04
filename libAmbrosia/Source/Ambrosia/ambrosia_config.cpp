@@ -49,7 +49,7 @@ void ambrosia_config::set_source_directory( const string &source_directory )
 
     m_source_directory = replace_directory_seperators( source_directory );
     debug(5) << "ambrosia_config::set_source_directory::Adding " << m_source_directory << " to s_file_store.\n";
-    s_file_store.add_source_directory( m_source_directory );
+    s_file_store.add_source_directory( "" ); // directory equals m_source_directory + argument, which is empty here
 }
 void ambrosia_config::set_project_file( const string &project_file )
 {
@@ -124,7 +124,7 @@ const string & ambrosia_config::project_file() const
 }
 const std::string ambrosia_config::path_to_project_file() const
 {
-    return m_source_directory + directory_seperator + m_project_file;
+    return m_source_directory + "/" + m_project_file;
 }
 const string & ambrosia_config::build_directory() const
 {

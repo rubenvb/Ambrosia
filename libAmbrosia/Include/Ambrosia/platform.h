@@ -27,6 +27,14 @@ extern const char directory_seperator;
 extern const std::string executable_suffix;
 extern const os build_os;
 extern const architecture build_architecture;
+
+/*
+ * Windows support functions
+ ****************************/
+#if _WIN32
+const std::string convert_to_utf8( const std::wstring &utf16_string );
+const std::wstring convert_to_utf16( const std::string &utf8_string );
+#endif // _WIN32
 /*
  * Possible commonly implemented functions
  ******************************************/

@@ -148,9 +148,9 @@ void nectar_loader::extract_nectar( target_list &targets )
             if( next_token(token) )
             {
                 const string sub_directory = s_ambrosia_config.source_directory()
-                                             + directory_seperator + token;
+                                             + "/" + token;
                 string sub_file( token + ".nectar.txt" );
-                string sub_project_file( sub_directory + directory_seperator + sub_file );
+                string sub_project_file( sub_directory + "/" + sub_file );
                 if( !file_exists(sub_project_file) )
                 {
                     debug(4) << "nectar_loader::extract_nectar::sub target name and subproject file name do not match.\n";
@@ -159,7 +159,7 @@ void nectar_loader::extract_nectar( target_list &targets )
                         return; // no *.nectar.txt file found
 
                     debug(4) << "nectar_loader::extract_nectar::found sub-.nectar.txt file: " << sub_file << ".\n";
-                    sub_project_file = sub_directory + directory_seperator + sub_file;
+                    sub_project_file = sub_directory + "/" + sub_file;
                 }
                 debug(4) << "nectar_loader::extract_nectar::Opening subproject file: " << sub_project_file << ".\n";
                 ifstream stream( sub_project_file );

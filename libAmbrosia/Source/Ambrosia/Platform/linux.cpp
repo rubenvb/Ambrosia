@@ -45,8 +45,8 @@ const os build_os = os::Linux;
 #endif // i386 || __x86_64__
 
 /*
- * Functions
- ************/
+ * Mostly platform dependently implemented functions
+ ****************************************************/
 template<class output_iterator>
 void scan_directory( output_iterator it, const string &directory_name )
 {
