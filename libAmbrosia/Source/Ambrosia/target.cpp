@@ -11,7 +11,7 @@
 
 // Ambrosia includes
 #include "algorithm.h"
-#include "ambrosia_config.h"
+#include "Configuration/ambrosia_config.h"
 #include "debug.h"
 #include "enum_maps.h"
 #include "file_store.h"
@@ -81,20 +81,21 @@ const string_set target::remove_config( const string &config )
 
 const string_set target::add_file( const file_type type, const string &filename )
 {
-    s_file_store.match_source_files( m_source_directories[type], replace_directory_seperators(filename) );
+    s_file_store.match_source_files( m_source_directories[type], filename );
     return {"unimplemented"};
 }
 const string_set target::remove_file( const file_type type, const string &filename )
 {
-    s_file_store.match_source_files( m_source_directories[type], replace_directory_seperators(filename) );
+    s_file_store.match_source_files( m_source_directories[type], filename );
     return {"unimplemented"};
 }
 const string_set target::add_directory( const file_type type, const string &directory )
 {
-    if( m_source_directories[type].insert(replace_directory_seperators(directory)).second )
+    if( !directory_exists(m_build_config.source_directory()) )
+    if( m_source_directories[type].insert(directory).second )
         return string_set();
     else
-        return { replace_directory_seperators(directory) };
+        return { directory };
 }
 const string_set target::remove_directory( const file_type type, const string &directory )
 {

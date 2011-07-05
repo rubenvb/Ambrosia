@@ -16,6 +16,7 @@
 
 // libAmbrosia includes
 #include "enums.h"
+#include "typedefs.h"
 
 // C++ includes
 #include <string>

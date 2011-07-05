@@ -15,7 +15,8 @@
 // libAmbrosia includes
 #include "enums.h"
 
-// C++ include
+// C++ includes
+#include <memory>
 #include <string>
 
 libambrosia_namespace_begin

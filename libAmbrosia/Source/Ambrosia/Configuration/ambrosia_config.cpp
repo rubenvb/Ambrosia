@@ -1,5 +1,5 @@
 /**
-  * Ambrosia/ambrosia_config.h
+  * Ambrosia/Configuration/ambrosia_config.h
   * Class implementation.
   *
   * Author: Ruben Van Boxem
@@ -7,7 +7,7 @@
   **/
 
 // Class include
-#include "ambrosia_config.h"
+#include "Configuration/ambrosia_config.h"
 
 // libAmbrosia includes
 #include "algorithm.h"
@@ -47,7 +47,7 @@ void ambrosia_config::set_source_directory( const string &source_directory )
     if( source_directory == "." )
         m_build_directory = "build";
 
-    m_source_directory = replace_directory_seperators( source_directory );
+    m_source_directory = source_directory;
     debug(5) << "ambrosia_config::set_source_directory::Adding " << m_source_directory << " to s_file_store.\n";
     s_file_store.add_source_directory( "" ); // directory equals m_source_directory + argument, which is empty here
 }

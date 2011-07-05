@@ -11,7 +11,7 @@
 
 // libAmbrosia includes
 #include "algorithm.h"
-#include "ambrosia_config.h"
+#include "Configuration/ambrosia_config.h"
 #include "debug.h"
 #include "file_store.h"
 #include "platform.h"

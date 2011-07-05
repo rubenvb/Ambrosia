@@ -17,7 +17,7 @@
 #include "global.h"
 
 // libAmbrosia includes
-#include "build_config.h"
+#include "Configuration/build_config.h"
 #include "nectar.h"
 
 // C++ includes

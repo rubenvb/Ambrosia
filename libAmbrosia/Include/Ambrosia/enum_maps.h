@@ -16,6 +16,7 @@
 #include "enums.h"
 
 // C++ includes
+#include <functional>
 #include <map>
 #include <string>
 

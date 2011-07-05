@@ -19,11 +19,11 @@
 #include "global.h"
 
 // libAmbrosia includes
-/* "build_config.h" */
+#include "Configuration/build_config.h"
 #include "enums.h"
 #include "nectar.h"
 #include "node.h"
-/* "typedefs.h" */
+#include "typedefs.h"
 
 // C++ includes
 /* <string> */

@@ -12,6 +12,9 @@
 // Global include
 #include "global.h"
 
+// libAmbrosia includes
+#include "typedefs.h"
+
 // C++ includes
 #include <iterator>
 #include <memory>

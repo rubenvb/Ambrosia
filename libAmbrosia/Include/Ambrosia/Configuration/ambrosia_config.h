@@ -1,5 +1,5 @@
 /**
-  * Ambrosia/ambrosia_config.h
+  * Ambrosia/Configuration/ambrosia_config.h
   * Ambrosia's runtime configuration, used as a basis for command generation and project configuration.
   *  This includes:
   *   - build and target platform and toolchain detection.
@@ -10,13 +10,14 @@
   *
   **/
 
-#ifndef AMBROSIA_CONFIG_H
-#define AMBROSIA_CONFIG_H
+#ifndef CONFIGURATION_AMBROSIA_CONFIG_H
+#define CONFIGURATION_AMBROSIA_CONFIG_H
 
 // Global include
 #include "global.h"
 
 // libAmbrosia includes
+#include "Configuration/config.h"
 #include "enums.h"
 #include "typedefs.h"
 
@@ -25,7 +26,7 @@
 
 libambrosia_namespace_begin
 
-class ambrosia_config
+class ambrosia_config : config
 {
 public:
     ambrosia_config();
@@ -64,9 +65,8 @@ private:
     architecture m_target_architecture;
     toolchain m_target_toolchain;
     map_string_set_string m_target_config;
-
 };
 
 libambrosia_namespace_end
 
-#endif // AMBROSIA_CONFIG_H
+#endif // CONFIGURATION_AMBROSIA_CONFIG_H

@@ -31,8 +31,6 @@ extern file_store s_file_store;
 
 libambrosia_namespace_end
 
-#include "build_config.h"
-
 // namespace shortcut
 namespace libambrosia = ambrosia::lib;
 

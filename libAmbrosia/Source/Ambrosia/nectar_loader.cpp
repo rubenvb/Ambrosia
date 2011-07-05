@@ -636,14 +636,14 @@ void nectar_loader::parse_target()
 {
     const target_type type = p_target->type();
     const std::string target_name( p_target->name() );
-    debug(4) << "nectar_loader::parse_binary_or_global::Processing named target section: " << target_name << ".\n";
+    debug(4) << "nectar_loader::parse_target::Processing named target section: " << target_name << ".\n";
     size_t curly_brace_count = 1; // parsing starts inside curly braces block
     string token;
     bool already_modified_NAME = false;
 
     while( curly_brace_count > 0 && next_token(token) )
     {
-        debug(4) << "nectar_loader::parse_binary_or_global::token: " << token << ".\n";
+        debug(4) << "nectar_loader::parse_target::token: " << token << ".\n";
         if( "}" == token )
             --curly_brace_count;
         else if( "{" == token )
@@ -655,7 +655,7 @@ void nectar_loader::parse_target()
         }
         else if( "CONFIG" == token)
         {
-            debug(5) << "nectar_loader::parse_global::CONFIG detected.\n";
+            debug(5) << "nectar_loader::parse_target::CONFIG detected.\n";
             if( !parse_list(std::bind(&nectar_loader::validate_CONFIG, this, _1),
                             std::bind(&target::add_config, p_target.get(), _1),
                             std::bind(&target::remove_config, p_target.get(), _1)) )

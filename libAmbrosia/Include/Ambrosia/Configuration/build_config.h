@@ -12,13 +12,14 @@
   *
   **/
 
-#ifndef BUILDCONFIG_H
-#define BUILDCONFIG_H
+#ifndef CONFIGURATION_BUILD_CONFIG_H
+#define CONFIGURATION_BUILD_CONFIG_H
 
 // Global include
 #include "global.h"
 
 // libAmbrosia includes
+#include "Configuration/config.h"
 #include "enums.h"
 #include "typedefs.h"
 
@@ -29,14 +30,11 @@
 
 libambrosia_namespace_begin
 
-// Forward declarations
-class ambrosia_config;
-
-class build_config
+class build_config : config
 {
 public:
     build_config();
-    build_config( const ambrosia_config &config ); // conversion constructor
+    build_config( ambrosia_config & );
 
     // Setters
     bool add_config( const std::string &config );
@@ -55,4 +53,4 @@ private:
 
 libambrosia_namespace_end
 
-#endif // BUILDCONFIG_H
+#endif // CONFIGURATION_BUILDCONFIG_H

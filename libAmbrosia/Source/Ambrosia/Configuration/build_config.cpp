@@ -1,5 +1,5 @@
 /**
-  * Ambrosia/build_config.cpp
+  * Ambrosia/Configuration/build_config.cpp
   * Class implementation.
   *
   * Author: Ruben Van Boxem
@@ -7,7 +7,7 @@
   **/
 
 // Class include
-#include "build_config.h"
+#include "Configuration/build_config.h"
 
 // libAmbrosia includes
 #include "algorithm.h"

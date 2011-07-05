@@ -178,7 +178,7 @@ void recursive_scan_directory( output_iterator it, const string &relative_direct
     if( relative_directory.empty() )
         directory_wide = directory_name_wide + L"\\*";
     else
-        directory_wide = relative_directory_wide + L"\\" + directory_name_wide + L"\\*";
+        directory_wide = relative_directory_wide + L"/" + directory_name_wide + L"\\*";
 
     _WIN32_FIND_DATAW find_data;
 
@@ -198,7 +198,7 @@ void recursive_scan_directory( output_iterator it, const string &relative_direct
                 if( directory_name.empty() )
                     subdirectory = convert_to_utf8( find_data.cFileName );
                 else
-                    subdirectory = directory_name + "\\" + convert_to_utf8( find_data.cFileName );
+                    subdirectory = directory_name + "/" + convert_to_utf8( find_data.cFileName );
                 recursive_scan_directory( it, relative_directory, subdirectory );
             }
         }
