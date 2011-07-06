@@ -16,12 +16,12 @@
 #define CONFIGURATION_BUILD_CONFIG_H
 
 // Global include
-#include "global.h"
+#include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "Configuration/config.h"
-#include "enums.h"
-#include "typedefs.h"
+#include "Ambrosia/Configuration/config.h"
+#include "Ambrosia/enums.h"
+#include "Ambrosia/typedefs.h"
 
 // C++ includes
 /* <map> */
@@ -30,24 +30,19 @@
 
 libambrosia_namespace_begin
 
-class build_config : config
+class build_config : public config
 {
 public:
     build_config();
-    build_config( ambrosia_config & );
+    build_config( const ambrosia_config & );
 
     // Setters
     bool add_config( const std::string &config );
     bool remove_config( const std::string &config );
 
-    // Getters
-    const string_set & config() const;
-    string_set & config();
-    bool contains( const std::string &config ) const;
     const string_map & user_options() const;
 
 private:
-    string_set m_config; // CONFIG
     string_map m_user_variables; // user string --> value
 };
 

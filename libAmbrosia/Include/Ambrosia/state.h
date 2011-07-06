@@ -10,7 +10,7 @@
 #define STATE_H
 
 // Global include
-#include "global.h"
+#include "Ambrosia/global.h"
 
 libambrosia_namespace_begin
 

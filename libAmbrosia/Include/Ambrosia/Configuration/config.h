@@ -10,11 +10,11 @@
 #define CONFIGURATION_CONFIG_H
 
 // Global include
-#include <global.h>
+#include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "enums.h"
-#include "typedefs.h"
+#include "Ambrosia/enums.h"
+#include "Ambrosia/typedefs.h"
 
 libambrosia_namespace_begin
 
@@ -32,6 +32,17 @@ public:
     void set_project_file( const std::string &project_file );
     // add user option settings
     void set_user_option( const std::string &option, const std::string &value );
+
+    /*
+     * Getters
+     **********/
+    const std::string & source_directory() const;
+    const std::string & project_file() const;
+    const std::string path_to_project_file() const;
+    const std::string & build_directory() const;
+    const os & target_os() const;
+    const architecture & target_architecture() const;
+    const toolchain & target_toolchain() const;
 
 protected:
     string_set m_config; // mostly platform dependent stuff

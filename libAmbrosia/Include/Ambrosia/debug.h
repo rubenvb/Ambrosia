@@ -10,8 +10,8 @@
 #define DEBUG_H
 
 // Ambrosia includes
-#include "global.h"
-#include "typedefs.h"
+#include "Ambrosia/global.h"
+#include "Ambrosia/typedefs.h"
 
 // C++ includes
 #include <iostream>

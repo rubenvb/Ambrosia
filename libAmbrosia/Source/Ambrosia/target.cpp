@@ -7,16 +7,16 @@
   **/
 
 // Class include
-#include "target.h"
+#include "Ambrosia/target.h"
 
 // Ambrosia includes
-#include "algorithm.h"
-#include "Configuration/ambrosia_config.h"
-#include "debug.h"
-#include "enum_maps.h"
-#include "file_store.h"
-#include "platform.h"
-#include "status.h"
+#include "Ambrosia/algorithm.h"
+#include "Ambrosia/Configuration/ambrosia_config.h"
+#include "Ambrosia/debug.h"
+#include "Ambrosia/enum_maps.h"
+#include "Ambrosia/file_store.h"
+#include "Ambrosia/platform.h"
+#include "Ambrosia/status.h"
 
 // C++ includes
 #include <stdexcept>

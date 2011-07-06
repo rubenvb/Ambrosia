@@ -10,10 +10,10 @@
 #define PLATFORM_H
 
 // Global include
-#include "global.h"
+#include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "enums.h"
+#include "Ambrosia/enums.h"
 
 // C++ includes
 #include <memory>

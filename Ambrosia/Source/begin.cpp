@@ -13,7 +13,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
-#include "Ambrosia/ambrosia_config.h"
+#include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
     using ambrosia::debug;
 #include "Ambrosia/enums.h"

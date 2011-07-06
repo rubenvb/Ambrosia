@@ -7,7 +7,7 @@
   **/
 
 // map declarations
-#include "enum_maps.h"
+#include "Ambrosia/enum_maps.h"
 
 // C++ includes
 /* <functional> */

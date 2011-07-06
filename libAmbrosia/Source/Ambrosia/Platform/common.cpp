@@ -7,10 +7,10 @@
   **/
 
 // Function include
-#include "platform.h"
+#include "Ambrosia/platform.h"
 
 // libAmbrosia includes
-#include "debug.h"
+#include "Ambrosia/debug.h"
 
 // Common platform includes
 #if __linux__

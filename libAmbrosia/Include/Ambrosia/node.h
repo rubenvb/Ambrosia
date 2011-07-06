@@ -10,8 +10,7 @@
 #define NODE_H
 
 // Global include
-#include "global.h"
-/* "typedefs.h" */
+#include "Ambrosia/global.h"
 
 // C++ includes
 #include <memory>

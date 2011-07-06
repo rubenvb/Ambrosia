@@ -7,10 +7,10 @@
   **/
 
 // Class include
-#include "state.h"
+#include "Ambrosia/state.h"
 
 // libAmbrosia includes
-#include "debug.h"
+#include "Ambrosia/debug.h"
 
 libambrosia_namespace_begin
 

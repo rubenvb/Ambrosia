@@ -14,7 +14,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/state.h"
-#include "Ambrosia/build_config.h"
+#include "Ambrosia/Configuration/build_config.h"
 
 ambrosia_namespace_begin
 

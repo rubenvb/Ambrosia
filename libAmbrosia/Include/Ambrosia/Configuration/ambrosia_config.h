@@ -14,19 +14,19 @@
 #define CONFIGURATION_AMBROSIA_CONFIG_H
 
 // Global include
-#include "global.h"
+#include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "Configuration/config.h"
-#include "enums.h"
-#include "typedefs.h"
+#include "Ambrosia/Configuration/config.h"
+#include "Ambrosia/enums.h"
+#include "Ambrosia/typedefs.h"
 
 // C++ includes
 /* <string> */
 
 libambrosia_namespace_begin
 
-class ambrosia_config : config
+class ambrosia_config : public config
 {
 public:
     ambrosia_config();
@@ -45,13 +45,7 @@ public:
     void set_user_option( const std::string &option, const std::string &value );
 
     // getters;
-    const std::string & source_directory() const;
-    const std::string & project_file() const;
-    const std::string path_to_project_file() const;
-    const std::string & build_directory() const;
-    const os & target_os() const;
-    const architecture & target_architecture() const;
-    const toolchain & target_toolchain() const;
+
     const map_string_set_string & target_config() const;
 
     friend class build_config;

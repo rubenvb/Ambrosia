@@ -7,15 +7,15 @@
   **/
 
 // Class include
-#include "Configuration/ambrosia_config.h"
+#include "Ambrosia/Configuration/ambrosia_config.h"
 
 // libAmbrosia includes
-#include "algorithm.h"
-#include "debug.h"
-#include "enum_maps.h"
-#include "file_store.h"
-#include "platform.h"
-#include "status.h"
+#include "Ambrosia/algorithm.h"
+#include "Ambrosia/debug.h"
+#include "Ambrosia/enum_maps.h"
+#include "Ambrosia/file_store.h"
+#include "Ambrosia/platform.h"
+#include "Ambrosia/status.h"
 
 // C++ includes
 #include <stdexcept>
@@ -111,37 +111,6 @@ void ambrosia_config::add_target_config( const std::string &target, const string
         emit_warning( "" );
 }
 
-/*
- * Getters
- **********/
-const string & ambrosia_config::source_directory() const
-{
-    return m_source_directory;
-}
-const string & ambrosia_config::project_file() const
-{
-    return m_project_file;
-}
-const std::string ambrosia_config::path_to_project_file() const
-{
-    return m_source_directory + "/" + m_project_file;
-}
-const string & ambrosia_config::build_directory() const
-{
-    return m_build_directory;
-}
-const os & ambrosia_config::target_os() const
-{
-    return m_target_os;
-}
-const architecture & ambrosia_config::target_architecture() const
-{
-    return m_target_architecture;
-}
-const toolchain & ambrosia_config::target_toolchain() const
-{
-    return m_target_toolchain;
-}
 const map_string_set_string & ambrosia_config::target_config() const
 {
     return m_target_config;

@@ -10,10 +10,10 @@
 #define NECTAR_H
 
 // Global include
-#include "global.h"
+#include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "typedefs.h"
+#include "Ambrosia/typedefs.h"
 
 // C++ includes
 #include <iterator>

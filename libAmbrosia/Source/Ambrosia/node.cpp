@@ -7,11 +7,11 @@
   **/
 
 // Class/function include
-#include "node.h"
+#include "Ambrosia/node.h"
 
 // libAmbrosia includes
-#include "algorithm.h"
-#include "status.h"
+#include "Ambrosia/algorithm.h"
+#include "Ambrosia/status.h"
 
 // C++ includes
 /* <memory> */

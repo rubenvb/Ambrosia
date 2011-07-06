@@ -7,14 +7,14 @@
   **/
 
 // Class include
-#include "file_store.h"
+#include "Ambrosia/file_store.h"
 
 // libAmbrosia includes
-#include "algorithm.h"
-#include "ambrosia_config.h"
-#include "debug.h"
-#include "platform.h"
-#include "status.h"
+#include "Ambrosia/algorithm.h"
+#include "Ambrosia/Configuration/ambrosia_config.h"
+#include "Ambrosia/debug.h"
+#include "Ambrosia/platform.h"
+#include "Ambrosia/status.h"
 
 // C++ includes
 #include <stdexcept>

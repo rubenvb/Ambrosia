@@ -6,7 +6,7 @@ DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
 
 *g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic-errors -Wextra -Wall -Wconversion \
                         -Weffc++ -Wmissing-include-dirs -Wstrict-aliasing
-
+debug:DEFINES += AMBROSIA_DEBUG
 CONFIG( debug, debug|release ) {
     LIBSUFFIX = d
     DEFINES += AMBROSIA_DEBUG
@@ -17,7 +17,7 @@ TARGET = Ambrosia$${LIBSUFFIX}
 
 #DEFINES += AMBROSIA_DLL AMRBOSIA_BUILD_DLL
 
-INCLUDEPATH += . Include Include/Ambrosia
+INCLUDEPATH += . Include
 DEPENDPATH += . Include Source
 
 HEADERS += \

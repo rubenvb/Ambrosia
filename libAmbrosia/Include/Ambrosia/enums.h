@@ -10,7 +10,7 @@
 #define ENUMS_H
 
 // Global include
-#include "global.h"
+#include "Ambrosia/global.h"
 
 ambrosia_namespace_begin
 

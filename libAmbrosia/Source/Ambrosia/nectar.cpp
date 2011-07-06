@@ -7,18 +7,18 @@
   **/
 
 // Function include
-#include "nectar.h"
+#include "Ambrosia/nectar.h"
 
 // libAmbrosia includes
-#include "algorithm.h"
-#include "Configuration/ambrosia_config.h"
-#include "debug.h"
-#include "file_store.h"
-#include "platform.h"
-#include "status.h"
-#include "target.h"
-#include "typedefs.h"
-#include "nectar_loader.h"
+#include "Ambrosia/algorithm.h"
+#include "Ambrosia/Configuration/ambrosia_config.h"
+#include "Ambrosia/debug.h"
+#include "Ambrosia/file_store.h"
+#include "Ambrosia/platform.h"
+#include "Ambrosia/status.h"
+#include "Ambrosia/target.h"
+#include "Ambrosia/typedefs.h"
+#include "Ambrosia/nectar_loader.h"
 
 // C++ includes
 #include <fstream>

@@ -10,10 +10,10 @@
 #define FILE_STORE_H
 
 // Global include
-#include "global.h"
+#include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "typedefs.h"
+#include "Ambrosia/typedefs.h"
 
 libambrosia_namespace_begin
 

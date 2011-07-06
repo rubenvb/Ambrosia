@@ -10,7 +10,7 @@
 #include "builder.h"
 
 // libAmbrosia includes
-#include "Ambrosia/build_config.h"
+#include "Ambrosia/Configuration/build_config.h"
 #include "Ambrosia/debug.h"
 
 ambrosia_namespace_begin

@@ -10,10 +10,10 @@
 #define TYPEDEFS_H
 
 // Global includes
-#include "global.h"
+#include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "enums.h"
+#include "Ambrosia/enums.h"
 
 // C++ includes
 #include <map>

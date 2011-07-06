@@ -7,11 +7,11 @@
   **/
 
 // Function include
-#include "platform.h"
+#include "Ambrosia/platform.h"
 
 // libAmbrosia includes
-#include "debug.h"
-#include "typedefs.h"
+#include "Ambrosia/debug.h"
+#include "Ambrosia/typedefs.h"
 
 // C++ includes
 #include <algorithm>

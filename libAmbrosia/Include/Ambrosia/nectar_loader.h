@@ -14,11 +14,11 @@
 #define NECTAR_LOADER_H
 
 // Global include
-#include "global.h"
+#include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "Configuration/build_config.h"
-#include "nectar.h"
+#include "Ambrosia/Configuration/build_config.h"
+#include "Ambrosia/nectar.h"
 
 // C++ includes
 #include <iosfwd>

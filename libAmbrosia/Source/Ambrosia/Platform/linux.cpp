@@ -7,10 +7,10 @@
   **/
 
 // Function include
-#include "platform.h"
+#include "Ambrosia/platform.h"
 
 // libAmbrosia includes
-#include "typedefs.h"
+#include "Ambrosia/typedefs.h"
 
 // Platform includes
 #include "dirent.h"

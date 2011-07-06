@@ -7,15 +7,15 @@
   **/
 
 // Class include
-#include "Configuration/build_config.h"
+#include "Ambrosia/Configuration/build_config.h"
 
 // libAmbrosia includes
-#include "algorithm.h"
-#include "ambrosia_config.h"
-#include "enum_maps.h"
-#include "debug.h"
-#include "status.h"
-#include "platform.h"
+#include "Ambrosia/algorithm.h"
+#include "Ambrosia/Configuration/ambrosia_config.h"
+#include "Ambrosia/enum_maps.h"
+#include "Ambrosia/debug.h"
+#include "Ambrosia/status.h"
+#include "Ambrosia/platform.h"
 /* "typedefs.h" */
 
 // C++ includes
@@ -34,13 +34,11 @@
 libambrosia_namespace_begin
 
 build_config::build_config()
-:   m_config(),
+:   config(),
     m_user_variables()
 {   }
 
 build_config::build_config( const ambrosia_config &config )
-:   m_config( config.m_config ),
-    m_user_variables()
 {   }
 
 /*
@@ -58,13 +56,6 @@ bool build_config::remove_config( const string &config )
 /*
  * Getters
  **********/
-const string_set & build_config::config() const
-{
-    return m_config;
-}
-string_set & build_config::config()
-{
-    return m_config;
-}
+
 
 libambrosia_namespace_end

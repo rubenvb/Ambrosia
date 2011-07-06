@@ -7,7 +7,7 @@
   **/
 
 // Class include
-#include "debug.h"
+#include "Ambrosia/debug.h"
 
 // C++ includes
 #include <algorithm>

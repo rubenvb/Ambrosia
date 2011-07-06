@@ -10,12 +10,12 @@
 #define ALGORITHM_H
 
 // Global include
-#include "global.h"
+#include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "platform.h"
-#include "target.h"
-#include "typedefs.h"
+#include "Ambrosia/platform.h"
+#include "Ambrosia/target.h"
+#include "Ambrosia/typedefs.h"
 
 // C++ includes
 #include <algorithm>

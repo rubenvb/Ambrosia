@@ -7,18 +7,18 @@
   **/
 
 // Class include
-#include "nectar_loader.h"
+#include "Ambrosia/nectar_loader.h"
 
 // libAmbrosia includes
-#include "algorithm.h"
-#include "ambrosia_config.h"
-#include "debug.h"
-#include "global.h"
-#include "enums.h"
-#include "enum_maps.h"
-#include "nectar.h"
-#include "status.h"
-#include "target.h"
+#include "Ambrosia/algorithm.h"
+#include "Ambrosia/Configuration/ambrosia_config.h"
+#include "Ambrosia/debug.h"
+#include "Ambrosia/global.h"
+#include "Ambrosia/enums.h"
+#include "Ambrosia/enum_maps.h"
+#include "Ambrosia/nectar.h"
+#include "Ambrosia/status.h"
+#include "Ambrosia/target.h"
 
 // C++ includes
 #include <deque>

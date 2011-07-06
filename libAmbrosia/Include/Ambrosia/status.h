@@ -12,11 +12,11 @@
 #define ERROR_H
 
 // Global include
-#include "global.h"
+#include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "enums.h"
-#include "typedefs.h"
+#include "Ambrosia/enums.h"
+#include "Ambrosia/typedefs.h"
 
 // C++ includes
 #include <string>

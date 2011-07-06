@@ -7,14 +7,14 @@
   **/
 
 // Function include
-#include "algorithm.h"
+#include "Ambrosia/algorithm.h"
 
 // libAmbrosia includes
-#include "ambrosia_config.h"
-#include "debug.h"
-#include "platform.h"
-#include "status.h"
-#include "target.h"
+#include "Ambrosia/Configuration/ambrosia_config.h"
+#include "Ambrosia/debug.h"
+#include "Ambrosia/platform.h"
+#include "Ambrosia/status.h"
+#include "Ambrosia/target.h"
 
 // C++ includes
 #include <istream>

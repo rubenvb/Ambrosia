@@ -11,7 +11,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
-#include "Ambrosia/ambrosia_config.h"
+#include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/node.h"
