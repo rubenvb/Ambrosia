@@ -28,34 +28,13 @@ libambrosia_namespace_begin
 ambrosia_config s_ambrosia_config; // declared in global.h
 
 ambrosia_config::ambrosia_config()
-:   m_config(),
-    m_source_directory(),
-    m_project_file(),
-    m_build_directory( "." ),
-    m_target_os( build_os ),
-    m_target_architecture( build_architecture ),
-    m_target_toolchain( toolchain::GNU ),
+:   config(),
     m_target_config()
 {    }
 
 /*
  * Setters
  **********/
-void ambrosia_config::set_source_directory( const string &source_directory )
-{
-    debug(5) << "ambrosia_config::set_source_directory::Setting source directory to: " << source_directory << "\n";
-    if( source_directory == "." )
-        m_build_directory = "build";
-
-    m_source_directory = source_directory;
-    debug(5) << "ambrosia_config::set_source_directory::Adding " << m_source_directory << " to s_file_store.\n";
-    s_file_store.add_source_directory( "" ); // directory equals m_source_directory + argument, which is empty here
-}
-void ambrosia_config::set_project_file( const string &project_file )
-{
-    m_project_file = project_file;
-}
-
 void ambrosia_config::set_ambrosia_cross( const std::string &cross )
 {
     debug(4) << "ambrosia_config::Checking and setting cross-compilation options through Ambrosia specification.\n";

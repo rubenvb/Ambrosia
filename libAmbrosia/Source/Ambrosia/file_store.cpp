@@ -35,7 +35,8 @@ file_store::file_store()
 
 const file_set & file_store::get_source_file_set( const std::string &directory )
 {
-    debug(5) << "file_set::get_source_file_set::Finding directory listing for " << directory << ".\n";
+    debug(5) << "file_set::get_source_file_set::Finding directory listing for "
+             << s_ambrosia_config.source_directory() << directory << ".\n";
     const auto result = m_source_files.find( directory );
     if( result != m_source_files.end() )
         return m_source_files[directory];
@@ -47,7 +48,7 @@ const file_set & file_store::get_source_file_set( const std::string &directory )
     }
 }
 
-const file_set file_store::find_source_file( const string_set &directories, const string &filename )
+const file_set file_store::find_source_file( const string &filename, const string_set &directories )
 {
     string_set directories_to_search = directories;
     debug(4) << "file_store::find_source_file::Looking for " << filename
@@ -67,7 +68,8 @@ const file_set file_store::find_source_file( const string_set &directories, cons
     {
         const string directory = *it + preceding_directory;
 
-        debug(5) << "file_store::find_source_file::Loading directory contents for: " << directory << ".\n";
+        debug(5) << "file_store::find_source_file::Loading directory contents for: "
+                 << s_ambrosia_config.source_directory() << "/" << directory << ".\n";
         const file_set &files_on_disk = get_source_file_set( directory );
         if( error_status() )
             return result;
@@ -84,6 +86,7 @@ const file_set file_store::find_source_file( const string_set &directories, cons
             }
         }
     }
+    debug(4) << "file_store::find_source_file::Found " << result.size() << " match(es).\n";
     return result;
 }
 const file_set file_store::match_source_files( const string_set &directories, const string &filename )

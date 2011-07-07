@@ -64,40 +64,54 @@ const dependency_list & target::dependencies() const
 /*
  * Setters
  **********/
-const string_set target::add_config( const string &config )
+void target::add_config( const string &config )
 {
-    if( m_build_config.add_config(config) )
-        return string_set(); // empty return value is success
-    else
-        return { config }; // value already present
+    if( !m_build_config.add_config(config) )
+        emit_error_list( {config} ); // value already present
 }
-const string_set target::remove_config( const string &config )
+void target::remove_config( const string &config )
 {
-    if( m_build_config.remove_config(config) )
-        return string_set(); // empty retun value is success
-    else
-        return { config };
+    if( !m_build_config.remove_config(config) )
+        emit_warning_list( {config} );
 }
 
-const string_set target::add_file( const file_type type, const string &filename )
+void target::add_file( const file_type type, const string &filename )
 {
-    s_file_store.match_source_files( m_source_directories[type], filename );
+    if( contains(filename, "*?") )
+    {
+        const file_set matches = s_file_store.match_source_files( filename, m_source_directories[type] );
+        if( matches.empty() )
+            return emit_error(); // error will be handled
+    }
+    else
+    {
+        const file_set matches = s_file_store.find_source_file( filename, m_source_directories[type] );
+        switch( matches.size() )
+        {
+            case 0:
+                return emit_error();
+            case 1:
+                m_source_files[type].insert( *matches.begin() );
+            default:
+            return emit_error_list();
+        }
+    }
+}
+void target::remove_file( const file_type type, const string &filename )
+{
+    s_file_store.match_source_files( filename, m_source_directories[type] );
     return {"unimplemented"};
 }
-const string_set target::remove_file( const file_type type, const string &filename )
+void target::add_directory( const file_type type, const string &directory )
 {
-    s_file_store.match_source_files( m_source_directories[type], filename );
-    return {"unimplemented"};
-}
-const string_set target::add_directory( const file_type type, const string &directory )
-{
-    if( !directory_exists(m_build_config.source_directory()) )
-    if( m_source_directories[type].insert(directory).second )
+
+
+    if( !m_source_directories[type].insert(directory).second )
         return string_set();
     else
         return { directory };
 }
-const string_set target::remove_directory( const file_type type, const string &directory )
+void target::remove_directory( const file_type type, const string &directory )
 {
     if( m_source_directories[type].erase(directory) )
         return string_set();

@@ -36,10 +36,6 @@ public:
     build_config();
     build_config( const ambrosia_config & );
 
-    // Setters
-    bool add_config( const std::string &config );
-    bool remove_config( const std::string &config );
-
     const string_map & user_options() const;
 
 private:

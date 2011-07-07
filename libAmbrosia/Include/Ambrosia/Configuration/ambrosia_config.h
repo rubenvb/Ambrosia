@@ -32,9 +32,6 @@ public:
     ambrosia_config();
 
     // Setters
-    void set_source_directory( const std::string &source_directory );
-    void set_project_file( const std::string &project_file );
-    // set cross-compilation options
     void set_ambrosia_cross( const std::string &cross );
     void set_gnu_prefix( const std::string &prefix ); // handles a lot of standard GU triplets
     // add target or add additional config options to one target
@@ -45,19 +42,9 @@ public:
     void set_user_option( const std::string &option, const std::string &value );
 
     // getters;
-
     const map_string_set_string & target_config() const;
 
-    friend class build_config;
-
 private:
-    string_set m_config; // mostly platform dependent stuff
-    std::string m_source_directory;
-    std::string m_project_file;
-    std::string m_build_directory; // if source and build dir are equal, this is ./build
-    os m_target_os;
-    architecture m_target_architecture;
-    toolchain m_target_toolchain;
     map_string_set_string m_target_config;
 };
 
