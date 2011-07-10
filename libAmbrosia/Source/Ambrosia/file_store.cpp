@@ -54,12 +54,13 @@ const file_set file_store::find_source_file( const string &filename, const strin
     debug(4) << "file_store::find_source_file::Looking for " << filename
              << " in subdirectories of: " <<  s_ambrosia_config.source_directory() << "\n"
              << directories;
+
     file_set result;
     const string_pair directory_filename( split_preceding_directory(filename) );
-    const string &preceding_directory( directory_filename.first );
-    const string &true_filename( directory_filename.second );
+    const string &preceding_directory = directory_filename.first;
+    const string &true_filename = directory_filename.second;
 
-    // handle emtpty directories seperately
+    // handle empty "directories" case
     if( directories.empty() )
         directories_to_search.insert("");
 
@@ -89,7 +90,7 @@ const file_set file_store::find_source_file( const string &filename, const strin
     debug(4) << "file_store::find_source_file::Found " << result.size() << " match(es).\n";
     return result;
 }
-const file_set file_store::match_source_files( const string_set &directories, const string &filename )
+const file_set file_store::match_source_files( const string &filename, const string_set &directories )
 {
     debug(4) << "file_store::match_source_files::Matching " << filename << " to all files in the source directories.\n";
     file_set result;
@@ -122,41 +123,37 @@ const file_set file_store::match_source_files( const string_set &directories, co
 
 void file_store::add_source_directory( const std::string &directory )
 {
-    string full_path = s_ambrosia_config.source_directory();
-    if( !directory.empty() )
-        full_path += "/" + directory;
-
-    if( !directory_exists(full_path) )
+    if( !directory_exists(directory) )
     {
-        debug(5) << "file_store::add_source_directory::Non-existing directory: " << full_path << "\n";
-        return emit_error( "Directory does not exist: " + full_path );
+        debug(5) << "file_store::add_source_directory::Non-existing directory: " << directory << "\n";
+        return emit_error( "Directory does not exist: " + directory );
     }
 
-    debug(5) << "file_store::add_source_directory::Scanning files in source directory: " << full_path << ".\n";
+    debug(5) << "file_store::add_source_directory::Scanning files in source directory: " << directory << ".\n";
     const auto result = m_source_files.insert( {directory, file_set()} );
     if( !result.second )
         debug(5) << "file_store::add_source_directory::Directory already present, and scanned.\n";
     else
     {
         file_set &new_files = (*result.first).second;
-        scan_directory( std::inserter(new_files, new_files.begin()), full_path );
+        scan_directory( std::inserter(new_files, new_files.begin()), directory );
         debug(5) << "file_store::add_source_directory::Directory scanned.\n";
     }
 }
 void file_store::add_build_directory( const std::string &directory )
 {
-    const string full_path( s_ambrosia_config.build_directory() + "/" + directory );
     if( !directory_exists(directory) )
-        return emit_error( "Directory does not exist: " + full_path );
+        // TODO: Create directory so scan_directory works OK. Check if creation was possible.
+        debug(5) << "file_store::add_build_direcctory::Creating build directory: " << directory << ".\n";
 
-    debug(5) << "file_store::add_build_directory::Scanning files in build directory: " << full_path << ".\n";
+    debug(5) << "file_store::add_build_directory::Scanning files in build directory: " << directory << ".\n";
     const auto result = m_build_files.insert( {directory, file_set()} );
     if( !result.second )
         debug(5) << "file_store::add_source_directory::Directory already present, and scanned.\n";
     else
     {
         file_set &new_files = (*result.first).second;
-        scan_directory( std::inserter(new_files, new_files.begin()), full_path );
+        scan_directory( std::inserter(new_files, new_files.begin()), directory );
     }
 }
 

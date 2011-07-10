@@ -92,31 +92,33 @@ void target::add_file( const file_type type, const string &filename )
                 return emit_error();
             case 1:
                 m_source_files[type].insert( *matches.begin() );
+                break;
             default:
-            return emit_error_list();
+                string_set ambiguous;
+                std::for_each( matches.begin(), matches.end(),
+                               [&ambiguous](const file &f)
+                               { ambiguous.insert(f.first); } );
+                return emit_error_list( ambiguous );
         }
     }
 }
 void target::remove_file( const file_type type, const string &filename )
 {
     s_file_store.match_source_files( filename, m_source_directories[type] );
-    return {"unimplemented"};
+    emit_error( "target::remove_file::Unimplementented." );
 }
 void target::add_directory( const file_type type, const string &directory )
 {
+    s_file_store.add_source_directory( m_build_config.source_directory() + "/" + directory );
+    if( error_status() )
+        return;
 
-
-    if( !m_source_directories[type].insert(directory).second )
-        return string_set();
-    else
-        return { directory };
+    m_source_directories[type].insert( directory );
 }
 void target::remove_directory( const file_type type, const string &directory )
 {
     if( m_source_directories[type].erase(directory) )
-        return string_set();
-    else
-        return { directory };
+        emit_warning_list( {directory} );
 }
 
 void target::set_output_name( const std::string &name )
