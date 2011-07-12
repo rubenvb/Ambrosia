@@ -17,7 +17,7 @@
 #include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Configuration/config.h"
+#include "Ambrosia/Configuration/config_base.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/typedefs.h"
 
@@ -26,7 +26,7 @@
 
 libambrosia_namespace_begin
 
-class ambrosia_config : public config
+class ambrosia_config : public config_base
 {
 public:
     ambrosia_config();

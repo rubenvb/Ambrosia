@@ -75,7 +75,7 @@ const std::string to_string (const T& t)
 inline const std::string output_form( const char c )
 {
     if( '\n' == c )
-        return std::string("\\n");
+        return std::string("\\n (newline)");
     else
         return std::string(1,c);
 }

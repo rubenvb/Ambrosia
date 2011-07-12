@@ -17,6 +17,7 @@
 #include "Ambrosia/enums.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/nectar.h"
+#include "Ambrosia/platform.h"
 #include "Ambrosia/status.h"
 #include "Ambrosia/target.h"
 
@@ -162,7 +163,8 @@ void nectar_loader::extract_nectar( target_list &targets )
                     sub_project_file = sub_directory + "/" + sub_file;
                 }
                 debug(4) << "nectar_loader::extract_nectar::Opening subproject file: " << sub_project_file << ".\n";
-                ifstream stream( sub_project_file );
+                auto stream_ptr = open_ifstream( sub_project_file );
+                auto &stream = *stream_ptr;
                 if( stream )
                 {
                     dependency_list dependencies;
@@ -282,6 +284,42 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
     }
     debug(6) << "nectar_loader::next_token:Token extracted: \'" << output_form(token) << "\'\n";
     return !token.empty();
+}
+bool nectar_loader::next_list_token( std::string &token )
+{
+    debug(4) << "nectar_loader::next_list_token::reading next list item.\n";
+    size_t curly_braces_count = 0;
+    while( next_token(token, s_special_characters_newline) )
+    {
+        debug(4) << "nectar_loader::next_list_token::token: " << output_form(token) << ".\n";
+        if( "\n" == token )
+            break; // list has ended
+        else if( "(" == token )
+        {
+            if( !process_inner_list_conditional() )
+                return false;
+        }
+        else if( "}" == token )
+        {
+            if( curly_braces_count > 0 )
+                curly_braces_count--;
+            else
+            {
+                syntax_error( "Unexpected closing curly brace." );
+                return false;
+            }
+        }
+        else // normal list item
+            return true;
+
+    }
+    debug(4) << "nectar_loader::parse_list::Done with list.\n";
+    if( curly_braces_count > 0 )
+    {
+        syntax_error( "Unclosed curly braces in list." );
+        return false;
+    }
+    return true;
 }
 
 void nectar_loader::read_dependency_list( dependency_list &dependencies )
@@ -541,9 +579,7 @@ bool nectar_loader::process_inner_list_conditional()
     return false;
 }
 
-bool nectar_loader::parse_list( function<bool(const string &)> validate,
-                                function<const string_set(const string &)> insert,
-                                function<const string_set(const string &)> remove )
+/*bool nectar_loader::parse_list()
 {
     debug(4) << "nectar_loader::parse_list::Parsing list.\n";
     size_t curly_braces_count = 0;
@@ -630,7 +666,7 @@ bool nectar_loader::parse_list( function<bool(const string &)> validate,
         return false;
     else
         return true;
-}
+}*/
 
 void nectar_loader::parse_target()
 {
@@ -656,9 +692,7 @@ void nectar_loader::parse_target()
         else if( "CONFIG" == token)
         {
             debug(5) << "nectar_loader::parse_target::CONFIG detected.\n";
-            if( !parse_list(std::bind(&nectar_loader::validate_CONFIG, this, _1),
-                            std::bind(&target::add_config, p_target.get(), _1),
-                            std::bind(&target::remove_config, p_target.get(), _1)) )
+            if( !parse_variable_list(p_target->config()) )
                 return; // failure
         }
         else if ( "NAME" == token )
@@ -683,9 +717,7 @@ void nectar_loader::parse_target()
             if( map_value(file_type_map, token, type) )
             {
                 debug(5) << "nectar_loader::parse_target::" << token << " file list detected.\n";
-                if( !parse_list(std::bind(&nectar_loader::validate_filename, this, _1),
-                                std::bind(&target::add_file, p_target.get(), type, _1),
-                                std::bind(&target::remove_file, p_target.get(), type, _1)) )
+                if( !parse_file_list(type) )
                 {
                     debug(6) << "nectar_loader::parse_target::Failed at inserting file(s).\n";
                     return; // failure, assumes parse_list has called emit_error
@@ -694,12 +726,17 @@ void nectar_loader::parse_target()
             else if( map_value(directory_type_map, token, type) )
             {
                 debug(5) << "nectar_loader::parse_target::" << map_value(file_type_map_inverse, type) << " directory list detected.\n";
-                if( !parse_list(std::bind(&nectar_loader::validate_directory, this, _1),
-                                std::bind(&target::add_directory, p_target.get(), type, _1),
-                                std::bind(&target::remove_directory, p_target.get(), type, _1)) )
+                if( get_general_type(type) == file_type::source || type == file_type::header )
                 {
-                    debug(6) << "nectar_loader::parse_target::Failed at inserting directory/directories.\n";
-                    return; // failure, assumes parse_list has called emit_error
+                    if( !parse_source_directory_list(type) )
+                    {
+                        debug(6) << "nectar_loader::parse_target::Failed at inserting source directory/directories.\n";
+                        return; // failure, assumes parse_list has called emit_error
+                    }
+                }
+                else
+                {
+                    // parse other types of directories
                 }
             }
             else
@@ -708,7 +745,7 @@ void nectar_loader::parse_target()
     }
 }
 
-bool nectar_loader::validate_CONFIG( const string &config )
+bool nectar_loader::validate_variable( const string &config )
 {
     return ( config.find_first_of("*?/$") == string::npos );
 }

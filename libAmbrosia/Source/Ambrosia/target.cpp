@@ -64,15 +64,13 @@ const dependency_list & target::dependencies() const
 /*
  * Setters
  **********/
-void target::add_config( const string &config )
+string_set &target::config()
 {
-    if( !m_build_config.add_config(config) )
-        emit_error_list( {config} ); // value already present
+    return m_build_config.config();
 }
-void target::remove_config( const string &config )
+const string_set &target::config() const
 {
-    if( !m_build_config.remove_config(config) )
-        emit_warning_list( {config} );
+    return m_build_config.config();
 }
 
 void target::add_file( const file_type type, const string &filename )

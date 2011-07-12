@@ -1,13 +1,13 @@
 /**
-  * Ambrosia/Configuration/config.h
-  * Abstract class for storing configuration options.
+  * Ambrosia/config_baseuration/config_base.h
+  * Abstract class for storing config_baseuration options.
   *
   * Author: Ruben Van Boxem
   *
   **/
 
-#ifndef CONFIGURATION_CONFIG_H
-#define CONFIGURATION_CONFIG_H
+#ifndef CONFIG_BASE_H
+#define CONFIG_BASE_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -18,16 +18,16 @@
 
 libambrosia_namespace_begin
 
-class config
+class config_base
 {
 public:
-    config();
-    virtual ~config() = 0; // abstractify class
+    config_base();
+    virtual ~config_base() = 0; // abstractify class
 
     /*
      * Setters
      **********/
-    // source directory and file where the object's config is attached to
+    // source directory and file where the object's config_base is attached to
     bool set_source_directory( const std::string &source_directory );
     void set_project_file( const std::string &project_file );
     bool add_config( const std::string &config );
@@ -35,10 +35,11 @@ public:
     // add user option settings
     void set_user_option( const std::string &option, const std::string &value );
 
-
     /*
      * Getters
      **********/
+    string_set & config();
+    const string_set & config() const;
     const std::string & source_directory() const;
     const std::string & project_file() const;
     const std::string path_to_project_file() const;
@@ -61,4 +62,4 @@ private:
 
 libambrosia_namespace_end
 
-#endif // CONFIGURATION_CONFIG_H
+#endif // CONFIG_BASE_H

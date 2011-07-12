@@ -19,7 +19,7 @@
 #include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Configuration/config.h"
+#include "Ambrosia/Configuration/config_base.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/typedefs.h"
 
@@ -30,13 +30,15 @@
 
 libambrosia_namespace_begin
 
-class build_config : public config
+class build_config : public config_base
 {
 public:
     build_config();
     build_config( const ambrosia_config & );
 
     const string_map & user_options() const;
+
+    friend class target;
 
 private:
     string_map m_user_variables; // user string --> value

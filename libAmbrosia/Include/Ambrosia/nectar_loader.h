@@ -61,8 +61,8 @@ private:
  * Token reading
  ****************/
     bool next_token( std::string &token, const std::set<char> &special_characters = s_special_characters );
+    bool next_list_token( std::string &token );
     bool process_conditional();
-
     // reads colon-lists of dependencies, ends at first '{'
     void read_dependency_list( dependency_list &dependencies );
     // finds matching curly brace and stores all stream contents in between in return value.
@@ -76,15 +76,15 @@ private:
     bool process_dependency_list_conditional(); // evaluated against s_ambrosia_config, skips dependenc(y/ies)
     bool process_inner_conditional();      // evaluated against m_build_config, skips whole list
     bool process_inner_list_conditional(); // evaluated against m_build_config, skips item in list
-    // item list
-    bool parse_list( std::function<bool(const std::string &)> validate,
-                     std::function<const string_set(const std::string &)> insert,
-                     std::function<const string_set(const std::string &)> remove );
-    bool add_file( const file_type type, const std::string &filename );
+    // item lists
+    bool parse_file_list( const file_type type ); // matches wildcards to filenames and checks existence
+    bool parse_source_directory_list( const file_type type ); // checks if directory exists
+    bool parse_build_directory( const file_type type );  // will be created on first use
+    bool parse_variable_list( string_set &items ); // only adds or removes strings from variables
     // main target parser
     void parse_target();
     // input validation functions (see wiki for valid input requirements)
-    bool validate_CONFIG( const std::string &config );
+    bool validate_variable( const std::string &config );
     bool validate_filename( const std::string &filename );
     bool validate_directory( const std::string &directory );
 };

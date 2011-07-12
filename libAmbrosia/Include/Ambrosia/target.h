@@ -48,8 +48,8 @@ public:
     const std::string &filename() const;
 
     // Setters
-    void add_config( const std::string &config );
-    void remove_config( const std::string &config );
+    string_set &config();
+    const string_set &config() const;
     void add_file( const file_type type, const std::string &filename );
     void remove_file( const file_type type, const std::string &filename );
     void add_directory( const file_type type, const std::string &directory );

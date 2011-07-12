@@ -34,12 +34,13 @@
 libambrosia_namespace_begin
 
 build_config::build_config()
-:   config(),
+:   config_base(),
     m_user_variables()
 {   }
 
 build_config::build_config( const ambrosia_config &config )
-:   m_user_variables()
+:   config_base(),
+    m_user_variables()
 {   }
 
 /*
