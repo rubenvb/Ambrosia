@@ -64,13 +64,13 @@ const dependency_list & target::dependencies() const
 /*
  * Setters
  **********/
-string_set &target::config()
+build_config & target::config()
 {
-    return m_build_config.config();
+    return m_build_config;
 }
-const string_set &target::config() const
+const build_config & target::config() const
 {
-    return m_build_config.config();
+    return m_build_config;
 }
 
 void target::add_file( const file_type type, const string &filename )
@@ -92,11 +92,11 @@ void target::add_file( const file_type type, const string &filename )
                 m_source_files[type].insert( *matches.begin() );
                 break;
             default:
-                string_set ambiguous;
+                string_vector ambiguous;
                 std::for_each( matches.begin(), matches.end(),
                                [&ambiguous](const file &f)
-                               { ambiguous.insert(f.first); } );
-                return emit_error_list( ambiguous );
+                               { ambiguous.push_back(f.first); } );
+                return emit_error_list( {ambiguous} );
         }
     }
 }

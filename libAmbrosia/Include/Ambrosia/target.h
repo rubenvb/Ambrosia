@@ -48,8 +48,8 @@ public:
     const std::string &filename() const;
 
     // Setters
-    string_set &config();
-    const string_set &config() const;
+    build_config & config();
+    const build_config &config() const;
     void add_file( const file_type type, const std::string &filename );
     void remove_file( const file_type type, const std::string &filename );
     void add_directory( const file_type type, const std::string &directory );
@@ -59,7 +59,7 @@ public:
 private:
     const target_type m_type; // target type
     const dependency_list m_dependencies; // dependency+type
-    build_config m_build_config; // build configuration, inherited from s_ambrosia_config
+    libambrosia::build_config m_build_config; // build configuration, inherited from s_ambrosia_config
     map_file_type_string_set m_source_directories; // source directories per file type
     map_file_type_file_set m_source_files; // source files per file type with last modified time
     std::string m_output_name;

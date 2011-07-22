@@ -322,6 +322,8 @@ bool nectar_loader::next_list_token( std::string &token )
     return true;
 }
 
+
+
 void nectar_loader::read_dependency_list( dependency_list &dependencies )
 {
     // copy "parent" dependencies
@@ -579,6 +581,33 @@ bool nectar_loader::process_inner_list_conditional()
     return false;
 }
 
+bool nectar_loader::parse_file_list( const file_type type )
+{
+    syntax_error( "File list parsing isn't done yet." );
+    return false;
+}
+bool nectar_loader::parse_source_directory_list( const file_type type )
+{
+    bool empty = true;
+    string token;
+    const string &source_directory = p_target->config().source_directory();
+    while( next_list_token(token) )
+    {
+        if( !directory_exists(source_directory + "/" + token) )
+            emit_error_list( {token} );
+    }
+    return false;
+}
+bool nectar_loader::parse_build_directory( const file_type type )
+{
+    syntax_error( "Build directory list parsing isn't done yet." );
+    return false;
+}
+bool nectar_loader::parse_variable_list( string_set &items )
+{
+    syntax_error( "Variable list parsing isn't done yet." );
+    return false;
+}
 /*bool nectar_loader::parse_list()
 {
     debug(4) << "nectar_loader::parse_list::Parsing list.\n";
@@ -692,7 +721,7 @@ void nectar_loader::parse_target()
         else if( "CONFIG" == token)
         {
             debug(5) << "nectar_loader::parse_target::CONFIG detected.\n";
-            if( !parse_variable_list(p_target->config()) )
+            if( !parse_variable_list(p_target->config().config()) )
                 return; // failure
         }
         else if ( "NAME" == token )
@@ -705,10 +734,15 @@ void nectar_loader::parse_target()
                 syntax_warning( "NAME is being modified twice in this target section." );
 
             already_modified_NAME = true;
-            if( next_token(token) )
-                p_target->set_output_name( token );
-            else
-                return syntax_error( "NAME must be followed by the target's output name (without prefix/suffix" );
+            if( next_token(token, s_special_characters_newline) )
+            {
+                if( "\n" != token )
+                {
+                    p_target->set_output_name( token );
+                    continue;
+                }
+            }
+            return syntax_error( "NAME must be followed by the target's output name (without prefix/suffix" );
         }
         else
         {
@@ -719,18 +753,19 @@ void nectar_loader::parse_target()
                 debug(5) << "nectar_loader::parse_target::" << token << " file list detected.\n";
                 if( !parse_file_list(type) )
                 {
-                    debug(6) << "nectar_loader::parse_target::Failed at inserting file(s).\n";
+                    debug(6) << "nectar_loader::parse_target::Failed parsing file list.\n";
                     return; // failure, assumes parse_list has called emit_error
                 }
             } // or a list of directories
             else if( map_value(directory_type_map, token, type) )
             {
                 debug(5) << "nectar_loader::parse_target::" << map_value(file_type_map_inverse, type) << " directory list detected.\n";
-                if( get_general_type(type) == file_type::source || type == file_type::header )
+                const file_type general_type = get_general_type( type );
+                if( general_type == file_type::source || type == file_type::header )
                 {
                     if( !parse_source_directory_list(type) )
                     {
-                        debug(6) << "nectar_loader::parse_target::Failed at inserting source directory/directories.\n";
+                        debug(6) << "nectar_loader::parse_target::Failed at parsing source directory/directories.\n";
                         return; // failure, assumes parse_list has called emit_error
                     }
                 }

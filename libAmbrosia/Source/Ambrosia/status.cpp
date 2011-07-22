@@ -25,8 +25,8 @@ bool error = false;
 bool warning = false;
 string error_messages = string();
 string warning_messages = string();
-string_set error_list = string_set();
-string_set warning_list = string_set();
+string_vector error_list{};
+string_vector warning_list{};
 
 bool error_status()
 {
@@ -50,14 +50,14 @@ void emit_warning( const string &message )
                    { cerr << "\n\t" << item; } );
 }
 
-void emit_error_list( const string_set &list )
+void emit_error_list( const string_vector &list )
 {
-    if( !error_list.empty() )
-        throw logic_error( "status::emit_error_list::Internal logic failure. String list is not empty." );
+//    if( !error_list.empty() )
+//        throw logic_error( "status::emit_error_list::Internal logic failure. String list is not empty." );
 
-    error_list = list;
+    error_list.insert( error_list.end(), list.begin(), list.end() );
 }
-void emit_warning_list( const string_set &list )
+void emit_warning_list( const string_vector &list )
 {
     if( !warning_list.empty() )
         throw logic_error( "status::emit_warning_list::Internal logic failure. String list is not empty." );
