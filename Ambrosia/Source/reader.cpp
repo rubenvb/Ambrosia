@@ -46,13 +46,13 @@ reader::~reader()
 state* reader::event()
 {
     // load project files
-    libambrosia::drink_nectar( s_ambrosia_config.path_to_project_file(), m_targets );
-    if( libambrosia::error_status() )
+    lib::drink_nectar( lib::s_ambrosia_config.path_to_project_file(), m_targets );
+    if( lib::error_status() )
         return new end_state( this );
 
     // delete unrequested targets
-    libambrosia::filter_dependency_sort( m_targets );
-    if( libambrosia::error_status() )
+    lib::filter_dependency_sort( m_targets );
+    if( lib::error_status() )
         return new end_state( this );
 
     return new end_state( "reader::reader does little for now.", this );

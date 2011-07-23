@@ -38,6 +38,8 @@ private:
     map_string_file_set m_build_files;  // all files in s_ambrosia_config::m_build_directory
 };
 
+extern file_store s_file_store;
+
 libambrosia_namespace_end
 
 #endif // FILE_STORE_H

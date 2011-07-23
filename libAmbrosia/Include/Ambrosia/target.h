@@ -19,6 +19,7 @@
 #include "global.h"
 
 // libAmbrosia includes
+#include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/Configuration/build_config.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/nectar.h"
@@ -32,14 +33,11 @@
 
 libambrosia_namespace_begin
 
-// temporary variable before all targets have their own build_config member with the
-static map_string_set_string s_target_config;
-
 class target : public node
 {
 public:
     target( const std::string &name, const target_type type,
-            const dependency_list &dependencies, const build_config &config = s_ambrosia_config );
+            const dependency_list &dependencies, const config_base &config = s_ambrosia_config );
 
     // Getters
     const std::string & name() const;
@@ -59,7 +57,7 @@ public:
 private:
     const target_type m_type; // target type
     const dependency_list m_dependencies; // dependency+type
-    libambrosia::build_config m_build_config; // build configuration, inherited from s_ambrosia_config
+    build_config m_build_config; // build configuration, inherited from s_ambrosia_config
     map_file_type_string_set m_source_directories; // source directories per file type
     map_file_type_file_set m_source_files; // source files per file type with last modified time
     std::string m_output_name;

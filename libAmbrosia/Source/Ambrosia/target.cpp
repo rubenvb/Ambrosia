@@ -33,7 +33,7 @@ libambrosia_namespace_begin
 // Static variable initialization
 
 target::target( const string &name, const target_type type,
-                const dependency_list &dependencies, const build_config &config )
+                const dependency_list &dependencies, const config_base &config )
 :   node( name ),
     m_type( type ),
     m_dependencies( dependencies ),

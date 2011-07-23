@@ -38,8 +38,8 @@ build_config::build_config()
     m_user_variables()
 {   }
 
-build_config::build_config( const ambrosia_config &config )
-:   config_base(),
+build_config::build_config( const config_base &config )
+:   config_base( config ),
     m_user_variables()
 {   }
 

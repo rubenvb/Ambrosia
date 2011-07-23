@@ -48,6 +48,8 @@ private:
     map_string_set_string m_target_config;
 };
 
+extern ambrosia_config s_ambrosia_config;
+
 libambrosia_namespace_end
 
 #endif // CONFIGURATION_AMBROSIA_CONFIG_H

@@ -293,7 +293,7 @@ bool nectar_loader::next_list_token( std::string &token )
     {
         debug(4) << "nectar_loader::next_list_token::token: " << output_form(token) << ".\n";
         if( "\n" == token )
-            break; // list has ended
+            return false; // list has ended
         else if( "(" == token )
         {
             if( !process_inner_list_conditional() )
@@ -313,7 +313,6 @@ bool nectar_loader::next_list_token( std::string &token )
             return true;
 
     }
-    debug(4) << "nectar_loader::parse_list::Done with list.\n";
     if( curly_braces_count > 0 )
     {
         syntax_error( "Unclosed curly braces in list." );
@@ -593,6 +592,8 @@ bool nectar_loader::parse_source_directory_list( const file_type type )
     const string &source_directory = p_target->config().source_directory();
     while( next_list_token(token) )
     {
+        debug(6) << "nectar_loader::parse_source_directory_list::Checking if directory exists: "
+                 << source_directory << "/" << token << ".\n";
         if( !directory_exists(source_directory + "/" + token) )
             emit_error_list( {token} );
     }
@@ -754,7 +755,7 @@ void nectar_loader::parse_target()
                 if( !parse_file_list(type) )
                 {
                     debug(6) << "nectar_loader::parse_target::Failed parsing file list.\n";
-                    return; // failure, assumes parse_list has called emit_error
+                    return; // failure, assumes parse_file_list has called emit_error
                 }
             } // or a list of directories
             else if( map_value(directory_type_map, token, type) )
@@ -766,7 +767,7 @@ void nectar_loader::parse_target()
                     if( !parse_source_directory_list(type) )
                     {
                         debug(6) << "nectar_loader::parse_target::Failed at parsing source directory/directories.\n";
-                        return; // failure, assumes parse_list has called emit_error
+                        return; // failure, assumes parse_source_directory_list has called emit_error
                     }
                 }
                 else

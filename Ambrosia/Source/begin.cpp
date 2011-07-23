@@ -92,11 +92,11 @@ state* begin::event()
                     debug(2) << "begin::Possible project file or directory: \'" << current << "\'.\n";
 
                     find_project_file( current );
-                    if( libambrosia::error_status() )
+                    if( lib::error_status() )
                         return new end_state( this );
 
                     // if project_file is still empty, "current" is really a target name to be built, skip to below next else
-                    if( s_ambrosia_config.project_file().empty() )
+                    if( lib::s_ambrosia_config.project_file().empty() )
                         goto add_target;
                 }
                 else
@@ -129,7 +129,7 @@ state* begin::event()
                     const string value( current.substr(index+1, string::npos) );
                     set_internal_option( option, value );
                     // check for any error that may have happened in the above call to libAmbrosia
-                    if( libambrosia::error_status() )
+                    if( lib::error_status() )
                         return new end_state( this );
                 }
                 else if( current[0] == ':' )
@@ -148,22 +148,22 @@ state* begin::event()
         }
     }
     // if project file is not yet set, search current directory
-    if( s_ambrosia_config.project_file().empty() )
+    if( lib::s_ambrosia_config.project_file().empty() )
     {
-        const string project_file = libambrosia::find_nectar_file( "." );
+        const string project_file = lib::find_nectar_file( "." );
         if( !project_file.empty() )
         {
             debug(2) << "begin::Project file found in current directory \'.\': " << project_file << ".\n";
-            libambrosia::emit_warning( "Ambrosia does not recommend an in-source build." );
-            s_ambrosia_config.set_source_directory( "");
-            s_ambrosia_config.set_project_file( project_file );
+            lib::emit_warning( "Ambrosia does not recommend an in-source build." );
+            lib::s_ambrosia_config.set_source_directory( "");
+            lib::s_ambrosia_config.set_project_file( project_file );
         }
-        else if( !libambrosia::error_status() )
-            libambrosia::emit_error( "No project file found in specified path or current directory." );
+        else if( !lib::error_status() )
+            lib::emit_error( "No project file found in specified path or current directory." );
     }
     debug() << "begin::Checking if project file was found.\n";
     // Ensure that a valid project file has been found
-    if( libambrosia::file_exists(s_ambrosia_config.path_to_project_file()) )
+    if( lib::file_exists(lib::s_ambrosia_config.path_to_project_file()) )
         return new reader( this );
     else
         return new end_state( "No project file was found. Please specify a project file or a directory containing a single project file.", this );
@@ -173,26 +173,26 @@ bool begin::find_project_file( const std::string &path )
 {
     debug(3) << "begin::find_project_file called for " << path << ".\n";
 
-    if( libambrosia::file_exists(path) )
+    if( lib::file_exists(path) )
     {
         debug(4) << "begin::find_project_file detected file.\n";
         // TODO: generalize the directory seperators list
         // seperate filename from (realtive) path
         const string::size_type index = path.find_last_of( "/\\" );
-        s_ambrosia_config.set_project_file( path.substr(index+1, string::npos) );
-        s_ambrosia_config.set_source_directory( path.substr(0, index) );
+        lib::s_ambrosia_config.set_project_file( path.substr(index+1, string::npos) );
+        lib::s_ambrosia_config.set_source_directory( path.substr(0, index) );
         return true;
     }
-    else if( libambrosia::directory_exists(path) )
+    else if( lib::directory_exists(path) )
     {
         debug(4) << "begin::find_project_file detected directory.\n";
-        const string project_file = libambrosia::find_nectar_file( path );
+        const string project_file = lib::find_nectar_file( path );
         // if the directory contains a *.nectar.txt file, set source directory as well
         if( !project_file.empty() )
         {
             debug(4) << "begin::Project file found: " << path << "/" << project_file << ".\n";
-            s_ambrosia_config.set_source_directory( path );
-            s_ambrosia_config.set_project_file( project_file );
+            lib::s_ambrosia_config.set_source_directory( path );
+            lib::s_ambrosia_config.set_project_file( project_file );
             return true;
         }
     }
@@ -208,7 +208,7 @@ bool begin::add_build_target( const std::string &target )
     if( index == string::npos )
     {
         debug(3) << "begin::Target to be built: " << target << ".\n";
-        s_ambrosia_config.add_target_config( target, string_set() );
+        lib::s_ambrosia_config.add_target_config( target, string_set() );
     }
     else
     {
@@ -224,7 +224,7 @@ bool begin::add_build_target( const std::string &target )
             if( options.insert(temp).second == false )
                 duplicates.insert( temp );
         }
-        s_ambrosia_config.add_target_config( target_name, options );
+        lib::s_ambrosia_config.add_target_config( target_name, options );
     }
     return true;
 }
@@ -236,7 +236,7 @@ void begin::set_internal_option( const std::string &option, const std::string &v
     if( "cross" == option )
     {
         debug(4) << "begin::Cross-compiling for " << value << ".\n";
-        s_ambrosia_config.set_ambrosia_cross( value );
+        lib::s_ambrosia_config.set_ambrosia_cross( value );
     }
     #ifdef AMBROSIA_DEBUG
     else if( "d" == option || "debug" == option )
@@ -252,7 +252,7 @@ void begin::set_internal_option( const std::string &option, const std::string &v
     else if( "gnu-prefix" == option )
     {
         debug(4) << "begin::Cross-compiling with GNU prefix " << value << ".\n";
-        s_ambrosia_config.set_gnu_prefix( value );
+        lib::s_ambrosia_config.set_gnu_prefix( value );
     }
     else
         lib::emit_error( "Unknown option passed to Ambrosia: \n\t-" + option + "=" + value );

@@ -22,13 +22,6 @@ const int version_major = 0;
 const int version_minor = 0;
 const int version_bugfix = 1;
 
-// global run build configuration
-class ambrosia_config;
-extern ambrosia_config s_ambrosia_config;
-// global run file list cache
-class file_store;
-extern file_store s_file_store;
-
 libambrosia_namespace_end
 
 // namespace shortcut

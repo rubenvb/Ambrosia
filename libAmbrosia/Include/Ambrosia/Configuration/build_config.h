@@ -34,7 +34,7 @@ class build_config : public config_base
 {
 public:
     build_config();
-    build_config( const ambrosia_config & );
+    build_config( const config_base &config );
 
     const string_map & user_options() const;
 

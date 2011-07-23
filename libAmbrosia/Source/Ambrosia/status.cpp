@@ -52,9 +52,6 @@ void emit_warning( const string &message )
 
 void emit_error_list( const string_vector &list )
 {
-//    if( !error_list.empty() )
-//        throw logic_error( "status::emit_error_list::Internal logic failure. String list is not empty." );
-
     error_list.insert( error_list.end(), list.begin(), list.end() );
 }
 void emit_warning_list( const string_vector &list )
@@ -69,6 +66,7 @@ void print_errors()
 {
     cerr << error_messages << "\n";
     error_messages.clear();
+    error_list.clear();
     error = true;
 }
 

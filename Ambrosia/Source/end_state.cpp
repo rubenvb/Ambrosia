@@ -30,7 +30,7 @@ end_state::end_state( state *parent )
 :   state( parent )
 {
     debug(0) << "end_state::end_state created.\n";
-    libambrosia::print_errors();
+    lib::print_errors();
 }
 
 end_state::end_state( const string &message, state* parent )

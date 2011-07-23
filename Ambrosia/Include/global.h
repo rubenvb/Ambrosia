@@ -21,7 +21,6 @@ namespace app
     const int version_minor = 0;
     const int version_bugfix = 1;
 }
-    using lib::s_ambrosia_config;
 
 ambrosia_namespace_end
 
