@@ -57,9 +57,10 @@ libambrosia_namespace_begin
 const set<char> s_special_characters = { '(', ')', '{', '}', ':', ',' };
 const set<char> s_special_characters_newline = { '(', ')', '{', '}', ':', ',', '\n' };
 
-nectar_loader::nectar_loader( const string &filename, istream &stream,
-                              const dependency_list &list )
+nectar_loader::nectar_loader( const string &filename, const string &subdirectory,
+                              istream &stream, const dependency_list &list )
 :   m_filename( filename ),
+    m_subdirectory( subdirectory ),
     m_stream( stream ),
     m_line_number( 1 ),
     m_dependency_list( list ),
@@ -167,12 +168,20 @@ void nectar_loader::extract_nectar( target_list &targets )
                 auto &stream = *stream_ptr;
                 if( stream )
                 {
+                    // Get sub target dependencies
                     dependency_list dependencies;
                     read_dependency_list( dependencies );
                     if( error_status() )
                         return;
 
-                    nectar_loader sub_loader( sub_project_file, stream, dependencies );
+                    // get subdirectory
+                    string subdirectory;
+                    if( m_subdirectory.empty() )
+                        subdirectory = sub_directory;
+                    else
+                        subdirectory = m_subdirectory + "/" + sub_directory;
+
+                    nectar_loader sub_loader( sub_project_file, subdirectory, stream, dependencies );
                     sub_loader.extract_nectar( targets );
                     if( error_status() )
                         return;
@@ -595,7 +604,7 @@ bool nectar_loader::parse_source_directory_list( const file_type type )
         debug(6) << "nectar_loader::parse_source_directory_list::Checking if directory exists: "
                  << source_directory << "/" << token << ".\n";
         if( !directory_exists(source_directory + "/" + token) )
-            emit_error_list( {token} );
+            emit_error_list( {token} ); // add the bad directory to error_list
     }
     return false;
 }

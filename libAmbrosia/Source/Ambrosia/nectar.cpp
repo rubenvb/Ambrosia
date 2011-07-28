@@ -73,7 +73,7 @@ void drink_nectar( const std::string &filename, target_list &targets )
 
     // read targets
     debug(2) << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
-    nectar_loader loader( filename, stream );
+    nectar_loader loader( filename, "", stream );
 
     loader.extract_nectar( targets );
     if( error_status() )

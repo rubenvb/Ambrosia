@@ -25,7 +25,7 @@
 
 libambrosia_namespace_begin
 
-ambrosia_config s_ambrosia_config; // declared in global.h
+ambrosia_config s_ambrosia_config;
 
 ambrosia_config::ambrosia_config()
 :   config_base(),

@@ -35,8 +35,8 @@ extern const std::set<char> s_special_characters_newline;
 class nectar_loader
 {
 public:
-    nectar_loader( const std::string &filename, std::istream &stream,
-                   const dependency_list &list = dependency_list() );
+    nectar_loader( const std::string &filename, const std::string &subdirectory,
+                   std::istream &stream, const dependency_list &list = dependency_list() );
     ~nectar_loader();
 
     void extract_nectar( target_list &targets );
@@ -47,6 +47,7 @@ public:
 
 private:
     const std::string &m_filename;
+    const std::string m_subdirectory;
     std::istream &m_stream;
     size_t m_line_number;
     const dependency_list &m_dependency_list;
