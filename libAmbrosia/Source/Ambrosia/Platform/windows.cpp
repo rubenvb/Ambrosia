@@ -75,7 +75,7 @@ const string convert_to_utf8( const wstring &utf16_string )
     else
     {
         string result;
-        result.resize( length );
+        result.resize( static_cast<string::size_type>(length) );
 
         if( WideCharToMultiByte(CP_UTF8, 0,
                                 utf16_string.c_str(), static_cast<int>(utf16_string.size()),
@@ -98,7 +98,7 @@ const wstring convert_to_utf16( const string &utf8_string )
     else
     {
         wstring result;
-        result.resize( length );
+        result.resize( static_cast<string::size_type>(length) );
 
         if( MultiByteToWideChar(CP_UTF8, 0,
                                 utf8_string.c_str(), static_cast<int>(utf8_string.size()),
@@ -236,11 +236,11 @@ unique_ptr<ostream> open_ofstream( const string &filename )
 # elif _MSC_VER
 unique_ptr<ifstream> open_ifstream( const string &filename )
 {
-    return unique_ptr<ifstream>(new ifstream( convert_to_utf16(filename)) );
+    return unique_ptr<ifstream>(new ifstream(convert_to_utf16(filename)) );
 }
 unique_ptr<ofstream> open_ofstream( const string &filename )
 {
-    return unique_ptr( new ofstream(convert_to_utf16(filename)) );
+    return unique_ptr<ofstream>( new ofstream(convert_to_utf16(filename)) );
 }
 # else
 # error unknown fstream implementation

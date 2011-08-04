@@ -217,7 +217,7 @@ bool begin::add_build_target( const std::string &target )
         string_set options;
         string_set duplicates;
         istringstream stream( target );
-        stream.seekg( index );
+        stream.seekg( static_cast<istringstream::streamoff>(index) );
         string temp;
         while( std::getline(stream, temp, ',') )
         {
