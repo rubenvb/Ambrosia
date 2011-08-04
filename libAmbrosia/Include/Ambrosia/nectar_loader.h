@@ -46,13 +46,13 @@ public:
     nectar_loader( const nectar_loader & ) = delete;
 
 private:
-    const std::string &m_filename;
-    const std::string m_subdirectory;
-    std::istream &m_stream;
-    size_t m_line_number;
+    const std::string &m_filename; // used for error reporting
+    const std::string m_subdirectory; // used for building source file paths, empty in main project file
+    std::istream &m_stream; // file input stream
+    size_t m_line_number; // used for error reporting
     const dependency_list &m_dependency_list;
-    bool m_global_processed;
-    std::unique_ptr<target> p_target; // temporary pointer to current target
+    bool m_global_processed; // only one global section per project file is allowed
+    std::unique_ptr<target> p_target; // temporary pointer to current target, moved to extract_nectar's target_list parameter
 /*
  * emit_error and emit_warning wrappers
  ***************************************/
