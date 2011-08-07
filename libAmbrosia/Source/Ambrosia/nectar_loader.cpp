@@ -594,9 +594,9 @@ bool nectar_loader::parse_file_list( const file_type type )
     syntax_error( "File list parsing isn't done yet." );
     return false;
 }
-bool nectar_loader::parse_source_directory_list( const file_type type )
+bool nectar_loader::parse_directory_list( const file_type type, const bool directory_should_exist )
 {
-    bool empty = true;
+    bool empty = true; // a list cannot be empty
     string token;
     const string &source_directory = p_target->config().source_directory();
     while( next_list_token(token) )

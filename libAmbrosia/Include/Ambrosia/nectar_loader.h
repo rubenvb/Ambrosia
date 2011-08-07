@@ -79,7 +79,7 @@ private:
     bool process_inner_list_conditional(); // evaluated against m_build_config, skips item in list
     // item lists
     bool parse_file_list( const file_type type ); // matches wildcards to filenames and checks existence
-    bool parse_source_directory_list( const file_type type ); // checks if directory exists
+    bool parse_directory_list( const file_type type, const bool directory_should_exist );
     bool parse_build_directory( const file_type type );  // will be created on first use
     bool parse_variable_list( string_set &items ); // only adds or removes strings from variables
     // main target parser
