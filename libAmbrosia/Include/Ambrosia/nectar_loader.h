@@ -35,7 +35,7 @@ extern const std::set<char> s_special_characters_newline;
 class nectar_loader
 {
 public:
-    nectar_loader( const std::string &filename, const std::string &subdirectory,
+    nectar_loader( const std::string &filename, const std::string &directory,
                    std::istream &stream, const dependency_list &list = dependency_list() );
     ~nectar_loader();
 
@@ -47,13 +47,13 @@ public:
 
 private:
     const std::string &m_filename; // used for error reporting
-    const std::string m_subdirectory; // used for building source file paths, empty in main project file
+    const std::string m_directory; // used for file searching
     std::istream &m_stream; // file input stream
     size_t m_line_number; // used for error reporting
     const dependency_list &m_dependency_list;
     bool m_global_processed; // only one global section per project file is allowed
     std::unique_ptr<target> p_target; // temporary pointer to current target, moved to extract_nectar's target_list parameter
-/*
+/*'
  * emit_error and emit_warning wrappers
  ***************************************/
     void syntax_error( const std::string &message ) const;
@@ -79,7 +79,7 @@ private:
     bool process_inner_list_conditional(); // evaluated against m_build_config, skips item in list
     // item lists
     bool parse_file_list( const file_type type ); // matches wildcards to filenames and checks existence
-    bool parse_directory_list( const file_type type, const bool directory_should_exist );
+    bool parse_source_directory_list( const file_type type ); // searches m_source_directory+"/"+m_subdirectory
     bool parse_build_directory( const file_type type );  // will be created on first use
     bool parse_variable_list( string_set &items ); // only adds or removes strings from variables
     // main target parser

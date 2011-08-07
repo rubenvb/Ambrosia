@@ -27,6 +27,8 @@ libambrosia_namespace_begin
 
 /* Freestanding functions (libAmbrosia independent, including no untransparent error handling)
  *************************/
+// merges directory and subdirectory names to one, does the right thing if the second part is empty
+const std::string full_directory_name( const std::string &first_directory, const std::string &second_directory );
 // returns true if expanding '?' or '*' produces a match
 bool wildcard_compare( const std::string &wildcard_string, const std::string &full_string );
 // returns true if expanding '?' or '*' between forward slashes '/' produces a match

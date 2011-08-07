@@ -4,13 +4,12 @@
 
 lib libAmbrosia
 {
-    HEADER_DIRS Include/Ambrosia \
-                Include/Ambrosia/Parser
-    SOURCE_DIRS Source/Ambrosia \
-                Source/Ambrosia/Parser
+    HEADER_DIRS Include/Ambrosia
+    SOURCE_DIRS Source/Ambrosia
+
     SOURCES *.cpp
     # Platform files
-    (windows)SOURCES Source/Ambrosia/Platform/windows.cpp
-    (linux)  SOURCES Source/Ambrosia/Platform/linux.cpp
-    (macos)  SOURCES Source/Ambrosia/Platform/mac.cpp
+    (windows)SOURCES Platform/windows.cpp
+    (linux)  SOURCES Platform/linux.cpp
+    (macos)  SOURCES Platform/mac.cpp
 }

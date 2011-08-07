@@ -41,6 +41,16 @@ libambrosia_namespace_begin
 
 /* Freestanding functions
  *************************/
+const std::string full_directory_name( const std::string &first_directory, const std::string &second_directory )
+{
+    if( first_directory.empty() )
+        return second_directory;
+    else if( second_directory.empty() )
+        return first_directory;
+    else
+        return first_directory + "/" + second_directory;
+}
+
 bool wildcard_compare( const string &wild_string, const string &full_string )
 {
     auto wild = wild_string.begin();

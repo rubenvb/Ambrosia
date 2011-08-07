@@ -52,6 +52,7 @@ void emit_warning( const string &message )
 
 void emit_error_list( const string_vector &list )
 {
+    error = true;
     error_list.insert( error_list.end(), list.begin(), list.end() );
 }
 void emit_warning_list( const string_vector &list )

@@ -57,20 +57,22 @@ libambrosia_namespace_begin
 const set<char> s_special_characters = { '(', ')', '{', '}', ':', ',' };
 const set<char> s_special_characters_newline = { '(', ')', '{', '}', ':', ',', '\n' };
 
-nectar_loader::nectar_loader( const string &filename, const string &subdirectory,
+nectar_loader::nectar_loader( const string &filename, const string &directory,
                               istream &stream, const dependency_list &list )
 :   m_filename( filename ),
-    m_subdirectory( subdirectory ),
+    m_directory( directory ),
     m_stream( stream ),
     m_line_number( 1 ),
     m_dependency_list( list ),
     m_global_processed( false ),
     p_target()
-{   }
+{
+    debug(0) << "nectar_loader::nectar_loader::filename is " << filename << "\n";
+}
 nectar_loader::~nectar_loader()
 {
-    if( p_target != nullptr )
-        emit_error( "Parsing " + p_target->name() + " in file " + m_filename + " failed." );
+//    if( p_target != nullptr )
+//        emit_error( "Parsing " + p_target->name() + " in file " + m_filename + " failed." );
 }
 
 void nectar_loader::extract_nectar( target_list &targets )
@@ -176,10 +178,10 @@ void nectar_loader::extract_nectar( target_list &targets )
 
                     // get subdirectory
                     string subdirectory;
-                    if( m_subdirectory.empty() )
+                    if( m_directory.empty() )
                         subdirectory = sub_directory;
                     else
-                        subdirectory = m_subdirectory + "/" + sub_directory;
+                        subdirectory = m_directory + "/" + sub_directory;
 
                     nectar_loader sub_loader( sub_project_file, subdirectory, stream, dependencies );
                     sub_loader.extract_nectar( targets );
@@ -591,22 +593,31 @@ bool nectar_loader::process_inner_list_conditional()
 
 bool nectar_loader::parse_file_list( const file_type type )
 {
-    syntax_error( "File list parsing isn't done yet." );
+    syntax_error( "File list parsing not implemented yet." );
     return false;
 }
-bool nectar_loader::parse_directory_list( const file_type type, const bool directory_should_exist )
+bool nectar_loader::parse_source_directory_list( const file_type type )
 {
     bool empty = true; // a list cannot be empty
     string token;
     const string &source_directory = p_target->config().source_directory();
+    // gather all list items
     while( next_list_token(token) )
     {
         debug(6) << "nectar_loader::parse_source_directory_list::Checking if directory exists: "
                  << source_directory << "/" << token << ".\n";
-        if( !directory_exists(source_directory + "/" + token) )
+        if( !directory_exists(source_directory + "/" + full_directory_name(m_directory, token)) )
             emit_error_list( {token} ); // add the bad directory to error_list
+        else
+            p_target->add_directory( type, full_directory_name(m_directory, token) );
     }
-    return false;
+    if( error_status() )
+    {
+        emit_error( "Not all directories listed exist: " );
+        return false;
+    }
+    else
+        return true;
 }
 bool nectar_loader::parse_build_directory( const file_type type )
 {
