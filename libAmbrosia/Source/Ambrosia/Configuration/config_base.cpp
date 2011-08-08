@@ -44,7 +44,7 @@ bool config_base::set_source_directory( const string &source_directory )
     debug(5) << "config_base::set_source_directory::Setting source directory to: " << source_directory << "\n";
     m_source_directory = source_directory;
     debug(5) << "config_base::set_source_directory::Adding " << m_source_directory << " to s_file_store.\n";
-    s_file_store.add_source_directory();
+    s_file_store.add_source_directory( m_source_directory );
     return true;
 }
 void config_base::set_project_file( const string &project_file )
@@ -80,7 +80,7 @@ const string & config_base::project_file() const
 }
 const std::string config_base::path_to_project_file() const
 {
-    return m_source_directory + "/" + m_project_file;
+    return m_project_file;
 }
 const string & config_base::build_directory() const
 {

@@ -606,10 +606,10 @@ bool nectar_loader::parse_source_directory_list( const file_type type )
     {
         debug(6) << "nectar_loader::parse_source_directory_list::Checking if directory exists: "
                  << source_directory << "/" << token << ".\n";
-        if( !directory_exists(source_directory + "/" + full_directory_name(m_directory, token)) )
+        if( !directory_exists( full_directory_name(m_directory, token)) )
             emit_error_list( {token} ); // add the bad directory to error_list
         else
-            p_target->add_directory( type, full_directory_name(m_directory, token) );
+            p_target->add_source_directory( type, full_directory_name(m_directory, token) );
     }
     if( error_status() )
     {

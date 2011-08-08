@@ -36,7 +36,7 @@ file_store::file_store()
 const file_set & file_store::get_source_file_set( const std::string &directory )
 {
     debug(5) << "file_set::get_source_file_set::Finding directory listing for "
-             << s_ambrosia_config.source_directory() << "/" << directory << ".\n";
+             << directory << ".\n";
     const auto result = m_source_files.find( directory );
     if( result != m_source_files.end() )
         return m_source_files[directory];
@@ -50,9 +50,10 @@ const file_set & file_store::get_source_file_set( const std::string &directory )
 
 const file_set file_store::find_source_file( const string &filename, const string_set &directories )
 {
+    const string &source_directory = s_ambrosia_config.source_directory();
     string_set directories_to_search = directories;
     debug(4) << "file_store::find_source_file::Looking for " << filename
-             << " in subdirectories of: " <<  s_ambrosia_config.source_directory() << "\n"
+             << " in subdirectories of: " <<  source_directory << "\n"
              << directories;
 
     file_set result;
@@ -67,10 +68,10 @@ const file_set file_store::find_source_file( const string &filename, const strin
     const auto end = directories_to_search.end();
     for( auto it = directories_to_search.begin(); it != end; ++it )
     {
-        const string directory = *it + preceding_directory;
+        const string directory = full_directory_name( source_directory, *it + preceding_directory );
 
         debug(5) << "file_store::find_source_file::Loading directory contents for: "
-                 << s_ambrosia_config.source_directory() << "/" << directory << ".\n";
+                 << directory << ".\n";
         const file_set &files_on_disk = get_source_file_set( directory );
         if( error_status() )
             return result;
@@ -123,11 +124,10 @@ const file_set file_store::match_source_files( const string &filename, const str
 
 void file_store::add_source_directory( const std::string &directory )
 {
-    const string full_path = full_directory_name(s_ambrosia_config.source_directory(), directory);
-    if( !directory_exists(full_path) )
+    if( !directory_exists(directory) )
     {
-        debug(5) << "file_store::add_source_directory::Non-existing directory: " << full_path << "\n";
-        return emit_error( "Directory does not exist: " + full_path );
+        debug(5) << "file_store::add_source_directory::Non-existing directory: " << directory << "\n";
+        return emit_error( "Directory does not exist: " + directory );
     }
 
     debug(5) << "file_store::add_source_directory::Scanning files in source directory: " << directory << ".\n";
@@ -137,7 +137,7 @@ void file_store::add_source_directory( const std::string &directory )
     else
     {
         file_set &new_files = (*result.first).second;
-        scan_directory( std::inserter(new_files, new_files.begin()), full_path );
+        scan_directory( std::inserter(new_files, new_files.begin()), directory );
         debug(5) << "file_store::add_source_directory::Directory scanned.\n";
     }
 }

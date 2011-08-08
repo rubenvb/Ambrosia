@@ -105,13 +105,14 @@ void target::remove_file( const file_type type, const string &filename )
     s_file_store.match_source_files( filename, m_source_directories[type] );
     emit_error( "target::remove_file::Unimplementented." );
 }
-void target::add_directory( const file_type type, const string &directory )
+bool target::add_source_directory( const file_type type, const string &directory )
 {
-    s_file_store.add_source_directory( m_build_config.source_directory() + "/" + directory );
+    s_file_store.add_source_directory( directory );
     if( error_status() )
-        return;
+        return false;
 
     m_source_directories[type].insert( directory );
+    return true;
 }
 void target::remove_directory( const file_type type, const string &directory )
 {

@@ -50,7 +50,7 @@ public:
     const build_config &config() const;
     void add_file( const file_type type, const std::string &filename );
     void remove_file( const file_type type, const std::string &filename );
-    void add_directory( const file_type type, const std::string &directory );
+    bool add_source_directory( const file_type type, const std::string &directory );
     void remove_directory( const file_type type, const std::string &directory );
     void set_output_name( const std::string &name );
 
