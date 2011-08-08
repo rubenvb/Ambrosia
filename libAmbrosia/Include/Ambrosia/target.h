@@ -48,7 +48,7 @@ public:
     // Setters
     build_config & config();
     const build_config &config() const;
-    void add_file( const file_type type, const std::string &filename );
+    void add_source_file( const file_type type, const std::string &filename, const size_t line_number );
     void remove_file( const file_type type, const std::string &filename );
     bool add_source_directory( const file_type type, const std::string &directory );
     void remove_directory( const file_type type, const std::string &directory );

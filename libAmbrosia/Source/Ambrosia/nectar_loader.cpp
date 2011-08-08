@@ -71,8 +71,8 @@ nectar_loader::nectar_loader( const string &filename, const string &directory,
 }
 nectar_loader::~nectar_loader()
 {
-//    if( p_target != nullptr )
-//        emit_error( "Parsing " + p_target->name() + " in file " + m_filename + " failed." );
+    if( p_target != nullptr )
+        debug(0) << "nectar_loader::" << p_target->name() + " in file " + m_filename + " not pushed to a target_list.\n";
 }
 
 void nectar_loader::extract_nectar( target_list &targets )
@@ -332,8 +332,6 @@ bool nectar_loader::next_list_token( std::string &token )
     return true;
 }
 
-
-
 void nectar_loader::read_dependency_list( dependency_list &dependencies )
 {
     // copy "parent" dependencies
@@ -389,58 +387,6 @@ void nectar_loader::read_dependency_list( dependency_list &dependencies )
         else
             in_list = false;
     }
-}
-
-const std::string nectar_loader::read_code_block()
-{
-    string block;
-    size_t curly_brace_count = 1; // stream pointer starts inside of curly brace block
-    size_t parenthesis_count = 0;
-    bool inside_quotes = false;
-
-    noskipws(m_stream);
-
-    char current;
-    for( istream_iterator<char> it(m_stream);
-         curly_brace_count > 0  && m_stream;
-         ++it )
-    {
-        current = *it;
-        block.append( 1, current );
-        debug(9) << "nectar_loader::read_code_block::Current character: \'" << current << "\'.\n";
-        if( inside_quotes )
-        {
-            if( '\"' == current )
-                inside_quotes = false;
-        }
-        else if( '\"' == current )
-            inside_quotes = true;
-        else if( '(' == current )
-            ++parenthesis_count;
-        else if( ')' == current )
-        {
-            if( parenthesis_count >= 1 )
-                --parenthesis_count;
-            else
-            {
-                syntax_error( "Too many closing parentheses \')\'." );
-                break;
-            }
-        }
-        else if( '{' == current )
-            ++curly_brace_count;
-        else if( '}' == current )
-        {
-            if( curly_brace_count >= 1 )
-                --curly_brace_count;
-            else
-            {
-                syntax_error( "Too many closing curly braces \'}\'." );
-                break;
-            }
-        }
-    }
-    return block;
 }
 /*
  * Parsing
@@ -512,60 +458,6 @@ bool nectar_loader::resolve_conditional( const std::function<bool(const string&)
             current = current || config_contains(token);
         }
     }
-
-
-/*
-    // (half of) Dijkstra's Shunting yard
-    // Step 1: convert conditional expression to Reverse Polish notation
-    // TODO fix implementation, is pretty shitty for now
-    stack<conditional_operator> operator_stack;
-    deque<string> output;
-
-    string token;
-    bool success = false;
-    // Taken from http://en.wikipedia.org/wiki/Shunting-yard_algorithm#The_algorithm_in_detail
-    while( next_token(token) )
-    {
-        conditional_operator op;
-        if( map_value(conditional_operator_map, token, op) )
-        {
-            switch( op )
-            {
-                case conditional_operator::left_parenthesis:
-                    operator_stack.push( op );
-                    break;
-                case conditional_operator::right_parenthesis:
-                    while( !operator_stack.empty() && operator_stack.top() != conditional_operator::left_parenthesis )
-                    {
-                        output.push_back( map_value(conditional_operator_map_inverse, operator_stack.top()) );
-                        operator_stack.pop();
-                    }
-                    if( operator_stack.empty() )
-                    {
-                        syntax_error( "No matching right parenthesis in conditional." );
-                        goto end;
-                    }
-                    break;
-                default: // real operators: + | !
-                    while( !operator_stack.empty() )
-                    {
-                        // Check precedence by comparing precedence ordered enum values
-                        if( op <= operator_stack.top() )
-                        {
-                            output.push_back( map_value(conditional_operator_map_inverse, operator_stack.top()) );
-                            operator_stack.pop();
-                        }
-                    }
-            }
-        }
-        else // token is neither op ("+","|" or "!") or parenthesis
-            output.push_back( token );
-    }
-    end:
-    // check success
-    if( !success )
-        emit_error( "Failed to parse conditional." );
-*/
     return result;
 }
 
@@ -593,12 +485,20 @@ bool nectar_loader::process_inner_list_conditional()
 
 bool nectar_loader::parse_file_list( const file_type type )
 {
-    syntax_error( "File list parsing not implemented yet." );
-    return false;
+    bool empty = true; // a list must not be empty
+    string token;
+
+    while( next_list_token(token) )
+    {
+        debug(6) << "nectar_loader::parse_file_list::adding file " << token << " to the file list.\n";
+        p_target->add_source_file(type, token, m_line_number); // errors are assembled below
+    }
+    return !error_status();
+
 }
 bool nectar_loader::parse_source_directory_list( const file_type type )
 {
-    bool empty = true; // a list cannot be empty
+    bool empty = true; // a list must not be empty
     string token;
     const string &source_directory = p_target->config().source_directory();
     // gather all list items
@@ -606,10 +506,8 @@ bool nectar_loader::parse_source_directory_list( const file_type type )
     {
         debug(6) << "nectar_loader::parse_source_directory_list::Checking if directory exists: "
                  << source_directory << "/" << token << ".\n";
-        if( !directory_exists( full_directory_name(m_directory, token)) )
-            emit_error_list( {token} ); // add the bad directory to error_list
-        else
-            p_target->add_source_directory( type, full_directory_name(m_directory, token) );
+        if( !p_target->add_source_directory(type, full_directory_name(m_directory, token)) )
+                emit_error_list( {token + "(line " + to_string(m_line_number) + ")"} ); // add the bad directory to error_list
     }
     if( error_status() )
     {
@@ -629,94 +527,6 @@ bool nectar_loader::parse_variable_list( string_set &items )
     syntax_error( "Variable list parsing isn't done yet." );
     return false;
 }
-/*bool nectar_loader::parse_list()
-{
-    debug(4) << "nectar_loader::parse_list::Parsing list.\n";
-    size_t curly_braces_count = 0;
-    string token;
-    bool list_empty = true;
-    while( next_token(token, s_special_characters_newline) )
-    {
-        debug(4) << "nectar_loader::parse_list::token: " << output_form(token) << ".\n";
-        if( "\n" == token )
-            break; // list has ended
-        else if( "(" == token )
-        {
-            if( !process_inner_list_conditional() )
-                return false;
-        }
-        else if( "}" == token )
-        {
-            if( curly_braces_count > 0 )
-                curly_braces_count--;
-            else
-            {
-                syntax_error( "Unexpected closing curly brace." );
-                return false;
-            }
-        }
-        else if( "~" == token && next_token(token, s_special_characters_newline) )
-        {
-            debug(5) << "nectar_loader::parse_list::removing item from list: " << token << ".\n";
-            if( !validate(token) )
-                return false;
-
-            list_empty = false;
-            const string_set result = remove( token );
-            switch( result.size() )
-            {
-                case 0:
-                    break; // all OK, continue
-                case 1:
-                    syntax_warning( "Item that is not in list cannot be deleted: " + token );
-                    break;
-                default:
-                    syntax_error( "Could not delete ambiguous item: " + token + "\n"
-                                  + "\tAmbiguous with:");
-                    std::for_each( result.begin(), result.end(),
-                                   [this](const string &item)
-                                   {
-                                       syntax_error( "\t" + item );
-                                   } );
-            }
-        }
-        else
-        {
-            debug(5) << "nectar_loader::parse_list::adding item to list: " << token << ".\n";
-            if( !validate(token) )
-                return false;
-
-            list_empty = false;
-            const string_set result = insert( token );
-            switch( result.size() )
-            {
-                case 0:
-                    break; // all OK, continue
-                case 1:
-                    syntax_error( "Duplicate item: " + *result.begin() );
-                    break;
-                default:
-                    syntax_error( "Ambiguous item: " + token );
-                    std::for_each( result.begin(), result.end(),
-                               [this](const string &item)
-                               {
-                                   syntax_error( "\t" + item );
-                               } );
-            }
-        }
-    }
-    debug(4) << "nectar_loader::parse_list::Done with list.\n";
-    if( curly_braces_count > 0 )
-        syntax_error( "Unclosed curly braces." );
-    else if( list_empty )
-        syntax_error( "A list must not be empty. Place the conditional before the list name." );
-
-    // gather any errors and make sure parsing does not continue
-    if( error_status() )
-        return false;
-    else
-        return true;
-}*/
 
 void nectar_loader::parse_target()
 {

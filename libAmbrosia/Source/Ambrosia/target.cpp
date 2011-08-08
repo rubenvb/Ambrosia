@@ -73,7 +73,7 @@ const build_config & target::config() const
     return m_build_config;
 }
 
-void target::add_file( const file_type type, const string &filename )
+void target::add_source_file( const file_type type, const string &filename, const size_t line_number )
 {
     if( contains(filename, "*?") )
     {
