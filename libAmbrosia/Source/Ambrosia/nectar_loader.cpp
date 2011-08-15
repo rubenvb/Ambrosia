@@ -505,7 +505,7 @@ bool nectar_loader::parse_source_directory_list( const file_type type )
     while( next_list_token(token) )
     {
         debug(6) << "nectar_loader::parse_source_directory_list::Checking if directory exists: "
-                 << source_directory << "/" << token << ".\n";
+                 << source_directory << "/" << full_directory_name(m_directory, token) << ".\n";
         if( !p_target->add_source_directory(type, full_directory_name(m_directory, token)) )
                 emit_error_list( {token + "(line " + to_string(m_line_number) + ")"} ); // add the bad directory to error_list
     }

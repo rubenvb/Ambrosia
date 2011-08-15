@@ -32,6 +32,7 @@ void emit_error_list( const string_vector &list );
 void emit_warning_list( const string_vector &list );
 // retrieve current status
 bool error_status();
+bool error_list_status();
 // print messages currently stored
 void print_errors();
 

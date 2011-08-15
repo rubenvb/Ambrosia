@@ -21,8 +21,13 @@
 libambrosia_namespace_begin
 
 // "private" variables
-bool error = false;
-bool warning = false;
+enum class status
+{
+    clear,
+    list,
+    error
+};
+status current_status = status::clear;
 string error_messages = string();
 string warning_messages = string();
 string_vector error_list{};
@@ -30,12 +35,16 @@ string_vector warning_list{};
 
 bool error_status()
 {
-    return error;
+    return current_status == status::error;
+}
+bool error_list_status()
+{
+    return current_status == status::list;
 }
 
 void emit_error( const string &message )
 {
-    error = true;
+    current_status = status::error;
     error_messages += "\nError: " + message;
     std::for_each( error_list.begin(), error_list.end(),
                    []( const string &item)
@@ -52,7 +61,7 @@ void emit_warning( const string &message )
 
 void emit_error_list( const string_vector &list )
 {
-    error = true;
+    current_status = status::list;
     error_list.insert( error_list.end(), list.begin(), list.end() );
 }
 void emit_warning_list( const string_vector &list )
@@ -68,7 +77,7 @@ void print_errors()
     cerr << error_messages << "\n";
     error_messages.clear();
     error_list.clear();
-    error = true;
+    current_status = status::clear;
 }
 
 libambrosia_namespace_end

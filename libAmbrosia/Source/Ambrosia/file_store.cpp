@@ -110,7 +110,6 @@ const file_set file_store::match_source_files( const string &filename, const str
         if( error_status() )
             return result;
 
-
         // match all files that were scanned from disk to the wildcard filename
         const auto files_end = files_on_disk.end();
         for( auto files_it = files_on_disk.begin(); files_it != files_end; ++files_it )
