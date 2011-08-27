@@ -79,7 +79,7 @@ void target::add_source_file( const file_type type, const string &filename, cons
     {
         const file_set matches = s_file_store.match_source_files( filename, m_source_directories[type] );
         if( matches.empty() )
-            return emit_error(); // error will be handled
+            return emit_error( "" ); // error will be handled
     }
     else
     {

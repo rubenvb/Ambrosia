@@ -120,7 +120,11 @@ const file_set file_store::match_source_files( const string &filename, const str
             debug(6) << "file_store::match_source_files::Matching " << entry.first
                      << " with " << true_filename << ".\n";
             if( wildcard_compare(true_filename, entry.first) )
+            {
+                debug(7) << "file_store::match_source_files::Matched " << true_filename
+                         << " to " << directory << "/" << entry.first << ".\n";
                 result.insert( { directory + "/" + entry.first, entry.second } );
+            }
         }
     }
     debug(5) << "file_store::match_source_files::Found " << result.size() << " matches.\n";
