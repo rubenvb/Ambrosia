@@ -9,6 +9,9 @@
 // Function include
 #include "Ambrosia/status.h"
 
+// libAmbrosia includes
+#include "Ambrosia/debug.h"
+
 // C++ includes
 #include <algorithm>
 #include <iostream>
@@ -35,6 +38,7 @@ string_vector warning_list{};
 
 bool error_status()
 {
+    debug(0) << "status::error_status::Checking error status now.\n";
     return current_status == status::error;
 }
 bool error_list_status()
@@ -44,6 +48,7 @@ bool error_list_status()
 
 void emit_error( const string &message )
 {
+    debug(0) << "status::emit_error:Emitting error here.\n";
     current_status = status::error;
     error_messages += "\nError: " + message;
     std::for_each( error_list.begin(), error_list.end(),

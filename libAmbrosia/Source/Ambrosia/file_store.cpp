@@ -110,15 +110,20 @@ const file_set file_store::match_source_files( const string &filename, const str
         if( error_status() )
             return result;
 
+        debug(5) << "file_store::match_source_files::Searching for match with " << files_on_disk.size() << " files.\n";
+
         // match all files that were scanned from disk to the wildcard filename
         const auto files_end = files_on_disk.end();
         for( auto files_it = files_on_disk.begin(); files_it != files_end; ++files_it )
         {
-            const file &entry = *files_it; // filename and last moddified time
+            const file &entry = *files_it; // filename and last modified time
+            debug(6) << "file_store::match_source_files::Matching " << entry.first
+                     << " with " << true_filename << ".\n";
             if( wildcard_compare(true_filename, entry.first) )
                 result.insert( { directory + "/" + entry.first, entry.second } );
         }
     }
+    debug(5) << "file_store::match_source_files::Found " << result.size() << " matches.\n";
     return result;
 }
 
