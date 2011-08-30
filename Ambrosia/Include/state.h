@@ -12,7 +12,7 @@
 // Global include
 #include "Ambrosia/global.h"
 
-libambrosia_namespace_begin
+ambrosia_namespace_begin
 
 class state
 {
@@ -34,6 +34,6 @@ private:
     state* p_parent;
 };
 
-libambrosia_namespace_end
+ambrosia_namespace_end
 
 #endif // STATE_H

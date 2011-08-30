@@ -12,6 +12,7 @@
 // libAmbrosia includes
 #include "Ambrosia/Configuration/build_config.h"
 #include "Ambrosia/debug.h"
+    using libambrosia::debug;
 
 ambrosia_namespace_begin
 

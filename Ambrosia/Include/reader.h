@@ -13,15 +13,17 @@
 #include "global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/state.h"
 #include "Ambrosia/typedefs.h"
+
+// Ambrosia includes
+#include "state.h"
 
 // C++ includes
 #include <fstream>
 
 ambrosia_namespace_begin
 
-class reader : public lib::state
+class reader : public state
 {
 public:
     reader( state* parent = 0 );

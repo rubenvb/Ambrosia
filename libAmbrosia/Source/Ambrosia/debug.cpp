@@ -12,7 +12,7 @@
 // C++ includes
 #include <algorithm>
 
-ambrosia_namespace_begin
+libambrosia_namespace_begin
 
 #ifdef AMBROSIA_DEBUG
 // static member initialization
@@ -41,5 +41,4 @@ debug& debug::operator<<( const string_set & )
     return *this;
 }
 
-
-ambrosia_namespace_end
+libambrosia_namespace_end

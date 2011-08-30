@@ -13,15 +13,17 @@
 #include "global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/state.h"
 #include "Ambrosia/Configuration/build_config.h"
+
+// Ambrosia includes
+#include "state.h"
 
 // C++ includes
 #include <string>
 
 ambrosia_namespace_begin
 
-class begin : public lib::state
+class begin : public state
 {
 public:
     begin( const int argc, const char* const argv[], state* parent = 0 );

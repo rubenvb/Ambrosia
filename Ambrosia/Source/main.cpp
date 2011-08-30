@@ -12,6 +12,7 @@
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/debug.h"
+    using libambrosia::debug;
 
 // C-ish includes
 #include <cstdlib>

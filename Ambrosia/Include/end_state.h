@@ -14,14 +14,16 @@
 
 // libAmbrosia includes
 #include "Ambrosia/typedefs.h"
-#include "Ambrosia/state.h"
+
+// Ambrosia includes
+#include "state.h"
 
 // C++ includes
 /* <string> */
 
 ambrosia_namespace_begin
 
-class end_state : public lib::state
+class end_state : public state
 {
 public:
     // print "Error:" followed by libAmbrosia's error::print_errors

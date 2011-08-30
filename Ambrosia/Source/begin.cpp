@@ -15,10 +15,8 @@
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
-    using ambrosia::debug;
+    using libambrosia::debug;
 #include "Ambrosia/enums.h"
-/* "Ambrosia/state.h" */
-    using libambrosia::state;
 #include "Ambrosia/status.h"
 #include "help_and_version_output.h"
 #include "Ambrosia/platform.h"
@@ -26,6 +24,8 @@
 
 // Ambrosia includes
 #include "output.h"
+/* "Ambrosia/state.h" */
+    using ambrosia::state;
 
 // C++ includes
 /* <string> */
@@ -243,7 +243,7 @@ void begin::set_internal_option( const std::string &option, const std::string &v
     {
         const int level = lib::from_string<int>( value );
         // check validity, partial check on input as well
-        if( level > s_max_debug_level || level < 0 )
+        if( level > lib::s_max_debug_level || level < 0 )
             lib::emit_error( "Debug level must be a number between 0 and 9." );
         debug(0) << "begin::Setting debug level to " << level << ".\n";
         debug::s_level = level;

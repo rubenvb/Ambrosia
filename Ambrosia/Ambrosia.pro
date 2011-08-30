@@ -28,6 +28,7 @@ INCLUDEPATH += . Include
 DEPENDPATH += . Include Source
 
 SOURCES += \
+    Source/state.cpp \
     Source/begin.cpp \
     Source/main.cpp \
     Source/end_state.cpp \
@@ -37,6 +38,7 @@ SOURCES += \
     Source/builder.cpp
 
 HEADERS += \
+    Include/state.h \
     Include/output.h \
     Include/begin.h \
     Include/global.h \

@@ -7,12 +7,12 @@
   **/
 
 // Class include
-#include "Ambrosia/state.h"
+#include "state.h"
 
 // libAmbrosia includes
 #include "Ambrosia/debug.h"
 
-libambrosia_namespace_begin
+ambrosia_namespace_begin
 
 state::state( state* parent )
 :   p_parent( parent )
@@ -43,4 +43,4 @@ void state::set_parent( state* parent )
     p_parent = parent;
 }
 
-libambrosia_namespace_end
+ambrosia_namespace_end

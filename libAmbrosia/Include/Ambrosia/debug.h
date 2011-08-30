@@ -16,7 +16,7 @@
 // C++ includes
 #include <iostream>
 
-ambrosia_namespace_begin
+libambrosia_namespace_begin
 
 #ifdef AMBROSIA_DEBUG
 extern const int s_max_debug_level;
@@ -67,6 +67,6 @@ private:
 template<>
 debug& debug::operator<<( const string_set & );
 
-ambrosia_namespace_end
+libambrosia_namespace_end
 
 #endif // DEBUG_H

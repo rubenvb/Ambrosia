@@ -11,8 +11,9 @@
 
 // libAmbrosia includes
 #include "Ambrosia/debug.h"
+    using libambrosia::debug;
 /* "Ambrosia/state.h" */
-    using libambrosia::state;
+    using ambrosia::state;
 #include "Ambrosia/status.h"
 
 // C++ includes

@@ -25,7 +25,6 @@ HEADERS += \
     Include/Ambrosia/global.h \
     Include/Ambrosia/platform.h \
     Include/Ambrosia/typedefs.h \
-    Include/Ambrosia/state.h \
     Include/Ambrosia/enum_maps.h \
     Include/Ambrosia/status.h \
     Include/Ambrosia/nectar.h \
@@ -40,7 +39,6 @@ HEADERS += \
 
 SOURCES += \
     Source/Ambrosia/Platform/common.cpp \
-    Source/Ambrosia/state.cpp \
     Source/Ambrosia/enum_maps.cpp \
     Source/Ambrosia/status.cpp \
     Source/Ambrosia/nectar.cpp \
