@@ -498,7 +498,7 @@ bool nectar_loader::parse_file_list( const file_type type )
     {
         debug(6) << "nectar_loader::parse_file_list::adding file " << token << " to the file list.\n";
         empty = false;
-        p_target->add_source_file(type, token, m_line_number); // errors are assembled in this function
+        p_target->add_source_file(type, token, m_filename, m_line_number); // errors are assembled in this function
     }
     if( empty )
         emit_syntax_error( "A list must not be empty." );

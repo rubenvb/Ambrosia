@@ -73,13 +73,15 @@ const build_config & target::config() const
     return m_build_config;
 }
 
-void target::add_source_file( const file_type type, const string &filename, const size_t line_number )
+void target::add_source_file( const file_type type, const string &filename,
+                              const string &nectar_file, const size_t line_number )
 {
     if( contains(filename, "*?") )
     {
         const file_set matches = s_file_store.match_source_files( filename, m_source_directories[type] );
         if( matches.empty() )
-            return emit_error( "No files matching " + filename + " found." ); // error will be handled
+            return emit_nectar_error( "No files matching " + filename + " found.",
+                                      nectar_file, line_number ); // error will be handled
     }
     else
     {
