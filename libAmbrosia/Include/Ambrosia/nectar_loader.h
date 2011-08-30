@@ -56,8 +56,10 @@ private:
 /*'
  * emit_error and emit_warning wrappers
  ***************************************/
-    void syntax_error( const std::string &message ) const;
-    void syntax_warning( const std::string &message ) const;
+    void emit_nectar_error( const std::string &message ) const;
+    void emit_nectar_warning( const std::string &message ) const;
+    void emit_syntax_error( const std::string &message ) const;
+    void emit_syntax_warning( const std::string &message ) const;
 /*
  * Token reading
  ****************/

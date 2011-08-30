@@ -10,6 +10,7 @@
 #include "Ambrosia/status.h"
 
 // libAmbrosia includes
+#include "Ambrosia/algorithm.h"
 #include "Ambrosia/debug.h"
 
 // C++ includes
@@ -63,7 +64,18 @@ void emit_warning( const string &message )
                    []( const string &item)
                    { cerr << "\n\t" << item; } );
 }
-
+void emit_nectar_error( const string &message, const string &filename,
+                        const size_t line_number )
+{
+    debug(4) << "nectar_loader::syntax_error::Emitting a syntax error here.\n";
+    emit_error( "Syntax error: " + filename + ": line " + to_string(line_number) + "\n\t" + message );
+}
+void emit_nectar_warning( const string &message, const string &filename,
+                          const size_t line_number )
+{
+    debug(4) << "nectar_loader::syntax_warning::Emitting a syntax warning here.\n";
+    emit_warning( "Syntax warning: " + filename + ": line " + to_string(line_number) + ": " + message );
+}
 void emit_error_list( const string_vector &list )
 {
     current_status = status::list;
