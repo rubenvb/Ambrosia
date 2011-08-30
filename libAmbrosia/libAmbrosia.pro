@@ -6,8 +6,6 @@ DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
 
 *g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic-errors -Wextra -Wall -Wconversion \
                         -Weffc++ -Wmissing-include-dirs -Wstrict-aliasing
-debug:DEFINES += AMBROSIA_DEBUG
-debug:QMAKE_CXXFLAGS += -ggdb -g3
 CONFIG( debug, debug|release ) {
     LIBSUFFIX = d
     DEFINES += AMBROSIA_DEBUG

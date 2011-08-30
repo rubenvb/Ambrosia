@@ -6,7 +6,6 @@ DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
 
 *g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic-errors -Wextra -Wconversion \
                         -Weffc++ -Wmissing-include-dirs -Wstrict-aliasing
-debug:QMAKE_CXXFLAGS += -ggdb -g3
 # Ambrosia Library
 INCLUDEPATH += ../libAmbrosia/Include
 CONFIG( debug, debug|release ) {

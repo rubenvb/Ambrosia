@@ -41,7 +41,7 @@ libambrosia_namespace_begin
 
 const string find_nectar_file( const string &directory )
 {
-    debug() << "nectar::find_nectar_file called for: " << directory << ".\n";
+    debug(3) << "nectar::find_nectar_file called for: " << directory << ".\n";
     s_ambrosia_config.set_source_directory( directory );
     file_set candidates = s_file_store.find_source_file( "*.nectar.txt" );
     //scan_directory( std::inserter(file_list, file_list.begin()), directory );

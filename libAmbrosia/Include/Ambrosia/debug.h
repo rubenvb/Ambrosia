@@ -18,24 +18,28 @@
 
 ambrosia_namespace_begin
 
+#ifdef AMBROSIA_DEBUG
 extern const int s_max_debug_level;
+#endif // AMBROSIA_DEBUG
 
 class debug
 {
 public:
     typedef std::ostream& (*stream_function)(std::ostream&);
 
+#ifdef AMBROSIA_DEBUG
     static int s_level;
-
     debug( const int debug_level = s_level );
-
+#else // AMBROSIA_DEBUG
+    debug( const int );
+#endif // AMBROSIA_DEBUG
     template<typename T>
     #ifdef AMBROSIA_DEBUG
     debug& operator<<( const T &output )
     {
         if( m_output )
             std::cerr << output;
-    #else
+    #else // AMBROSIA_DEBUG
     debug& operator<<( const T & )
     {
     #endif // AMBROSIA_DEBUG
