@@ -12,7 +12,6 @@
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/debug.h"
-    using libambrosia::debug;
 
 // C-ish includes
 #include <cstdlib>
@@ -29,7 +28,7 @@
 
 using namespace std;
 using namespace ambrosia;
-using namespace libambrosia;
+using namespace ambrosia::lib;
 
 int main( int argc, char* argv[] )
 {
