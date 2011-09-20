@@ -13,6 +13,9 @@
 #include "Ambrosia/debug.h"
 
 // Common platform includes
+#if _WIN32
+    #define S_IFREG _S_IFREG
+#endif // _WIN32
 #if __linux__
     #include <sys/io.h>   // For access()
 #else
@@ -95,7 +98,7 @@ bool file_exists( const string &filename )
 #endif //_WIN32
     {
         debug(6) << "platform::file_exists::(_w)stat(64) succeeded.\n";
-        if ( status.st_mode & _S_IFREG )
+        if ( status.st_mode & S_IFREG )
             return true;
     }
     debug(6) << "platform::file_exists::" << filename << " is not a file.\n";

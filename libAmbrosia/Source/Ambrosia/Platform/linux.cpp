@@ -17,9 +17,14 @@
 #include "sys/stat.h"
 
 // C++ includes
+#include <fstream>
+    using std::ifstream;
+    using std::ofstream;
 #include <iterator>
     using std::back_insert_iterator;
     using std::insert_iterator;
+/* <memory> */
+    using std::unique_ptr;
 #include <stdexcept>
     using std::runtime_error;
 /* <string> */
@@ -60,7 +65,8 @@ void scan_directory( output_iterator it, const string &directory_name )
     // store cwd to return to original directory when finished
     string cwd( current_working_directory() );
 
-    chdir( directory_name.c_str() );
+    if( chdir(directory_name.c_str()) )
+        throw runtime_error( "Cannot access directory: " + directory_name );
 
     while( (entry=readdir(dir)) != 0 )
     {
@@ -72,7 +78,9 @@ void scan_directory( output_iterator it, const string &directory_name )
         if( S_ISREG(attributes.st_mode) )
             it = { name, attributes.st_mtime };
     }
-    chdir( cwd.c_str() );
+    if( chdir(cwd.c_str()) )
+        throw runtime_error( "Cannot access old working directory: " + cwd );
+
     closedir( dir );
 }
 template void scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string & );
@@ -85,12 +93,13 @@ void recursive_scan_directory( output_iterator it, const string &relative_direct
     struct stat attributes;
 
     if( (dir=opendir(relative_directory.c_str())) == 0 )
-        throw runtime_error( "unable to open file: " + directory_name );
+        throw runtime_error( "Unable to open file: " + directory_name );
 
     // store cwd to return to original directory when finished
     string cwd( current_working_directory() );
 
-    chdir( relative_directory.c_str() );
+    if( chdir(relative_directory.c_str()) )
+        throw runtime_error( "Directory cannot be accessed: " + relative_directory );
 
     while( (entry=readdir(dir)) != 0 )
     {
@@ -116,7 +125,9 @@ void recursive_scan_directory( output_iterator it, const string &relative_direct
                 it = { directory_name + "/" + name, attributes.st_mtime };
         }
     }
-    chdir( cwd.c_str() );
+    if( chdir(cwd.c_str()) )
+        throw runtime_error( "Cannot access old working directory: " + cwd );
+
     closedir( dir );
 }
 // explicit instantiation
