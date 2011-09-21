@@ -53,16 +53,16 @@ private:
     const dependency_list &m_dependency_list;
     bool m_global_processed; // only one global section per project file is allowed
     std::unique_ptr<target> p_target; // temporary pointer to current target, moved to extract_nectar's target_list parameter
-/*'
- * emit_error and emit_warning wrappers
+/*
+ * Error/warning reporting
  ***************************************/
     void emit_nectar_error( const std::string &message ) const;
     void emit_nectar_warning( const std::string &message ) const;
     void emit_syntax_error( const std::string &message ) const;
     void emit_syntax_warning( const std::string &message ) const;
 /*
- * Token reading
- ****************/
+ * Lexing
+ *********/
     bool next_token( std::string &token, const std::set<char> &special_characters = s_special_characters );
     bool next_list_token( std::string &token );
     bool process_conditional();
@@ -74,7 +74,7 @@ private:
  * Parsing
  **********/
     // conditionals
-    bool resolve_conditional( const std::function<bool(const std::string&)> &config_contains );
+    bool test_condition( const std::function<bool(const std::string&)> &config_contains );
     bool process_outer_conditional();      // evaluated against s_ambrosia_config, skips full target
     bool process_dependency_list_conditional(); // evaluated against s_ambrosia_config, skips dependenc(y/ies)
     bool process_inner_conditional();      // evaluated against m_build_config, skips whole list
@@ -86,7 +86,7 @@ private:
     bool parse_variable_list( string_set &items ); // only adds or removes strings from variables
     // main target parser
     void parse_target();
-    // input validation functions (see wiki for valid input requirements)
+    // input validation functions (see Ambrosia wiki for valid input requirements)
     bool validate_variable( const std::string &config );
     bool validate_filename( const std::string &filename );
     bool validate_directory( const std::string &directory );

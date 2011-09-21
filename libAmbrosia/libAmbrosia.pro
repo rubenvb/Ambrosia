@@ -4,6 +4,8 @@ CONFIG += static
 CONFIG -= qt
 DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
 
+CONFIG += debug_and_release
+
 *g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic-errors -Wextra -Wall -Wconversion \
                         -Weffc++ -Wmissing-include-dirs -Wstrict-aliasing -Werror
 CONFIG( debug, debug|release ) {

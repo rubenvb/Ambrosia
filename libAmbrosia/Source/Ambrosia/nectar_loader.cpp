@@ -199,7 +199,9 @@ void nectar_loader::extract_nectar( target_list &targets )
     }
     debug(3) << "nectar_loader::Finished with file: " << m_filename << ".\n";
 }
-
+/*
+ * Error/warning reporting
+ **************************/
 void nectar_loader::emit_nectar_error( const std::string &message ) const
 {
     libambrosia::emit_nectar_error( message, m_filename, m_line_number );
@@ -216,11 +218,13 @@ void nectar_loader::emit_syntax_warning( const std::string &message ) const
 {
     libambrosia::emit_nectar_warning( "Syntax warning: " + message, m_filename, m_line_number );
 }
+/*
+ * Lexing
+ *********/
 bool nectar_loader::next_token( string &token, const std::set<char> &special_characters )
 {
     // TODO: test the *full* hell out of this function
-    // FIXME: ugly as hell, fixes welcome.
-    //        - check for special char's in two places
+    // FIXME: ugly as hell, alternatives welcome.
     token.clear();
     bool inside_quotes = false;
     char c;
@@ -397,7 +401,7 @@ void nectar_loader::read_dependency_list( dependency_list &dependencies )
 /*
  * Parsing
  **********/
-bool nectar_loader::resolve_conditional( const std::function<bool(const string&)> &config_contains )
+bool nectar_loader::test_condition( const std::function<bool(const string&)> &config_contains )
 {
     bool result = true;
 
@@ -438,7 +442,7 @@ bool nectar_loader::resolve_conditional( const std::function<bool(const string&)
                         // TODO: allow conditionals without outer parenthesis of the form (a+b)|(c)
                         return result;
                     case conditional_operator::left_parenthesis: // recurse
-                        return resolve_conditional( config_contains );
+                        return test_condition( config_contains );
                     case conditional_operator::plus_op:
                         result = result && current; // "current" -> "result"
                         if( !result ) // negative when an element of a "+" expression
@@ -480,6 +484,15 @@ bool nectar_loader::process_dependency_list_conditional()
 
 bool nectar_loader::process_inner_conditional()
 {
+    if( test_condition( [this](const string &item){ return contains(p_target->config(), item); }) )
+    {
+        debug(4) << "nectar_loader::process_inner_conditional::condition returned true, nothing to skip.\n";
+    }
+    else
+    {
+        debug(4) << "nectar_loader::process_inner_conditional::conditional returned false, skipping all relevant parts.\n";
+    }
+
     emit_nectar_error( "Inner conditionals not implemented yet." );
     return false;
 }
