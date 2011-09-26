@@ -231,12 +231,12 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
 
     while( m_stream.get(c) )
     {
-        debug(7) << "nectar_loader::next_token::line number " << m_line_number
+        debug(8) << "nectar_loader::next_token::line number " << m_line_number
                  << ", character: \'" << output_form(c)
                  << "\', token so far: " << output_form(token) << "\n";
         if( inside_quotes )
         {
-            debug(7) << "nectar_loader::next_token::Inside quotes.\n";
+            debug(9) << "nectar_loader::next_token::Inside quotes.\n";
             if( '\"' == c )
                 break; // end of token at end of quotes
             else if( '\n' == c )
@@ -264,7 +264,7 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
                 }
                 else if( '\"' == c )
                 {
-                    debug(7) << "nectar_loader::next_token::Quote detected.\n";
+                    debug(9) << "nectar_loader::next_token::Quote detected.\n";
                     inside_quotes = true;
                     continue;
                 }
@@ -272,7 +272,7 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
                     continue;
                 else if( '#' == c )
                 {   // skip over comments
-                    debug(7) << "nectar_loader::next_token::Skipping over comments.\n";
+                    debug(8) << "nectar_loader::next_token::Skipping over comments.\n";
                     string temp;
                     std::getline( m_stream, temp );
                     ++m_line_number;
@@ -288,7 +288,7 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
             }
             else if( std::isspace(c, m_stream.getloc()) || contains(special_characters, c) )
             {   // special characters or whitespace seperate tokens
-                debug(6) << "nectar_loader::next_token::Detected special character or space.\n";
+                debug(7) << "nectar_loader::next_token::Detected special character or space.\n";
                 m_stream.putback( c );
                 break;
             }
@@ -424,6 +424,7 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
         conditional_operator op;
         if( map_value(conditional_operator_map, token, op) )
         {
+            debug(6) << "nectar_loader::test_condition::operator found: " << token << ".\n";
             if( previous_was_operator )
             {
                 if( op == conditional_operator::not_op )
@@ -449,7 +450,7 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
                         current = false; // reset "current"
                         break;
                     case conditional_operator::or_op: // combine with "current"
-                    throw runtime_error( "TODO" );
+                        throw runtime_error( "TODO" );
                     case conditional_operator::not_op: // unreachable
                         throw runtime_error( "Internal logic error in nectar_loader::resolve_conditional" );
                 }
@@ -466,6 +467,7 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
             // check CONFIG string, and perform a logical OR
             // TODO: check effect of "!"
             current = current || config_contains(token);
+            previous_was_operator = false;
         }
     }
     return result;
@@ -484,17 +486,18 @@ bool nectar_loader::process_dependency_list_conditional()
 
 bool nectar_loader::process_inner_conditional()
 {
-    if( test_condition( [this](const string &item){ return contains(p_target->config(), item); }) )
-    {
+    if( test_condition( [this](const string &item){ return contains(p_target->config().config(), item); }) )
         debug(4) << "nectar_loader::process_inner_conditional::condition returned true, nothing to skip.\n";
-    }
     else
     {
         debug(4) << "nectar_loader::process_inner_conditional::conditional returned false, skipping all relevant parts.\n";
     }
 
-    emit_nectar_error( "Inner conditionals not implemented yet." );
-    return false;
+    debug(0) << "!!!Inner conditionals not fully implemented yet.\n" ;
+    if( error_status() )
+        return false;
+    else
+        return true;
 }
 bool nectar_loader::process_inner_list_conditional()
 {
