@@ -31,9 +31,14 @@ template<>
 debug& debug::operator<<( const string_set & strings )
 {
     if( m_output )
-        std::for_each( strings.begin(), strings.end(),
-                       [strings](const std::string &item)
-                       { std::cerr << "\t" << item << "\n"; } );
+    {
+        if( strings.empty() )
+            std::cerr << "\t<empty list>\n";
+        else
+            std::for_each( strings.begin(), strings.end(),
+                           [strings](const std::string &item)
+                           { std::cerr << "\t" << item << "\n"; } );
+    }
 #else // AMBROSIA_DEBUG
 debug& debug::operator<<( const string_set & )
 {

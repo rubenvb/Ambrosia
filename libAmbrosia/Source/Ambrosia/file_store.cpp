@@ -51,24 +51,31 @@ const file_set & file_store::get_source_file_set( const std::string &directory )
 const file_set file_store::find_source_file( const string &filename, const string_set &directories )
 {
     const string &source_directory = s_ambrosia_config.source_directory();
-    string_set directories_to_search = directories;
-    debug(4) << "file_store::find_source_file::Looking for " << filename
-             << " in subdirectories of: " <<  source_directory << "\n"
-             << directories;
-
-    file_set result;
+    // handle filename with directory prepended
     const string_pair directory_filename( split_preceding_directory(filename) );
     const string &preceding_directory = directory_filename.first;
     const string &true_filename = directory_filename.second;
-
     // handle empty "directories" case
+    string_set directories_to_search;
     if( directories.empty() )
-        directories_to_search.insert("");
+        directories_to_search = { "" };
+    else
+    {
+        std::for_each( directories.begin(), directories.end(),
+                       [&](const string & directory)
+                       {
+                       directories_to_search.insert( full_directory_name(directory, preceding_directory) );
+                       } );
+    }
+    debug(4) << "file_store::find_source_file::Looking for " << filename
+             << " in " << directories_to_search;
+
+    file_set result;
 
     const auto end = directories_to_search.end();
     for( auto it = directories_to_search.begin(); it != end; ++it )
     {
-        const string directory = full_directory_name( source_directory, *it + preceding_directory );
+        const string &directory = source_directory;
 
         debug(5) << "file_store::find_source_file::Loading directory contents for: "
                  << directory << ".\n";

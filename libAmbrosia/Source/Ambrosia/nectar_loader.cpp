@@ -512,7 +512,7 @@ bool nectar_loader::parse_file_list( const file_type type )
 
     while( next_list_token(token) )
     {
-        debug(6) << "nectar_loader::parse_file_list::adding file " << token << " to the file list.\n";
+        debug(6) << "nectar_loader::parse_file_list::adding matches to file " << token << " to the file list.\n";
         empty = false;
         p_target->add_source_file(type, token, m_filename, m_line_number); // errors are assembled in this function
     }
