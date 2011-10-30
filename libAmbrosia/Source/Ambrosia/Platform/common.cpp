@@ -51,22 +51,24 @@ libambrosia_namespace_begin
 const vector<string> get_environment_PATH()
 {
 #if _WIN32
-    std::string PATH = convert_to_utf8( _wgetenv(L"PATH") );
+    const std::string PATH = convert_to_utf8( _wgetenv(L"PATH") );
+    const char delimiter = ';';
 #else
-    std::string PATH = getenv( "PATH" );
+    const std::string PATH = getenv( "PATH" );
+    const char delimiter = ":";
 #endif
     if( PATH.empty() )
         throw runtime_error( "PATH should not be empty" );
 
     vector<string> result;
     size_t previous = 0;
-    size_t index = PATH.find( ';' );
-
+    size_t index = PATH.find( delimiter );
     while( index != string::npos )
     {
-        result.push_back( PATH.substr(previous, index));
-        previous=index;
-        debug(8) << "platform::get_environment_PATH::part of PATH: " << PATH.substr(previous, index) << "\n";
+        result.push_back( PATH.substr(previous, index-previous));
+        debug(6) << "platform::get_environment_PATH::part of PATH: " << result.back() << "\n";
+        previous=index+1;
+        index = PATH.find( delimiter, previous );
     }
     result.push_back( PATH.substr(previous) );
 

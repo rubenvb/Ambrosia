@@ -30,7 +30,7 @@ config_base::config_base()
     m_target_os( m_build_os ),
     m_target_toolchain( detect_toolchain() ),
     m_config(),
-    m_environment_PATH(),
+    m_environment_PATH( get_environment_PATH() ),
     m_source_directory(),
     m_project_file(),
     m_build_directory()
@@ -43,7 +43,7 @@ config_base::config_base( toolchain requested_toolchain )
     m_target_os( m_build_os ),
     m_target_toolchain( detect_toolchain(requested_toolchain) ),
     m_config(),
-    m_environment_PATH(),
+    m_environment_PATH( get_environment_PATH() ),
     m_source_directory(),
     m_project_file(),
     m_build_directory()
