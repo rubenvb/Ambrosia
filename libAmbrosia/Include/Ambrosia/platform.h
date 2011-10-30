@@ -18,6 +18,7 @@
 // C++ includes
 #include <memory>
 #include <string>
+#include <vector>
 
 libambrosia_namespace_begin
 
@@ -28,6 +29,7 @@ extern const char directory_seperator;
 extern const std::string executable_suffix;
 extern const os build_os;
 extern const architecture build_architecture;
+extern const architecture ambrosia_architecture;
 
 /*
  * Windows support functions
@@ -39,6 +41,8 @@ const std::wstring convert_to_utf16( const std::string &utf8_string );
 /*
  * Possible commonly implemented functions
  ******************************************/
+// PATH environment variable
+const std::vector<std::string> get_environment_PATH();
 // current working directory in string form.
 const std::string current_working_directory();
 // check if a file/directory exists/is accessible

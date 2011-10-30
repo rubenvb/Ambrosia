@@ -60,6 +60,13 @@ const map<toolchain, string> toolchain_map_inverse =
            {toolchain::LLVM,      "clang"},
            {toolchain::Intel,     "icc"} };
 
+const map<string, environment> environment_map =
+         { {"cmd",  environment::cmd},
+           {"Bash", environment::bash} };
+const map<environment, string> environment_map_inverse =
+         { {environment::cmd,  "cmd"},
+           {environment::bash, "Bash"} };
+
 const map<string, target_type> target_type_map =
          { {"global",  target_type::global},
            {"app",     target_type::app},

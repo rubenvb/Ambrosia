@@ -29,7 +29,7 @@ ambrosia_config s_ambrosia_config;
 
 ambrosia_config::ambrosia_config()
 :   config_base(),
-    m_target_config()
+    m_target_config_options()
 {    }
 
 /*
@@ -83,16 +83,16 @@ void ambrosia_config::set_gnu_prefix( const std::string & )
     // TODO: detect and set common GNU/GCC target triplets
     emit_error( "Cross-compiling through GNU prefix has not been implemented yet." );
 }
-void ambrosia_config::add_target_config( const std::string &target, const string_set &options )
+void ambrosia_config::add_target_config_options( const std::string &target, const string_set &options )
 {
-    string_set duplicates = merge_sets( m_target_config[target], options );
+    string_set duplicates = merge_sets( m_target_config_options[target], options );
     if( !duplicates.empty() )
         emit_warning( "" );
 }
 
-const map_string_set_string & ambrosia_config::target_config() const
+const map_string_set_string & ambrosia_config::target_config_options() const
 {
-    return m_target_config;
+    return m_target_config_options;
 }
 
 libambrosia_namespace_end

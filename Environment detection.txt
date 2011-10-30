@@ -16,7 +16,7 @@ SUPPORT
 This table lists the target OS - toolchain combinations that Ambrosia can build with/for.
 The left column is the option provided by the "-cross=..." option on the commandline.
 
-Ambrosia config     | target OS | bitness | Toolchain | Description
+Ambrosia cross      | target OS | bitness | Toolchain | Description
 --------------------+-----------+---------+-----------+------------
 windows-x86-gcc     | Windows   |   32    |   GCC     | MinGW (all 32-bit flavours)
 windows-amd64-gcc   | Windows   |   64    |   GCC     | MinGW (all 64-bit flavours)
@@ -41,6 +41,7 @@ mac-amd64-icc       | Mac OS X  |   64    |   Intel   | UNSUPPORTED
 
 If no "-cross=..." option is passed, auto-detection is initiated:
 
+0. Environment variables CC, CXX, LD, etc. are used.
 1. Native compilation is assumed, which means running Ambrosia
    on Windows x64 will by default create Win64 binaries if possible.
 2. Toolchain ordering:
@@ -49,6 +50,36 @@ If no "-cross=..." option is passed, auto-detection is initiated:
    3) Clang
    4) Intel
 
-This information is unique to a run of Ambrosia, and can only be altered by the "-cross=..." option.
-Many platform specific settings (like inclusion of source files or not in a certain target) can be
-determined this way by using conditionals
+A "-toolchain=..." option will allow to choose a specific one if more of
+them are in PATH.
+
+This information is unique to a run of Ambrosia, and can only be altered
+by the "-cross=..." or "-toolchain=..." options. Many platform specific
+settings (like inclusion of source files or not in a certain target) can be
+determined this way by using following builtin conditionals:
+Note: most of these config strings can be set on a per-target basis
+
+config string | set if
+--------------+---------
+cmd           | Ambrosia was called from the cmd.exe shell
+bash          | Ambrosia was called from GNU Bash (or compatible) shell
+build_windows | Ambrosia was built for and is used on Windows
+build_linux   | Ambrosia was built for and is used on Linux
+build_mac     | Ambrosia was built for and is used on Mac OS X
+windows       | Ambrosia is targetting (building for) Windows
+linux         | Ambrosia is targetting (building for) Linux
+mac           | Ambrosia is targetting (building for) Mac OS X
+x86           | Ambrosia is targetting (building for) 32-bit x86
+amd64         | Ambrosia is targetting (building for) 64-bit amd64/x86_64
+build_x86     | Ambrosia is used on 32-bit x86
+build_amd64   | Ambrosia is used on 64_bit amd64/x86_64
+              |     (also true for 32-bit app on 64-bit OS)
+gcc           | GCC is used
+msvc          | Microsoft's cl.exe is used
+icc           | Intels compiler is used
+clang         | LLVM's Clang is used
+debug         | debug build (no optimizations + debug information)
+release       | release build (optimizations and no debug information)
+release_debug | Release build with debug info
+static        | Link statically where possible
+shared        | Link dynamically where possible, produce shared libraries

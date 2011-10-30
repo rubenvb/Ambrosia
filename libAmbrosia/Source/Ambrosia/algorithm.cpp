@@ -323,9 +323,9 @@ void filter_dependency_sort( target_list &unsorted )
     resolved.reserve( unsorted.size() );
     unresolved.reserve( unsorted.size() );
 
-    const auto &target_config = s_ambrosia_config.target_config();
-    const auto end = target_config.end();
-    for( auto it = target_config.begin(); it != end; ++it )
+    const auto &target_config_options = s_ambrosia_config.target_config_options();
+    const auto end = target_config_options.end();
+    for( auto it = target_config_options.begin(); it != end; ++it )
     {
         const string name( (*it).first );
         const auto item = std::find_if( unsorted.begin(), unsorted.end(),

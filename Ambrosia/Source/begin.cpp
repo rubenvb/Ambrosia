@@ -208,7 +208,7 @@ bool begin::add_build_target( const std::string &target )
     if( index == string::npos )
     {
         debug(3) << "begin::Target to be built: " << target << ".\n";
-        lib::s_ambrosia_config.add_target_config( target, string_set() );
+        lib::s_ambrosia_config.add_target_config_options( target, string_set() );
     }
     else
     {
@@ -224,7 +224,7 @@ bool begin::add_build_target( const std::string &target )
             if( options.insert(temp).second == false )
                 duplicates.insert( temp );
         }
-        lib::s_ambrosia_config.add_target_config( target_name, options );
+        lib::s_ambrosia_config.add_target_config_options( target_name, options );
     }
     return true;
 }

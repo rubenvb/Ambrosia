@@ -12,6 +12,7 @@
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/debug.h"
+#include "Ambrosia/status.h"
 
 // C-ish includes
 #include <cstdlib>
@@ -51,7 +52,8 @@ int main( int argc, char* argv[] )
     const double cleanup_time = difftime( t, time(0) );
 
     debug(0) << "main::Execution took " << exec_time << " seconds.\n"
-         << "Cleanup took " << cleanup_time << " seconds.\n";
+         << "Cleanup took " << cleanup_time << " seconds.\n"
+         << "error_status() was called " << error_status_calls << " times.\n";
 
     return 0;
 }

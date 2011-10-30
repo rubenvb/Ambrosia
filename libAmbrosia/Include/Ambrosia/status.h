@@ -23,6 +23,10 @@
 
 libambrosia_namespace_begin
 
+#ifdef AMBROSIA_DEBUG
+extern size_t error_status_calls;
+#endif
+
 // set error status with appropriate messages
 void emit_error( const std::string &message );
 // directly output warning messages immediately

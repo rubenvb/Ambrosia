@@ -14,6 +14,7 @@
 
 ambrosia_namespace_begin
 
+// Operating system
 enum class os
 {
     Windows,
@@ -21,20 +22,30 @@ enum class os
     MacOSX
     // ...
 };
+// CPU architecture
 enum class architecture
 {
     x86,
     amd64
     //...
 };
+// Toolchain comprising of compiler, linker, and general tools
 enum class toolchain
 {
-    GNU,
-    Microsoft,
-    LLVM,
-    Intel
+    GNU, // GCC+GNU binutils
+    Microsoft, // cl.exe and link.exe
+    LLVM, // Clang+GNU binutils (may change later)
+    Intel // ICC+platform linker
     // ...
 };
+// Shell execution environment
+enum class environment
+{
+    cmd, // Windows' cmd.exe
+    bash // GNU Bash or compatible
+    // ...
+};
+
 enum class conditional_operator
 {   // defines operator precedence
     right_parenthesis, // )
@@ -60,6 +71,8 @@ enum class file_type
     source_java,
     source_fortran,
     header,
+    header_c,
+    header_cxx,
     resource,
     Qt_ui,
     Qt_moc,
@@ -76,11 +89,14 @@ inline file_type get_general_type( const file_type type )
         case file_type::source_java:
         case file_type::source_fortran:
             return file_type::source;
+        case file_type::header:
+        case file_type::header_c:
+        case file_type::header_cxx:
+            return file_type::header;
         default:
             return type;
     }
 }
-
 
 ambrosia_namespace_end
 

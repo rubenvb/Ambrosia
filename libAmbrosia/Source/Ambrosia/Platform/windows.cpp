@@ -48,6 +48,24 @@
 
 libambrosia_namespace_begin
 
+// architecture detection - directly from msdn
+typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+BOOL is_wow64()
+{
+    BOOL bIsWow64 = FALSE;
+    LPFN_ISWOW64PROCESS fnIsWow64Process =
+            (LPFN_ISWOW64PROCESS)GetProcAddress(
+                     GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
+
+    if(NULL != fnIsWow64Process)
+    {
+        if (!fnIsWow64Process(GetCurrentProcess(),&bIsWow64))
+            throw runtime_error( "Unable to execute fnIsWow64Process.");
+    }
+    return bIsWow64;
+}
+
+
 /*
  * Constants
  *********************/
@@ -56,9 +74,12 @@ const string executable_suffix = ".exe";
 const os build_os = os::Windows;
 #if _WIN64
     const architecture build_architecture = architecture::amd64;
+    const architecture ambrosia_architecture = architecture::amd64;
 #else
-    const architecture build_architecture = architecture::x86;
+    const architecture build_architecture = is_wow64() ? architecture::x86 : architecture::amd64;
+    const architecture ambrosia_architecture = architecture::x86;
 #endif // _WIN64
+
 /*
  * Windows support functions
  ****************************/

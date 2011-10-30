@@ -14,6 +14,7 @@
 #include "Ambrosia/enums.h"
 #include "Ambrosia/file_store.h"
 #include "Ambrosia/platform.h"
+#include "Ambrosia/status.h"
 
 // C++ includes
 /* <string> */
@@ -22,10 +23,27 @@
 libambrosia_namespace_begin
 
 config_base::config_base()
-:   m_target_os( build_os ),
-    m_target_architecture( build_architecture ),
-    m_target_toolchain( toolchain::GNU ),
+:   m_build_architecture( build_architecture ),
+    m_build_environment( detect_build_environment() ),
+    m_build_os( build_os ), // global from Ambrosia/platform.h
+    m_target_architecture( m_build_architecture ),
+    m_target_os( m_build_os ),
+    m_target_toolchain( detect_toolchain() ),
     m_config(),
+    m_environment_PATH(),
+    m_source_directory(),
+    m_project_file(),
+    m_build_directory()
+{   }
+config_base::config_base( toolchain requested_toolchain )
+:   m_build_architecture( build_architecture ),
+    m_build_environment( detect_build_environment() ),
+    m_build_os( build_os ), // global from Ambrosia/platform.h
+    m_target_architecture( m_build_architecture ),
+    m_target_os( m_build_os ),
+    m_target_toolchain( detect_toolchain(requested_toolchain) ),
+    m_config(),
+    m_environment_PATH(),
     m_source_directory(),
     m_project_file(),
     m_build_directory()
@@ -97,6 +115,21 @@ const architecture & config_base::target_architecture() const
 const toolchain & config_base::target_toolchain() const
 {
     return m_target_toolchain;
+}
+
+// Platform detection functions
+environment config_base::detect_build_environment() const
+{
+    return environment::cmd;
+}
+toolchain config_base::detect_toolchain() const
+{
+    return toolchain::GNU;
+}
+toolchain config_base::detect_toolchain( toolchain requested_toolchain ) const
+{
+    emit_error( "detect_toolchain needs to validate input" );
+    return requested_toolchain;
 }
 
 libambrosia_namespace_end

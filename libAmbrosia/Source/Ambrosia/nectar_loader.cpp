@@ -493,11 +493,9 @@ bool nectar_loader::process_inner_conditional()
         debug(4) << "nectar_loader::process_inner_conditional::conditional returned false, skipping all relevant parts.\n";
     }
 
-    debug(0) << "!!!Inner conditionals not fully implemented yet.\n" ;
-    if( error_status() )
-        return false;
-    else
-        return true;
+    emit_error( "!!!Inner conditionals not fully implemented yet.\n" );
+
+    return !error_status();
 }
 bool nectar_loader::process_inner_list_conditional()
 {
@@ -533,7 +531,7 @@ bool nectar_loader::parse_source_directory_list( const file_type type )
                  << source_directory << "/" << full_directory_name(m_directory, token) << ".\n";
         empty = false;
         if( !p_target->add_source_directory(type, full_directory_name(m_directory, token)) )
-                emit_error_list( {token + "(line " + to_string(m_line_number) + ")"} ); // add the bad directory to error_list
+            emit_error_list( {token + "(line " + to_string(m_line_number) + ")"} ); // add the bad directory to error_list
     }
     if( empty )
         emit_syntax_error( "A list must not be empty" );

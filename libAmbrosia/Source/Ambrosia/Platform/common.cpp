@@ -33,6 +33,8 @@
 #include <string>
     using std::string;
     using std::wstring;
+/* <vector> */
+    using std::vector;
 
 /*
  * Workarounds
@@ -46,6 +48,31 @@ libambrosia_namespace_begin
 /*
  * Common platform implementations
  **********************************/
+const vector<string> get_environment_PATH()
+{
+#if _WIN32
+    std::string PATH = convert_to_utf8( _wgetenv(L"PATH") );
+#else
+    std::string PATH = getenv( "PATH" );
+#endif
+    if( PATH.empty() )
+        throw runtime_error( "PATH should not be empty" );
+
+    vector<string> result;
+    size_t previous = 0;
+    size_t index = PATH.find( ';' );
+
+    while( index != string::npos )
+    {
+        result.push_back( PATH.substr(previous, index));
+        previous=index;
+        debug(8) << "platform::get_environment_PATH::part of PATH: " << PATH.substr(previous, index) << "\n";
+    }
+    result.push_back( PATH.substr(previous) );
+
+    return result;
+}
+
 const std::string current_working_directory()
 {
     const int chunkSize=255;
