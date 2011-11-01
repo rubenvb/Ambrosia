@@ -424,11 +424,13 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
         conditional_operator op;
         if( map_value(conditional_operator_map, token, op) )
         {
-            debug(6) << "nectar_loader::test_condition::operator found: " << token << ".\n";
+            debug(6) << "nectar_loader::test_condition::Operator found: " << token << ".\n";
             if( previous_was_operator )
             {
+                debug(7) << "nectar_loader::test_condition::Previous token was operator.\n"
                 if( op == conditional_operator::not_op )
-                    current ^= current; // negate next
+                    debug(7) << "nectar_loader::test_condition::Operator \'!\' (logical not) found.\n";
+                    current = !current; // negate next
                 else
                 {
                     emit_syntax_error( "Conditional operators \'+\', \'|\', \')\', and \'(\' must be followed by a CONFIG string." );
@@ -440,14 +442,15 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
                 switch( op )
                 {
                     case conditional_operator::right_parenthesis:
+                        debug(7) << "nectar_loader::test_condition::R \')'
                         // TODO: allow conditionals without outer parenthesis of the form (a+b)|(c)
                         return result;
                     case conditional_operator::left_parenthesis: // recurse
                         return test_condition( config_contains );
                     case conditional_operator::plus_op:
                         result = result && current; // "current" -> "result"
-                        if( !result ) // negative when an element of a "+" expression
-                        current = false; // reset "current"
+                        if( !result ) // negative when an element of a "+" expression is false
+                            current = false; // reset "current"
                         break;
                     case conditional_operator::or_op: // combine with "current"
                         throw runtime_error( "TODO" );

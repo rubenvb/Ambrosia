@@ -10,8 +10,10 @@
 #include "Ambrosia/Configuration/config_base.h"
 
 // libambrosia includes
+#include "Ambrosia/algorithm.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/enums.h"
+#include "Ambrosia/enum_maps.h"
 #include "Ambrosia/file_store.h"
 #include "Ambrosia/platform.h"
 #include "Ambrosia/status.h"
@@ -23,31 +25,38 @@
 libambrosia_namespace_begin
 
 config_base::config_base()
-:   m_build_architecture( build_architecture ),
+:   m_environment_PATH( get_environment_PATH() ),
+    m_build_architecture( build_architecture ),
     m_build_environment( detect_build_environment() ),
     m_build_os( build_os ), // global from Ambrosia/platform.h
+    m_build_toolchain( detect_toolchain() ),
     m_target_architecture( m_build_architecture ),
     m_target_os( m_build_os ),
     m_target_toolchain( detect_toolchain() ),
     m_config(),
-    m_environment_PATH( get_environment_PATH() ),
     m_source_directory(),
     m_project_file(),
     m_build_directory()
-{   }
+{
+    initialize_config();
+    debug(0) << "\nconfig_base::config contains:\n" << m_config << "\n";
+}
 config_base::config_base( toolchain requested_toolchain )
-:   m_build_architecture( build_architecture ),
+:   m_environment_PATH( get_environment_PATH() ),
+    m_build_architecture( build_architecture ),
     m_build_environment( detect_build_environment() ),
     m_build_os( build_os ), // global from Ambrosia/platform.h
+    m_build_toolchain( detect_toolchain() ),
     m_target_architecture( m_build_architecture ),
     m_target_os( m_build_os ),
     m_target_toolchain( detect_toolchain(requested_toolchain) ),
     m_config(),
-    m_environment_PATH( get_environment_PATH() ),
     m_source_directory(),
     m_project_file(),
     m_build_directory()
-{   }
+{
+    initialize_config();
+}
 config_base::~config_base()
 {   }
 
@@ -130,6 +139,23 @@ toolchain config_base::detect_toolchain( toolchain requested_toolchain ) const
 {
     emit_error( "detect_toolchain needs to validate input" );
     return requested_toolchain;
+}
+void config_base::initialize_config()
+{
+    m_config = {
+    // Target OS
+        map_value(os_map_inverse, m_target_os),
+    // Target Architecture
+        map_value(architecture_map_inverse, m_target_architecture),
+    // Toolchain
+        map_value(toolchain_map_inverse, m_target_toolchain),
+    // Build OS
+        "build_" + map_value(os_map_inverse, m_build_os),
+    // Build architecture
+        "build_" + map_value(architecture_map_inverse, m_build_architecture),
+    // Shell environment
+        map_value(environment_map_inverse, m_build_environment)
+        };
 }
 
 libambrosia_namespace_end

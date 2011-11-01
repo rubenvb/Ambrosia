@@ -66,7 +66,7 @@ const vector<string> get_environment_PATH()
     while( index != string::npos )
     {
         result.push_back( PATH.substr(previous, index-previous));
-        debug(6) << "platform::get_environment_PATH::part of PATH: " << result.back() << "\n";
+        debug(7) << "platform::get_environment_PATH::part of PATH: " << result.back() << "\n";
         previous=index+1;
         index = PATH.find( delimiter, previous );
     }
