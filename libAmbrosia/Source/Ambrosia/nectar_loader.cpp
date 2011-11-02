@@ -404,8 +404,7 @@ void nectar_loader::read_dependency_list( dependency_list &dependencies )
 bool nectar_loader::test_condition( const std::function<bool(const string&)> &config_contains )
 {
     bool result = true;
-
-    // My very own recursive implementation
+    bool empty_conditional = true;
     /*
       - each set of parenthesis is handled recursively
       - logical AND: +
@@ -416,7 +415,44 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
       - "current" keeps results for "|" and "!"
       - syntax checking for invalid
     */
-    bool previous_was_operator = true;
+    string token;
+    bool current = false;
+    while( next_token(token) )
+    {
+        conditional_operator op;
+
+        if( token == "(" )
+        {
+            current = test_condition(config_contains);
+        }
+        else if( token == ")" )
+        {
+            if( empty_conditional )
+            {
+                emit_syntax_warning( "Empty conditional statement." );
+                return false;
+            }
+
+        }
+        else if( map_value(conditional_operator_map, token, op) )
+        {
+            debug(7) << "nectar_loader::test_condition::Found conditional operator " << token << ".\n";
+            if( next_token(token) && !contains(conditional_operator_map, token) )
+            {
+                result=current;
+
+            }
+            else
+            {
+                emit_syntax_error( "Expected config item after conditional operator "
+                                   + map_value(conditional_operator_map_inverse, op) );
+                return false;
+            }
+        }
+    }
+    // My very own recursive implementation - broken
+
+/*  bool previous_was_operator = true;
     bool current = false; // keep track of current state
     string token;
     while( next_token(token) )
@@ -427,10 +463,12 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
             debug(6) << "nectar_loader::test_condition::Operator found: " << token << ".\n";
             if( previous_was_operator )
             {
-                debug(7) << "nectar_loader::test_condition::Previous token was operator.\n"
+                debug(7) << "nectar_loader::test_condition::Previous token was operator.\n";
                 if( op == conditional_operator::not_op )
+                {
                     debug(7) << "nectar_loader::test_condition::Operator \'!\' (logical not) found.\n";
                     current = !current; // negate next
+                }
                 else
                 {
                     emit_syntax_error( "Conditional operators \'+\', \'|\', \')\', and \'(\' must be followed by a CONFIG string." );
@@ -442,7 +480,7 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
                 switch( op )
                 {
                     case conditional_operator::right_parenthesis:
-                        debug(7) << "nectar_loader::test_condition::R \')'
+                        debug(7) << "nectar_loader::test_condition::Right parenthesis \')\' found.\n";
                         // TODO: allow conditionals without outer parenthesis of the form (a+b)|(c)
                         return result;
                     case conditional_operator::left_parenthesis: // recurse
@@ -472,7 +510,7 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
             current = current || config_contains(token);
             previous_was_operator = false;
         }
-    }
+    }*/
     return result;
 }
 

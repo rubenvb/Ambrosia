@@ -25,6 +25,14 @@ extern const int s_max_debug_level;
 class debug
 {
 public:
+    enum type
+    {
+        platform            = 0x01,
+        parser              = 0x02,
+        command_generation  = 0x04
+
+    };
+
     typedef std::ostream& (*stream_function)(std::ostream&);
 
 #ifdef AMBROSIA_DEBUG

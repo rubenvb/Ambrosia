@@ -45,13 +45,18 @@ inline bool contains( const std::string &token, const std::string &characters )
     return ( std::find_first_of(token.begin(), token.end(),
                                 characters.begin(), characters.end()) != token.end() );
 }
-
+template <class K, class V>
+bool contains( const std::map<K, V> &map, const K key )
+{
+    return ( map.find(key) != map.end());
+}
 // returns true if container contains element
 template <class container>
 bool contains( const container &cont, const typename container::value_type &elem )
 {
    return ( std::find(cont.begin(), cont.end(), elem) != cont.end() );
 }
+
 inline bool has_space( const std::string &str )
 {
     return contains( str, ' ' );
@@ -93,11 +98,13 @@ const T & map_value( const std::vector<T> &map, const typename std::vector<T>::s
 {
     return map[key];
 }
+// return mapped value
 template<class T, class Y>
 const T & map_value( const std::map<Y,T> &map, const Y &key )
 {
     return (*map.find(key)).second;
 }
+// put mapped value in &value and return true if found, otherwise return false
 template<class T, class Y>
 bool map_value( const std::map<Y,T> &map, const Y &key, T &value )
 {
