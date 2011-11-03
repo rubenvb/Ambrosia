@@ -35,7 +35,7 @@ extern const std::set<char> s_special_characters_newline;
 class nectar_loader
 {
 public:
-    nectar_loader( const std::string &filename, const std::string &directory,
+    nectar_loader( const std::string &full_filename, const std::string &sub_directory,
                    std::istream &stream, const dependency_list &list = dependency_list() );
     ~nectar_loader();
 
@@ -47,7 +47,7 @@ public:
 
 private:
     const std::string &m_filename; // used for error reporting
-    const std::string m_directory; // used for file searching
+    const std::string m_subdirectory; // used for file searching, without ambrosia_config.source_directory() !
     std::istream &m_stream; // file input stream
     size_t m_line_number; // used for error reporting
     const dependency_list &m_dependency_list;

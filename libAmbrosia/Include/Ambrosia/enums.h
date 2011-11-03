@@ -50,7 +50,7 @@ enum class conditional_operator
 {   // defines operator precedence
     right_parenthesis, // )
     left_parenthesis,  // (
-    plus_op,           // +
+    and_op,           // +
     or_op,             // |
     not_op             // !
 };

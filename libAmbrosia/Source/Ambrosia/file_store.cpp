@@ -68,14 +68,15 @@ const file_set file_store::find_source_file( const string &filename, const strin
                        } );
     }
     debug(4) << "file_store::find_source_file::Looking for " << filename
-             << " in " << directories_to_search;
+             << " in the following subdirectories of " << source_directory
+             << ":\n" << directories_to_search;
 
     file_set result;
 
     const auto end = directories_to_search.end();
     for( auto it = directories_to_search.begin(); it != end; ++it )
     {
-        const string &directory = source_directory;
+        const string &directory = full_directory_name( source_directory, *it );
 
         debug(5) << "file_store::find_source_file::Loading directory contents for: "
                  << directory << ".\n";

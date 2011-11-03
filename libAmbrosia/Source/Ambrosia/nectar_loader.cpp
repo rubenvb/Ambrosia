@@ -57,17 +57,17 @@ libambrosia_namespace_begin
 const set<char> s_special_characters = { '(', ')', '{', '}', ':', ',' };
 const set<char> s_special_characters_newline = { '(', ')', '{', '}', ':', ',', '\n' };
 
-nectar_loader::nectar_loader( const string &filename, const string &directory,
+nectar_loader::nectar_loader( const string &full_filename, const string &sub_directory,
                               istream &stream, const dependency_list &list )
-:   m_filename( filename ),
-    m_directory( directory ),
+:   m_filename( full_filename ),
+    m_subdirectory( sub_directory ),
     m_stream( stream ),
     m_line_number( 1 ),
     m_dependency_list( list ),
     m_global_processed( false ),
     p_target()
 {
-    debug(0) << "nectar_loader::nectar_loader::filename is " << filename << "\n";
+    debug(0) << "nectar_loader::nectar_loader::filename is " << full_filename << "\n";
 }
 nectar_loader::~nectar_loader()
 {
@@ -85,7 +85,6 @@ void nectar_loader::extract_nectar( target_list &targets )
     string token;
     while( next_token(token) )
     {
-        debug(3) << "nectar_loader::extract_nectar::checking error_status.\n";
         if( error_status() )
             return;
 
@@ -151,19 +150,19 @@ void nectar_loader::extract_nectar( target_list &targets )
             // get name and dependencies of sub target
             if( next_token(token) )
             {
-                const string sub_directory = s_ambrosia_config.source_directory()
-                                             + "/" + token;
+                /*
+                const string subdirectory = full_directory_name( m_subdirectory, token );
                 string sub_file( token + ".nectar.txt" );
-                string sub_project_file( sub_directory + "/" + sub_file );
+                string sub_project_file( s_ambrosia_config.source_directory() + subdirectory + "/" + token + ".nectar.txt" );
                 if( !file_exists(sub_project_file) )
                 {
                     debug(4) << "nectar_loader::extract_nectar::sub target name and subproject file name do not match.\n";
-                    sub_file = find_nectar_file( sub_directory );
+                    sub_file = find_nectar_file( subdirectory );
                     if( error_status() )
                         return; // no *.nectar.txt file found
 
                     debug(4) << "nectar_loader::extract_nectar::found sub-.nectar.txt file: " << sub_file << ".\n";
-                    sub_project_file = sub_directory + "/" + sub_file;
+                    sub_project_file = subdirectory + "/" + sub_file;
                 }
                 debug(4) << "nectar_loader::extract_nectar::Opening subproject file: " << sub_project_file << ".\n";
                 auto stream_ptr = open_ifstream( sub_project_file );
@@ -178,18 +177,54 @@ void nectar_loader::extract_nectar( target_list &targets )
 
                     // get subdirectory
                     string subdirectory;
-                    if( m_directory.empty() )
-                        subdirectory = sub_directory;
+                    if( m_subdirectory.empty() )
+                        subdirectory = subdirectory;
                     else
-                        subdirectory = m_directory + "/" + sub_directory;
+                        subdirectory = m_subdirectory + "/" + subdirectory;
 
                     nectar_loader sub_loader( sub_project_file, subdirectory, stream, dependencies );
                     sub_loader.extract_nectar( targets );
                     if( error_status() )
                         return;
+                }*/
+                // Search for sub-project file: sourcedir/token/token.nectar.txt
+                // 1. check for subdirectory
+                const string full_subproject_directory =
+                        full_directory_name( s_ambrosia_config.source_directory(),
+                                             full_directory_name( m_subdirectory, token) );
+                if( !directory_exists(full_subproject_directory) )
+                    return emit_syntax_error( "Directory " + full_subproject_directory + " not found.\n"
+                                              "Subproject names must be identical to the subproject names." );
+
+                string subproject_filename = token + ".nectar.txt";
+                string full_subproject_filename =
+                         full_directory_name( full_subproject_directory, subproject_filename );
+                if( !file_exists(full_subproject_filename) )
+                {
+                    // subproject file has different
+                    debug(4) << "nectar_loader::extract_nectar:Subproject filename is same as subdirectory.\n";
+
+                }
+                // Opening project file
+                auto stream_ptr = open_ifstream( full_subproject_filename );
+                auto &stream = *stream_ptr;
+                if( stream )
+                {
+                    debug(4) << "nectar_loader::extract_nectar:Opening file " << full_subproject_filename << " succeeded.\n";
+                    // Get sub target dependencies
+                    dependency_list dependencies;
+                    read_dependency_list( dependencies );
+                    if( error_status() )
+                        return;
+
+                    nectar_loader subloader( subproject_filename, full_directory_name(m_subdirectory, token),
+                                              stream, dependencies );
+                    subloader.extract_nectar( targets );
+                    if( error_status() )
+                        return;
                 }
                 else // opening file failed
-                    return emit_nectar_error( "Error opening subproject file: " + sub_file + "." );
+                    return emit_nectar_error( "Error opening subproject file: " + full_subproject_filename + "." );
             }
             else
                 return emit_syntax_error( "\'sub\' must be followed by the name of the subproject." );
@@ -409,45 +444,87 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
       - each set of parenthesis is handled recursively
       - logical AND: +
       - logical OR:  |
-      - logical NOT: !
+      - logical NOT: ! TODO!!!!!!
       - two bools: "result" and "current"
       - "result" keeps global result, and is modified by "+"
       - "current" keeps results for "|" and "!"
       - syntax checking for invalid
     */
     string token;
-    bool current = false;
+    bool previous_was_operator = false; // only for |!+
+    bool negate = false;
+    conditional_operator op = conditional_operator::left_parenthesis;
     while( next_token(token) )
     {
-        conditional_operator op;
-
         if( token == "(" )
         {
-            current = test_condition(config_contains);
+            debug(7) << "nectar_loader::test_condition::Found opening parenthesis \'(\';\n";
+            if( previous_was_operator )
+            {
+                switch( op )
+                {
+                    case conditional_operator::not_op:
+                        emit_syntax_error( "Not operator not implemented yet.");
+                        break;
+                    case conditional_operator::or_op:
+                        result = result || test_condition(config_contains);
+                        break;
+                    case conditional_operator::and_op:
+                        emit_syntax_error( "And operator not implemented yet.");
+                    default:
+                        throw std::logic_error( "nectar_loader::test_condition:Operator "
+                                                + map_value(conditional_operator_map_inverse, op)
+                                                + " unexpected." );
+                }
+            }
         }
         else if( token == ")" )
         {
+            debug(7) << "nectar_loader::test_condition:Detected closing parenthesis. Returning "
+                     << to_string(result) << ".\n";
             if( empty_conditional )
             {
                 emit_syntax_warning( "Empty conditional statement." );
-                return false;
             }
-
+            return result;
         }
         else if( map_value(conditional_operator_map, token, op) )
         {
             debug(7) << "nectar_loader::test_condition::Found conditional operator " << token << ".\n";
-            if( next_token(token) && !contains(conditional_operator_map, token) )
-            {
-                result=current;
-
-            }
-            else
+            if( op == conditional_operator::not_op )
+                negate = !negate;
+            else if( previous_was_operator )
             {
                 emit_syntax_error( "Expected config item after conditional operator "
-                                   + map_value(conditional_operator_map_inverse, op) );
-                return false;
+                                   + map_value(conditional_operator_map_inverse, op) + " unexpected." );
+                return result;
             }
+            else
+                previous_was_operator = true;
+        }
+        else // "token" is a config string
+        {
+            debug(7) << "nectar_loader::test_condition:Testing config string \'" << token << "\'"
+                     << " with operator " << map_value(conditional_operator_map_inverse, op) << ".\n";
+            empty_conditional = false;
+            switch( op )
+            {
+                case conditional_operator::left_parenthesis:
+                    result = config_contains( token );
+                    break;
+                case conditional_operator::or_op:
+                    result = result || config_contains( token );
+                    break;
+                case conditional_operator::and_op:
+                    result = result && config_contains( token );
+                    break;
+                default:
+                    throw std::logic_error( "nectar_loader::test_condition:Operator "
+                                            + map_value(conditional_operator_map_inverse, op)
+                                            + " not expected." );
+            }
+            debug(7) << "nectar_loader::test_condition:Current condition state is "
+                     << to_string(result) << ".\n";
         }
     }
     // My very own recursive implementation - broken
@@ -527,6 +604,7 @@ bool nectar_loader::process_dependency_list_conditional()
 
 bool nectar_loader::process_inner_conditional()
 {
+    debug(7) << "nectar_loader::process_inner_conditional:Using target config:\n" << p_target->config().config() << "\n";
     if( test_condition( [this](const string &item){ return contains(p_target->config().config(), item); }) )
         debug(4) << "nectar_loader::process_inner_conditional::condition returned true, nothing to skip.\n";
     else
@@ -534,7 +612,7 @@ bool nectar_loader::process_inner_conditional()
         debug(4) << "nectar_loader::process_inner_conditional::conditional returned false, skipping all relevant parts.\n";
     }
 
-    emit_error( "!!!Inner conditionals not fully implemented yet.\n" );
+    //emit_error( "!!!Inner conditionals not fully implemented yet.\n" );
 
     return !error_status();
 }
@@ -568,10 +646,11 @@ bool nectar_loader::parse_source_directory_list( const file_type type )
     // gather all list items
     while( next_list_token(token) )
     {
+        const string full_subdirectory_name = full_directory_name( source_directory, full_directory_name(m_subdirectory, token) );
         debug(6) << "nectar_loader::parse_source_directory_list::Checking if directory exists: "
-                 << source_directory << "/" << full_directory_name(m_directory, token) << ".\n";
+                 << full_subdirectory_name << ".\n";
         empty = false;
-        if( !p_target->add_source_directory(type, full_directory_name(m_directory, token)) )
+        if( !p_target->add_source_directory(type, full_subdirectory_name) )
             emit_error_list( {token + "(line " + to_string(m_line_number) + ")"} ); // add the bad directory to error_list
     }
     if( empty )

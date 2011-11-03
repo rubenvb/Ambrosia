@@ -31,8 +31,8 @@ const map<string, os> os_map =
            {"linux",   os::Linux},
            {"mac",     os::MacOSX} };
 const map<os, string> os_map_inverse =
-         { {os::Windows, "Windows"},
-           {os::Linux,   "Linux"},
+         { {os::Windows, "windows"},
+           {os::Linux,   "linux"},
            {os::MacOSX,  "mac"} };
 
 // libambrosia::toolchain has two maps: one for the ambrosia cross
@@ -122,13 +122,13 @@ const map<file_type, string> directory_type_map_inverse =
 const map<string, conditional_operator> conditional_operator_map =
          { {")", conditional_operator::right_parenthesis},
            {"(", conditional_operator::left_parenthesis},
-           {"+", conditional_operator::plus_op},
+           {"+", conditional_operator::and_op},
            {"|", conditional_operator::or_op},
            {"!", conditional_operator::not_op} };
 const map<conditional_operator, std::string> conditional_operator_map_inverse =
          { {conditional_operator::right_parenthesis, ")"},
            {conditional_operator::left_parenthesis,  "("},
-           {conditional_operator::plus_op,           "+"},
+           {conditional_operator::and_op,           "+"},
            {conditional_operator::or_op,             "|"},
            {conditional_operator::not_op,            "!"} };
 

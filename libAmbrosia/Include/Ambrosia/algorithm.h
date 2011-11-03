@@ -78,6 +78,12 @@ const std::string to_string (const T& t)
     ss << t;
     return ss.str();
 }
+template<>
+inline const std::string to_string<bool>( const bool& b )
+{
+    return b?"true":"false";
+}
+
 // convert a newline \n character string to \\n
 inline const std::string output_form( const char c )
 {
