@@ -10,7 +10,6 @@
 #include "builder.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Configuration/build_config.h"
 #include "Ambrosia/debug.h"
     using libambrosia::debug;
 

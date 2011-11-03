@@ -123,6 +123,7 @@ void target::remove_file( const file_type type, const string &filename )
 bool target::add_source_directory( const file_type type, const string &directory )
 {
     const string full_subdirectory_name = full_directory_name( m_build_config.source_directory(), directory );
+
     debug(6) << "target::add_source_directory::Checking if directory " << full_subdirectory_name
              << " exists.\n";
     if( !directory_exists(full_subdirectory_name) )

@@ -52,7 +52,7 @@ private:
     size_t m_line_number; // used for error reporting
     const dependency_list &m_dependency_list;
     bool m_global_processed; // only one global section per project file is allowed
-    std::unique_ptr<target> p_target; // temporary pointer to current target, moved to extract_nectar's target_list parameter
+    target* p_target;
 /*
  * Error/warning reporting
  ***************************************/

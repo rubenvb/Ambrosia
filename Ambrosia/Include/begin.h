@@ -12,14 +12,12 @@
 // Global include
 #include "global.h"
 
-// libAmbrosia includes
-#include "Ambrosia/Configuration/build_config.h"
-
 // Ambrosia includes
 #include "state.h"
 
 // C++ includes
 #include <string>
+#include <vector>
 
 ambrosia_namespace_begin
 

@@ -51,6 +51,7 @@ const file_set & file_store::get_source_file_set( const std::string &directory )
 const file_set file_store::find_source_file( const string &filename, const config_base &configuration,
                                              const string_set &directories )
 {
+    debug(5) << "file_store::find_source_file::Called.\n";
     const string &source_directory = configuration.source_directory();
     // handle filename with directory prepended
     const string_pair directory_filename( split_preceding_directory(filename) );

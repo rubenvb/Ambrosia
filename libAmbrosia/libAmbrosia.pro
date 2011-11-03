@@ -11,6 +11,7 @@ CONFIG += debug_and_release
 CONFIG( debug, debug|release ) {
     LIBSUFFIX = d
     DEFINES += AMBROSIA_DEBUG
+    *g++*:QMAKE_CXXFLAGS += -g3
 } else {
     LIBSUFFIX =
 }

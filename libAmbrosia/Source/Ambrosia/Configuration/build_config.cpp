@@ -33,16 +33,11 @@
 
 libambrosia_namespace_begin
 
-build_config::build_config()
-:   config_base(),
-    m_user_variables()
-{   }
-
 build_config::build_config( const string &subdirectory, const config_base &config )
 :   config_base( config ),
     m_user_variables()
 {
-    m_source_directory = m_source_directory + subdirectory;
+    m_source_directory = full_directory_name( m_source_directory, subdirectory );
 }
 
 /*

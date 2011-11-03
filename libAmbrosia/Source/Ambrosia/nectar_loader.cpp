@@ -65,15 +65,12 @@ nectar_loader::nectar_loader( const string &full_filename, const string &sub_dir
     m_line_number( 1 ),
     m_dependency_list( list ),
     m_global_processed( false ),
-    p_target()
+    p_target() // ooh, a dangerous null pointer!
 {
-    debug(0) << "nectar_loader::nectar_loader::filename is " << full_filename << "\n";
+    debug(2) << "nectar_loader::nectar_loader::filename is " << full_filename << "\n";
 }
 nectar_loader::~nectar_loader()
-{
-    if( p_target != nullptr )
-        debug(0) << "nectar_loader::" << p_target->name() + " in file " + m_filename + " not pushed to a target_list.\n";
-}
+{   }
 
 void nectar_loader::extract_nectar( target_list &targets )
 {
@@ -81,6 +78,9 @@ void nectar_loader::extract_nectar( target_list &targets )
 
     // Remove leading BOM
     skip_BOM( m_stream );
+
+    // create global target
+    targets.emplace_back( unique_ptr<target>( new target(m_subdirectory, {}, s_ambrosia_config)) );
 
     string token;
     while( next_token(token) )
@@ -100,15 +100,13 @@ void nectar_loader::extract_nectar( target_list &targets )
             if( m_global_processed )
                 return emit_syntax_error( "Second global section found in nectar file. Only one global section per *.nectar.txt file is allowed." );
 
+            m_global_processed = true;
             if( next_token(token) && "{" == token )
             {
-                p_target = std::unique_ptr<target>( new target(m_subdirectory, dependency_list(), s_ambrosia_config) );
-
+                p_target = targets[0].get();
                 parse_target();
                 if( error_status() )
                     return;
-
-                targets.emplace_back( std::move(p_target) );
             }
             else
                 return emit_syntax_error( "\'global\' must be followed by \'{\'." );
@@ -134,13 +132,12 @@ void nectar_loader::extract_nectar( target_list &targets )
                     if( !next_token(token) && "{" == token )
                         return emit_error( "Expected '{' after " + map_value(target_type_map_inverse, type) + " target name." );
 
-                    p_target = std::unique_ptr<target>(new target(target_name, type, dependencies, targets[0]->config()) );
+                    targets.emplace_back( std::unique_ptr<target>(new target(target_name, type, dependencies, targets[0]->config())) );
 
+                    p_target = targets.back().get();
                     parse_target();
                     if( error_status() )
                         return;
-
-                    targets.emplace_back( std::move(p_target) );
                 }
             }
         }
@@ -605,7 +602,7 @@ bool nectar_loader::process_dependency_list_conditional()
 bool nectar_loader::process_inner_conditional()
 {
     debug(7) << "nectar_loader::process_inner_conditional:Using target config:\n" << p_target->config().config() << "\n";
-    if( test_condition( [this](const string &item){ return contains(p_target->config().config(), item); }) )
+    if( test_condition( [&p_target](const string &item){ return contains(p_target->config().config(), item); }) )
         debug(4) << "nectar_loader::process_inner_conditional::condition returned true, nothing to skip.\n";
     else
     {
@@ -640,7 +637,7 @@ bool nectar_loader::parse_file_list( const file_type type )
 }
 bool nectar_loader::parse_source_directory_list( const file_type type )
 {
-    debug(4) << "parse_source_directory_list::Parsing full list, nonexistent directories are kept in error_list.\n";
+    debug(4) << "nectar_loader::parse_source_directory_list::Parsing full list, nonexistent directories are kept in error_list.\n";
     bool empty_list = true; // a list must not be empty
     string token;
     // gather all list items
@@ -649,6 +646,7 @@ bool nectar_loader::parse_source_directory_list( const file_type type )
         const string subdirectory_name = full_directory_name( m_subdirectory, token );
 
         empty_list = false;
+
         if( !p_target->add_source_directory(type, subdirectory_name) )
             emit_error_list( {"line " + to_string(m_line_number) +": " + token} ); // add the bad directory to error_list
     }

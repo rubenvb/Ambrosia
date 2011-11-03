@@ -62,7 +62,7 @@ public:
 private:
     const target_type m_type; // target type
     const dependency_list m_dependencies; // dependency+type
-    build_config m_build_config; // build configuration, inherited from s_ambrosia_config
+    build_config m_build_config; // build configuration, inherited from global target's build_config
     map_file_type_string_set m_source_directories; // source directories per file type
     map_file_type_file_set m_source_files; // source files per file type with last modified time
     std::string m_output_name;
