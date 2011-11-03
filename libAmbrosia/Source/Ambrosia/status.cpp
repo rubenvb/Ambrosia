@@ -50,12 +50,17 @@ bool error_status()
 }
 bool error_list_status()
 {
+#ifdef AMBROSIA_DEBUG
+    debug(0) << "status::error_list_status::Checking error status now.\n";
+    error_status_calls++;
+#endif
     return current_status == status::list;
 }
 
 void emit_error( const string &message )
 {
-    debug(0) << "status::emit_error:Emitting error here.\n";
+    debug(0) << "status::emit_error:Emitting error here:\n\t"
+             << message << "\n";
     current_status = status::error;
     error_messages += "\nError: " + message;
     std::for_each( error_list.begin(), error_list.end(),

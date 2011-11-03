@@ -30,11 +30,14 @@
 
 libambrosia_namespace_begin
 
+// Forward declarations
+class ambrosia_config;
+
 class build_config : public config_base
 {
 public:
     build_config();
-    build_config( const config_base &config );
+    build_config( const std::string &subdirectory, const config_base &config );
 
     const string_map & user_options() const;
 

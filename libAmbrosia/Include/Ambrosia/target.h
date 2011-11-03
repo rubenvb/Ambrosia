@@ -36,8 +36,12 @@ libambrosia_namespace_begin
 class target : public node
 {
 public:
+    // 'global' target with subproject-wide dependencies
+    target( const std::string &subdirectory,
+            const dependency_list &dependencies, const ambrosia_config &config );
+    // other targets are based off of global
     target( const std::string &name, const target_type type,
-            const dependency_list &dependencies, const config_base &config = s_ambrosia_config );
+            const dependency_list &dependencies, const build_config &config );
 
     // Getters
     const std::string & name() const;

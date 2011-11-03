@@ -33,8 +33,8 @@ config_base::config_base()
     m_target_architecture( m_build_architecture ),
     m_target_os( m_build_os ),
     m_target_toolchain( detect_toolchain() ),
-    m_config(),
     m_source_directory(),
+    m_config(),
     m_project_file(),
     m_build_directory()
 {
@@ -50,8 +50,8 @@ config_base::config_base( toolchain requested_toolchain )
     m_target_architecture( m_build_architecture ),
     m_target_os( m_build_os ),
     m_target_toolchain( detect_toolchain(requested_toolchain) ),
-    m_config(),
     m_source_directory(),
+    m_config(),
     m_project_file(),
     m_build_directory()
 {
@@ -72,7 +72,10 @@ bool config_base::set_source_directory( const string &source_directory )
     m_source_directory = source_directory;
     debug(5) << "config_base::set_source_directory::Adding " << m_source_directory << " to s_file_store.\n";
     s_file_store.add_source_directory( m_source_directory );
-    return true;
+    if( !error_status() )
+        return true;
+    else
+        return false;
 }
 void config_base::set_project_file( const string &project_file )
 {

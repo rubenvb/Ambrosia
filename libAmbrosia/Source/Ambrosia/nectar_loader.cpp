@@ -102,7 +102,7 @@ void nectar_loader::extract_nectar( target_list &targets )
 
             if( next_token(token) && "{" == token )
             {
-                p_target = std::unique_ptr<target>( new target("global", target_type::global, dependency_list()) );
+                p_target = std::unique_ptr<target>( new target(m_subdirectory, dependency_list(), s_ambrosia_config) );
 
                 parse_target();
                 if( error_status() )
@@ -134,7 +134,7 @@ void nectar_loader::extract_nectar( target_list &targets )
                     if( !next_token(token) && "{" == token )
                         return emit_error( "Expected '{' after " + map_value(target_type_map_inverse, type) + " target name." );
 
-                    p_target = std::unique_ptr<target>(new target(target_name, type, dependencies) );
+                    p_target = std::unique_ptr<target>(new target(target_name, type, dependencies, targets[0]->config()) );
 
                     parse_target();
                     if( error_status() )
@@ -640,21 +640,22 @@ bool nectar_loader::parse_file_list( const file_type type )
 }
 bool nectar_loader::parse_source_directory_list( const file_type type )
 {
-    bool empty = true; // a list must not be empty
+    debug(4) << "parse_source_directory_list::Parsing full list, nonexistent directories are kept in error_list.\n";
+    bool empty_list = true; // a list must not be empty
     string token;
-    const string &source_directory = p_target->config().source_directory();
     // gather all list items
     while( next_list_token(token) )
     {
-        const string full_subdirectory_name = full_directory_name( source_directory, full_directory_name(m_subdirectory, token) );
-        debug(6) << "nectar_loader::parse_source_directory_list::Checking if directory exists: "
-                 << full_subdirectory_name << ".\n";
-        empty = false;
-        if( !p_target->add_source_directory(type, full_subdirectory_name) )
-            emit_error_list( {token + "(line " + to_string(m_line_number) + ")"} ); // add the bad directory to error_list
+        const string subdirectory_name = full_directory_name( m_subdirectory, token );
+
+        empty_list = false;
+        if( !p_target->add_source_directory(type, subdirectory_name) )
+            emit_error_list( {"line " + to_string(m_line_number) +": " + token} ); // add the bad directory to error_list
     }
-    if( empty )
+    if( empty_list )
         emit_syntax_error( "A list must not be empty" );
+    else if( error_list_status() )
+        emit_nectar_error( "Some source directories were not found:\n" );
 
     return !error_status();
 }

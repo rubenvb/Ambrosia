@@ -48,9 +48,10 @@ const file_set & file_store::get_source_file_set( const std::string &directory )
     }
 }
 
-const file_set file_store::find_source_file( const string &filename, const string_set &directories )
+const file_set file_store::find_source_file( const string &filename, const config_base &configuration,
+                                             const string_set &directories )
 {
-    const string &source_directory = s_ambrosia_config.source_directory();
+    const string &source_directory = configuration.source_directory();
     // handle filename with directory prepended
     const string_pair directory_filename( split_preceding_directory(filename) );
     const string &preceding_directory = directory_filename.first;
@@ -64,8 +65,19 @@ const file_set file_store::find_source_file( const string &filename, const strin
         std::for_each( directories.begin(), directories.end(),
                        [&](const string & directory)
                        {
-                       directories_to_search.insert( full_directory_name(directory, preceding_directory) );
+                           const string full_dir = full_directory_name(directory, preceding_directory);
+                           if( directory_exists(full_dir))
+                           {
+                               debug(5) << "file_store::find_source_file::Adding deduced directory to search list: "
+                                           << full_dir << "\n";
+                               directories_to_search.insert( full_dir );
+                           }
+                           else
+                               debug(5) << "file_store::find_source_file::Not adding non-existing deduced directory to search list: "
+                                        << full_dir << ".\n";
                        } );
+        if( directories_to_search.empty() )
+            directories_to_search = { "" };
     }
     debug(4) << "file_store::find_source_file::Looking for " << filename
              << " in the following subdirectories of " << source_directory
@@ -99,7 +111,8 @@ const file_set file_store::find_source_file( const string &filename, const strin
     debug(4) << "file_store::find_source_file::Found " << result.size() << " match(es).\n";
     return result;
 }
-const file_set file_store::match_source_files( const string &filename, const string_set &directories )
+const file_set file_store::match_source_files( const string &filename, const config_base &configuration,
+                                               const string_set &directories )
 {
     debug(4) << "file_store::match_source_files::Matching " << filename << " to all files in the source directories.\n";
     file_set result;
@@ -111,8 +124,14 @@ const file_set file_store::match_source_files( const string &filename, const str
     const auto directory_end = directories.end();
     for( auto directory_it = directories.begin(); directory_it != directory_end; ++directory_it )
     {
-        const string directory( *directory_it + preceding_directory );
+        const string directory( full_directory_name(configuration.source_directory(),
+                                                    *directory_it + preceding_directory) );
+        if( !directory_exists(directory) )
+        {
+            debug(5) << "file_store::match_source_files::Skipping nonexistent directory: " << directory << ".\n";
+        }
         debug(5) << "file_store::match_source_files::Looking in " << directory << " for matches.\n";
+
 
         const file_set &files_on_disk = get_source_file_set( directory );
         if( error_status() )
@@ -141,11 +160,10 @@ const file_set file_store::match_source_files( const string &filename, const str
 
 void file_store::add_source_directory( const std::string &directory )
 {
+#ifdef AMBROSIA_DEBUG
     if( !directory_exists(directory) )
-    {
-        debug(5) << "file_store::add_source_directory::Non-existing directory: " << directory << "\n";
-        return emit_error( "Directory does not exist: " + directory );
-    }
+        throw logic_error( "Directory does not exist: " + directory );
+#endif
 
     debug(5) << "file_store::add_source_directory::Scanning files in source directory: " << directory << ".\n";
     const auto result = m_source_files.insert( {directory, file_set()} );

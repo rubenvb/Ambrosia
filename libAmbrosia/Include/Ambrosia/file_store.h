@@ -17,6 +17,9 @@
 
 libambrosia_namespace_begin
 
+// Forward declarations
+class config_base;
+
 class file_store
 {
 public:
@@ -26,9 +29,11 @@ public:
     const file_set & get_source_file_set( const std::string &directory );
 
     // Find the unique relative path to the filename, otherwise return all matching duplicates
-    const file_set find_source_file( const std::string &filename, const string_set &directories = string_set() );
+    const file_set find_source_file( const std::string &filename, const config_base &configuration,
+                                     const string_set &directories = string_set() );
     // Match filename with all directories and match wildcards
-    const file_set match_source_files( const std::string &filename, const string_set &directories = string_set() );
+    const file_set match_source_files( const std::string &filename, const config_base &configuration,
+                                       const string_set &directories = string_set() );
     // Read directory contents from disk (don't complain if already present).
     void add_source_directory( const std::string &directory = "" );
     void add_build_directory(const std::string &directory );

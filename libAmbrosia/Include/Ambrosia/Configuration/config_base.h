@@ -63,9 +63,10 @@ protected:
     os m_target_os;
     toolchain m_target_toolchain;
 
+    std::string m_source_directory;
+
 private:
     string_set m_config; // mostly platform dependent stuff
-    std::string m_source_directory;
     std::string m_project_file;
     std::string m_build_directory; // if source and build dir are equal, this is ./build
     // Platform detection functions

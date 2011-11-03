@@ -5,7 +5,8 @@
 lib libAmbrosia
 {
     HEADER_DIRS Include/Ambrosia
-    SOURCE_DIRS Source/Ambrosia
+    SOURCE_DIRS Source/Ambrosia \
+                Source/Ambrosia/Configuration
 
     SOURCES *.cpp
     # Platform files
