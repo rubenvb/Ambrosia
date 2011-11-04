@@ -141,28 +141,6 @@ time_t get_time( const FILETIME &filetime )
 /*
  * Mostly platform dependently implemented functions
  ****************************************************/
-/*bool directory_exists( const std::string &directory )
-{
-    DWORD attribs = GetFileAttributesW( convert_to_utf16(directory).c_str() );
-    if( attribs == INVALID_FILE_ATTRIBUTES)
-    {
-        debug(0) << "platform::directory_exists::HANDLE ERRORS\n";
-        return false;
-    }
-    return( attribs & FILE_ATTRIBUTE_DIRECTORY );
-}
-bool file_exists( const std::string &filename )
-{
-    DWORD attribs = GetFileAttributesW( convert_to_utf16(filename).c_str() );
-    if( attribs == INVALID_FILE_ATTRIBUTES )
-    {
-        debug(0) << "platform::file_exists::HANDLE ERRORS\n";
-        return false;
-    }
-    debug(0) << "platform::file_exists::TODO: FILE_ATTRIBUTES_NORMAL is not good enough for all cases\n";
-    return( attribs & FILE_ATTRIBUTE_NORMAL );
-}*/
-
 template<class output_iterator>
 void scan_directory( output_iterator it, const std::string &directory_name )
 {

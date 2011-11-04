@@ -37,14 +37,14 @@ string warning_messages = string();
 string_vector error_list{};
 string_vector warning_list{};
 #ifdef AMBROSIA_DEBUG
-size_t error_status_calls = 0;
+size_t s_error_status_calls = 0;
 #endif
 
 bool error_status()
 {
 #ifdef AMBROSIA_DEBUG
     debug(0) << "status::error_status::Checking error status now.\n";
-    error_status_calls++;
+    ++s_error_status_calls;
 #endif
     return current_status == status::error;
 }
@@ -52,7 +52,7 @@ bool error_list_status()
 {
 #ifdef AMBROSIA_DEBUG
     debug(0) << "status::error_list_status::Checking error status now.\n";
-    error_status_calls++;
+    ++s_error_status_calls;
 #endif
     return current_status == status::list;
 }

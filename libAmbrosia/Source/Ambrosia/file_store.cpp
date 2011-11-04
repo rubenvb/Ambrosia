@@ -66,7 +66,8 @@ const file_set file_store::find_source_file( const string &filename, const confi
         std::for_each( directories.begin(), directories.end(),
                        [&](const string & directory)
                        {
-                           const string full_dir = full_directory_name(directory, preceding_directory);
+                           const string full_dir = full_directory_name( source_directory,
+                                                                        full_directory_name(directory, preceding_directory) );
                            if( directory_exists(full_dir))
                            {
                                debug(5) << "file_store::find_source_file::Adding deduced directory to search list: "

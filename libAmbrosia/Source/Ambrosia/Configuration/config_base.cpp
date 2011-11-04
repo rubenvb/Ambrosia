@@ -39,7 +39,7 @@ config_base::config_base()
     m_build_directory()
 {
     initialize_config();
-    debug(0) << "\nconfig_base::config contains:\n" << m_config << "\n";
+    debug(4) << "\nconfig_base::config contains:\n" << m_config << "\n";
 }
 config_base::config_base( toolchain requested_toolchain )
 :   m_environment_PATH( get_environment_PATH() ),

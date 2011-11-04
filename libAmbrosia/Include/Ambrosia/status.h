@@ -24,7 +24,7 @@
 libambrosia_namespace_begin
 
 #ifdef AMBROSIA_DEBUG
-extern size_t error_status_calls;
+extern size_t s_error_status_calls;
 #endif
 
 // set error status with appropriate messages

@@ -334,7 +334,9 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
                 token.append( 1, c );
         }
     }
-    debug(6) << "nectar_loader::next_token:Token extracted: \'" << output_form(token) << "\'\n";
+    if( !token.empty() )
+        debug(6) << "nectar_loader::next_token:Token extracted: \'" << output_form(token) << "\'\n";
+
     return !token.empty();
 }
 bool nectar_loader::next_list_token( std::string &token )
@@ -607,6 +609,14 @@ bool nectar_loader::process_inner_conditional()
     else
     {
         debug(4) << "nectar_loader::process_inner_conditional::conditional returned false, skipping all relevant parts.\n";
+        string token;
+        while( next_token(token, s_special_characters_newline) )
+        {
+            if( "\n" == token )
+                break; // reached the end
+            else
+                continue; // ignore anything in the list following a false conditional
+        }
     }
 
     //emit_error( "!!!Inner conditionals not fully implemented yet.\n" );

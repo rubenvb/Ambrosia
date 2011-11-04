@@ -52,8 +52,10 @@ int main( int argc, char* argv[] )
     const double cleanup_time = difftime( t, time(0) );
 
     debug(0) << "main::Execution took " << exec_time << " seconds.\n"
-         << "Cleanup took " << cleanup_time << " seconds.\n"
-         << "error_status() was called " << error_status_calls << " times.\n";
-
+         << "Cleanup took " << cleanup_time << " seconds.\n";
+#ifdef AMBROSIA_DEBUG
+    debug(0) << "error_status() was called " << s_error_status_calls << " times.\n"
+         << "full_directory_name() was called " << s_full_directory_name_calls << " times.\n";
+#endif
     return 0;
 }

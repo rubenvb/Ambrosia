@@ -101,7 +101,7 @@ void target::add_source_file( const file_type type, const string &filename,
         switch( matches.size() )
         {
             case 0:
-               return emit_error("");
+                return emit_nectar_error( "No matches to file " + filename + " found.", filename, line_number );
             case 1:
                 m_source_files[type].insert( *matches.begin() );
                 break;

@@ -25,6 +25,10 @@
 
 libambrosia_namespace_begin
 
+#ifdef AMBROSIA_DEBUG
+extern size_t s_full_directory_name_calls;
+#endif
+
 /* Freestanding functions (libAmbrosia independent, including no untransparent error handling)
  *************************/
 // merges directory and subdirectory names to one, does the right thing if the second part is empty

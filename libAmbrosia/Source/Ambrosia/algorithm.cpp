@@ -39,10 +39,17 @@
 
 libambrosia_namespace_begin
 
+#ifdef AMBROSIA_DEBUG
+size_t s_full_directory_name_calls = 0;
+#endif
+
 /* Freestanding functions
  *************************/
 const std::string full_directory_name( const std::string &first_directory, const std::string &second_directory )
 {
+#ifdef AMBROSIA_DEBUG
+    ++s_full_directory_name_calls;
+#endif
     if( first_directory.empty() )
         return second_directory;
     else if( second_directory.empty() )
