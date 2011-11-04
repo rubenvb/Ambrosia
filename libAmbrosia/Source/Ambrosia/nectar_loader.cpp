@@ -678,6 +678,12 @@ bool nectar_loader::parse_variable_list( string_set & )
     return false;
 }
 
+bool nectar_loader::parse_library_list( const file_type type )
+{
+    emit_nectar_error( "Parsing " + map_value(file_type_map_inverse, type) + " list has not yet been implemented." );
+    return false;
+}
+
 void nectar_loader::parse_target()
 {
     const target_type type = p_target->type();
@@ -728,11 +734,17 @@ void nectar_loader::parse_target()
         else
         {
             file_type type;
-            // is it a list of files?
+            // is it a list of files or librar(y director)ies?
             if( map_value(file_type_map, token, type) )
             {
-                debug(5) << "nectar_loader::parse_target::" << token << " file list detected.\n";
-                if( !parse_file_list(type) )
+                debug(5) << "nectar_loader::parse_target::" << token << " list detected.\n";
+                if( get_general_type(type) == file_type::library
+                    && !parse_library_list(type) )
+                {
+                    debug(6) << "nectar_loader::parse_target::Failed parsing file list.\n";
+                    return; // failure, assumes parse_library_list has called emit_error
+                }
+                else if( !parse_file_list(type) )
                 {
                     debug(6) << "nectar_loader::parse_target::Failed parsing file list.\n";
                     return; // failure, assumes parse_file_list has called emit_error
@@ -752,7 +764,7 @@ void nectar_loader::parse_target()
                 }
                 else
                 {
-                    // parse other types of directories
+                    emit_nectar_error( "Parsing of " + token + " not yet implemented." );
                 }
             }
             else
