@@ -43,7 +43,8 @@ size_t s_error_status_calls = 0;
 bool error_status()
 {
 #ifdef AMBROSIA_DEBUG
-    debug(0) << "status::error_status::Checking error status now.\n";
+    debug(0) << "status::error_status::Status="
+             << ((current_status==status::error)?"ERROR":"OK") << ".\n";
     ++s_error_status_calls;
 #endif
     return current_status == status::error;

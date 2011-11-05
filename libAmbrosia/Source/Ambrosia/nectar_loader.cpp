@@ -634,6 +634,7 @@ bool nectar_loader::process_inner_list_conditional()
 
 bool nectar_loader::parse_file_list( const file_type type )
 {
+    debug(5) << "nectar_loader::parse_file_list::Parsing " << map_value(file_type_map_inverse, type) << " file list.\n";
     bool empty = true; // a list must not be empty
     string token;
 
@@ -684,28 +685,30 @@ bool nectar_loader::parse_variable_list( string_set & )
 bool nectar_loader::parse_library_list()
 {
     string token;
-    while( next_list_token(token) )
+    while( !error_status() && next_list_token(token) )
     {
         // LIBS items must be of the form '-lsomelib' or '-Lsomedirectory'
         if( token.size() <= 2 )
             goto return_error;
-        else if( token.compare(0, 2, "-l") )
+        else if( !token.compare(0, 2, "-l") )
         {
             token = token.substr(2);
             debug(5) << "nectar_loader::parse_library_list::Found library name: " << token << ".\n";
-
+            if( p_target->add_library(token) )
+                emit_nectar_error( "Library is mentioned twice: " + token );
 
         }
-        else if( token.compare(0, 2, "-L") )
+        else if( !token.compare(0, 2, "-L") )
         {
             token = token.substr(2);
             debug(5) << "nectar_loader::parse_library_list::Found library search directory: " << token << ".\n";
+            if( !directory_exists(token) )
+                emit_error_list( {token} );
             if( is_absolute_path(token) )
             {
                 debug(5) << "nectar_loader::parse_library_list::Absolure library path detected.\n";
                 emit_nectar_warning( "Absolute paths in project files should be avoided." );
             }
-
         }
         else
         {
@@ -714,8 +717,7 @@ bool nectar_loader::parse_library_list()
             return false;
         }
     }
-    emit_error( "LIBS parsing not complete yet." );
-    return false;
+    return true;
 }
 
 void nectar_loader::parse_target()
@@ -729,7 +731,6 @@ void nectar_loader::parse_target()
 
     while( curly_brace_count > 0 && next_token(token) )
     {
-        debug(4) << "nectar_loader::parse_target::token: " << token << ".\n";
         if( "}" == token )
             --curly_brace_count;
         else if( "{" == token )
@@ -772,11 +773,13 @@ void nectar_loader::parse_target()
             if( map_value(file_type_map, token, type) )
             {
                 debug(5) << "nectar_loader::parse_target::" << token << " list detected.\n";
-                if( type == file_type::library
-                    && !parse_library_list() )
+                if( type == file_type::library )
                 {
-                    debug(6) << "nectar_loader::parse_target::Failed parsing file list.\n";
-                    return; // failure, assumes parse_library_list has called emit_error
+                    if( !parse_library_list() )
+                    {
+                        debug(6) << "nectar_loader::parse_target::Failed parsing library list.\n";
+                        return; // failure, assumes parse_library_list has called emit_error
+                    }
                 }
                 else if( !parse_file_list(type) )
                 {

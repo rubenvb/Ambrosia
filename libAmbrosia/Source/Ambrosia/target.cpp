@@ -40,6 +40,7 @@ target::target( const string &subdirectory,
     m_build_config( subdirectory, config ),
     m_source_directories(),
     m_source_files(),
+    m_libraries(),
     m_output_name( subdirectory + "::global" )
 {   }
 target::target( const string &name, const target_type type,
@@ -50,6 +51,7 @@ target::target( const string &name, const target_type type,
     m_build_config( config ),
     m_source_directories(),
     m_source_files(),
+    m_libraries(),
     m_output_name( name )
 {
     debug(6) << "target::Created " << map_value(target_type_map_inverse, type) << ": "
@@ -137,6 +139,17 @@ void target::remove_directory( const file_type type, const string &directory )
 {
     if( m_source_directories[type].erase(directory) )
         emit_warning_list( {directory} );
+}
+bool target::add_library( const string &library )
+{
+    debug(6) << "target::add_library::Adding library " << library << " to target " << m_name << ".\n";
+    //TODO: check if library can be linked
+    return !(m_libraries.insert(library).second);
+}
+void target::remove_library( const string &library )
+{
+    if( m_libraries.erase(library) )
+        emit_warning_list( {library} );
 }
 
 void target::set_output_name( const std::string &name )

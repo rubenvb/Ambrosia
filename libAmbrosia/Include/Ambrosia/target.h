@@ -57,6 +57,9 @@ public:
     void remove_file( const file_type type, const std::string &filename );
     bool add_source_directory( const file_type type, const std::string &directory );
     void remove_directory( const file_type type, const std::string &directory );
+    // TODO: check if libraries can be linked!
+    bool add_library( const std::string &library );
+    void remove_library( const std::string &library );
     void set_output_name( const std::string &name );
 
 private:
@@ -65,6 +68,7 @@ private:
     build_config m_build_config; // build configuration, inherited from global target's build_config
     map_file_type_string_set m_source_directories; // source directories per file type
     map_file_type_file_set m_source_files; // source files per file type with last modified time
+    string_set m_libraries; // libraries to be linked
     std::string m_output_name;
 };
 
