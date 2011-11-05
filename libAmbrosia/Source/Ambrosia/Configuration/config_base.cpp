@@ -159,6 +159,11 @@ void config_base::initialize_config()
     // Shell environment
         map_value(environment_map_inverse, m_build_environment)
         };
+    // Convenience config strings
+    if( m_target_os == os::Windows && m_target_toolchain == toolchain::GNU )
+        m_config.insert( "mingw" );
+    if( m_target_os == os::Linux || m_target_os == os::MacOSX )
+        m_config.insert( "unix" );
 }
 
 libambrosia_namespace_end

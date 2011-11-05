@@ -40,6 +40,7 @@
 // Windows includes
 #include "direct.h"
 #include "windows.h"
+#include "shlwapi.h"
 
 // Includes for the last hackish section
 #ifdef __GLIBCXX__
@@ -141,6 +142,11 @@ time_t get_time( const FILETIME &filetime )
 /*
  * Mostly platform dependently implemented functions
  ****************************************************/
+bool is_absolute_path( const string &path )
+{
+    return !PathIsRelativeW( convert_to_utf16(path).c_str() );
+}
+
 template<class output_iterator>
 void scan_directory( output_iterator it, const std::string &directory_name )
 {

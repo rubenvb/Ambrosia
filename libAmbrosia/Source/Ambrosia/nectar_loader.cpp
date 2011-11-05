@@ -307,7 +307,7 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
                     debug(8) << "nectar_loader::next_token::Skipping over comments.\n";
                     string temp;
                     std::getline( m_stream, temp );
-                    ++m_line_number;
+                    m_stream.putback( '\n' );
                 }
                 else if( '\\' == c )
                 {
@@ -347,7 +347,10 @@ bool nectar_loader::next_list_token( std::string &token )
     {
         debug(4) << "nectar_loader::next_list_token::token: " << output_form(token) << ".\n";
         if( "\n" == token )
+        {
+            debug(5) << "nectar_loader::next_list_token::End of list.\n";
             return false; // list has ended
+        }
         else if( "(" == token )
         {
             if( !process_inner_list_conditional() )
@@ -678,9 +681,40 @@ bool nectar_loader::parse_variable_list( string_set & )
     return false;
 }
 
-bool nectar_loader::parse_library_list( const file_type type )
+bool nectar_loader::parse_library_list()
 {
-    emit_nectar_error( "Parsing " + map_value(file_type_map_inverse, type) + " list has not yet been implemented." );
+    string token;
+    while( next_list_token(token) )
+    {
+        // LIBS items must be of the form '-lsomelib' or '-Lsomedirectory'
+        if( token.size() <= 2 )
+            goto return_error;
+        else if( token.compare(0, 2, "-l") )
+        {
+            token = token.substr(2);
+            debug(5) << "nectar_loader::parse_library_list::Found library name: " << token << ".\n";
+
+
+        }
+        else if( token.compare(0, 2, "-L") )
+        {
+            token = token.substr(2);
+            debug(5) << "nectar_loader::parse_library_list::Found library search directory: " << token << ".\n";
+            if( is_absolute_path(token) )
+            {
+                debug(5) << "nectar_loader::parse_library_list::Absolure library path detected.\n";
+                emit_nectar_warning( "Absolute paths in project files should be avoided." );
+            }
+
+        }
+        else
+        {
+            return_error:
+            emit_syntax_error( "LIBS items must be of the form \'-lsomelib\'' and/or \'-Lsomedirectory\'" );
+            return false;
+        }
+    }
+    emit_error( "LIBS parsing not complete yet." );
     return false;
 }
 
@@ -738,8 +772,8 @@ void nectar_loader::parse_target()
             if( map_value(file_type_map, token, type) )
             {
                 debug(5) << "nectar_loader::parse_target::" << token << " list detected.\n";
-                if( get_general_type(type) == file_type::library
-                    && !parse_library_list(type) )
+                if( type == file_type::library
+                    && !parse_library_list() )
                 {
                     debug(6) << "nectar_loader::parse_target::Failed parsing file list.\n";
                     return; // failure, assumes parse_library_list has called emit_error
@@ -749,6 +783,7 @@ void nectar_loader::parse_target()
                     debug(6) << "nectar_loader::parse_target::Failed parsing file list.\n";
                     return; // failure, assumes parse_file_list has called emit_error
                 }
+                debug(5) << "nectar_loader::parse_target::Succesfully parsed list of files or librar(y director)ies.\n";
             } // or a list of directories
             else if( map_value(directory_type_map, token, type) )
             {

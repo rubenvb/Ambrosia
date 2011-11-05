@@ -74,8 +74,6 @@ enum class file_type
     header_c,
     header_cxx,
     library,
-    library_shared,
-    library_static,
     resource,
     Qt_ui,
     Qt_moc,
@@ -96,10 +94,6 @@ inline file_type get_general_type( const file_type type )
         case file_type::header_c:
         case file_type::header_cxx:
             return file_type::header;
-        case file_type::library:
-        case file_type::library_shared:
-        case file_type::library_static:
-            return file_type::library;
         default:
             return type;
     }

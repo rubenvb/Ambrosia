@@ -23,6 +23,7 @@ CONFIG( debug, debug|release ) {
 unix:LIBS += -L ../libAmbrosia
 unix:PRE_TARGETDEPS += ../libAmbrosia/libAmbrosia$${LIBSUFFIX}.a
 LIBS += -lAmbrosia$${LIBSUFFIX}
+win32:LIBS += -lshlwapi
 #DEFINES += AMBROSIA_DLL
 
 # Application includes

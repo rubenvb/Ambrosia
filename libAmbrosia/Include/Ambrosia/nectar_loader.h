@@ -84,7 +84,7 @@ private:
     bool parse_source_directory_list( const file_type type ); // searches m_source_directory+"/"+m_subdirectory
     bool parse_build_directory( const file_type type );  // will be created on first use
     bool parse_variable_list( string_set &items ); // only adds or removes strings from variables
-    bool parse_library_list( const file_type type ); // parses -l and -L items, and handle interproject dependencies?
+    bool parse_library_list(); // parses -l and -L items, and handle interproject dependencies?
     // main target parser
     void parse_target();
     // input validation functions (see Ambrosia wiki for valid input requirements)

@@ -56,6 +56,9 @@ SOURCES += \
     Source/Ambrosia/Configuration/config_base.cpp
 
 *win32*:SOURCES += Source/Ambrosia/Platform/windows.cpp
-*linux*:SOURCES += Source/Ambrosia/Platform/linux.cpp
+*linux*:SOURCES += Source/Ambrosia/Platform/unix.cpp
+*mac*:SOURCES += Source/Ambrosia/Platform/unix.cpp
 
 OTHER_FILES += libAmbrosia.nectar.txt
+
+

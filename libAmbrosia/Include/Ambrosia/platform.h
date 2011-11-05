@@ -52,6 +52,7 @@ bool file_exists( const std::string &filename );
 /*
  * Mostly platform dependently implemented functions
  ****************************************************/
+bool is_absolute_path( const std::string &path );
 // Single level directory scan
 template<class output_iterator>
 void scan_directory( output_iterator it, const std::string &relative_directory );

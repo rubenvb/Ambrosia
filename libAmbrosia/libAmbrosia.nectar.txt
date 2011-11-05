@@ -11,6 +11,5 @@ lib libAmbrosia
     SOURCES *.cpp
     # Platform files
     (windows)SOURCES Platform/windows.cpp
-    (linux)  SOURCES Platform/linux.cpp
-    (macos)  SOURCES Platform/mac.cpp
+    (unix)   SOURCES Platform/unix.cpp
 }

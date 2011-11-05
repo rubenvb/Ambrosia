@@ -52,6 +52,14 @@ const os build_os = os::Linux;
 /*
  * Mostly platform dependently implemented functions
  ****************************************************/
+bool is_absolute_path( const string &path )
+{
+    if( path.empty() )
+        return false;
+    else
+        return (path[0] == '/');
+}
+
 template<class output_iterator>
 void scan_directory( output_iterator it, const string &directory_name )
 {
