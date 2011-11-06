@@ -22,6 +22,7 @@
 
 // Ambrosia includes
 #include "end_state.h"
+#include "target_verifier.h"
 
 // C++ includes
 /* <fstream> */
@@ -57,7 +58,7 @@ state* reader::event()
     if( lib::error_status() )
         return new end_state( this );
 
-    return new end_state( "reader::reader does little for now.", this );
+    return new target_verifier( m_targets, this );
 }
 
 ambrosia_namespace_end

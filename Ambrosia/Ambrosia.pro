@@ -38,7 +38,8 @@ SOURCES += \
     Source/help_and_version_output.cpp \
     Source/output.cpp \
     Source/reader.cpp \
-    Source/builder.cpp
+    Source/builder.cpp \
+    Source/target_verifier.cpp
 
 HEADERS += \
     Include/state.h \
@@ -48,6 +49,9 @@ HEADERS += \
     Include/end_state.h \
     Include/help_and_version_output.h \
     Include/reader.h \
-    Include/builder.h
+    Include/builder.h \
+    Include/target_verifier.h
 
 OTHER_FILES += Ambrosia.nectar.txt
+
+
