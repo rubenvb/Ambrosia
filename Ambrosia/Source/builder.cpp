@@ -18,11 +18,11 @@ ambrosia_namespace_begin
 builder::builder( state* parent )
 :   state( parent )
 {
-    debug(0) << "builder::Builder state created.\n";
+    //debug(0) << "builder::Builder state created.\n";
 }
 builder::~builder()
 {
-    debug(0) << "builder::Destroyed.\n";
+    //debug(0) << "builder::Destroyed.\n";
 }
 
 ambrosia_namespace_end

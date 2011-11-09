@@ -54,7 +54,7 @@ target::target( const string &name, const target_type type,
     m_libraries(),
     m_output_name( name )
 {
-    debug(6) << "target::Created " << map_value(target_type_map_inverse, type) << ": "
+    debug(debug::target) << "target::Created " << map_value(target_type_map_inverse, type) << ": "
              << name << ".\n";
 }
 
@@ -126,7 +126,7 @@ bool target::add_source_directory( const file_type type, const string &directory
 {
     const string full_subdirectory_name = full_directory_name( m_build_config.source_directory(), directory );
 
-    debug(6) << "target::add_source_directory::Checking if directory " << full_subdirectory_name
+    debug(debug::target) << "target::add_source_directory::Checking if directory " << full_subdirectory_name
              << " exists.\n";
     if( !directory_exists(full_subdirectory_name) )
         return false;
@@ -142,7 +142,7 @@ void target::remove_directory( const file_type type, const string &directory )
 }
 bool target::add_library( const string &library )
 {
-    debug(6) << "target::add_library::Adding library " << library << " to target " << m_name << ".\n";
+    debug(debug::target) << "target::add_library::Adding library " << library << " to target " << m_name << ".\n";
     //TODO: check if library can be linked
     return !(m_libraries.insert(library).second);
 }
@@ -160,6 +160,5 @@ void target::set_output_name( const std::string &name )
 /*
  * Private functions
  ********************/
-
 
 libambrosia_namespace_end

@@ -25,7 +25,12 @@
 
 libambrosia_namespace_begin
 
-ambrosia_config s_ambrosia_config;
+ambrosia_config& get_first_ambrosia_config()
+{
+    static ambrosia_config* local_static_config = new ambrosia_config();
+    return *local_static_config;
+}
+ambrosia_config s_ambrosia_config = get_first_ambrosia_config();
 
 ambrosia_config::ambrosia_config()
 :   config_base(),

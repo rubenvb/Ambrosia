@@ -37,18 +37,18 @@ reader::reader( state* parent )
     m_stream(),
     m_targets()
 {
-    debug(0) << "reader::reader created.\n";
+    //debug(0) << "reader::reader created.\n";
 }
 reader::~reader()
 {
-    debug(0) << "reader::Destroyed.\n";
+    //debug(0) << "reader::Destroyed.\n";
 }
 
 state* reader::event()
 {
     // load project files
-    debug(1) << "reader:::event::calling extract_nectar with filename: "
-             << lib::s_ambrosia_config.path_to_project_file() << "\n";
+    //debug(1) << "reader:::event::calling extract_nectar with filename: "
+    //         << lib::s_ambrosia_config.path_to_project_file() << "\n";
     lib::drink_nectar( lib::s_ambrosia_config.path_to_project_file(), m_targets );
     if( lib::error_status() )
         return new end_state( this );

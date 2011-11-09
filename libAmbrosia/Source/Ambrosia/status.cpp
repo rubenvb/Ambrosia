@@ -43,7 +43,7 @@ size_t s_error_status_calls = 0;
 bool error_status()
 {
 #ifdef AMBROSIA_DEBUG
-    debug(0) << "status::error_status::Status="
+    debug(debug::type::status) << "status::error_status::Status="
              << ((current_status==status::error)?"ERROR":"OK") << ".\n";
     ++s_error_status_calls;
 #endif
@@ -52,7 +52,7 @@ bool error_status()
 bool error_list_status()
 {
 #ifdef AMBROSIA_DEBUG
-    debug(0) << "status::error_list_status::Checking error status now.\n";
+    debug(debug::type::status) << "status::error_list_status::Checking error status now.\n";
     ++s_error_status_calls;
 #endif
     return current_status == status::list;
@@ -60,7 +60,7 @@ bool error_list_status()
 
 void emit_error( const string &message )
 {
-    debug(0) << "status::emit_error:Emitting error here:\n\t"
+    debug(debug::type::status) << "status::emit_error:Emitting error here:\n\t"
              << message << "\n";
     current_status = status::error;
     error_messages += "\nError: " + message;
@@ -79,7 +79,7 @@ void emit_warning( const string &message )
 void emit_nectar_error( const string &message, const string &filename,
                         const size_t line_number )
 {
-    debug(4) << "nectar_loader::syntax_error::Emitting a syntax error here.\n";
+    debug(debug::type::status) << "status::emit_nectar_error::Emitting a nectar error now.\n";
     emit_error( "Syntax error in: " + filename + "\n" +
                 "       line: " + to_string(line_number) + "\n" +
                 "       " + message );
@@ -87,7 +87,7 @@ void emit_nectar_error( const string &message, const string &filename,
 void emit_nectar_warning( const string &message, const string &filename,
                           const size_t line_number )
 {
-    debug(4) << "nectar_loader::syntax_warning::Emitting a syntax warning here.\n";
+    debug(debug::type::status) << "status::emit_nectar_warning::Emitting a syntax warning now.\n";
     emit_warning( "Syntax warning: " + filename + "\n" +
                   "       line " + to_string(line_number) + "\n" +
                   "       " + message );
@@ -105,12 +105,13 @@ void emit_warning_list( const string_vector &list )
     warning_list = list;
 }
 
-void print_errors()
+int print_errors()
 {
     cerr << error_messages << "\n";
     error_messages.clear();
     error_list.clear();
     current_status = status::clear;
+    return EXIT_FAILURE;
 }
 
 libambrosia_namespace_end

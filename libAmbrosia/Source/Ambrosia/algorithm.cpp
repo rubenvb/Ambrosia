@@ -211,7 +211,7 @@ const string replace_directory_seperators( const string &original )
 {
     if( '/' == directory_seperator )
     {
-        debug(6) << "algorithm::replace_directory_seperators::Forward slash is directory_seperator.\n";
+        debug(debug::algorithm) << "algorithm::replace_directory_seperators::Forward slash is directory_seperator.\n";
         return original;
     }
 
@@ -266,7 +266,7 @@ def dep_resolve(node, resolved, unresolved):
 void dependency_resolve( target_list &unsorted, target_list::iterator node,
                          target_list &resolved, target_list &unresolved )
 {
-    debug(6) << "dependency_resolve::Resolving: " << (*node)->name() << ".\n";
+    debug(debug::algorithm) << "dependency_resolve::Resolving: " << (*node)->name() << ".\n";
     unresolved.push_back( std::move(*node) );
     unsorted.erase( unsorted.begin() );
 
@@ -275,7 +275,7 @@ void dependency_resolve( target_list &unsorted, target_list::iterator node,
     for( auto it = edges.begin(); it != end; ++it )
     {
         const string name( (*it).second );
-        debug(6) << "dependency_resolve::Processing edge: " << name << ".\n";
+        debug(debug::algorithm) << "dependency_resolve::Processing edge: " << name << ".\n";
         const auto find_functor = [&name](const target_list::value_type &t)
                                   {   return name == t->name();   };
 
@@ -358,20 +358,20 @@ void find_matching_files( const string &filename, const map<string, file_set> &d
     const auto end = directories.end();
     if( filename.find_first_of("*?") != string::npos )
     {
-        debug(5) << "Algorithm::find_matching_files::Matching wildcard filename.\n";
+        debug(debug::algorithm) << "Algorithm::find_matching_files::Matching wildcard filename.\n";
         for( auto directory_it = directories.begin(); directory_it != end; ++directory_it )
         {
             const string &directory = (*directory_it).first;
             const file_set &files = (*directory_it).second;
             const auto files_end = files.end();
-            debug(6) << "Algorithm::find_matching_files::Matching files in " << directory << ".\n";
+            debug(debug::algorithm) << "Algorithm::find_matching_files::Matching files in " << directory << ".\n";
             for( auto files_it = files.begin(); files_it != files_end; ++files_it)
             {
                 const string &file = (*files_it).first;
-                debug(6) << "Algorithm::find_matching_files::Matching " << filename << " to " << file << ".\n";
+                debug(debug::algorithm) << "Algorithm::find_matching_files::Matching " << filename << " to " << file << ".\n";
                 if( wildcard_compare(filename, file) )
                 {
-                    debug(6) << "Algorithm::find_matching_files::Found match: " << directory << directory_seperator << file << ".\n";
+                    debug(debug::algorithm) << "Algorithm::find_matching_files::Found match: " << directory << directory_seperator << file << ".\n";
                     it = { directory + directory_seperator + file, (*files_it).second };
                     ++number_of_matches;
                 }

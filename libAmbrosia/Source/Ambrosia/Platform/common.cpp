@@ -55,7 +55,7 @@ const vector<string> get_environment_PATH()
     const char delimiter = ';';
 #else
     const std::string PATH = getenv( "PATH" );
-    const char delimiter = ":";
+    const char delimiter = ':';
 #endif
     if( PATH.empty() )
         throw runtime_error( "PATH should not be empty" );
@@ -66,7 +66,7 @@ const vector<string> get_environment_PATH()
     while( index != string::npos )
     {
         result.push_back( PATH.substr(previous, index-previous));
-        debug(7) << "platform::get_environment_PATH::part of PATH: " << result.back() << "\n";
+        debug(debug::type::platform) << "platform::get_environment_PATH::part of PATH: " << result.back() << "\n";
         previous=index+1;
         index = PATH.find( delimiter, previous );
     }
@@ -108,11 +108,11 @@ bool directory_exists( const string &directory )
     if( stat(directory.c_str(), &status) == 0 )
 #endif //_WIN32
     {
-        debug(6) << "platform::directory_exists::(_w)stat(64) succeeded for " << directory << ".\n";
+        debug(debug::type::platform) << "platform::directory_exists::(_w)stat(64) succeeded for " << directory << ".\n";
         if ( status.st_mode & S_IFDIR )
             return true;
     }
-    debug(6) << "platform::directory_exists::" << directory << " is not a directory.\n";
+    debug(debug::type::platform) << "platform::directory_exists::" << directory << " is not a directory.\n";
     return false;
 }
 bool file_exists( const string &filename )
@@ -126,11 +126,11 @@ bool file_exists( const string &filename )
     if( stat(filename.c_str(), &status) == 0 )
 #endif //_WIN32
     {
-        debug(6) << "platform::file_exists::(_w)stat(64) succeeded.\n";
+        debug(debug::type::platform) << "platform::file_exists::(_w)stat(64) succeeded.\n";
         if ( status.st_mode & S_IFREG )
             return true;
     }
-    debug(6) << "platform::file_exists::" << filename << " is not a file.\n";
+    debug(debug::type::platform) << "platform::file_exists::" << filename << " is not a file.\n";
     return false;
 }
 

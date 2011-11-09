@@ -18,28 +18,32 @@
 
 libambrosia_namespace_begin
 
-#ifdef AMBROSIA_DEBUG
-extern const int s_max_debug_level;
-#endif // AMBROSIA_DEBUG
-
 class debug
 {
 public:
-    enum type
+    enum type : uint32_t
     {
-        platform            = 0x01,
-        parser              = 0x02,
-        command_generation  = 0x04
-
+        commandline = 1 << 0,
+        algorithm   = 1 << 1,
+        nectar      = 1 << 2,
+        lexer       = 1 << 3,
+        parser      = 1 << 4,
+        conditional = 1 << 5,
+        target      = 1 << 6,
+        files       = 1 << 7,
+        platform    = 1 << 8,
+        status      = 1 << 9,
+        nectar_parser = nectar | parser
+        // ...
     };
 
     typedef std::ostream& (*stream_function)(std::ostream&);
 
 #ifdef AMBROSIA_DEBUG
-    static int s_level;
-    debug( const int debug_level = s_level );
+    static type s_level;
+    debug( const type debug_level = s_level );
 #else // AMBROSIA_DEBUG
-    debug( const int );
+    debug( const type );
 #endif // AMBROSIA_DEBUG
     template<typename T>
     #ifdef AMBROSIA_DEBUG
@@ -71,6 +75,10 @@ private:
     const bool m_output;
     #endif // AMBROSIA_DEBUG
 };
+
+#ifdef AMBROSIA_DEBUG
+extern const debug::type s_max_debug_level;
+#endif // AMBROSIA_DEBUG
 
 template<>
 debug& debug::operator<<( const string_set & );

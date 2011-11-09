@@ -43,8 +43,8 @@ void emit_warning_list( const string_vector &list );
 // retrieve current status
 bool error_status();
 bool error_list_status();
-// print messages currently stored
-void print_errors();
+// print messages currently stored and return EXIT_FAILURE
+int print_errors();
 
 libambrosia_namespace_end
 

@@ -16,12 +16,12 @@ libambrosia_namespace_begin
 
 #ifdef AMBROSIA_DEBUG
 // static member initialization
-const int s_max_debug_level = 9;
-int debug::s_level = s_max_debug_level;
-debug::debug( const int debug_level )
-    :   m_output( debug_level <= s_level )
+const debug::type s_max_debug_level = debug::type::commandline;
+debug::type debug::s_level = s_max_debug_level;
+debug::debug( const type debug_level )
+    :   m_output( debug_level & s_level )
 #else // AMBROSIA_DEBUG
-debug::debug( const int )
+debug::debug( const type )
 #endif // AMRBOSIA_DEBUG
 {}
 

@@ -35,14 +35,14 @@ file_store::file_store()
 
 const file_set & file_store::get_source_file_set( const std::string &directory )
 {
-    debug(5) << "file_set::get_source_file_set::Finding directory listing for "
-             << directory << ".\n";
+    debug(debug::files) << "file_set::get_source_file_set::Finding directory listing for "
+                        << directory << ".\n";
     const auto result = m_source_files.find( directory );
     if( result != m_source_files.end() )
         return m_source_files[directory];
     else
     {
-        debug(5) << "file_store::get_source_file_set::Directory not found, scanning now.\n";
+        debug(debug::files) << "file_store::get_source_file_set::Directory not found, scanning now.\n";
         add_source_directory( directory );
         return m_source_files[directory];
     }
@@ -51,7 +51,7 @@ const file_set & file_store::get_source_file_set( const std::string &directory )
 const file_set file_store::find_source_file( const string &filename, const config_base &configuration,
                                              const string_set &directories )
 {
-    debug(5) << "file_store::find_source_file::Called.\n";
+    debug(debug::files) << "file_store::find_source_file::Called.\n";
     const string &source_directory = configuration.source_directory();
     // handle filename with directory prepended
     const string_pair directory_filename( split_preceding_directory(filename) );
@@ -70,20 +70,20 @@ const file_set file_store::find_source_file( const string &filename, const confi
                                                                         full_directory_name(directory, preceding_directory) );
                            if( directory_exists(full_dir))
                            {
-                               debug(5) << "file_store::find_source_file::Adding deduced directory to search list: "
-                                           << full_dir << "\n";
+                               debug(debug::files) << "file_store::find_source_file::Adding deduced directory to search list: "
+                                                   << full_dir << "\n";
                                directories_to_search.insert( full_dir );
                            }
                            else
-                               debug(5) << "file_store::find_source_file::Not adding non-existing deduced directory to search list: "
-                                        << full_dir << ".\n";
+                               debug(debug::files) << "file_store::find_source_file::Not adding non-existing deduced directory to search list: "
+                                                   << full_dir << ".\n";
                        } );
         if( directories_to_search.empty() )
             directories_to_search = { "" };
     }
-    debug(4) << "file_store::find_source_file::Looking for " << filename
-             << " in the following subdirectories of " << source_directory
-             << ":\n" << directories_to_search;
+    debug(debug::files) << "file_store::find_source_file::Looking for " << filename
+                        << " in the following subdirectories of " << source_directory
+                        << ":\n" << directories_to_search;
 
     file_set result;
 
@@ -92,8 +92,8 @@ const file_set file_store::find_source_file( const string &filename, const confi
     {
         const string &directory = full_directory_name( source_directory, *it );
 
-        debug(5) << "file_store::find_source_file::Loading directory contents for: "
-                 << directory << ".\n";
+        debug(debug::files) << "file_store::find_source_file::Loading directory contents for: "
+                            << directory << ".\n";
         const file_set &files_on_disk = get_source_file_set( directory );
         if( error_status() )
             return result;
@@ -102,21 +102,23 @@ const file_set file_store::find_source_file( const string &filename, const confi
         for( auto it = files_on_disk.begin(); it != end; ++it )
         {
             const file &entry = *it;
-            debug(5) << "file_store::find_source_file::Matching " << entry.first << " vs " << true_filename << ".\n";
+            debug(debug::files) << "file_store::find_source_file::Matching " << entry.first
+                                << " vs " << true_filename << ".\n";
             if( wildcard_compare(true_filename, entry.first) )
             {
-                debug(5) << "file_store::find_source_file::Match found: " << entry.first << "\n";
+                debug(debug::files) << "file_store::find_source_file::Match found: " << entry.first << "\n";
                 result.insert( {directory + "/" + entry.first, entry.second} );
             }
         }
     }
-    debug(4) << "file_store::find_source_file::Found " << result.size() << " match(es).\n";
+    debug(debug::files) << "file_store::find_source_file::Found " << result.size() << " match(es).\n";
     return result;
 }
 const file_set file_store::match_source_files( const string &filename, const config_base &configuration,
                                                const string_set &directories )
 {
-    debug(4) << "file_store::match_source_files::Matching " << filename << " to all files in the source directories.\n";
+    debug(debug::files) << "file_store::match_source_files::Matching " << filename
+                        << " to all files in the source directories.\n";
     file_set result;
     const string_pair directory_filename( split_preceding_directory(filename) );
     const string &preceding_directory( directory_filename.first );
@@ -130,33 +132,33 @@ const file_set file_store::match_source_files( const string &filename, const con
                                                     *directory_it + preceding_directory) );
         if( !directory_exists(directory) )
         {
-            debug(5) << "file_store::match_source_files::Skipping nonexistent directory: " << directory << ".\n";
+            debug(debug::files) << "file_store::match_source_files::Skipping nonexistent directory: " << directory << ".\n";
         }
-        debug(5) << "file_store::match_source_files::Looking in " << directory << " for matches.\n";
+        debug(debug::files) << "file_store::match_source_files::Looking in " << directory << " for matches.\n";
 
 
         const file_set &files_on_disk = get_source_file_set( directory );
         if( error_status() )
             return result;
 
-        debug(5) << "file_store::match_source_files::Searching for match with " << files_on_disk.size() << " files.\n";
+        debug(debug::files) << "file_store::match_source_files::Searching for match with " << files_on_disk.size() << " files.\n";
 
         // match all files that were scanned from disk to the wildcard filename
         const auto files_end = files_on_disk.end();
         for( auto files_it = files_on_disk.begin(); files_it != files_end; ++files_it )
         {
             const file &entry = *files_it; // filename and last modified time
-            debug(6) << "file_store::match_source_files::Matching " << entry.first
-                     << " with " << true_filename << ".\n";
+            debug(debug::files) << "file_store::match_source_files::Matching " << entry.first
+                                << " with " << true_filename << ".\n";
             if( wildcard_compare(true_filename, entry.first) )
             {
-                debug(7) << "file_store::match_source_files::Matched " << true_filename
-                         << " to " << directory << "/" << entry.first << ".\n";
+                debug(debug::files) << "file_store::match_source_files::Matched " << true_filename
+                                    << " to " << directory << "/" << entry.first << ".\n";
                 result.insert( { directory + "/" + entry.first, entry.second } );
             }
         }
     }
-    debug(5) << "file_store::match_source_files::Found " << result.size() << " matches.\n";
+    debug(debug::files) << "file_store::match_source_files::Found " << result.size() << " matches.\n";
     return result;
 }
 
@@ -167,27 +169,27 @@ void file_store::add_source_directory( const std::string &directory )
         throw logic_error( "Directory does not exist: " + directory );
 #endif
 
-    debug(5) << "file_store::add_source_directory::Scanning files in source directory: " << directory << ".\n";
+    debug(debug::files) << "file_store::add_source_directory::Scanning files in source directory: " << directory << ".\n";
     const auto result = m_source_files.insert( {directory, file_set()} );
     if( !result.second )
-        debug(5) << "file_store::add_source_directory::Directory already present, and scanned.\n";
+        debug(debug::files) << "file_store::add_source_directory::Directory already present, and scanned.\n";
     else
     {
         file_set &new_files = (*result.first).second;
         scan_directory( std::inserter(new_files, new_files.begin()), directory );
-        debug(5) << "file_store::add_source_directory::Directory scanned.\n";
+        debug(debug::files) << "file_store::add_source_directory::Directory scanned.\n";
     }
 }
 void file_store::add_build_directory( const std::string &directory )
 {
     if( !directory_exists(directory) )
         // TODO: Create directory so scan_directory works OK. Check if creation was possible.
-        debug(5) << "file_store::add_build_direcctory::Creating build directory: " << directory << ".\n";
+        debug(debug::files) << "file_store::add_build_direcctory::Creating build directory: " << directory << ".\n";
 
-    debug(5) << "file_store::add_build_directory::Scanning files in build directory: " << directory << ".\n";
+    debug(debug::files) << "file_store::add_build_directory::Scanning files in build directory: " << directory << ".\n";
     const auto result = m_build_files.insert( {directory, file_set()} );
     if( !result.second )
-        debug(5) << "file_store::add_source_directory::Directory already present, and scanned.\n";
+        debug(debug::files) << "file_store::add_source_directory::Directory already present, and scanned.\n";
     else
     {
         file_set &new_files = (*result.first).second;
