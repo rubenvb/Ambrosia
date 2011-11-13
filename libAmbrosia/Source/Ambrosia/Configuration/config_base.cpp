@@ -39,7 +39,7 @@ config_base::config_base()
     m_build_directory()
 {
     initialize_config();
-    debug(4) << "\nconfig_base::config contains:\n" << m_config << "\n";
+    debug(debug::config) << "\nconfig_base::config contains:\n" << m_config << "\n";
 }
 config_base::config_base( toolchain requested_toolchain )
 :   m_environment_PATH( get_environment_PATH() ),
@@ -68,9 +68,9 @@ bool config_base::set_source_directory( const string &source_directory )
     if( !directory_exists(source_directory) )
         return false;
 
-    debug(5) << "config_base::set_source_directory::Setting source directory to: " << source_directory << "\n";
+    debug(debug::config) << "config_base::set_source_directory::Setting source directory to: " << source_directory << "\n";
     m_source_directory = source_directory;
-    debug(5) << "config_base::set_source_directory::Adding " << m_source_directory << " to s_file_store.\n";
+    debug(debug::config) << "config_base::set_source_directory::Adding " << m_source_directory << " to s_file_store.\n";
     s_file_store.add_source_directory( m_source_directory );
     if( !error_status() )
         return true;

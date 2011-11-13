@@ -75,7 +75,7 @@ bool apply_commandline_options( const string_vector &arguments, lib::ambrosia_co
                 else
                 {
                     add_target:
-                    if( !add_build_target(current) )
+                    if( !add_build_target(current, config) )
                         return true;
                 }
                 break;
@@ -97,7 +97,7 @@ bool apply_commandline_options( const string_vector &arguments, lib::ambrosia_co
                     const string::size_type index = current.find( "=",1 );
                     if( index == string::npos || index == current.size()-1 )
                     {
-                        emit_error( "Ambrosia internal options must be set by \'-option=value\' type arguments." );
+                        lib::emit_error( "Ambrosia internal options must be set by \'-option=value\' type arguments." );
                         return true;
                     }
                     const string option( current.substr(1,index-1) );
@@ -119,12 +119,12 @@ bool apply_commandline_options( const string_vector &arguments, lib::ambrosia_co
                 //  store in a string_map?
                 break;
             default:
-                emit_error( "Invalid commandline argument: \'" + current + "\'." );
+                lib::emit_error( "Invalid commandline argument: \'" + current + "\'." );
                 return true;
         }
     }
     // if project file is not yet set, search current directory
-    if( lib::s_ambrosia_config.project_file().empty() )
+    if( config.project_file().empty() )
     {
         const string project_file = lib::find_nectar_file( "." );
         if( !project_file.empty() )
@@ -137,14 +137,44 @@ bool apply_commandline_options( const string_vector &arguments, lib::ambrosia_co
         else if( !lib::error_status() )
             lib::emit_error( "No project file found in specified path or current directory." );
     }
-    debug(1) << "begin::Checking if project file was found.\n";
+    debug(debug::commandline) << "commandline::apply_commandline_options::Checking if project file was found.\n";
     // Ensure that a valid project file has been found
-    if( lib::file_exists(lib::s_ambrosia_config.path_to_project_file()) )
-        return new reader( this );
+    if( lib::file_exists(config.path_to_project_file()) )
+        return true;
     else
-        return new end_state( "No project file was found. Please specify a project file or a directory containing a single project file.", this );
-
+    {
+        lib::emit_error( "No project file was found. Please specify a project file or a directory containing a single project file." )
+        return true;
+    }
     return false;
+}
+
+bool add_build_target( const string &target, ambrosia_config &config )
+{
+    // TODO: fixme: this function does wrong things
+    const string::size_type index = target.find( ":" );
+    if( index == string::npos )
+    {
+        debug(debug::commandline) << "commandline::add_build_target::Target to be built: " << target << ".\n";
+        config.add_target_config_options( target, string_set() );
+    }
+    else
+    {
+        const string target_name( target.substr(0, index) );
+        debug(debug::commandline) << "commandline::add_build_target::Target to be built: " << target_name << ".\n";
+        string_set options;
+        string_set duplicates;
+        istringstream stream( target );
+        stream.seekg( static_cast<istringstream::streamoff>(index) );
+        string temp;
+        while( std::getline(stream, temp, ',') )
+        {
+            if( options.insert(temp).second == false )
+                duplicates.insert( temp );
+        }
+        config.add_target_config_options( target_name, options );
+    }
+    return true;
 }
 
 

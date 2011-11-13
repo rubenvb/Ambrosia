@@ -42,7 +42,7 @@ ambrosia_config::ambrosia_config()
  **********/
 void ambrosia_config::set_ambrosia_cross( const std::string &cross )
 {
-    debug(4) << "ambrosia_config::Checking and setting cross-compilation options through Ambrosia specification.\n";
+    debug(debug::config) << "ambrosia_config::Checking and setting cross-compilation options through Ambrosia specification.\n";
 
     // verify format
     if( !wildcard_compare( "*-*-*", cross) )
@@ -51,7 +51,7 @@ void ambrosia_config::set_ambrosia_cross( const std::string &cross )
         return;
     }
     else
-        debug(4) << "ambrosia_config::cross has correct format.\n";
+        debug(debug::config) << "ambrosia_config::cross has correct format.\n";
 
     // find relevant parts and complain if somethin's wrong
     const string::size_type architecture_index = cross.find( "-" ) + 1;
@@ -61,10 +61,10 @@ void ambrosia_config::set_ambrosia_cross( const std::string &cross )
     const string os_string( cross.substr(0, architecture_index-1) );
     const string architecture_string( cross.substr(architecture_index, toolchain_index-architecture_index-1) );
     const string toolchain_string( cross.substr(toolchain_index, string::npos ) );
-    debug(4) << "ambrosia_config::cross options specified:\n"
-             << "              os = " << os_string << ".\n"
-             << "              architecture = " << architecture_string << ".\n"
-             << "              toolchain = " << toolchain_string << ".\n";
+    debug(debug::config) << "ambrosia_config::cross options specified:\n"
+                         << "              os = " << os_string << ".\n"
+                         << "              architecture = " << architecture_string << ".\n"
+                         << "              toolchain = " << toolchain_string << ".\n";
 
     // set the appropriate internal options
     os new_os = build_os; // shut up uninitialized warning

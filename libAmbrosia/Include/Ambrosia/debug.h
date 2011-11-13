@@ -23,17 +23,18 @@ class debug
 public:
     enum type : uint32_t
     {
-        commandline = 1 << 0,
-        algorithm   = 1 << 1,
-        nectar      = 1 << 2,
-        lexer       = 1 << 3,
-        parser      = 1 << 4,
-        conditional = 1 << 5,
-        target      = 1 << 6,
-        files       = 1 << 7,
-        platform    = 1 << 8,
-        status      = 1 << 9,
-        nectar_parser = nectar | parser
+        commandline   = 1 << 0,
+        algorithm     = 1 << 1,
+        nectar        = 1 << 2,
+        lexer         = 1 << 3,
+        parser        = 1 << 4,
+        nectar_parser = nectar | parser,
+        conditional   = 1 << 5,
+        target        = 1 << 6,
+        files         = 1 << 7,
+        platform      = 1 << 8,
+        status        = 1 << 9,
+        config        = 1 << 10
         // ...
     };
 
