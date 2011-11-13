@@ -11,6 +11,7 @@
 
 // Ambrosia includes
 #include "help_and_version_output.h"
+#include "output.h"
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
@@ -22,6 +23,8 @@
 
 // C++ includes
 #include <algorithm>
+#include <sstream>
+    using std::istringstream;
 #include <string>
     using std::string;
 
@@ -102,14 +105,14 @@ bool apply_commandline_options( const string_vector &arguments, lib::ambrosia_co
                     }
                     const string option( current.substr(1,index-1) );
                     const string value( current.substr(index+1, string::npos) );
-                    set_internal_option( option, value );
+                    set_internal_option( option, value, config );
                     // check for any error that may have happened in the above call to libAmbrosia
                     if( lib::error_status() )
                         return true;
                 }
                 else if( current[0] == ':' )
                 {
-                    if( !add_configuration_options(current.substr(1)) )
+                    if( !add_configuration_options(current.substr(1), config) )
                         return true;
                 }
                 break;
@@ -143,13 +146,13 @@ bool apply_commandline_options( const string_vector &arguments, lib::ambrosia_co
         return true;
     else
     {
-        lib::emit_error( "No project file was found. Please specify a project file or a directory containing a single project file." )
+        lib::emit_error( "No project file was found. Please specify a project file or a directory containing a single project file." );
         return true;
     }
-    return false;
+    return false; // clean up the above and this
 }
 
-bool add_build_target( const string &target, ambrosia_config &config )
+bool add_build_target( const string &target, lib::ambrosia_config &config )
 {
     // TODO: fixme: this function does wrong things
     const string::size_type index = target.find( ":" );
@@ -177,5 +180,57 @@ bool add_build_target( const string &target, ambrosia_config &config )
     return true;
 }
 
+void set_internal_option( const string &option, const string &value,
+                          lib::ambrosia_config &config )
+{
+    debug(debug::commandline) << "commandline::set_internal_option::Ambrosia internal option: " << option
+                              << " with value " << value << " being set.\n";
+
+    if( "cross" == option )
+    {
+        debug(debug::commandline) << "commandline::set_internal_option::Cross-compiling for "
+                                  << value << ".\n";
+        config.set_ambrosia_cross( value );
+    }
+    #ifdef AMBROSIA_DEBUG
+    else if( "d" == option || "debug" == option )
+    {
+        const uint32_t level = lib::from_string<uint32_t>( value );
+        // check validity, partial check on input as well
+        if( level > lib::s_max_debug_level )//|| level < 0 )
+            lib::emit_error( "Debug level must be a number between 0 and 9." );
+        debug(debug::always) << "begin::Setting debug level to " << level << ".\n";
+        debug::s_level = static_cast<debug::type>(level);
+    }
+    #endif // AMBROSIA_DEBUG
+    else if( "gnu-prefix" == option )
+    {
+        debug(debug::commandline) << "commandline::set_internal_option::Cross-compiling with GNU prefix "
+                                  << value << ".\n";
+        config.set_gnu_prefix( value );
+    }
+    else
+        lib::emit_error( "Unknown option passed to Ambrosia: \n\t-" + option + "=" + value );
+}
+
+bool add_configuration_options( const string &options, lib::ambrosia_config &/*config*/ )
+{
+    debug(debug::commandline) << "commandline::addd_configuration_options::Target configuration option: "
+                              << options << " set.\n";
+    // put them in a set
+    istringstream stream( options );
+    string temp;
+    string_set new_options;
+    while( getline(stream, temp, ',') )
+    {
+        if( new_options.insert(temp).second == false )
+            output() << "Warning: duplicate configuration option: " << temp << ".\n";
+    }
+
+    // add config options to all previous targets and output duplicates as a warning.
+
+    return true;
+
+}
 
 ambrosia_namespace_end

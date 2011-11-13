@@ -33,7 +33,7 @@ private:
     bool m_first_dashless_argument; // true if no arguments without '-' was processed
     std::vector<std::string> m_arguments;
     // internal functions
-    bool find_project_file( const std::string &path );
+    //bool find_project_file( const std::string &path );
     bool add_build_target( const std::string &target );
     // TODO: implement internal Ambrosia options
     void set_internal_option( const std::string &option, const std::string &value );

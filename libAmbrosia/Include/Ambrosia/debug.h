@@ -34,7 +34,8 @@ public:
         files         = 1 << 7,
         platform      = 1 << 8,
         status        = 1 << 9,
-        config        = 1 << 10
+        config        = 1 << 10,
+        always        = 0xffffffff
         // ...
     };
 

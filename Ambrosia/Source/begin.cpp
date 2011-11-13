@@ -91,7 +91,7 @@ state* begin::event()
                     m_first_dashless_argument = false;
                     //debug(2) << "begin::Possible project file or directory: \'" << current << "\'.\n";
 
-                    find_project_file( current );
+                    //find_project_file( current );
                     if( lib::error_status() )
                         return new end_state( this );
 
