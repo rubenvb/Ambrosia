@@ -52,7 +52,7 @@ bool apply_commandline_options( const string_vector &arguments, lib::ambrosia_co
 
     // Options to be filled in, with default values, if any
     string current;
-    bool m_first_dashless_argument;
+    bool m_first_dashless_argument = true;
     const auto end = arguments.end();
     for( auto it = arguments.begin(); it != end; ++it )
     {

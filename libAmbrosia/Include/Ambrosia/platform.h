@@ -42,7 +42,7 @@ const std::wstring convert_to_utf16( const std::string &utf8_string );
  * Possible commonly implemented functions
  ******************************************/
 // PATH environment variable
-const std::vector<std::string> get_environment_PATH();
+const std::vector<std::string>& get_environment_PATH();
 // current working directory in string form.
 const std::string current_working_directory();
 // check if a file/directory exists/is accessible
