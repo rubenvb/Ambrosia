@@ -6,8 +6,8 @@
   *
   **/
 
-#ifndef FILE_STORE_H
-#define FILE_STORE_H
+#ifndef AMBROSIA_FILE_STORE_H
+#define AMBROSIA_FILE_STORE_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -47,4 +47,4 @@ extern file_store s_file_store;
 
 libambrosia_namespace_end
 
-#endif // FILE_STORE_H
+#endif // AMBROSIA_FILE_STORE_H

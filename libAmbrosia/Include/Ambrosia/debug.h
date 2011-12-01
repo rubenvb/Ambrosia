@@ -6,8 +6,8 @@
   *
   **/
 
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef AMBROSIA_DEBUG_H
+#define AMBROSIA_DEBUG_H
 
 // Ambrosia includes
 #include "Ambrosia/global.h"
@@ -87,4 +87,4 @@ debug& debug::operator<<( const string_set & );
 
 libambrosia_namespace_end
 
-#endif // DEBUG_H
+#endif // AMBROSIA_DEBUG_H

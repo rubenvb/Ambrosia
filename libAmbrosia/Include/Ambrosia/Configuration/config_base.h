@@ -6,8 +6,8 @@
   *
   **/
 
-#ifndef CONFIG_BASE_H
-#define CONFIG_BASE_H
+#ifndef AMBROSIA_CONFIG_BASE_H
+#define AMBROSIA_CONFIG_BASE_H
 
 // Global include
 #include "Ambrosia/global.h"

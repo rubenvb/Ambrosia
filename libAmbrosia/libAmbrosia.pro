@@ -36,7 +36,11 @@ HEADERS += \
     Include/Ambrosia/nectar_loader.h \
     Include/Ambrosia/Configuration/ambrosia_config.h \
     Include/Ambrosia/Configuration/build_config.h \
-    Include/Ambrosia/Configuration/config_base.h
+    Include/Ambrosia/Configuration/config_base.h \
+    Include/Ambrosia/project.h \
+    Include/Ambrosia/Error/syntax_error.h \
+    Include/Ambrosia/Error/error.h \
+    Include/Ambrosia/Error/nectar_error.h
 
 SOURCES += \
     Source/Ambrosia/Platform/common.cpp \
@@ -51,12 +55,30 @@ SOURCES += \
     Source/Ambrosia/nectar_loader.cpp \
     Source/Ambrosia/Configuration/ambrosia_config.cpp \
     Source/Ambrosia/Configuration/build_config.cpp \
-    Source/Ambrosia/Configuration/config_base.cpp
+    Source/Ambrosia/Configuration/config_base.cpp \
+    Source/Ambrosia/project.cpp \
+    Source/Ambrosia/Error/syntax_error.cpp \
+    Source/Ambrosia/Error/error.cpp \
+    Source/Ambrosia/Error/nectar_error.cpp
 
 *win32*:SOURCES += Source/Ambrosia/Platform/windows.cpp
 *linux*:SOURCES += Source/Ambrosia/Platform/unix.cpp
 *mac*:SOURCES += Source/Ambrosia/Platform/unix.cpp
 
 OTHER_FILES += libAmbrosia.nectar.txt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

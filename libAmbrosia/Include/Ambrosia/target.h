@@ -12,8 +12,8 @@
   *
   **/
 
-#ifndef TARGET_H
-#define TARGET_H
+#ifndef AMBROSIA_TARGET_H
+#define AMBROSIA_TARGET_H
 
 // Global include
 #include "global.h"
@@ -74,4 +74,4 @@ private:
 
 libambrosia_namespace_end
 
-#endif // TARGET_H
+#endif // AMBROSIA_TARGET_H

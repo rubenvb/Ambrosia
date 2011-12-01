@@ -6,8 +6,8 @@
   *
   **/
 
-#ifndef NECTAR_H
-#define NECTAR_H
+#ifndef AMBROSIA_NECTAR_H
+#define AMBROSIA_NECTAR_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -39,4 +39,4 @@ void apply_build_config( target_list &targets );
 
 libambrosia_namespace_end
 
-#endif // NECTAR_H
+#endif // AMBROSIA_NECTAR_H

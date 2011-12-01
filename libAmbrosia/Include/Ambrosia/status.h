@@ -8,8 +8,8 @@
   *
   **/
 
-#ifndef ERROR_H
-#define ERROR_H
+#ifndef AMBROSIA_STATUS_H
+#define AMBROSIA_STATUS_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -26,6 +26,13 @@ libambrosia_namespace_begin
 #ifdef AMBROSIA_DEBUG
 extern size_t s_error_status_calls;
 #endif
+
+enum class status
+{
+    OK,
+    list,
+    error
+};
 
 // set error status with appropriate messages
 void emit_error( const std::string &message );
@@ -48,4 +55,4 @@ int print_errors();
 
 libambrosia_namespace_end
 
-#endif // ERROR_H
+#endif // AMBROSIA_STATUS_H

@@ -6,8 +6,8 @@
   *
   **/
 
-#ifndef GLOBAL_LIBRARY_H
-#define GLOBAL_LIBRARY_H
+#ifndef AMBROSIA_GLOBAL_H
+#define AMBROSIA_GLOBAL_H
 
 // namespace definition
 #define ambrosia_namespace_begin namespace ambrosia {
@@ -38,4 +38,4 @@ namespace libambrosia = ambrosia::lib;
 # define DLL_EXPORT
 #endif // AMBROSIA_DLL
 
-#endif // GLOBAL_H
+#endif // AMBROSIA_GLOBAL_H

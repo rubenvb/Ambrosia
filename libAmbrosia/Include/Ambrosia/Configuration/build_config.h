@@ -12,8 +12,8 @@
   *
   **/
 
-#ifndef CONFIGURATION_BUILD_CONFIG_H
-#define CONFIGURATION_BUILD_CONFIG_H
+#ifndef AMBROSIA_CONFIGURATION_BUILD_CONFIG_H
+#define AMBROSIA_CONFIGURATION_BUILD_CONFIG_H
 
 // Global include
 #include "Ambrosia/global.h"

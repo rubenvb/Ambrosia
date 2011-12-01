@@ -10,8 +10,8 @@
   *
   **/
 
-#ifndef CONFIGURATION_AMBROSIA_CONFIG_H
-#define CONFIGURATION_AMBROSIA_CONFIG_H
+#ifndef AMBROSIA_CONFIGURATION_AMBROSIA_CONFIG_H
+#define AMBROSIA_CONFIGURATION_AMBROSIA_CONFIG_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -52,4 +52,4 @@ extern ambrosia_config s_ambrosia_config;
 
 libambrosia_namespace_end
 
-#endif // CONFIGURATION_AMBROSIA_CONFIG_H
+#endif // AMBROSIA_CONFIGURATION_AMBROSIA_CONFIG_H

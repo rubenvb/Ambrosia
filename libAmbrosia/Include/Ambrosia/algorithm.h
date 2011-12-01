@@ -6,8 +6,8 @@
   *
   **/
 
-#ifndef ALGORITHM_H
-#define ALGORITHM_H
+#ifndef AMBROSIA_ALGORITHM_H
+#define AMBROSIA_ALGORITHM_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -150,4 +150,4 @@ void find_matching_files( const std::string &filename, const std::map<std::strin
 
 libambrosia_namespace_end
 
-#endif // ALGORITHM_H
+#endif // AMBROSIA_ALGORITHM_H

@@ -18,12 +18,12 @@
 
 ambrosia_namespace_begin
 
-bool apply_commandline_options( const string_vector &options, lib::ambrosia_config &config );
+bool apply_commandline_options( const string_vector &options, lib::project &project );
 
-bool add_build_target( const std::string &target, lib::ambrosia_config &config );
+bool add_build_target( const std::string &target, lib::project &project );
 
 void set_internal_option( const std::string &option, const std::string &value,
-                          lib::ambrosia_config &config );
+                          lib::project &project );
 
 bool add_configuration_options( const std::string &options, lib::ambrosia_config &config );
 

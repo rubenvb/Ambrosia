@@ -6,8 +6,8 @@
   *
   **/
 
-#ifndef PLATFORM_H
-#define PLATFORM_H
+#ifndef AMBROSIA_PLATFORM_H
+#define AMBROSIA_PLATFORM_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -76,4 +76,4 @@ void recursive_scan_directory( output_iterator it, const std::string &relative_d
 
 libambrosia_namespace_end
 
-#endif // PLATFORM_H
+#endif // AMBROSIA_PLATFORM_H

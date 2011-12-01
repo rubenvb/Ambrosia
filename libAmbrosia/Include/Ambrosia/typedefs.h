@@ -6,8 +6,8 @@
   *
   **/
 
-#ifndef TYPEDEFS_H
-#define TYPEDEFS_H
+#ifndef AMBROSIA_TYPEDEFS_H
+#define AMBROSIA_TYPEDEFS_H
 
 // Global includes
 #include "Ambrosia/global.h"
@@ -51,11 +51,14 @@ ambrosia_namespace_end
 libambrosia_namespace_begin
 
     // Forward declarations
+    class project;
     class target;
 
     // homogeneous typedefs
     typedef std::unique_ptr<target> target_ptr;
     typedef std::vector<target_ptr> target_list;
+    typedef std::unique_ptr<project> project_ptr;
+    typedef std::vector<project_ptr> project_list;
 
     // heterogeneous typedefs
     typedef std::set<std::pair<target_type, std::string> > dependency_list;
@@ -65,4 +68,4 @@ libambrosia_namespace_begin
 
 libambrosia_namespace_end
 
-#endif // TYPEDEFS_H
+#endif // AMBROSIA_TYPEDEFS_H

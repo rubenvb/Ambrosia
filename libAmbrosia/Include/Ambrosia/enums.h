@@ -6,8 +6,8 @@
   *
   **/
 
-#ifndef ENUMS_H
-#define ENUMS_H
+#ifndef AMBROSIA_ENUMS_H
+#define AMBROSIA_ENUMS_H
 
 // Global include
 #include "Ambrosia/global.h"

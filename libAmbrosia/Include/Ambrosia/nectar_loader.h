@@ -10,8 +10,8 @@
   *
   **/
 
-#ifndef NECTAR_LOADER_H
-#define NECTAR_LOADER_H
+#ifndef AMBROSIA_NECTAR_LOADER_H
+#define AMBROSIA_NECTAR_LOADER_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -95,4 +95,4 @@ private:
 
 libambrosia_namespace_end
 
-#endif // NECTAR_LOADER_H
+#endif // AMBROSIA_NECTAR_LOADER_H

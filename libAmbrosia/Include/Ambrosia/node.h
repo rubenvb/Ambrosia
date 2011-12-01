@@ -6,8 +6,8 @@
   *
   **/
 
-#ifndef NODE_H
-#define NODE_H
+#ifndef AMBROSIA_NODE_H
+#define AMBROSIA_NODE_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -43,4 +43,4 @@ private:
 
 libambrosia_namespace_end
 
-#endif // NODE_H
+#endif // AMBROSIA_NODE_H

@@ -6,8 +6,8 @@
   *
   **/
 
-#ifndef ENUM_MAPS_H
-#define ENUM_MAPS_H
+#ifndef AMBROSIA_ENUM_MAPS_H
+#define AMBROSIA_ENUM_MAPS_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -46,4 +46,4 @@ extern const std::map<conditional_operator, std::function<bool(bool,bool)> > con
 
 libambrosia_namespace_end
 
-#endif // ENUM_MAPS_H
+#endif // AMBROSIA_ENUM_MAPS_H
