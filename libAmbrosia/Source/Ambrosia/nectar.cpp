@@ -13,7 +13,7 @@
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
-#include "Ambrosia/file_store.h"
+#include "Ambrosia/file_cache.h"
 #include "Ambrosia/platform.h"
 #include "Ambrosia/status.h"
 #include "Ambrosia/target.h"
@@ -38,61 +38,6 @@
 #include <ctime>
 
 libambrosia_namespace_begin
-
-const string find_nectar_file( const string &directory )
-{
-    debug(debug::files) << "nectar::find_nectar_file called for: " << directory << ".\n";
-    s_ambrosia_config.set_source_directory( directory );
-    file_set candidates = s_file_store.find_source_file( "*.nectar.txt", s_ambrosia_config );
-    switch( candidates.size() )
-    {
-        case 0:
-            emit_error( "No *.nectar.txt file found in " + directory );
-            break;
-        case 1:
-            return (*candidates.begin()).first; // first = filename, second = modified
-        default:
-            emit_error( "Multiple *.nectar.txt files found in directory: " + directory );
-            std::for_each( candidates.begin(), candidates.end(),
-                       [&candidates](const file &item)
-                       {
-                           emit_error( "\t" + item.first );
-                       } );
-    }
-    return string("");
-}
-
-bool find_project_file( const string &path, ambrosia_config &config )
-{
-    debug(debug::files) << "nectar::find_project_file::Called for " << path << ".\n";
-
-    if( lib::file_exists(path) )
-    {
-        debug(debug::files) << "nectar::find_project_file::Detected file.\n";
-        // TODO: generalize the directory seperators list
-        // seperate filename from (realtive) path
-        const string::size_type index = path.find_last_of( "/\\" );
-        config.set_project_file( path.substr(index+1, string::npos) );
-        config.set_source_directory( path.substr(0, index) );
-        return true;
-    }
-    else if( lib::directory_exists(path) )
-    {
-        debug(debug::files) << "nectar::find_project_file detected directory.\n";
-        const string project_file = lib::find_nectar_file( path );
-        // if the directory contains a *.nectar.txt file, set source directory as well
-        if( !project_file.empty() )
-        {
-            debug(debug::files) << "nectar::Project file found: " << project_file << ".\n";
-            config.set_source_directory( path );
-            config.set_project_file( project_file );
-            return true;
-        }
-    }
-    // return failure if some condition failed
-    debug(debug::files) << "nectar::No *.nectar.txt file found in " << path << ".\n";
-    return false;
-}
 
 void drink_nectar( const std::string &filename, target_list &targets )
 {

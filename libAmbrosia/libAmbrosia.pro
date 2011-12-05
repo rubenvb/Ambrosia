@@ -32,7 +32,6 @@ HEADERS += \
     Include/Ambrosia/target.h \
     Include/Ambrosia/algorithm.h \
     Include/Ambrosia/node.h \
-    Include/Ambrosia/file_store.h \
     Include/Ambrosia/nectar_loader.h \
     Include/Ambrosia/Configuration/ambrosia_config.h \
     Include/Ambrosia/Configuration/build_config.h \
@@ -40,7 +39,10 @@ HEADERS += \
     Include/Ambrosia/project.h \
     Include/Ambrosia/Error/syntax_error.h \
     Include/Ambrosia/Error/error.h \
-    Include/Ambrosia/Error/nectar_error.h
+    Include/Ambrosia/Error/nectar_error.h \
+    Include/Ambrosia/file_cache.h \
+    Include/Ambrosia/Error/soft_error.h \
+    Include/Ambrosia/Error/commandline_error.h
 
 SOURCES += \
     Source/Ambrosia/Platform/common.cpp \
@@ -51,7 +53,6 @@ SOURCES += \
     Source/Ambrosia/algorithm.cpp \
     Source/Ambrosia/debug.cpp \
     Source/Ambrosia/node.cpp \
-    Source/Ambrosia/file_store.cpp \
     Source/Ambrosia/nectar_loader.cpp \
     Source/Ambrosia/Configuration/ambrosia_config.cpp \
     Source/Ambrosia/Configuration/build_config.cpp \
@@ -59,13 +60,24 @@ SOURCES += \
     Source/Ambrosia/project.cpp \
     Source/Ambrosia/Error/syntax_error.cpp \
     Source/Ambrosia/Error/error.cpp \
-    Source/Ambrosia/Error/nectar_error.cpp
+    Source/Ambrosia/Error/nectar_error.cpp \
+    Source/Ambrosia/file_cache.cpp \
+    Source/Ambrosia/Error/soft_error.cpp \
+    Source/Ambrosia/Error/commandline_error.cpp
 
 *win32*:SOURCES += Source/Ambrosia/Platform/windows.cpp
 *linux*:SOURCES += Source/Ambrosia/Platform/unix.cpp
 *mac*:SOURCES += Source/Ambrosia/Platform/unix.cpp
 
 OTHER_FILES += libAmbrosia.nectar.txt
+
+
+
+
+
+
+
+
 
 
 

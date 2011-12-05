@@ -1,13 +1,13 @@
 /**
-  * Ambrosia/file_store.h
+  * Ambrosia/file_cache.h
   * Cache for filesystem. Stores source and build directories
   *
   * Author: Ruben Van Boxem
   *
   **/
 
-#ifndef AMBROSIA_FILE_STORE_H
-#define AMBROSIA_FILE_STORE_H
+#ifndef AMBROSIA_FILE_CACHE_H
+#define AMBROSIA_FILE_CACHE_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -20,12 +20,16 @@ libambrosia_namespace_begin
 // Forward declarations
 class config_base;
 
-class file_store
+class file_cache
 {
 public:
-    file_store();
+    file_cache();
 
-    // getters
+    // Finders
+    const std::string find_nectar_file( const std::string &directory, config_base &config );
+    bool find_project_file( const std::string &path, config_base &config );
+
+    // Getters
     const file_set & get_source_file_set( const std::string &directory );
 
     // Find the unique relative path to the filename, otherwise return all matching duplicates
@@ -43,8 +47,8 @@ private:
     map_string_file_set m_build_files;  // all files in s_ambrosia_config::m_build_directory
 };
 
-extern file_store s_file_store;
+extern file_cache s_file_cache;
 
 libambrosia_namespace_end
 
-#endif // AMBROSIA_FILE_STORE_H
+#endif // AMBROSIA_FILE_CACHE_H

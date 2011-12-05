@@ -13,14 +13,21 @@
 #include "global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/typedefs.h"
+
+// Foward declarations
+libambrosia_namespace_begin
+class ambrosia_config;
+class file_cache;
+class project;
+libambrosia_namespace_end
 
 ambrosia_namespace_begin
 
-bool apply_commandline_options( const string_vector &options, lib::project &project );
+void apply_commandline_options( const string_vector &options, lib::project &project,
+                                lib::file_cache &files);
 
-bool add_build_target( const std::string &target, lib::project &project );
+bool add_build_target( const std::string &target );
 
 void set_internal_option( const std::string &option, const std::string &value,
                           lib::project &project );

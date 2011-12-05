@@ -16,16 +16,20 @@
 
 // libAmbrosia includes
 #include "Ambrosia/Configuration/ambrosia_config.h"
-#include "Ambrosia/file_store.h"
 #include "Ambrosia/status.h"
 #include "Ambrosia/typedefs.h"
 
 libambrosia_namespace_begin
 
+// Forward declarations
+class file_cache;
+
 class project
 {
 public:
-    project();
+    project( file_cache &file_cache );
+
+    static void set_internal_option( const std::string &option, const std::string &value );
 
     // commandline
     void apply_commandline_options( string_vector &arguments);
@@ -34,15 +38,10 @@ public:
     void find_project_file();
     void drink_nectar();
 
-    // Getters
-    const ambrosia_config & config() const;
-    ambrosia_config & config();
-    // Setters
-
+    static ambrosia_config configuration;
 
 private:
-    static ambrosia_config m_configuration;
-    static file_store m_file_store;
+    file_cache &m_file_cache;
     project_list m_subprojects;
 };
 

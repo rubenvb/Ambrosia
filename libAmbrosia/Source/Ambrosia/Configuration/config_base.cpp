@@ -14,7 +14,7 @@
 #include "Ambrosia/debug.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/enum_maps.h"
-#include "Ambrosia/file_store.h"
+#include "Ambrosia/file_cache.h"
 #include "Ambrosia/platform.h"
 #include "Ambrosia/status.h"
 
@@ -71,7 +71,7 @@ bool config_base::set_source_directory( const string &source_directory )
     debug(debug::config) << "config_base::set_source_directory::Setting source directory to: " << source_directory << "\n";
     m_source_directory = source_directory;
     debug(debug::config) << "config_base::set_source_directory::Adding " << m_source_directory << " to s_file_store.\n";
-    s_file_store.add_source_directory( m_source_directory );
+    s_file_cache.add_source_directory( m_source_directory );
     if( !error_status() )
         return true;
     else

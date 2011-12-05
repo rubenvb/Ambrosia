@@ -13,7 +13,7 @@
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/enum_maps.h"
-#include "Ambrosia/file_store.h"
+#include "Ambrosia/file_cache.h"
 #include "Ambrosia/platform.h"
 #include "Ambrosia/status.h"
 

@@ -24,7 +24,8 @@ class error
 {
 public:
     error( const std::string &message, const string_vector &list = string_vector() );
-    virtual ~error() = 0;
+    error( const std::string &message, const file_set &list );
+    virtual ~error();
 
     virtual void output_message() const;
 

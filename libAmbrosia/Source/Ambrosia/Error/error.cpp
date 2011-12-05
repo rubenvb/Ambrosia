@@ -10,7 +10,7 @@
 #include "Ambrosia/Error/error.h"
 
 // libAmbrosia includes
-/* "Ambrosia/typedefs.h" */
+#include "Ambrosia/typedefs.h"
 
 // C++ includes
 #include <iostream>
@@ -24,8 +24,16 @@ error::error( const string &message, const string_vector &list )
 :   m_message( message ),
     m_list( list )
 {   }
+error::error( const std::string &message, const file_set &list )
+:   m_message( message ),
+    m_list( list.size() )
+{
+    auto dest = m_list.begin();
+    for_each(list.begin(), list.end(), [&](const file& item) { *dest++ = item.first; });
+}
+
 error::~error()
-{   }
+
 
 void error::output_message() const
 {

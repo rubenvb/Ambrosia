@@ -12,8 +12,9 @@
 using namespace ambrosia;
 
 // libAmbrosia includes
+#include "Ambrosia/Error/error.h"
+#include "Ambrosia/file_cache.h"
 #include "Ambrosia/project.h"
-    using libambrosia::project;
 
 // C-ish includes
 #include <cstdlib>
@@ -22,22 +23,24 @@ using namespace ambrosia;
 // C++ includes
 #include <iomanip>
 #include <iosfwd>
+#include <iostream>
 #include <iterator>
 #include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
 
+using namespace std;
+
 int main( int argc, char* argv[] )
 try {
     // Welcome message
     print_version_information();
 
-    project project;
+    lib::file_cache file_cache;
+    lib::project project( file_cache );
 
-    apply_commandline_options( string_vector(argv+1, argv+argc), project );
-
-
+    apply_commandline_options( string_vector(argv+1, argv+argc), project, file_cache );
 
     /*state* current_state = new ambrosia::begin( argc, argv );
     // Main event loop
@@ -62,7 +65,12 @@ try {
     //     << "full_directory_name() was called " << s_full_directory_name_calls << " times.\n";
 #endif*/
 }
-catch( ... )
+catch( libambrosia::error &e )
 {
-
+    e.output_message();
+}
+catch( std::exception &e )
+{
+    cout << "something bad happened:\n";
+    cout << e.what();
 }

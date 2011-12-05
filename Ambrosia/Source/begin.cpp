@@ -150,7 +150,7 @@ state* begin::event()
     // if project file is not yet set, search current directory
     if( lib::s_ambrosia_config.project_file().empty() )
     {
-        const string project_file = lib::find_nectar_file( "." );
+        /*const string project_file = lib::find_nectar_file( "." );
         if( !project_file.empty() )
         {
             //debug(2) << "begin::Project file found in current directory \'.\': " << project_file << ".\n";
@@ -159,7 +159,7 @@ state* begin::event()
             lib::s_ambrosia_config.set_project_file( project_file );
         }
         else if( !lib::error_status() )
-            lib::emit_error( "No project file found in specified path or current directory." );
+            lib::emit_error( "No project file found in specified path or current directory." );*/
     }
     //debug(1) << "begin::Checking if project file was found.\n";
     // Ensure that a valid project file has been found
