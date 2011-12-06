@@ -31,7 +31,7 @@ public:
 
 private:
     const std::string m_message;
-    const string_vector m_list;
+    string_vector m_list;
 };
 
 libambrosia_namespace_end

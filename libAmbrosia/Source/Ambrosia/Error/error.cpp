@@ -13,6 +13,7 @@
 #include "Ambrosia/typedefs.h"
 
 // C++ includes
+#include <algorithm>
 #include <iostream>
     using std::cerr;
 /* <string> */
@@ -29,15 +30,24 @@ error::error( const std::string &message, const file_set &list )
     m_list( list.size() )
 {
     auto dest = m_list.begin();
-    for_each(list.begin(), list.end(), [&](const file& item) { *dest++ = item.first; });
+    std::for_each(list.begin(), list.end(), [=](const file& item) mutable
+                                            { *dest++ = item.first; });
 }
 
 error::~error()
-
+{   }
 
 void error::output_message() const
 {
     cerr << m_message;
+    if( !m_list.empty() )
+    {
+        std::for_each( m_list.begin(), m_list.end(),
+                       [](const string &item)
+                       {
+                           cerr << "\t" << item << "\n";
+                       } );
+    }
 }
 
 libambrosia_namespace_end
