@@ -40,7 +40,10 @@ try {
     lib::file_cache file_cache;
     lib::project project( file_cache );
 
-    apply_commandline_options( string_vector(argv+1, argv+argc), project, file_cache );
+    apply_commandline_options( string_vector(argv+1, argv+argc), project,
+                               file_cache );
+
+    project.read_project_files();
 
     /*state* current_state = new ambrosia::begin( argc, argv );
     // Main event loop

@@ -17,6 +17,7 @@
 // libAmbrosia includes
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/status.h"
+#include "Ambrosia/target.h"
 #include "Ambrosia/typedefs.h"
 
 libambrosia_namespace_begin
@@ -31,17 +32,14 @@ public:
 
     static void set_internal_option( const std::string &option, const std::string &value );
 
-    // commandline
-    void apply_commandline_options( string_vector &arguments);
-
-    // nectar
-    void find_project_file();
-    void drink_nectar();
+    // read project file(s)
+    void read_project_files();
 
     static ambrosia_config configuration;
 
 private:
     file_cache &m_file_cache;
+    target_list m_targets;
     project_list m_subprojects;
 };
 

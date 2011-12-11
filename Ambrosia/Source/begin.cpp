@@ -163,7 +163,7 @@ state* begin::event()
     }
     //debug(1) << "begin::Checking if project file was found.\n";
     // Ensure that a valid project file has been found
-    if( lib::file_exists(lib::s_ambrosia_config.path_to_project_file()) )
+    if( lib::file_exists(lib::s_ambrosia_config.project_file()) )
         return new reader( this );
     else
         return new end_state( "No project file was found. Please specify a project file or a directory containing a single project file.", this );

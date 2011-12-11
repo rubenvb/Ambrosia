@@ -43,7 +43,6 @@ public:
     const string_set & config() const;
     const std::string & source_directory() const;
     const std::string & project_file() const;
-    const std::string path_to_project_file() const;
     const std::string & build_directory() const;
     const os & target_os() const;
     const architecture & target_architecture() const;

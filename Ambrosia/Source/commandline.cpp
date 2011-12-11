@@ -132,7 +132,7 @@ void apply_commandline_options( const string_vector &arguments, lib::project &pr
     }
     debug(debug::commandline) << "commandline::apply_commandline_options::Checking if project file was found.\n";
     // Ensure that a valid project file has been found
-    assert( lib::file_exists(lib::project::configuration.path_to_project_file()) );
+    assert( lib::file_exists(lib::project::configuration.project_file()) );
 }
 
 bool add_build_target( const string &target )

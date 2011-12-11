@@ -33,7 +33,6 @@ error::error( const std::string &message, const file_set &list )
     std::for_each(list.begin(), list.end(), [=](const file& item) mutable
                                             { *dest++ = item.first; });
 }
-
 error::~error()
 {   }
 

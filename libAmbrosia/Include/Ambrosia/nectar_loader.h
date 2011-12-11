@@ -54,12 +54,10 @@ private:
     bool m_global_processed; // only one global section per project file is allowed
     target* p_target;
 /*
- * Error/warning reporting
- ***************************************/
-    void emit_nectar_error( const std::string &message ) const;
-    void emit_nectar_warning( const std::string &message ) const;
-    void emit_syntax_error( const std::string &message ) const;
-    void emit_syntax_warning( const std::string &message ) const;
+ * Warning output
+ *****************/
+    void emit_syntax_warning( const std::string &message,
+                              const string_vector &warning_list = string_vector() ) const;
 /*
  * Lexing
  *********/
@@ -75,22 +73,22 @@ private:
  **********/
     // conditionals
     bool test_condition( const std::function<bool(const std::string&)> &config_contains );
-    bool process_outer_conditional();      // evaluated against s_ambrosia_config, skips full target
-    bool process_dependency_list_conditional(); // evaluated against s_ambrosia_config, skips dependenc(y/ies)
-    bool process_inner_conditional();      // evaluated against m_build_config, skips whole list
-    bool process_inner_list_conditional(); // evaluated against m_build_config, skips item in list
+    void process_outer_conditional();      // evaluated against s_ambrosia_config, skips full target
+    void process_dependency_list_conditional(); // evaluated against s_ambrosia_config, skips dependenc(y/ies)
+    void process_inner_conditional();      // evaluated against m_build_config, skips whole list
+    void process_inner_list_conditional(); // evaluated against m_build_config, skips item in list
     // item lists
-    bool parse_file_list( const file_type type ); // matches wildcards to filenames and checks existence
-    bool parse_source_directory_list( const file_type type ); // searches m_source_directory+"/"+m_subdirectory
-    bool parse_build_directory( const file_type type );  // will be created on first use
-    bool parse_variable_list( string_set &items ); // only adds or removes strings from variables
-    bool parse_library_list(); // parses -l and -L items, and handle interproject dependencies?
+    void parse_file_list( const file_type type ); // matches wildcards to filenames and checks existence
+    void parse_source_directory_list( const file_type type ); // searches m_source_directory+"/"+m_subdirectory
+    void parse_build_directory( const file_type type );  // will be created on first use
+    void parse_variable_list( string_set &items ); // only adds or removes strings from variables
+    void parse_library_list(); // parses -l and -L items, and handle interproject dependencies?
     // main target parser
     void parse_target();
     // input validation functions (see Ambrosia wiki for valid input requirements)
-    bool validate_variable( const std::string &config );
-    bool validate_filename( const std::string &filename );
-    bool validate_directory( const std::string &directory );
+    void validate_variable( const std::string &config );
+    void validate_filename( const std::string &filename );
+    void validate_directory( const std::string &directory );
 };
 
 libambrosia_namespace_end

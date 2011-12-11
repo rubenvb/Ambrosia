@@ -13,12 +13,12 @@
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
+#include "Ambrosia/Error/syntax_error.h"
 #include "Ambrosia/global.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/platform.h"
-#include "Ambrosia/status.h"
 #include "Ambrosia/target.h"
 
 // C++ includes
@@ -31,6 +31,8 @@
     using std::ifstream;
 #include <ios>
     using std::noskipws;
+#include <iostream>
+    using std::cerr;
 #include <istream>
     using std::istream;
     using std::istream_iterator;
@@ -85,31 +87,25 @@ void nectar_loader::extract_nectar( target_list &targets )
     string token;
     while( next_token(token) )
     {
-        if( error_status() )
-            return;
-
         debug(debug::parser) << "nectar_loader::extract_nectar::processing token: \'" << token << "\'.\n";
         if( "(" == token )
-        {
-            if( !process_outer_conditional() )
-                return; // emit_error already called
-        }
+            process_outer_conditional();
         else if( "global" == token )
         {
             debug(debug::parser) << "nectar_loader::extract_nectar::global section found at line " << m_line_number << ".\n";
             if( m_global_processed )
-                return emit_syntax_error( "Second global section found in nectar file. Only one global section per *.nectar.txt file is allowed." );
+                throw syntax_error( "Second global section found in nectar file. Only one global section per *.nectar.txt file is allowed.",
+                                    m_filename, m_line_number );
 
             m_global_processed = true;
             if( next_token(token) && "{" == token )
             {
                 p_target = targets[0].get();
                 parse_target();
-                if( error_status() )
-                    return;
             }
             else
-                return emit_syntax_error( "\'global\' must be followed by \'{\'." );
+                throw syntax_error( "\'global\' must be followed by \'{\'.",
+                                    m_filename, m_line_number );
         }
         else if( "app" == token || "lib" == token )
         {
@@ -119,26 +115,25 @@ void nectar_loader::extract_nectar( target_list &targets )
             if( next_token(token) )
             {
                 if( "{" == token )
-                    return emit_nectar_error( "Syntax error: Expected " + token + " name after " + token + "." );
+                    throw nectar_error( "Syntax error: Expected " + token + " name after " + token + ".",
+                                        m_filename, m_line_number );
                 else
                 {
                     debug(debug::parser) << "nectar_loader::extract_nectar::Processing "
-                                         << map_value(target_type_map_inverse, type) << ": " << token << ".\n";
+                                         << map_value(target_type_map_inverse, type) << ": "
+                                         << token << ".\n";
                     const string target_name( token );
                     dependency_list dependencies( m_dependency_list );
                     read_dependency_list( dependencies );
-                    if( error_status() )
-                        return;
 
                     if( !next_token(token) && "{" == token )
-                        return emit_error( "Expected '{' after " + map_value(target_type_map_inverse, type) + " target name." );
+                        throw syntax_error( "Expected '{' after " + map_value(target_type_map_inverse, type) + " target name.",
+                                            m_filename, m_line_number );
 
                     targets.emplace_back( std::unique_ptr<target>(new target(target_name, type, dependencies, targets[0]->config())) );
 
                     p_target = targets.back().get();
                     parse_target();
-                    if( error_status() )
-                        return;
                 }
             }
         }
@@ -191,12 +186,13 @@ void nectar_loader::extract_nectar( target_list &targets )
                         full_directory_name( s_ambrosia_config.source_directory(),
                                              full_directory_name( m_subdirectory, token) );
                 if( !directory_exists(full_subproject_directory) )
-                    return emit_syntax_error( "Directory " + full_subproject_directory + " not found.\n"
-                                              "Subproject names must be identical to the subproject names." );
+                    throw nectar_error( "Directory " + full_subproject_directory + " not found.\n"
+                                        "Subproject names must be identical to the subproject names.",
+                                        m_filename, m_line_number );
 
                 string subproject_filename = token + ".nectar.txt";
-                string full_subproject_filename =
-                         full_directory_name( full_subproject_directory, subproject_filename );
+                string full_subproject_filename = full_directory_name( full_subproject_directory,
+                                                                       subproject_filename );
                 if( !file_exists(full_subproject_filename) )
                 {
                     // subproject file has different
@@ -212,44 +208,38 @@ void nectar_loader::extract_nectar( target_list &targets )
                     // Get sub target dependencies
                     dependency_list dependencies;
                     read_dependency_list( dependencies );
-                    if( error_status() )
-                        return;
 
                     nectar_loader subloader( subproject_filename, full_directory_name(m_subdirectory, token),
-                                              stream, dependencies );
+                                             stream, dependencies );
                     subloader.extract_nectar( targets );
-                    if( error_status() )
-                        return;
                 }
                 else // opening file failed
-                    return emit_nectar_error( "Error opening subproject file: " + full_subproject_filename + "." );
+                    throw nectar_error( "Error opening subproject file: " + full_subproject_filename + ".",
+                                        m_filename, m_line_number );
             }
             else
-                return emit_syntax_error( "\'sub\' must be followed by the name of the subproject." );
+                throw syntax_error( "\'sub\' must be followed by the name of the subproject.",
+                                    m_filename, m_line_number );
         }
         else
-            return emit_syntax_error( "Unexpected token: " + token + ". Expected global, app, lib, or sub." );
+            throw syntax_error( "Unexpected token: " + token + ". Expected global, app, lib, or sub.",
+                                m_filename, m_line_number );
     }
     debug(debug::nectar_parser) << "nectar_loader::Finished with file: " << m_filename << ".\n";
 }
+
 /*
- * Error/warning reporting
- **************************/
-void nectar_loader::emit_nectar_error( const std::string &message ) const
+ * Warning output
+ *****************/
+void nectar_loader::emit_syntax_warning( const std::string &message, const string_vector &warning_list ) const
 {
-    libambrosia::emit_nectar_error( message, m_filename, m_line_number );
-}
-void nectar_loader::emit_nectar_warning( const std::string &message ) const
-{
-    libambrosia::emit_nectar_warning( message, m_filename, m_line_number );
-}
-void nectar_loader::emit_syntax_error( const std::string &message ) const
-{
-    libambrosia::emit_nectar_error( "Syntax error: " + message, m_filename, m_line_number );
-}
-void nectar_loader::emit_syntax_warning( const std::string &message ) const
-{
-    libambrosia::emit_nectar_warning( "Syntax warning: " + message, m_filename, m_line_number );
+    debug(debug::status) << "nectar_loader::emit_syntax_warning::Emitting a syntax warning now.\n";
+    cerr << "\nSyntax warning: " + m_filename + "\n" +
+              "       line " + to_string(m_line_number) + "\n" +
+              "       " + message << "\n";
+    std::for_each( warning_list.begin(), warning_list.end(),
+                   []( const string &item)
+                   { cerr << "\n\t" << item; } );
 }
 /*
  * Lexing
@@ -273,12 +263,11 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
             if( '\"' == c )
                 break; // end of token at end of quotes
             else if( '\n' == c )
-            {
-                emit_syntax_error( "Quoted strings cannot span several lines." );
-                return false;
-            }
+                throw syntax_error( "Quoted strings cannot span several lines.",
+                                    m_filename, m_line_number );
             else if( token.empty() && std::isspace(c, m_stream.getloc()) )
-                emit_syntax_error( "Beginning quote must not be followed by a whitespace." );
+                throw syntax_error( "Beginning quote must not be followed by a whitespace.",
+                                    m_filename, m_line_number );
             else
                 goto add_char;
         }
@@ -327,7 +316,8 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
             }
             else if( '\"' == c )
             {
-                emit_syntax_error( "Beginning quotes must be preceded by a whitespace or a special character." );
+                throw syntax_error( "Beginning quotes must be preceded by a whitespace or a special character.",
+                                    m_filename, m_line_number );
                 return false;
             }
             else
@@ -353,29 +343,24 @@ bool nectar_loader::next_list_token( std::string &token )
             return false; // list has ended
         }
         else if( "(" == token )
-        {
-            if( !process_inner_list_conditional() )
-                return false;
-        }
+            process_inner_list_conditional();
         else if( "}" == token )
         {
             if( curly_braces_count > 0 )
                 curly_braces_count--;
             else
             {
-                emit_syntax_error( "Unexpected closing curly brace." );
+                throw syntax_error( "Unexpected closing curly brace.",
+                                    m_filename, m_line_number );
                 return false;
             }
         }
         else // normal list item
             return true;
-
     }
     if( curly_braces_count > 0 )
-    {
-        emit_syntax_error( "Unclosed curly braces in list." );
-        return false;
-    }
+        throw syntax_error( "Unclosed curly braces in list.",
+                            m_filename, m_line_number);
     return true;
 }
 
@@ -411,10 +396,12 @@ void nectar_loader::read_dependency_list( dependency_list &dependencies )
                     goto insert_dependency;
                 }
                 else
-                    return emit_syntax_error( "Expected list of target names after \':\'." );
+                    throw syntax_error( "Expected list of target names after \':\'.",
+                                        m_filename, m_line_number );
             }
             else
-                return emit_syntax_error( "Expected target body \'{\' or dependency list \':\'." );
+                throw syntax_error( "Expected target body \'{\' or dependency list \':\'.",
+                                    m_filename, m_line_number );
         }
         else if( "," == token )
         {
@@ -426,9 +413,10 @@ void nectar_loader::read_dependency_list( dependency_list &dependencies )
                 if( !dependencies.insert(element).second )
                 {
                     if( !contains(m_dependency_list, element) )
-                        return emit_nectar_error( "Double dependency listed: "
-                                                  + map_value(target_type_map_inverse, type) + " "
-                                                  + token + "."  );
+                        throw syntax_error( "Double dependency listed: "
+                                            + map_value(target_type_map_inverse, type) + " "
+                                            + token + ".",
+                                            m_filename, m_line_number );
                 }
             }
         }
@@ -467,13 +455,14 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
                 switch( op )
                 {
                     case conditional_operator::not_op:
-                        emit_syntax_error( "Not operator not implemented yet.");
-                        break;
+                        throw syntax_error( "Not operator not implemented yet.",
+                                            m_filename, m_line_number );
                     case conditional_operator::or_op:
                         result = result || test_condition(config_contains);
                         break;
                     case conditional_operator::and_op:
-                        emit_syntax_error( "And operator not implemented yet.");
+                        throw syntax_error( "And operator not implemented yet.",
+                                            m_filename, m_line_number );
                     default:
                         throw std::logic_error( "nectar_loader::test_condition:Operator "
                                                 + map_value(conditional_operator_map_inverse, op)
@@ -486,9 +475,7 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
             debug(debug::conditional) << "nectar_loader::test_condition:Detected closing parenthesis. Returning "
                      << to_string(result) << ".\n";
             if( empty_conditional )
-            {
                 emit_syntax_warning( "Empty conditional statement." );
-            }
             return result;
         }
         else if( map_value(conditional_operator_map, token, op) )
@@ -498,9 +485,9 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
                 negate = !negate;
             else if( previous_was_operator )
             {
-                emit_syntax_error( "Expected config item after conditional operator "
-                                   + map_value(conditional_operator_map_inverse, op) + " unexpected." );
-                return result;
+                throw syntax_error( "Expected config item after conditional operator "
+                                    + map_value(conditional_operator_map_inverse, op) + " unexpected.",
+                                    m_filename, m_line_number );
             }
             else
                 previous_was_operator = true;
@@ -594,18 +581,16 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
     return result;
 }
 
-bool nectar_loader::process_outer_conditional()
+void nectar_loader::process_outer_conditional()
 {
-    emit_nectar_error( "Outer conditionals not implemented yet." );
-    return false;
+    throw nectar_error( "Outer conditionals not implemented yet.", m_filename, m_line_number );
 }
-bool nectar_loader::process_dependency_list_conditional()
+void nectar_loader::process_dependency_list_conditional()
 {
-    emit_nectar_error( "Outer list conditionals not implemented yet." );
-    return false;
+    throw nectar_error( "Outer list conditionals not implemented yet.", m_filename, m_line_number );
 }
 
-bool nectar_loader::process_inner_conditional()
+void nectar_loader::process_inner_conditional()
 {
     debug(debug::parser) << "nectar_loader::process_inner_conditional:Using target config:\n" << p_target->config().config() << "\n";
     if( test_condition( [&p_target](const string &item){ return contains(p_target->config().config(), item); }) )
@@ -622,18 +607,13 @@ bool nectar_loader::process_inner_conditional()
                 continue; // ignore anything in the list following a false conditional
         }
     }
-
-    //emit_error( "!!!Inner conditionals not fully implemented yet.\n" );
-
-    return !error_status();
 }
-bool nectar_loader::process_inner_list_conditional()
+void nectar_loader::process_inner_list_conditional()
 {
-    emit_nectar_error( "Inner list conditionals not implemented yet." );
-    return false;
+    throw nectar_error( "Inner list conditionals not implemented yet.", m_filename, m_line_number );
 }
 
-bool nectar_loader::parse_file_list( const file_type type )
+void nectar_loader::parse_file_list( const file_type type )
 {
     debug(debug::parser) << "nectar_loader::parse_file_list::Parsing " << map_value(file_type_map_inverse, type) << " file list.\n";
     bool empty = true; // a list must not be empty
@@ -646,15 +626,14 @@ bool nectar_loader::parse_file_list( const file_type type )
         p_target->add_source_file(type, token, m_filename, m_line_number); // errors are assembled in this function
     }
     if( empty )
-        emit_syntax_error( "A list must not be empty." );
-
-    return !error_status();
+        throw syntax_error( "A list must not be empty.", m_filename, m_line_number );
 }
-bool nectar_loader::parse_source_directory_list( const file_type type )
+void nectar_loader::parse_source_directory_list( const file_type type )
 {
     debug(debug::parser) << "nectar_loader::parse_source_directory_list::Parsing full list, nonexistent directories are kept in error_list.\n";
     bool empty_list = true; // a list must not be empty
     string token;
+    string_vector error_list;
     // gather all list items
     while( next_list_token(token) )
     {
@@ -663,30 +642,28 @@ bool nectar_loader::parse_source_directory_list( const file_type type )
         empty_list = false;
 
         if( !p_target->add_source_directory(type, subdirectory_name) )
-            emit_error_list( {"line " + to_string(m_line_number) +": " + token} ); // add the bad directory to error_list
+            error_list.push_back( "line " + to_string(m_line_number) +": " + token ); // add the bad directory to error_list
     }
     if( empty_list )
-        emit_syntax_error( "A list must not be empty" );
-    else if( error_list_status() )
-        emit_nectar_error( "Some source directories were not found:\n" );
-
-    return !error_status();
+        throw syntax_error( "A source directory list must not be empty", m_filename, m_line_number );
+    else if( !error_list.empty() )
+        throw nectar_error( "Some source directories were not found:\n", m_filename,
+                            m_line_number, error_list );
 }
-bool nectar_loader::parse_build_directory( const file_type )
+void nectar_loader::parse_build_directory( const file_type )
 {
-    emit_nectar_error( "Build directory list parsing isn't done yet." );
-    return false;
+    throw nectar_error( "Build directory list parsing isn't done yet.", m_filename, m_line_number );
 }
-bool nectar_loader::parse_variable_list( string_set & )
+void nectar_loader::parse_variable_list( string_set & )
 {
-    emit_nectar_error( "Variable list parsing isn't done yet." );
-    return false;
+    throw nectar_error( "Variable list parsing isn't done yet.", m_filename, m_line_number );
 }
 
-bool nectar_loader::parse_library_list()
+void nectar_loader::parse_library_list()
 {
     string token;
-    while( !error_status() && next_list_token(token) )
+    string_vector error_list;
+    while( next_list_token(token) )
     {
         // LIBS items must be of the form '-lsomelib' or '-Lsomedirectory'
         if( token.size() <= 2 )
@@ -696,7 +673,7 @@ bool nectar_loader::parse_library_list()
             token = token.substr(2);
             debug(debug::parser) << "nectar_loader::parse_library_list::Found library name: " << token << ".\n";
             if( p_target->add_library(token) )
-                emit_nectar_error( "Library is mentioned twice: " + token );
+                throw nectar_error( "Library is mentioned twice: " + token, m_filename, m_line_number );
 
         }
         else if( !token.compare(0, 2, "-L") )
@@ -704,21 +681,20 @@ bool nectar_loader::parse_library_list()
             token = token.substr(2);
             debug(debug::parser) << "nectar_loader::parse_library_list::Found library search directory: " << token << ".\n";
             if( !directory_exists(token) )
-                emit_error_list( {token} );
+                error_list.push_back( token );
             if( is_absolute_path(token) )
             {
                 debug(debug::parser) << "nectar_loader::parse_library_list::Absolure library path detected.\n";
-                emit_nectar_warning( "Absolute paths in project files should be avoided." );
+                emit_syntax_warning( "Absolute paths in project files should be avoided." );
             }
         }
         else
         {
             return_error:
-            emit_syntax_error( "LIBS items must be of the form \'-lsomelib\'' and/or \'-Lsomedirectory\'" );
-            return false;
+            throw syntax_error( "LIBS items must be of the form \'-lsomelib\'' and/or \'-Lsomedirectory\'",
+                                m_filename, m_line_number );
         }
     }
-    return true;
 }
 
 void nectar_loader::parse_target()
@@ -737,21 +713,17 @@ void nectar_loader::parse_target()
         else if( "{" == token )
             ++curly_brace_count;
         else if( "(" == token )
-        {
-            if( !process_inner_conditional() )
-                return; // emit_error already called
-        }
+            process_inner_conditional();
         else if( "CONFIG" == token)
         {
             debug(debug::parser) << "nectar_loader::parse_target::CONFIG detected.\n";
-            if( !parse_variable_list(p_target->config().config()) )
-                return; // failure
+            parse_variable_list( p_target->config().config() );
         }
         else if ( "NAME" == token )
         {
             debug(debug::parser) << "nectar_loader::parse_target::NAME detected.\n";
             if( type == target_type::global )
-                return emit_syntax_error( "global target must not have a name");
+                throw syntax_error( "global target must not have a name", m_filename, m_line_number );
 
             if( already_modified_NAME )
                 emit_syntax_warning( "NAME is being modified twice in this target section." );
@@ -765,7 +737,8 @@ void nectar_loader::parse_target()
                     continue;
                 }
             }
-            return emit_syntax_error( "NAME must be followed by the target's output name (without prefix/suffix" );
+            throw syntax_error( "NAME must be followed by the target's output name (without prefix/suffix",
+                                m_filename, m_line_number );
         }
         else
         {
@@ -775,18 +748,10 @@ void nectar_loader::parse_target()
             {
                 debug(debug::parser) << "nectar_loader::parse_target::" << token << " list detected.\n";
                 if( type == file_type::library )
-                {
-                    if( !parse_library_list() )
-                    {
-                        debug(debug::parser) << "nectar_loader::parse_target::Failed parsing library list.\n";
-                        return; // failure, assumes parse_library_list has called emit_error
-                    }
-                }
-                else if( !parse_file_list(type) )
-                {
-                    debug(debug::parser) << "nectar_loader::parse_target::Failed parsing file list.\n";
-                    return; // failure, assumes parse_file_list has called emit_error
-                }
+                    parse_library_list();
+                else
+                    parse_file_list(type);
+
                 debug(debug::parser) << "nectar_loader::parse_target::Succesfully parsed list of files or librar(y director)ies.\n";
             } // or a list of directories
             else if( map_value(directory_type_map, token, type) )
@@ -794,48 +759,38 @@ void nectar_loader::parse_target()
                 debug(debug::parser) << "nectar_loader::parse_target::" << map_value(file_type_map_inverse, type) << " directory list detected.\n";
                 const file_type general_type = get_general_type( type );
                 if( general_type == file_type::source || type == file_type::header )
-                {
-                    if( !parse_source_directory_list(type) )
-                    {
-                        debug(debug::parser) << "nectar_loader::parse_target::Failed at parsing source directory/directories.\n";
-                        return; // failure, assumes parse_source_directory_list has called emit_error
-                    }
-                }
+                    parse_source_directory_list(type);
                 else
-                    emit_nectar_error( "Parsing of " + token + " not yet implemented." );
+                    throw nectar_error( "Parsing of " + token + " not yet implemented.",
+                                        m_filename, m_line_number );
             }
             else
-                return emit_syntax_error( "Unexpected token: " + token );
+                throw syntax_error( "Unexpected token: " + token, m_filename, m_line_number );
         }
     }
 }
 
-bool nectar_loader::validate_variable( const string &config )
+void nectar_loader::validate_variable( const string &config )
 {
-    return ( config.find_first_of("*?/$") == string::npos );
+    if( config.find_first_of("*?/$") != string::npos )
+        throw syntax_error( "Variable names must not contain the following characters: *?/$",
+                            m_filename, m_line_number );
 }
-bool nectar_loader::validate_filename( const string &filename )
+void nectar_loader::validate_filename( const string &filename )
 {
     const string::size_type index = filename.find_first_of( "/?*" );
     if( index != string::npos && '/' != filename[index])
     {   // there might be wildcards before a directory seperator
         if( filename.find('/',index+1) != string::npos )
-        {
-            emit_syntax_error( "Directory seperators '/' are not allowed in directory names." );
-            return false;
-        }
+            throw syntax_error( "Directory seperators '/' are not allowed in directory names.",
+                                m_filename, m_line_number );
     }
-    return true;
 }
-bool nectar_loader::validate_directory( const string &directory )
+void nectar_loader::validate_directory( const string &directory )
 {
     if( !(directory.find_first_of("*?") == string::npos) )
-    {
-        emit_syntax_error( "Wildcard characters ?* are not allowed in directory names." );
-        return false;
-    }
-    else
-        return true;
+        throw syntax_error( "Wildcard characters ?* are not allowed in directory names.",
+                            m_filename, m_line_number );
 }
 
 libambrosia_namespace_end

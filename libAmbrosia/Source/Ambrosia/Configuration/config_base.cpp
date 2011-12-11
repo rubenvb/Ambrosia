@@ -108,10 +108,6 @@ const string & config_base::project_file() const
 {
     return m_project_file;
 }
-const std::string config_base::path_to_project_file() const
-{
-    return m_project_file;
-}
 const string & config_base::build_directory() const
 {
     return m_build_directory;

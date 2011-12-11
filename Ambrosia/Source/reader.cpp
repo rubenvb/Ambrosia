@@ -49,7 +49,7 @@ state* reader::event()
     // load project files
     //debug(1) << "reader:::event::calling extract_nectar with filename: "
     //         << lib::s_ambrosia_config.path_to_project_file() << "\n";
-    lib::drink_nectar( lib::s_ambrosia_config.path_to_project_file(), m_targets );
+    lib::drink_nectar( lib::s_ambrosia_config.project_file(), m_targets );
     if( lib::error_status() )
         return new end_state( this );
 
