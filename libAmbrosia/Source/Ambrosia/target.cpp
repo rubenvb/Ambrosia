@@ -90,7 +90,7 @@ void target::add_source_file( const file_type type, const string &filename,
 {
     if( contains(filename, "*?") )
     {
-        const file_set matches = s_file_cache.match_source_files( filename, m_build_config,
+        const file_set matches = s_file_cache.match_source_files( filename, &m_build_config,
                                                                   m_source_directories[type] );
         if( matches.empty() )
             return emit_nectar_error( "No files matching " + filename + " found.",
@@ -98,7 +98,7 @@ void target::add_source_file( const file_type type, const string &filename,
     }
     else
     {
-        const file_set matches = s_file_cache.find_source_file( filename, m_build_config,
+        const file_set matches = s_file_cache.find_source_file( filename, &m_build_config,
                                                                 m_source_directories[type] );
         switch( matches.size() )
         {
@@ -118,7 +118,7 @@ void target::add_source_file( const file_type type, const string &filename,
 }
 void target::remove_file( const file_type type, const string &filename )
 {
-    s_file_cache.match_source_files( filename, m_build_config,
+    s_file_cache.match_source_files( filename, &m_build_config,
                                      m_source_directories[type] );
     emit_error( "target::remove_file::Unimplementented." );
 }

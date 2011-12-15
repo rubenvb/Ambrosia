@@ -11,6 +11,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
+#include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/Error/error.h"
 #include "Ambrosia/nectar_loader.h"
@@ -21,8 +22,15 @@
 
 libambrosia_namespace_begin
 
-ambrosia_config project::configuration = ambrosia_config();
+ambrosia_config* project::configuration = NULL;
 
+project::project( ambrosia_config &ambrosia_config, file_cache &file_cache)
+:   m_file_cache(file_cache),
+    m_targets(),
+    m_subprojects()
+{
+    configuration = &ambrosia_config;
+}
 project::project( file_cache &file_cache)
 :   m_file_cache(file_cache),
     m_targets(),
@@ -39,7 +47,7 @@ void project::set_internal_option( const string &option, const string &value )
     {
         debug(debug::commandline) << "commandline::set_internal_option::Cross-compiling for "
                                   << value << ".\n";
-        lib::project::configuration.set_ambrosia_cross( value );
+        lib::project::configuration->set_ambrosia_cross( value );
     }
     #ifdef AMBROSIA_DEBUG
     else if( "d" == option || "debug" == option )
@@ -56,7 +64,7 @@ void project::set_internal_option( const string &option, const string &value )
     {
         debug(debug::commandline) << "commandline::set_internal_option::Cross-compiling with GNU prefix "
                                   << value << ".\n";
-        lib::project::configuration.set_gnu_prefix( value );
+        lib::project::configuration->set_gnu_prefix( value );
     }
     else
         lib::emit_error( "Unknown option passed to Ambrosia: \n\t-" + option + "=" + value );
@@ -66,7 +74,7 @@ void project::set_internal_option( const string &option, const string &value )
 void project::read_project_files()
 {
     // open file
-    const string &filename = configuration.project_file();
+    const string &filename = configuration->project_file();
     auto stream_ptr( open_ifstream(filename) );
     auto &stream = *stream_ptr;
     if( !stream )

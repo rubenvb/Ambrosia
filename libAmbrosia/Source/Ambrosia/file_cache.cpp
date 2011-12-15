@@ -15,7 +15,6 @@
 #include "Ambrosia/debug.h"
 #include "Ambrosia/Error/error.h"
 #include "Ambrosia/platform.h"
-#include "Ambrosia/status.h"
 
 // C++ includes
 #include <stdexcept>
@@ -35,10 +34,10 @@ file_cache::file_cache()
     m_build_files()
 {   }
 
-const string file_cache::find_nectar_file( const string &directory, config_base &config )
+const string file_cache::find_nectar_file( const string &directory, config_base* config )
 {
     debug(debug::files) << "nectar::find_nectar_file called for: " << directory << ".\n";
-    config.set_source_directory( directory );
+    config->set_source_directory( directory );
     file_set candidates = find_source_file( "*.nectar.txt", config );
     switch( candidates.size() )
     {
@@ -53,7 +52,7 @@ const string file_cache::find_nectar_file( const string &directory, config_base 
     return string("");
 }
 
-bool file_cache::find_project_file( const string &path, config_base &config )
+bool file_cache::find_project_file( const string &path, config_base* config )
 {
     debug(debug::files) << "nectar::find_project_file::Called for " << path << ".\n";
 
@@ -63,8 +62,8 @@ bool file_cache::find_project_file( const string &path, config_base &config )
         // TODO: generalize the directory seperators list
         // TODO: seperate filename from (relative) path
         const string::size_type index = path.find_last_of( "/\\" );
-        config.set_project_file( path.substr(index+1, string::npos) );
-        config.set_source_directory( path.substr(0, index) );
+        config->set_project_file( path.substr(index+1, string::npos) );
+        config->set_source_directory( path.substr(0, index) );
     }
     else if( lib::directory_exists(path) )
     {
@@ -74,8 +73,8 @@ bool file_cache::find_project_file( const string &path, config_base &config )
         if( !project_file.empty() )
         {
             debug(debug::files) << "nectar::Project file found: " << project_file << ".\n";
-            config.set_source_directory( path );
-            config.set_project_file( project_file );
+            config->set_source_directory( path );
+            config->set_project_file( project_file );
             return true;
         }
     }
@@ -99,11 +98,11 @@ const file_set & file_cache::get_source_file_set( const std::string &directory )
     }
 }
 
-const file_set file_cache::find_source_file( const string &filename, const config_base &configuration,
+const file_set file_cache::find_source_file( const string &filename, const config_base* config,
                                              const string_set &directories )
 {
     debug(debug::files) << "file_cache::find_source_file::Called.\n";
-    const string &source_directory = configuration.source_directory();
+    const string &source_directory = config->source_directory();
     // handle filename with directory prepended
     const string_pair directory_filename( split_preceding_directory(filename) );
     const string &preceding_directory = directory_filename.first;
@@ -146,8 +145,6 @@ const file_set file_cache::find_source_file( const string &filename, const confi
         debug(debug::files) << "file_cache::find_source_file::Loading directory contents for: "
                             << directory << ".\n";
         const file_set &files_on_disk = get_source_file_set( directory );
-        if( error_status() )
-            return result;
 
         const auto end = files_on_disk.end();
         for( auto it = files_on_disk.begin(); it != end; ++it )
@@ -165,7 +162,7 @@ const file_set file_cache::find_source_file( const string &filename, const confi
     debug(debug::files) << "file_cache::find_source_file::Found " << result.size() << " match(es).\n";
     return result;
 }
-const file_set file_cache::match_source_files( const string &filename, const config_base &configuration,
+const file_set file_cache::match_source_files( const string &filename, const config_base* config,
                                                const string_set &directories )
 {
     debug(debug::files) << "file_cache::match_source_files::Matching " << filename
@@ -179,7 +176,7 @@ const file_set file_cache::match_source_files( const string &filename, const con
     const auto directory_end = directories.end();
     for( auto directory_it = directories.begin(); directory_it != directory_end; ++directory_it )
     {
-        const string directory( full_directory_name(configuration.source_directory(),
+        const string directory( full_directory_name(config->source_directory(),
                                                     *directory_it + preceding_directory) );
         if( !directory_exists(directory) )
         {
@@ -189,8 +186,6 @@ const file_set file_cache::match_source_files( const string &filename, const con
 
 
         const file_set &files_on_disk = get_source_file_set( directory );
-        if( error_status() )
-            return result;
 
         debug(debug::files) << "file_cache::match_source_files::Searching for match with " << files_on_disk.size() << " files.\n";
 

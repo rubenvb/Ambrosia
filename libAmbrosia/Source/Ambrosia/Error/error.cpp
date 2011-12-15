@@ -38,7 +38,8 @@ error::~error()
 
 void error::output_message() const
 {
-    cerr << m_message;
+    cerr << "Error:\n"
+            "\t" << m_message << "\n";
     if( !m_list.empty() )
     {
         std::for_each( m_list.begin(), m_list.end(),

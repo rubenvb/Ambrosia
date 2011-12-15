@@ -80,6 +80,8 @@ private:
 
 #ifdef AMBROSIA_DEBUG
 extern const debug::type s_max_debug_level;
+extern const std::map<std::string, debug::type> debug_map;
+extern const std::map<debug::type, std::string> debug_map_inverse;
 #endif // AMBROSIA_DEBUG
 
 template<>

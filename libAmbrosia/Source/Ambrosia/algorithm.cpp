@@ -13,7 +13,8 @@
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/platform.h"
-#include "Ambrosia/status.h"
+#include "Ambrosia/Error/internal_error.h"
+#include "Ambrosia/Error/nectar_error.h"
 #include "Ambrosia/target.h"
 
 // C++ includes
@@ -240,13 +241,13 @@ const string_pair split_preceding_directory( const string &path )
     else
         return { "", path };
 }
-void skip_BOM( istream &stream )
+void skip_BOM( istream &stream, const string &filename )
 {
     const unsigned char BOM[] = { 0xef, 0xbb, 0xbf };
 
     char first_3_chars[3];
     if( !stream.read( first_3_chars, 3 ) )
-        return emit_error( "Unexpected end of file." );
+        throw error( "Unexpected end of file: " + filename + "." );
 
     if( memcmp(reinterpret_cast<const char*>(BOM), first_3_chars, 3) )
         stream.seekg( 0, std::ios::beg ); // reset to beginning of file
@@ -284,7 +285,7 @@ void dependency_resolve( target_list &unsorted, target_list::iterator node,
         {
             if( unresolved.end() != find_if(unresolved.begin(), unresolved.end(),
                                           find_functor) )
-                return emit_error( "Circular dependency detected: " + unresolved.back()->name() + " -> " + name + "." );
+                throw internal_error( "Circular dependency detected: " + unresolved.back()->name() + " -> " + name + "." );
 
             // check if dependency is already resolved or still needs to be processed
             auto new_node = std::find_if( unsorted.begin(), unsorted.end(),
@@ -297,7 +298,7 @@ void dependency_resolve( target_list &unsorted, target_list::iterator node,
                 new_node = std::find_if( resolved.begin(), resolved.end(),
                                          find_functor );
                 if( new_node == resolved.end() )
-                    return emit_error( "Dependency not defined: " + name );
+                    throw internal_error( "Dependency not defined: " + name );
             }
         }
     }
@@ -317,9 +318,6 @@ void dependency_sort( target_list &unsorted )
         dependency_resolve( unsorted, unsorted.begin(),
                             resolved, unresolved );
     }
-    if( error_status() )
-        return;
-
     unsorted.swap(resolved);
 }
 
@@ -345,14 +343,11 @@ void filter_dependency_sort( target_list &unsorted )
         dependency_resolve( unsorted, unsorted.begin(),
                             resolved, unresolved );
     }
-    if( error_status() )
-        return;
-
     unsorted.swap(resolved);
 }
-template<class output_iterator>
-void find_matching_files( const string &filename, const map<string, file_set> &directories,
-                          output_iterator it )
+/*template<class output_iterator>
+void find_matching_files( const string &filename, const size_t line_number,
+                          const map<string, file_set> &directories, output_iterator it )
 {
     string::size_type number_of_matches = 0;
     const auto end = directories.end();
@@ -392,7 +387,8 @@ void find_matching_files( const string &filename, const map<string, file_set> &d
                 if( file == filename )
                 {
                     if( number_of_matches > 0 )
-                        emit_error( "Ambiguous filename match: directory=\"" + directory + "\", filename=\"" + filename + "\""  );
+                        throw nectar_error( "Ambiguous filename match: directory=\"" + directory + "\", filename=\"" + filename + "\"",
+                                            filename, line_number );
                     else
                     {
                         it = { directory + directory_seperator + file, (*files_it).second };
@@ -403,6 +399,8 @@ void find_matching_files( const string &filename, const map<string, file_set> &d
         }
     }
 }
-template void find_matching_files<insert_iterator<file_set> >( const string &, const map<string, file_set> &, insert_iterator<file_set> );
+template void find_matching_files<insert_iterator<file_set> >
+    ( const string &, const size_t line_number,
+      const map<string, file_set> &, insert_iterator<file_set> );*/
 
 libambrosia_namespace_end

@@ -26,17 +26,17 @@ public:
     file_cache();
 
     // Finders
-    const std::string find_nectar_file( const std::string &directory, config_base &config );
-    bool find_project_file( const std::string &path, config_base &config );
+    const std::string find_nectar_file( const std::string &directory, config_base* config );
+    bool find_project_file( const std::string &path, config_base* config );
 
     // Getters
     const file_set & get_source_file_set( const std::string &directory );
 
     // Find the unique relative path to the filename, otherwise return all matching duplicates
-    const file_set find_source_file( const std::string &filename, const config_base &configuration,
+    const file_set find_source_file( const std::string &filename, const config_base* config,
                                      const string_set &directories = string_set() );
     // Match filename with all directories and match wildcards
-    const file_set match_source_files( const std::string &filename, const config_base &configuration,
+    const file_set match_source_files( const std::string &filename, const config_base* config,
                                        const string_set &directories = string_set() );
     // Read directory contents from disk (don't complain if already present).
     void add_source_directory( const std::string &directory = "" );

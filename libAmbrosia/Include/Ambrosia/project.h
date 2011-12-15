@@ -29,13 +29,14 @@ class project
 {
 public:
     project( file_cache &file_cache );
+    project( ambrosia_config &ambrosia_config, file_cache &file_cache );
 
     static void set_internal_option( const std::string &option, const std::string &value );
 
     // read project file(s)
     void read_project_files();
 
-    static ambrosia_config configuration;
+    static ambrosia_config* configuration;
 
 private:
     file_cache &m_file_cache;

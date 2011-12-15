@@ -29,10 +29,9 @@ void apply_commandline_options( const string_vector &options, lib::project &proj
 
 bool add_build_target( const std::string &target );
 
-void set_internal_option( const std::string &option, const std::string &value,
-                          lib::project &project );
+void set_program_option( const std::string &option, const std::string &value );
 
-bool add_configuration_options( const std::string &options, lib::ambrosia_config &config );
+bool add_configuration_options( const std::string &options, lib::ambrosia_config* config );
 
 ambrosia_namespace_end
 

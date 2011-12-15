@@ -79,7 +79,7 @@ void nectar_loader::extract_nectar( target_list &targets )
     debug(debug::nectar_parser) << "nectar_loader::extract_nectar::Processing file: " << m_filename << ".\n";
 
     // Remove leading BOM
-    skip_BOM( m_stream );
+    skip_BOM( m_stream, m_filename );
 
     // create global target
     targets.emplace_back( unique_ptr<target>( new target(m_subdirectory, {}, s_ambrosia_config)) );
@@ -231,9 +231,9 @@ void nectar_loader::extract_nectar( target_list &targets )
 /*
  * Warning output
  *****************/
-void nectar_loader::emit_syntax_warning( const std::string &message, const string_vector &warning_list ) const
+void nectar_loader::syntax_warning( const std::string &message, const string_vector &warning_list ) const
 {
-    debug(debug::status) << "nectar_loader::emit_syntax_warning::Emitting a syntax warning now.\n";
+    debug(debug::status) << "nectar_loader::syntax_warning::Emitting a syntax warning now.\n";
     cerr << "\nSyntax warning: " + m_filename + "\n" +
               "       line " + to_string(m_line_number) + "\n" +
               "       " + message << "\n";
@@ -475,7 +475,7 @@ bool nectar_loader::test_condition( const std::function<bool(const string&)> &co
             debug(debug::conditional) << "nectar_loader::test_condition:Detected closing parenthesis. Returning "
                      << to_string(result) << ".\n";
             if( empty_conditional )
-                emit_syntax_warning( "Empty conditional statement." );
+                syntax_warning( "Empty conditional statement." );
             return result;
         }
         else if( map_value(conditional_operator_map, token, op) )
@@ -685,7 +685,7 @@ void nectar_loader::parse_library_list()
             if( is_absolute_path(token) )
             {
                 debug(debug::parser) << "nectar_loader::parse_library_list::Absolure library path detected.\n";
-                emit_syntax_warning( "Absolute paths in project files should be avoided." );
+                syntax_warning( "Absolute paths in project files should be avoided." );
             }
         }
         else
@@ -726,7 +726,7 @@ void nectar_loader::parse_target()
                 throw syntax_error( "global target must not have a name", m_filename, m_line_number );
 
             if( already_modified_NAME )
-                emit_syntax_warning( "NAME is being modified twice in this target section." );
+                syntax_warning( "NAME is being modified twice in this target section." );
 
             already_modified_NAME = true;
             if( next_token(token, s_special_characters_newline) )

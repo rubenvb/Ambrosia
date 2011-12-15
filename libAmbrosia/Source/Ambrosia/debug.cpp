@@ -11,13 +11,44 @@
 
 // C++ includes
 #include <algorithm>
+#include <map>
+    using std::map;
 
 libambrosia_namespace_begin
 
 #ifdef AMBROSIA_DEBUG
 // static member initialization
-const debug::type s_max_debug_level = debug::always;
+const debug::type s_max_debug_level = static_cast<debug::type>(debug::always ^ debug::lexer);
 debug::type debug::s_level = s_max_debug_level;
+
+extern const map<std::string, debug::type> debug_map =
+                { {"commandline",   debug::commandline},
+                  {"algorithm",     debug::algorithm},
+                  {"nectar",        debug::nectar},
+                  {"lexer",         debug::lexer},
+                  {"parser",        debug::parser},
+                  {"NoT ReAcHABle", debug::nectar_parser},
+                  {"conditional",   debug::conditional},
+                  {"target",        debug::target},
+                  {"files",         debug::files},
+                  {"platform",      debug::platform},
+                  {"status",        debug::status},
+                  {"config",        debug::config},
+                  {"all",           debug::always} };
+extern const map<debug::type, std::string> debug_map_inverse =
+                { {debug::commandline,   "commandline"},
+                  {debug::algorithm,     "algorithm"},
+                  {debug::nectar,        "nectar"},
+                  {debug::lexer,         "lexer"},
+                  {debug::parser,        "parser"},
+                  {debug::nectar_parser, "nectar and parser"},
+                  {debug::conditional,   "conditional"},
+                  {debug::target,        "target"},
+                  {debug::files,         "files"},
+                  {debug::platform,      "platform"},
+                  {debug::status,        "status"},
+                  {debug::config,        "config"},
+                  {debug::always,        "all"} };
 
 debug::debug( const type debug_level )
     :   m_output( debug_level & s_level )

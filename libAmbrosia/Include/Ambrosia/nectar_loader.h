@@ -56,8 +56,8 @@ private:
 /*
  * Warning output
  *****************/
-    void emit_syntax_warning( const std::string &message,
-                              const string_vector &warning_list = string_vector() ) const;
+    void syntax_warning( const std::string &message,
+                         const string_vector &warning_list = string_vector() ) const;
 /*
  * Lexing
  *********/

@@ -78,7 +78,7 @@ void apply_commandline_options( const string_vector &arguments, lib::project &pr
                     files.find_project_file( current, lib::project::configuration );
 
                     // if project_file is still empty, "current" is really a target name to be built, skip to below next else
-                    if( lib::project::configuration.project_file().empty() )
+                    if( lib::project::configuration->project_file().empty() )
                         goto add_target;
                 }
                 else
@@ -119,12 +119,12 @@ void apply_commandline_options( const string_vector &arguments, lib::project &pr
         }
     }
     // if project file is not yet set, search current directory
-    if( lib::project::configuration.project_file().empty() )
+    if( lib::project::configuration->project_file().empty() )
     {
         if( files.find_project_file(".", lib::project::configuration) )
         {
             debug(debug::commandline) << "begin::Project file found in current directory \'.\': "
-                                      << lib::project::configuration.project_file() << ".\n";
+                                      << lib::project::configuration->project_file() << ".\n";
             lib::emit_warning( "Ambrosia does not recommend an in-source build." );
         }
         else
@@ -132,7 +132,7 @@ void apply_commandline_options( const string_vector &arguments, lib::project &pr
     }
     debug(debug::commandline) << "commandline::apply_commandline_options::Checking if project file was found.\n";
     // Ensure that a valid project file has been found
-    assert( lib::file_exists(lib::project::configuration.project_file()) );
+    assert( lib::file_exists(lib::project::configuration->project_file()) );
 }
 
 bool add_build_target( const string &target )
@@ -142,7 +142,7 @@ bool add_build_target( const string &target )
     if( index == string::npos )
     {
         debug(debug::commandline) << "commandline::add_build_target::Target to be built: " << target << ".\n";
-        lib::project::configuration.add_target_config_options( target, string_set() );
+        lib::project::configuration->add_target_config_options( target, string_set() );
     }
     else
     {
@@ -158,12 +158,42 @@ bool add_build_target( const string &target )
             if( options.insert(temp).second == false )
                 duplicates.insert( temp );
         }
-        lib::project::configuration.add_target_config_options( target_name, options );
+        lib::project::configuration->add_target_config_options( target_name, options );
     }
     return true;
 }
 
-bool add_configuration_options( const string &options, lib::ambrosia_config &/*config*/ )
+void set_internal_option( const std::string &option, const std::string &value )
+{
+    //debug(3) << "begin::Ambrosia internal option: " << option
+    //         << " with value " << value << " being set.\n";
+
+    if( "cross" == option )
+    {
+        //debug(4) << "begin::Cross-compiling for " << value << ".\n";
+        lib::s_ambrosia_config.set_ambrosia_cross( value );
+    }
+    #ifdef AMBROSIA_DEBUG
+    else if( "d" == option || "debug" == option )
+    {
+        const uint32_t level = lib::from_string<uint32_t>( value );
+        // check validity, partial check on input as well
+        if( level > lib::s_max_debug_level )//|| level < 0 )
+            lib::emit_error( "Debug level must be a number between 0 and 9." );
+        //debug(0) << "begin::Setting debug level to " << level << ".\n";
+        debug::s_level = static_cast<debug::type>(level);
+    }
+    #endif // AMBROSIA_DEBUG
+    else if( "gnu-prefix" == option )
+    {
+        //debug(4) << "begin::Cross-compiling with GNU prefix " << value << ".\n";
+        lib::project::configuration->set_gnu_prefix( value );
+    }
+    else
+        lib::emit_error( "Unknown option passed to Ambrosia: \n\t-" + option + "=" + value );
+}
+
+bool add_configuration_options( const string &options, lib::ambrosia_config* /*config*/ )
 {
     debug(debug::commandline) << "commandline::addd_configuration_options::Target configuration option: "
                               << options << " set.\n";
