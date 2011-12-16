@@ -48,7 +48,7 @@ private:
     map_string_set_string m_target_config_options;
 };
 
-extern ambrosia_config s_ambrosia_config;
+//extern ambrosia_config s_ambrosia_config;
 
 libambrosia_namespace_end
 

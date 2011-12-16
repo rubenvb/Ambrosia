@@ -19,6 +19,7 @@
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/platform.h"
+#include "Ambrosia/project.h"
 #include "Ambrosia/target.h"
 
 // C++ includes
@@ -82,7 +83,7 @@ void nectar_loader::extract_nectar( target_list &targets )
     skip_BOM( m_stream, m_filename );
 
     // create global target
-    targets.emplace_back( unique_ptr<target>( new target(m_subdirectory, {}, s_ambrosia_config)) );
+    targets.emplace_back( unique_ptr<target>( new target(m_subdirectory, {}, *project::configuration)) );
 
     string token;
     while( next_token(token) )
@@ -183,7 +184,7 @@ void nectar_loader::extract_nectar( target_list &targets )
                 // Search for sub-project file: sourcedir/token/token.nectar.txt
                 // 1. check for subdirectory
                 const string full_subproject_directory =
-                        full_directory_name( s_ambrosia_config.source_directory(),
+                        full_directory_name( project::configuration->source_directory(),
                                              full_directory_name( m_subdirectory, token) );
                 if( !directory_exists(full_subproject_directory) )
                     throw nectar_error( "Directory " + full_subproject_directory + " not found.\n"

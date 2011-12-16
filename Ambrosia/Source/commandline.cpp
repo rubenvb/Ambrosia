@@ -44,7 +44,7 @@ void apply_commandline_options( const string_vector &arguments, lib::project &pr
     std::for_each( arguments.begin(), arguments.end(),
                    [](const string &option)
                    {
-                       static int i= 1;
+                       static int i=1;
                        debug(debug::type::commandline) << "commandline::apply_commandline_options::argument: " << i++ << ": " << option << ".\n";
                    } );
     debug(debug::commandline) << "commandline::apply_commandline_options::Number of commandline arguments: " << arguments.size() << ".\n";
@@ -59,12 +59,12 @@ void apply_commandline_options( const string_vector &arguments, lib::project &pr
     }
 
     // Options to be filled in, with default values, if any
-    string current;
+    size_t argument_number = 0;
     bool m_first_dashless_argument = true;
-    const auto end = arguments.end();
-    for( auto it = arguments.begin(); it != end; ++it )
+    for( auto it = arguments.begin(); it != arguments.end(); ++it )
     {
-        current = *it;
+        argument_number++;
+        const string &current = *it;
         string::size_type index = current.find_first_not_of( "-:" );
         switch( index )
         {
@@ -86,7 +86,7 @@ void apply_commandline_options( const string_vector &arguments, lib::project &pr
                     add_target:
                     if( !add_build_target(current) )
                         throw lib::commandline_error( "Unable to add target " + current + " to be built.",
-                                                      std::distance(arguments.begin(),it) );
+                                                      argument_number );
                 }
                 break;
             case 1:
@@ -95,7 +95,7 @@ void apply_commandline_options( const string_vector &arguments, lib::project &pr
                     const string::size_type index = current.find( "=",1 );
                     if( index == string::npos || index == current.size()-1 )
                         throw lib::commandline_error( "Ambrosia internal options must be set by \'-option=value\' type arguments.",
-                                                      std::distance(arguments.begin(),it) );
+                                                      argument_number );
 
                     const string option( current.substr(1,index-1) );
                     const string value( current.substr(index+1, string::npos) );
@@ -105,7 +105,7 @@ void apply_commandline_options( const string_vector &arguments, lib::project &pr
                 {
                     if( !add_configuration_options(current.substr(1), lib::project::configuration) )
                         throw lib::commandline_error( "Cannot set configuration option: " + current,
-                                                      std::distance(arguments.begin(), it) );
+                                                      argument_number );
                 }
                 break;
             case 2:
@@ -115,7 +115,7 @@ void apply_commandline_options( const string_vector &arguments, lib::project &pr
                 break;
             default:
                 throw lib::commandline_error( "Invalid commandline argument: " + current,
-                                              std::distance(arguments.begin(), it) );
+                                              argument_number );
         }
     }
     // if project file is not yet set, search current directory
@@ -163,34 +163,43 @@ bool add_build_target( const string &target )
     return true;
 }
 
-void set_internal_option( const std::string &option, const std::string &value )
+void set_internal_option( const std::string &option, const std::string &value,
+                          const size_t argument_number )
 {
-    //debug(3) << "begin::Ambrosia internal option: " << option
-    //         << " with value " << value << " being set.\n";
+    debug(debug::commandline) << "commandline::set_internal_option::" << option
+                              << " with value " << value << " being set.\n";
 
     if( "cross" == option )
     {
-        //debug(4) << "begin::Cross-compiling for " << value << ".\n";
-        lib::s_ambrosia_config.set_ambrosia_cross( value );
+        debug(debug::commandline) << "commandline::set_internal_option::Cross-compiling for "
+                                  << value << ".\n";
+        lib::project::configuration->set_ambrosia_cross( value );
     }
     #ifdef AMBROSIA_DEBUG
     else if( "d" == option || "debug" == option )
     {
-        const uint32_t level = lib::from_string<uint32_t>( value );
+        string::size_type index = 0;
+        do
+        {
+            index=value.find( ',', index );
+        } while( index != string::npos );
+        /*const uint32_t level = lib::from_string<uint32_t>( value );
         // check validity, partial check on input as well
         if( level > lib::s_max_debug_level )//|| level < 0 )
             lib::emit_error( "Debug level must be a number between 0 and 9." );
         //debug(0) << "begin::Setting debug level to " << level << ".\n";
-        debug::s_level = static_cast<debug::type>(level);
+        debug::s_level = static_cast<debug::type>(level);*/
     }
     #endif // AMBROSIA_DEBUG
     else if( "gnu-prefix" == option )
     {
-        //debug(4) << "begin::Cross-compiling with GNU prefix " << value << ".\n";
+        debug(debug::commandline) << "commandline::set_internal_option::Cross-compiling with GNU prefix "
+                                  << value << ".\n";
         lib::project::configuration->set_gnu_prefix( value );
     }
     else
-        lib::emit_error( "Unknown option passed to Ambrosia: \n\t-" + option + "=" + value );
+        throw lib::commandline_error( "Unknown option passed to Ambrosia: \n\t-" + option + "=" + value,
+                                      argument_number );
 }
 
 bool add_configuration_options( const string &options, lib::ambrosia_config* /*config*/ )
@@ -206,11 +215,7 @@ bool add_configuration_options( const string &options, lib::ambrosia_config* /*c
         if( new_options.insert(temp).second == false )
             output() << "Warning: duplicate configuration option: " << temp << ".\n";
     }
-
-    // add config options to all previous targets and output duplicates as a warning.
-
-    return true;
-
+    throw lib::error( "commandline::add_configuration_options is not finished yet." );
 }
 
 ambrosia_namespace_end

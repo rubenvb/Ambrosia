@@ -12,9 +12,10 @@
 // libAmbrosia includes
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
-#include "Ambrosia/platform.h"
 #include "Ambrosia/Error/internal_error.h"
 #include "Ambrosia/Error/nectar_error.h"
+#include "Ambrosia/platform.h"
+#include "Ambrosia/project.h"
 #include "Ambrosia/target.h"
 
 // C++ includes
@@ -328,7 +329,7 @@ void filter_dependency_sort( target_list &unsorted )
     resolved.reserve( unsorted.size() );
     unresolved.reserve( unsorted.size() );
 
-    const auto &target_config_options = s_ambrosia_config.target_config_options();
+    const auto &target_config_options = project::configuration->target_config_options();
     const auto end = target_config_options.end();
     for( auto it = target_config_options.begin(); it != end; ++it )
     {
