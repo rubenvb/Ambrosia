@@ -18,8 +18,8 @@ libambrosia_namespace_begin
 
 #ifdef AMBROSIA_DEBUG
 // static member initialization
-const debug::type s_max_debug_level = static_cast<debug::type>(debug::always ^ debug::lexer);
-debug::type debug::s_level = s_max_debug_level;
+debug::type debug::s_level = // debug::initial
+        static_cast<debug::type>(debug::always ^ debug::lexer);
 
 extern const map<std::string, debug::type> debug_map =
                 { {"commandline",   debug::commandline},
@@ -34,6 +34,7 @@ extern const map<std::string, debug::type> debug_map =
                   {"platform",      debug::platform},
                   {"status",        debug::status},
                   {"config",        debug::config},
+                  {"initial",       debug::initial},
                   {"all",           debug::always} };
 extern const map<debug::type, std::string> debug_map_inverse =
                 { {debug::commandline,   "commandline"},
@@ -48,6 +49,7 @@ extern const map<debug::type, std::string> debug_map_inverse =
                   {debug::platform,      "platform"},
                   {debug::status,        "status"},
                   {debug::config,        "config"},
+                  {debug::initial,       "initial"},
                   {debug::always,        "all"} };
 
 debug::debug( const type debug_level )

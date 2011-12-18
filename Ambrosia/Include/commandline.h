@@ -24,10 +24,12 @@ libambrosia_namespace_end
 
 ambrosia_namespace_begin
 
-void apply_commandline_options( const string_vector &options, lib::project &project,
-                                lib::file_cache &files);
+void apply_commandline_options( const string_vector &options, lib::file_cache &files);
 
-bool add_build_target( const std::string &target );
+void add_build_target( const std::string &target, const string_set &options = string_set() );
+
+void set_internal_option( const std::string &option, const std::string &value,
+                          const size_t argument_number );
 
 void set_program_option( const std::string &option, const std::string &value );
 

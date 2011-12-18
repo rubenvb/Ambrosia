@@ -29,7 +29,7 @@ public:
      * Setters
      **********/
     // source directory and file where the object's config_base is attached to
-    bool set_source_directory( const std::string &source_directory );
+    void set_source_directory( const std::string &source_directory );
     void set_project_file( const std::string &project_file );
     bool add_config( const std::string &config );
     bool remove_config( const std::string &config );

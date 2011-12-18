@@ -136,6 +136,7 @@ const std::string replace_directory_seperators( const std::string &original );
 const string_pair split_preceding_directory( const std::string &path );
 // remove Byte Order Mark from stream
 void skip_BOM( std::istream &stream, const std::string &filename = "" );
+
 // Dependency resolving algorithm
 void dependency_resolve( target_list &unsorted, target_list::iterator node,
                          target_list &resolved, target_list &unresolved );
@@ -143,10 +144,6 @@ void dependency_resolve( target_list &unsorted, target_list::iterator node,
 void dependency_sort( target_list &unsorted );
 // Dependency resolving sort that filters out targets not present in s_ambrosia_config::targets_config
 void filter_dependency_sort( target_list &unsorted );
-// find files that match the (wildcard) string in a list of files
-/*template<class output_iterator>
-void find_matching_files( const std::string &filename, const size_t line_number,
-                          const std::map<std::string, file_set> &directories, output_iterator it );*/
 
 libambrosia_namespace_end
 

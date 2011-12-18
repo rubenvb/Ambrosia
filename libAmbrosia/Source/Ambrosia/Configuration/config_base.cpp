@@ -12,6 +12,7 @@
 // libambrosia includes
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/debug.h"
+#include "Ambrosia/Error/internal_error.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/file_cache.h"
@@ -63,19 +64,16 @@ config_base::~config_base()
 /*
  * Setters
  **********/
-bool config_base::set_source_directory( const string &source_directory )
+void config_base::set_source_directory( const string &source_directory )
 {
     if( !directory_exists(source_directory) )
-        return false;
+        throw internal_error( "Attempting to call config_base::set_source_directory with"
+                              "a non-existent directory: " + source_directory );
 
     debug(debug::config) << "config_base::set_source_directory::Setting source directory to: " << source_directory << "\n";
     m_source_directory = source_directory;
     debug(debug::config) << "config_base::set_source_directory::Adding " << m_source_directory << " to s_file_store.\n";
     s_file_cache.add_source_directory( m_source_directory );
-    if( !error_status() )
-        return true;
-    else
-        return false;
 }
 void config_base::set_project_file( const string &project_file )
 {

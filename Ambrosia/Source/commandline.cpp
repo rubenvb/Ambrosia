@@ -37,8 +37,7 @@
 
 ambrosia_namespace_begin
 
-void apply_commandline_options( const string_vector &arguments, lib::project &project,
-                                lib::file_cache &files )
+void apply_commandline_options( const string_vector &arguments, lib::file_cache &files )
 {
     // Debug output
     std::for_each( arguments.begin(), arguments.end(),
@@ -84,9 +83,23 @@ void apply_commandline_options( const string_vector &arguments, lib::project &pr
                 else
                 {
                     add_target:
-                    if( !add_build_target(current) )
-                        throw lib::commandline_error( "Unable to add target " + current + " to be built.",
-                                                      argument_number );
+                    const string target = current;
+                    string_set options;
+                    if( (it+1) != arguments.end() && *(it+1) == ":" )
+                    {
+                        const string &list_of_options = *(++it);
+                        ++argument_number;
+                        do
+                        {
+                            const string::size_type previous_index = index;
+                            string::size_type index = list_of_options.find( ',' );
+                            const string option = list_of_options.substr(previous_index, index);
+                            if( !options.insert(option).second )
+                                throw lib::commandline_error( "Duplicate config option to target "
+                                                              + target + ": " + option, argument_number);
+                        } while( index != string::npos );
+                    }
+                    add_build_target(target, options);
                 }
                 break;
             case 1:
@@ -99,14 +112,11 @@ void apply_commandline_options( const string_vector &arguments, lib::project &pr
 
                     const string option( current.substr(1,index-1) );
                     const string value( current.substr(index+1, string::npos) );
-                    project.set_internal_option( option, value );
+                    set_internal_option( option, value, argument_number );
                 }
                 else if( current[0] == ':' )
-                {
-                    if( !add_configuration_options(current.substr(1), lib::project::configuration) )
-                        throw lib::commandline_error( "Cannot set configuration option: " + current,
-                                                      argument_number );
-                }
+                    add_configuration_options( current.substr(1), lib::project::configuration);
+
                 break;
             case 2:
                 // TODO: user arguments defined in project file:
@@ -135,14 +145,14 @@ void apply_commandline_options( const string_vector &arguments, lib::project &pr
     assert( lib::file_exists(lib::project::configuration->project_file()) );
 }
 
-bool add_build_target( const string &target )
+void add_build_target( const string &target, const string_set &options )
 {
     // TODO: fixme: this function does wrong things
     const string::size_type index = target.find( ":" );
     if( index == string::npos )
     {
         debug(debug::commandline) << "commandline::add_build_target::Target to be built: " << target << ".\n";
-        lib::project::configuration->add_target_config_options( target, string_set() );
+        lib::project::configuration->add_target_config_options( target, options );
     }
     else
     {
@@ -160,14 +170,13 @@ bool add_build_target( const string &target )
         }
         lib::project::configuration->add_target_config_options( target_name, options );
     }
-    return true;
 }
 
 void set_internal_option( const std::string &option, const std::string &value,
                           const size_t argument_number )
 {
     debug(debug::commandline) << "commandline::set_internal_option::" << option
-                              << " with value " << value << " being set.\n";
+                              << " with value \'" << value << "\'' being set.\n";
 
     if( "cross" == option )
     {
@@ -181,7 +190,20 @@ void set_internal_option( const std::string &option, const std::string &value,
         string::size_type index = 0;
         do
         {
+            debug(debug::always) << "commandline::set_internal_option::setting debug options: "
+                                 << value << ".\n";
+            const string::size_type previous_index = index;
             index=value.find( ',', index );
+            const string item = value.substr(previous_index, index);
+            debug::type item_enum;
+            if( !map_value(lib::debug_map, item, item_enum) )
+                throw lib::commandline_error( "Unknown debug type: " + item, argument_number );
+
+            debug(debug::always) << "commandline::set_internal_option::enabling " << item
+                                 << " debug output.\n";
+            debug(debug::always) << "\n-->s_level=" << debug::s_level << "\n";
+            debug::s_level = static_cast<debug::type>(debug::s_level ^ item_enum);
+            debug(debug::always) << "\n-->s_level=" << debug::s_level << "\n";
         } while( index != string::npos );
         /*const uint32_t level = lib::from_string<uint32_t>( value );
         // check validity, partial check on input as well

@@ -52,8 +52,6 @@ void drink_nectar( const std::string &filename, target_list &targets )
     nectar_loader loader( filename, "", stream );
 
     loader.extract_nectar( targets );
-    if( error_status() )
-        return;
 }
 
 void apply_build_config( target_list &/*targets*/ )
