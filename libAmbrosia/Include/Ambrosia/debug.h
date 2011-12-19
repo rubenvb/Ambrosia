@@ -10,6 +10,7 @@
 #define AMBROSIA_DEBUG_H
 
 // Ambrosia includes
+#include "Ambrosia/Error/internal_error.h"
 #include "Ambrosia/global.h"
 #include "Ambrosia/typedefs.h"
 
@@ -54,6 +55,8 @@ public:
     {
         if( m_output )
             std::cerr << output;
+        if( !std::cerr )
+            throw internal_error( "std::cerr was left in an invalid state." );
     #else // AMBROSIA_DEBUG
     debug& operator<<( const T & )
     {
@@ -66,6 +69,8 @@ public:
     {
         if( m_output )
             func( std::cerr );
+        if( !std::cerr )
+            throw internal_error( "std::cerr was left in an invalid state." );
     #else // AMBROSIA_DEBUG
     debug& operator<<( stream_function )
     {

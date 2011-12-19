@@ -133,7 +133,7 @@ void apply_commandline_options( const string_vector &arguments, lib::file_cache 
     {
         if( files.find_project_file(".", lib::project::configuration) )
         {
-            debug(debug::commandline) << "begin::Project file found in current directory \'.\': "
+            debug(debug::commandline) << "commandline::Project file found in current directory \'.\': "
                                       << lib::project::configuration->project_file() << ".\n";
             lib::emit_warning( "Ambrosia does not recommend an in-source build." );
         }
@@ -177,7 +177,7 @@ void set_internal_option( const std::string &option, const std::string &value,
                           const size_t argument_number )
 {
     debug(debug::commandline) << "commandline::set_internal_option::" << option
-                              << " with value \'" << value << "\'' being set.\n";
+                              << " with value \'" << value << "\' being set.\n";
 
     if( "cross" == option )
     {
@@ -192,9 +192,11 @@ void set_internal_option( const std::string &option, const std::string &value,
                              << value << ".\n";
         string::size_type index = 0;
         string::size_type previous_index = 0;
+        int loop=0;
         do {
+          ++loop;
           index=value.find( ',', previous_index );
-          const string item = value.substr(previous_index, index);
+          const string item = value.substr(previous_index, index-previous_index);
           debug::type item_enum;
           if( !map_value(lib::debug_map, item, item_enum) )
               throw lib::commandline_error( "Unknown debug type: " + item, argument_number );

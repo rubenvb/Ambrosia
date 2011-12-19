@@ -50,6 +50,7 @@ libambrosia_namespace_begin
  **********************************/
 const vector<string>& get_environment_PATH()
 {
+    debug(debug::platform) << "platform::get_environment_PATH::Called.\n";
     static vector<string> result;
     if( !result.empty() )
         return result;
@@ -69,7 +70,7 @@ const vector<string>& get_environment_PATH()
     while( index != string::npos )
     {
         result.push_back( PATH.substr(previous, index-previous));
-        debug(debug::type::platform) << "platform::get_environment_PATH::part of PATH: " << result.back() << "\n";
+        debug(debug::platform) << "platform::get_environment_PATH::part of PATH: " << result.back() << "\n";
         previous=index+1;
         index = PATH.find( delimiter, previous );
     }
