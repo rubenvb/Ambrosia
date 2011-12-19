@@ -29,7 +29,7 @@ public:
 
     virtual void output_message() const;
 
-private:
+protected:
     const std::string m_message;
     string_vector m_list;
 };

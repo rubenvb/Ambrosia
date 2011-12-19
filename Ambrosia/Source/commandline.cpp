@@ -160,6 +160,7 @@ void add_build_target( const string &target, const string_set &options )
         debug(debug::commandline) << "commandline::add_build_target::Target to be built: " << target_name << ".\n";
         string_set options;
         string_set duplicates;
+        // FIXME: stringstream --> string::find
         istringstream stream( target );
         stream.seekg( static_cast<istringstream::streamoff>(index) );
         string temp;
@@ -187,30 +188,22 @@ void set_internal_option( const std::string &option, const std::string &value,
     #ifdef AMBROSIA_DEBUG
     else if( "d" == option || "debug" == option )
     {
+        debug(debug::always) << "commandline::set_internal_option::setting debug options: "
+                             << value << ".\n";
         string::size_type index = 0;
-        do
-        {
-            debug(debug::always) << "commandline::set_internal_option::setting debug options: "
-                                 << value << ".\n";
-            const string::size_type previous_index = index;
-            index=value.find( ',', index );
-            const string item = value.substr(previous_index, index);
-            debug::type item_enum;
-            if( !map_value(lib::debug_map, item, item_enum) )
-                throw lib::commandline_error( "Unknown debug type: " + item, argument_number );
+        string::size_type previous_index = 0;
+        do {
+          index=value.find( ',', previous_index );
+          const string item = value.substr(previous_index, index);
+          debug::type item_enum;
+          if( !map_value(lib::debug_map, item, item_enum) )
+              throw lib::commandline_error( "Unknown debug type: " + item, argument_number );
 
-            debug(debug::always) << "commandline::set_internal_option::enabling " << item
-                                 << " debug output.\n";
-            debug(debug::always) << "\n-->s_level=" << debug::s_level << "\n";
-            debug::s_level = static_cast<debug::type>(debug::s_level ^ item_enum);
-            debug(debug::always) << "\n-->s_level=" << debug::s_level << "\n";
+          debug(debug::always) << "commandline::set_internal_option::enabling " << item
+                               << " debug output.\n";
+          debug::s_level = static_cast<debug::type>(debug::s_level ^ item_enum);
+          previous_index = index+1;
         } while( index != string::npos );
-        /*const uint32_t level = lib::from_string<uint32_t>( value );
-        // check validity, partial check on input as well
-        if( level > lib::s_max_debug_level )//|| level < 0 )
-            lib::emit_error( "Debug level must be a number between 0 and 9." );
-        //debug(0) << "begin::Setting debug level to " << level << ".\n";
-        debug::s_level = static_cast<debug::type>(level);*/
     }
     #endif // AMBROSIA_DEBUG
     else if( "gnu-prefix" == option )
