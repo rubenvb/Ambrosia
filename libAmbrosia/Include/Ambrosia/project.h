@@ -33,8 +33,18 @@ public:
 
     void read_project_files();
 
-    // determine projects to be built and apply build configuration
+    // Determine projects to be built and apply build configuration.
     void apply_target_configuration();
+
+    // Determine the names and locations of output files to determine commands to be generated.
+    // NEEDS REDESIGN AND SMARTNESS THAT IS NOW ABSENT
+    //void determine_output_files();
+
+    // Generate commands only for the files that need to be built.
+    void generate_commands();
+
+    // Run the build commands.
+    void execute_build_commands();
 
     static ambrosia_config* configuration;
 

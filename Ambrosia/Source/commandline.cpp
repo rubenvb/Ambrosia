@@ -192,20 +192,27 @@ void set_internal_option( const std::string &option, const std::string &value,
                              << value << ".\n";
         string::size_type index = 0;
         string::size_type previous_index = 0;
+        debug::type new_debug_level = static_cast<debug::type>(0);
         int loop=0;
         do {
           ++loop;
           index=value.find( ',', previous_index );
           const string item = value.substr(previous_index, index-previous_index);
+          if( item.empty() )
+              throw lib::commandline_error( "Trailing comma in argument to -" + option, argument_number );
+
           debug::type item_enum;
           if( !map_value(lib::debug_map, item, item_enum) )
               throw lib::commandline_error( "Unknown debug type: " + item, argument_number );
 
           debug(debug::always) << "commandline::set_internal_option::enabling " << item
                                << " debug output.\n";
-          debug::s_level = static_cast<debug::type>(debug::s_level ^ item_enum);
+          // add the debug output option
+          new_debug_level = static_cast<debug::type>(new_debug_level ^ item_enum);
           previous_index = index+1;
         } while( index != string::npos );
+        // set new debug level
+        debug::s_level = new_debug_level;
     }
     #endif // AMBROSIA_DEBUG
     else if( "gnu-prefix" == option )

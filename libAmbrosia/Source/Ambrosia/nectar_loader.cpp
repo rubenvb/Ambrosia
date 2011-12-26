@@ -593,7 +593,7 @@ void nectar_loader::process_dependency_list_conditional()
 
 void nectar_loader::process_inner_conditional()
 {
-    debug(debug::parser) << "nectar_loader::process_inner_conditional:Using target config:\n" << p_target->config().config() << "\n";
+    debug(debug::parser) << "nectar_loader::process_inner_conditional::Using target config:\n" << p_target->config().config() << "\n";
     if( test_condition( [&p_target](const string &item){ return contains(p_target->config().config(), item); }) )
         debug(debug::parser) << "nectar_loader::process_inner_conditional::condition returned true, nothing to skip.\n";
     else

@@ -43,7 +43,10 @@ HEADERS += \
     Include/Ambrosia/file_cache.h \
     Include/Ambrosia/Error/soft_error.h \
     Include/Ambrosia/Error/commandline_error.h \
-    Include/Ambrosia/Error/internal_error.h
+    Include/Ambrosia/Error/internal_error.h \
+    Include/Ambrosia/Generators/cgenerator.h \
+    Include/Ambrosia/Generators/generator.h \
+    Include/Ambrosia/Generators/generator_maps.h
 
 SOURCES += \
     Source/Ambrosia/Platform/common.cpp \
@@ -65,7 +68,10 @@ SOURCES += \
     Source/Ambrosia/file_cache.cpp \
     Source/Ambrosia/Error/soft_error.cpp \
     Source/Ambrosia/Error/commandline_error.cpp \
-    Source/Ambrosia/Error/internal_error.cpp
+    Source/Ambrosia/Error/internal_error.cpp \
+    Source/Ambrosia/Generators/generator.cpp \
+    Source/Ambrosia/Generators/cgenerator.cpp \
+    Source/Ambrosia/Generators/generator_maps.cpp
 
 *win32*:SOURCES += Source/Ambrosia/Platform/windows.cpp
 *linux*:SOURCES += Source/Ambrosia/Platform/unix.cpp

@@ -19,7 +19,7 @@ libambrosia_namespace_begin
 #ifdef AMBROSIA_DEBUG
 // static member initialization
 debug::type debug::s_level = // debug::initial
-        static_cast<debug::type>(debug::commandline ^ debug::initial);
+        static_cast<debug::type>(debug::commandline ^ debug::platform ^ debug::initial);
 
 extern const map<std::string, debug::type> debug_map =
                 { {"commandline",   debug::commandline},

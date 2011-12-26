@@ -35,7 +35,7 @@ project::project( file_cache &file_cache)
     m_targets()
 {   }
 
-// read project file(s)
+// read project file(s) and store the info and dependencies in target_list
 void project::read_project_files()
 {
     // open file
@@ -52,6 +52,7 @@ void project::read_project_files()
     loader.extract_nectar( m_targets );
 }
 
+// Filter target_list and sort the targets that need to be built.
 void project::apply_target_configuration()
 {
     const map_string_set_string target_config = configuration->target_config_options();
@@ -61,6 +62,25 @@ void project::apply_target_configuration()
 
     }
     throw error( "project::apply_target_configuration::Not yet implemented." );
+}
+
+// Configuration is applied, order is fixed. Generate output names
+/*const string_vector project::determine_output_files()
+{
+    for( auto it = m_targets.begin(); it != m_targets.end(); ++it )
+    {
+
+    }
+}*/
+
+void project::generate_commands()
+{
+    throw error( "generate_commands is not implemented yet." );
+}
+
+void project::execute_build_commands()
+{
+    throw error( "execute_build_commands is not implemented yet." );
 }
 
 libambrosia_namespace_end

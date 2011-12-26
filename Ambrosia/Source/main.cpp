@@ -45,6 +45,10 @@ try {
 
     project.read_project_files();
 
+    // project.apply_project_configuration();
+
+    project.generate_commands();
+
     /*state* current_state = new ambrosia::begin( argc, argv );
     // Main event loop
     while( !current_state->end() )

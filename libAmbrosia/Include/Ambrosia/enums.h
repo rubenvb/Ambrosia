@@ -98,6 +98,23 @@ inline file_type get_general_type( const file_type type )
             return type;
     }
 }
+enum class generator_string
+{
+    compiler, // compiler program name (without target prefixes)
+    linker, // linker program name
+    output_argument, // precedes output file name
+    compile_argument, // compile to object file
+    linker_argument, // arguments for linking
+    object_suffix, // suffix for intermediate object files
+    import_library_suffix, // .dll.a, .lib
+    static_library_suffix, // .a, .lib
+    shared_library_suffix, // .dll, .so
+    debug_argument, // produce debug info
+    optimize, // standard "release" configuration optimization
+    optimize_none, // explicitely turn off optimizations
+    optimize_size, // optimize for size
+    optimize_extreme // full optimization, not guaranteed to be better than 'optimize_release'
+};
 
 ambrosia_namespace_end
 

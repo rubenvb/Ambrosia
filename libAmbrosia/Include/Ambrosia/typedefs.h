@@ -65,6 +65,7 @@ libambrosia_namespace_begin
     typedef std::map<std::string, file_set> map_string_file_set;
     typedef std::map<file_type, string_set> map_file_type_string_set;
     typedef std::map<file_type, file_set> map_file_type_file_set;
+    typedef std::map<toolchain, std::map<generator_string, std::string> > generator_map;
 
 libambrosia_namespace_end
 
