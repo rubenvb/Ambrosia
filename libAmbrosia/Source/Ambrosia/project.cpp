@@ -19,6 +19,8 @@
 // C++ includes
 /* <string> */
     using std::string;
+#include <fstream>
+    using std::ifstream;
 
 libambrosia_namespace_begin
 
@@ -40,9 +42,9 @@ void project::read_project_files()
 {
     // open file
     const string &filename = configuration->project_file();
-    auto stream_ptr( open_ifstream(filename) );
+    auto stream_ptr = open_ifstream(filename);
     auto &stream = *stream_ptr;
-    if( !stream )
+    if(!stream )
         throw error( "Unable to open *.nectar.txt file: " + filename );
 
     // read targets

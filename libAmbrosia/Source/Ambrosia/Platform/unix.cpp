@@ -13,8 +13,9 @@
 #include "Ambrosia/typedefs.h"
 
 // Platform includes
-#include "dirent.h"
-#include "sys/stat.h"
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 // C++ includes
 #include <fstream>

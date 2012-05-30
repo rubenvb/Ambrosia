@@ -15,9 +15,10 @@
 // Common platform includes
 #if _WIN32
     #define S_IFREG _S_IFREG
-#endif // _WIN32
+#endif
 #if __linux__
     #include <sys/io.h>   // For access()
+    #include <unistd.h>
 #else
     #include <io.h>
     #include <stdio.h>
