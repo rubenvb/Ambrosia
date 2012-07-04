@@ -33,7 +33,7 @@ libambrosia_namespace_begin
 // Static variable initialization
 
 target::target( const string &subdirectory,
-                const dependency_list &dependencies, const ambrosia_config &config )
+                const dependency_set &dependencies, const ambrosia_config &config )
 :   node(subdirectory + "::global"),
     m_type( target_type::global ),
     m_dependencies( dependencies ),
@@ -44,7 +44,7 @@ target::target( const string &subdirectory,
     m_output_name( subdirectory + "::global" )
 {   }
 target::target( const string &name, const target_type type,
-                const dependency_list &dependencies, const build_config &config )
+                const dependency_set &dependencies, const build_config &config )
 :   node( name ),
     m_type( type ),
     m_dependencies( dependencies ),
@@ -69,7 +69,7 @@ target_type target::type() const
 {
     return m_type;
 }
-const dependency_list & target::dependencies() const
+const dependency_set & target::dependencies() const
 {
     return m_dependencies;
 }

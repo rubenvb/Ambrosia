@@ -138,12 +138,12 @@ const string_pair split_preceding_directory( const std::string &path );
 void skip_BOM( std::istream &stream, const std::string &filename = "" );
 
 // Dependency resolving algorithm
-void dependency_resolve( target_list &unsorted, target_list::iterator node,
-                         target_list &resolved, target_list &unresolved );
+void dependency_resolve( target_vector &unsorted, target_vector::iterator node,
+                         target_vector &resolved, target_vector &unresolved );
 // Dependency resolving sort
-void dependency_sort( target_list &unsorted );
+void dependency_sort( target_vector &unsorted );
 // Dependency resolving sort that filters out targets not present in s_ambrosia_config::targets_config
-void filter_dependency_sort( target_list &unsorted );
+void filter_dependency_sort( target_vector &unsorted );
 
 libambrosia_namespace_end
 

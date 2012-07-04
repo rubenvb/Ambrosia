@@ -36,10 +36,10 @@ class nectar_loader
 {
 public:
     nectar_loader( const std::string &full_filename, const std::string &sub_directory,
-                   std::istream &stream, const dependency_list &list = dependency_list() );
+                   std::istream &stream, const dependency_set &list = dependency_set() );
     ~nectar_loader();
 
-    void extract_nectar( target_list &targets );
+    void extract_nectar( target_vector &targets );
 
     // Disallow copy(constructor)ing and assignment (shuts up warning of -Weffc++)
     nectar_loader & operator=( const nectar_loader & ) = delete;
@@ -50,7 +50,7 @@ private:
     const std::string m_subdirectory; // used for file searching, without ambrosia_config.source_directory() !
     std::istream &m_stream; // file input stream
     size_t m_line_number; // used for error reporting
-    const dependency_list &m_dependency_list;
+    const dependency_set &m_dependency_list;
     bool m_global_processed; // only one global section per project file is allowed
     target* p_target;
 /*
@@ -65,7 +65,7 @@ private:
     bool next_list_token( std::string &token );
     bool process_conditional();
     // reads colon-lists of dependencies, ends at first '{'
-    void read_dependency_list( dependency_list &dependencies );
+    void read_dependency_list( dependency_set &dependencies );
     // finds matching curly brace and stores all stream contents in between in return value.
     const std::string read_code_block();
 /*

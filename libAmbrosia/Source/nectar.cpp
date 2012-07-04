@@ -39,7 +39,7 @@
 
 libambrosia_namespace_begin
 
-void drink_nectar( const std::string &filename, target_list &targets )
+void drink_nectar( const std::string &filename, target_vector &targets )
 {
     // open file
     auto stream_ptr( open_ifstream(filename) );
@@ -54,7 +54,7 @@ void drink_nectar( const std::string &filename, target_list &targets )
     loader.extract_nectar( targets );
 }
 
-void apply_build_config( target_list &/*targets*/ )
+void apply_build_config( target_vector &/*targets*/ )
 {
     emit_error( "nectar::apply_build_config::Not implemented." );
 }

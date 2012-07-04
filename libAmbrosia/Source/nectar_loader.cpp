@@ -61,7 +61,7 @@ const set<char> s_special_characters = { '(', ')', '{', '}', ':', ',' };
 const set<char> s_special_characters_newline = { '(', ')', '{', '}', ':', ',', '\n' };
 
 nectar_loader::nectar_loader( const string &full_filename, const string &sub_directory,
-                              istream &stream, const dependency_list &list )
+                              istream &stream, const dependency_set &list )
 :   m_filename( full_filename ),
     m_subdirectory( sub_directory ),
     m_stream( stream ),
@@ -75,7 +75,7 @@ nectar_loader::nectar_loader( const string &full_filename, const string &sub_dir
 nectar_loader::~nectar_loader()
 {   }
 
-void nectar_loader::extract_nectar( target_list &targets )
+void nectar_loader::extract_nectar( target_vector &targets )
 {
     debug(debug::nectar_parser) << "nectar_loader::extract_nectar::Processing file: " << m_filename << ".\n";
 
@@ -124,7 +124,7 @@ void nectar_loader::extract_nectar( target_list &targets )
                                          << map_value(target_type_map_inverse, type) << ": "
                                          << token << ".\n";
                     const string target_name( token );
-                    dependency_list dependencies( m_dependency_list );
+                    dependency_set dependencies( m_dependency_list );
                     read_dependency_list( dependencies );
 
                     if( !next_token(token) && "{" == token )
@@ -207,7 +207,7 @@ void nectar_loader::extract_nectar( target_list &targets )
                 {
                     debug(debug::nectar) << "nectar_loader::extract_nectar:Opening file " << full_subproject_filename << " succeeded.\n";
                     // Get sub target dependencies
-                    dependency_list dependencies;
+                    dependency_set dependencies;
                     read_dependency_list( dependencies );
 
                     nectar_loader subloader( subproject_filename, full_directory_name(m_subdirectory, token),
@@ -365,7 +365,7 @@ bool nectar_loader::next_list_token( std::string &token )
     return true;
 }
 
-void nectar_loader::read_dependency_list( dependency_list &dependencies )
+void nectar_loader::read_dependency_list( dependency_set &dependencies )
 {
     // copy "parent" dependencies
     dependencies = m_dependency_list;

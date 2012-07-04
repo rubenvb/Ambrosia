@@ -56,12 +56,12 @@ libambrosia_namespace_begin
 
     // homogeneous typedefs
     typedef std::unique_ptr<target> target_ptr;
-    typedef std::vector<target_ptr> target_list;
+    typedef std::vector<target_ptr> target_vector;
     typedef std::unique_ptr<project> project_ptr;
-    typedef std::vector<project_ptr> project_list;
+    typedef std::vector<project_ptr> project_vector;
 
     // heterogeneous typedefs
-    typedef std::set<std::pair<target_type, std::string> > dependency_list;
+    typedef std::set<std::pair<target_type, std::string> > dependency_set;
     typedef std::map<std::string, file_set> map_string_file_set;
     typedef std::map<file_type, string_set> map_file_type_string_set;
     typedef std::map<file_type, file_set> map_file_type_file_set;

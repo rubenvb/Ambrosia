@@ -51,6 +51,7 @@ public:
 private:
     file_cache &m_file_cache;
     target_list m_targets;
+    string_list m_commands;
 };
 
 libambrosia_namespace_end
