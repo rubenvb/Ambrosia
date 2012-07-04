@@ -64,11 +64,9 @@ void recursive_scan_directory( output_iterator it, const std::string &relative_d
 /*
  * Ugly workarounds
  *******************/
-#if _WIN32
-# if __GLIBCXX__
+#if defined(_WIN32) && defined(__GLIBCXX__)
     std::unique_ptr<std::istream> open_ifstream( const std::string &filename );
     std::unique_ptr<std::ostream> open_ofstream( const std::string &filename );
-# endif
 #else
     std::unique_ptr<std::ifstream> open_ifstream( const std::string &filename );
     std::unique_ptr<std::ofstream> open_ofstream( const std::string &filename );

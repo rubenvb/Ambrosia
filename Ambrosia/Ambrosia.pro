@@ -22,6 +22,7 @@ unix:LIBS += -L ../libAmbrosia
 unix:PRE_TARGETDEPS += ../libAmbrosia/libAmbrosia$${LIBSUFFIX}.a
 LIBS += -lAmbrosia$${LIBSUFFIX}
 win32:LIBS += -lshlwapi
+win32:DEFINES += _CRT_SECURE_NO_WARNINGS
 #DEFINES += AMBROSIA_DLL
 
 # Application includes

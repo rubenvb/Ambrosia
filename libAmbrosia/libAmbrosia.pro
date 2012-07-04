@@ -49,33 +49,35 @@ HEADERS += \
     Include/Ambrosia/Generators/generator_maps.h
 
 SOURCES += \
-    Source/Ambrosia/Platform/common.cpp \
-    Source/Ambrosia/enum_maps.cpp \
-    Source/Ambrosia/status.cpp \
-    Source/Ambrosia/nectar.cpp \
-    Source/Ambrosia/target.cpp \
-    Source/Ambrosia/algorithm.cpp \
-    Source/Ambrosia/debug.cpp \
-    Source/Ambrosia/node.cpp \
-    Source/Ambrosia/nectar_loader.cpp \
-    Source/Ambrosia/Configuration/ambrosia_config.cpp \
-    Source/Ambrosia/Configuration/build_config.cpp \
-    Source/Ambrosia/Configuration/config_base.cpp \
-    Source/Ambrosia/project.cpp \
-    Source/Ambrosia/Error/syntax_error.cpp \
-    Source/Ambrosia/Error/error.cpp \
-    Source/Ambrosia/Error/nectar_error.cpp \
-    Source/Ambrosia/file_cache.cpp \
-    Source/Ambrosia/Error/soft_error.cpp \
-    Source/Ambrosia/Error/commandline_error.cpp \
-    Source/Ambrosia/Error/internal_error.cpp \
-    Source/Ambrosia/Generators/generator.cpp \
-    Source/Ambrosia/Generators/cgenerator.cpp \
-    Source/Ambrosia/Generators/generator_maps.cpp
+    Source/Configuration/ambrosia_config.cpp \
+    Source/Configuration/build_config.cpp \
+    Source/Configuration/config_base.cpp \
+    Source/Error/commandline_error.cpp \
+    Source/Error/error.cpp \
+    Source/Error/internal_error.cpp \
+    Source/Error/nectar_error.cpp \
+    Source/Error/soft_error.cpp \
+    Source/Error/syntax_error.cpp \
+    Source/Generators/cgenerator.cpp \
+    Source/Error/generator.cpp \
+    Source/Error/generator_maps.cpp \
+    Source/Platform/unix.cpp \
+    Source/Platform/common.cpp \
+    Source/Platform/windows.cpp \
+    Source/algorithm.cpp \
+    Source/debug.cpp \
+    Source/enum_maps.cpp \
+    Source/file_cache.cpp \
+    Source/nectar.cpp \
+    Source/nectar_loader.cpp \
+    Source/node.cpp \
+    Source/project.cpp \
+    Source/status.cpp \
+    Source/target.cpp
 
-*win32*:SOURCES += Source/Ambrosia/Platform/windows.cpp
-*linux*:SOURCES += Source/Ambrosia/Platform/unix.cpp
-*mac*:SOURCES += Source/Ambrosia/Platform/unix.cpp
+*win32*:SOURCES +=
+*linux*:SOURCES +=
+*mac*:SOURCES +=
 
 OTHER_FILES += libAmbrosia.nectar.txt
 
