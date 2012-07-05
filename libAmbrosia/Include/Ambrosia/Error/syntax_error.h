@@ -16,17 +16,19 @@
 #include "Ambrosia/Error/nectar_error.h"
 
 // C++ includes
-/* <string> */
+#include <string>
 
 libambrosia_namespace_begin
 
 class syntax_error : public nectar_error
 {
 public:
-    syntax_error( const std::string& message, const std::string& filename,
-                  const size_t line_number, const string_vector& list = string_vector() );
+  syntax_error(const std::string& message,
+               const std::string& filename,
+               const size_t line_number,
+               const string_vector& list = {} );
 
-    void output_message() const;
+  void output_message() const;
 };
 
 libambrosia_namespace_end

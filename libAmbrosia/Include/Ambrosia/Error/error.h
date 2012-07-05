@@ -1,6 +1,6 @@
 /**
   * Ambrosia/Error/error.h
-  * Ambrosia's exception abstract base class.
+  * Ambrosia's exception base class.
   *
   * Author: Ruben Van Boxem
   *

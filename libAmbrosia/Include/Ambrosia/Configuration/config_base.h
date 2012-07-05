@@ -21,32 +21,32 @@ libambrosia_namespace_begin
 class config_base
 {
 public:
-    config_base();
-    config_base( toolchain requested_toolchain );
-    virtual ~config_base() = 0; // abstractify class
+  config_base();
+  config_base( toolchain requested_toolchain );
+  virtual ~config_base() = 0; // abstractify class
 
-    /*
-     * Setters
-     **********/
-    // source directory and file where the object's config_base is attached to
-    void set_source_directory( const std::string& source_directory );
-    void set_project_file( const std::string& project_file );
-    bool add_config( const std::string& config );
-    bool remove_config( const std::string& config );
-    // add user option settings
-    void set_user_option( const std::string& option, const std::string& value );
+  /*
+   * Setters
+   **********/
+  // source directory and file where the object's config_base is attached to
+  void set_source_directory( const std::string& source_directory );
+  void set_project_file( const std::string& project_file );
+  bool add_config( const std::string& config );
+  bool remove_config( const std::string& config );
+  // add user option settings
+  void set_user_option( const std::string& option, const std::string& value );
 
-    /*
-     * Getters
-     **********/
-    string_set& config();
-    const string_set& config() const;
-    const std::string& source_directory() const;
-    const std::string& project_file() const;
-    const std::string& build_directory() const;
-    const os& target_os() const;
-    const architecture& target_architecture() const;
-    const toolchain& target_toolchain() const;
+  /*
+   * Getters
+   **********/
+  string_set& config();
+  const string_set& config() const;
+  const std::string& source_directory() const;
+  const std::string& project_file() const;
+  const std::string& build_directory() const;
+  const os& target_os() const;
+  const architecture& target_architecture() const;
+  const toolchain& target_toolchain() const;
 
 protected:
     // Environment PATH

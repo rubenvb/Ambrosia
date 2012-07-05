@@ -6,6 +6,7 @@
   * Author: Ruben Van Boxem
   *
   **/
+
 #ifndef CGENERATOR_H
 #define CGENERATOR_H
 
@@ -20,7 +21,7 @@ libambrosia_namespace_begin
 class cgenerator
 {
 public:
-    cgenerator();
+  cgenerator();
 };
 
 libambrosia_namespace_end

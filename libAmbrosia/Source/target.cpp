@@ -94,7 +94,8 @@ void target::add_source_file( const file_type type, const string& filename,
                                                                   m_source_directories[type] );
         if( matches.empty() )
             return emit_nectar_error( "No files matching " + filename + " found.",
-                                      nectar_file, line_number ); // error will be handled
+                                      nectar_file, line_number );
+        //FIXME: this should add files to m_source_files and check for ambiguities like below
     }
     else
     {
@@ -103,7 +104,7 @@ void target::add_source_file( const file_type type, const string& filename,
         switch( matches.size() )
         {
             case 0:
-                return emit_nectar_error( "No matches to file " + filename + " found.", filename, line_number );
+                return emit_nectar_error( "No matches to file " + filename + " found.", nectar_file, line_number );
             case 1:
                 m_source_files[type].insert( *matches.begin() );
                 break;
@@ -115,46 +116,50 @@ void target::add_source_file( const file_type type, const string& filename,
                 return emit_error_list( {ambiguous} );
         }
     }
+    // add build config source type to determine which command generators need to be run
+    m_build_config.m_source_types.insert(type); // no need to check failure: only needs
 }
 void target::remove_file( const file_type type, const string& filename )
 {
+    // search for file, check if there are any other files of the same type,
+    //  and remove the "source file config" for generation phase.
     s_file_cache.match_source_files( filename, &m_build_config,
                                      m_source_directories[type] );
     emit_error( "target::remove_file::Unimplementented." );
 }
 bool target::add_source_directory( const file_type type, const string& directory )
 {
-    const string full_subdirectory_name = full_directory_name( m_build_config.source_directory(), directory );
+  const string full_subdirectory_name = full_directory_name( m_build_config.source_directory(), directory );
 
-    debug(debug::target) << "target::add_source_directory::Checking if directory " << full_subdirectory_name
-             << " exists.\n";
-    if( !directory_exists(full_subdirectory_name) )
-        return false;
+  debug(debug::target) << "target::add_source_directory::Checking if directory " << full_subdirectory_name
+                       << " exists.\n";
+  if( !directory_exists(full_subdirectory_name) )
+    return false;
 
-    s_file_cache.add_source_directory( full_subdirectory_name );
-    m_source_directories[type].insert( directory );
-    return true;
+  s_file_cache.add_source_directory( full_subdirectory_name );
+  m_source_directories[type].insert( directory );
+  return true;
 }
 void target::remove_directory( const file_type type, const string& directory )
 {
-    if( m_source_directories[type].erase(directory) )
-        emit_warning_list( {directory} );
+  if( m_source_directories[type].erase(directory) )
+    emit_warning_list( {directory} );
 }
 bool target::add_library( const string& library )
 {
-    debug(debug::target) << "target::add_library::Adding library " << library << " to target " << m_name << ".\n";
-    //TODO: check if library can be linked
-    return !(m_libraries.insert(library).second);
+  debug(debug::target) << "target::add_library::Adding library " << library << " to target " << m_name << ".\n";
+  //TODO: check if library can be linked
+  return !(m_libraries.insert(library).second);
 }
 void target::remove_library( const string& library )
 {
-    if( m_libraries.erase(library) )
-        emit_warning_list( {library} );
+  if( m_libraries.erase(library) )
+    emit_warning_list( {library} );
 }
 
 void target::set_output_name( const std::string& name )
 {
-    m_output_name = name;
+  m_output_name = name;
 }
 
 /*

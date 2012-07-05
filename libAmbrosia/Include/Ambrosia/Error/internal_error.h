@@ -15,6 +15,9 @@
 // libAmbrosia includes
 #include "Ambrosia/Error/error.h"
 
+// C++ includes
+#include <string>
+
 libambrosia_namespace_begin
 
 class internal_error : public error

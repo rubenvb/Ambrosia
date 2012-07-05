@@ -16,7 +16,7 @@
 #include "Ambrosia/Error/error.h"
 
 // C++ includes
-/* <string> */
+#include <string>
 
 libambrosia_namespace_begin
 

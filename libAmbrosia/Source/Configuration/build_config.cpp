@@ -35,6 +35,7 @@ libambrosia_namespace_begin
 
 build_config::build_config( const string& subdirectory, const config_base& config )
 :   config_base( config ),
+    m_source_types(),
     m_user_variables()
 {
     m_source_directory = full_directory_name( m_source_directory, subdirectory );

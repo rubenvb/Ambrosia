@@ -16,21 +16,23 @@
 #include "Ambrosia/Error/error.h"
 
 // C++ includes
-/* <string> */
+#include <string>
 
 libambrosia_namespace_begin
 
 class nectar_error : public error
 {
 public:
-    nectar_error( const std::string& message, const std::string& filename,
-                  const size_t line_number, const string_vector& list = string_vector() );
+  nectar_error(const std::string& message,
+               const std::string& filename,
+               const size_t line_number,
+               const string_vector& list = string_vector());
 
-    virtual void output_message() const;
+  virtual void output_message() const;
 
 protected:
-    const std::string m_filename;
-    const size_t m_line_number;
+  const std::string m_filename;
+  const size_t m_line_number;
 };
 
 libambrosia_namespace_end

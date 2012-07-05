@@ -29,24 +29,26 @@ extern size_t s_error_status_calls;
 
 enum class status
 {
-    OK,
-    list,
-    error
+  OK,
+  list,
+  error
 };
 
 // set error status with appropriate messages
-void emit_error( const std::string& message );
+void emit_error(const std::string& message);
 // directly output warning messages immediately
-void emit_warning( const std::string& message );
+void emit_warning(const std::string& message);
 // syntax error including file and line number
-void emit_nectar_error( const std::string& message, const std::string& filename,
-                        const size_t line_number );
+void emit_nectar_error(const std::string& message,
+                       const std::string& filename,
+                       const size_t line_number);
 // nectar warning including file and line number, directly output
-void emit_nectar_warning( const std::string& message, const std::string& filename,
-                          const size_t line_number );
+void emit_nectar_warning(const std::string& message,
+                         const std::string& filename,
+                         const size_t line_number);
 // store string_set's for later output from emit_error/warning
-void emit_error_list( const string_vector& list );
-void emit_warning_list( const string_vector& list );
+void emit_error_list(const string_vector& list);
+void emit_warning_list(const string_vector& list);
 // retrieve current status
 bool error_status();
 bool error_list_status();

@@ -16,10 +16,10 @@ ambrosia_namespace_begin
 
 namespace app
 {
-    // Versioning
-    const int version_major = 0;
-    const int version_minor = 0;
-    const int version_bugfix = 1;
+  // Versioning
+  const int version_major = 0;
+  const int version_minor = 0;
+  const int version_bugfix = 1;
 }
 
 ambrosia_namespace_end

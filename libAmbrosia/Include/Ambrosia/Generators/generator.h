@@ -17,7 +17,7 @@ libambrosia_namespace_begin
 class generator
 {
 public:
-    generator();
+  generator();
 };
 
 libambrosia_namespace_end

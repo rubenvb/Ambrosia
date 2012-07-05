@@ -1,6 +1,6 @@
 /**
-  * Ambrosia/Error/nectar_error.cpp
-  * Class implementation.
+  * Ambrosia/Error/soft_error.h
+  * I have no clue.
   *
   * Author: Ruben Van Boxem
   *
@@ -16,15 +16,15 @@
 #include "Ambrosia/Error/error.h"
 
 // C++ includes
-/* <string> */
+#include <string>
 
 libambrosia_namespace_begin
 
 class soft_error : public error
 {
 public:
-    soft_error( const std::string& message );
-    ~soft_error();
+  soft_error(const std::string& message);
+  ~soft_error();
 };
 
 libambrosia_namespace_end

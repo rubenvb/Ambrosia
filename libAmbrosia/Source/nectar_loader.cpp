@@ -144,43 +144,6 @@ void nectar_loader::extract_nectar( target_vector& targets )
             // get name and dependencies of sub target
             if( next_token(token) )
             {
-                /*
-                const string subdirectory = full_directory_name( m_subdirectory, token );
-                string sub_file( token + ".nectar.txt" );
-                string sub_project_file( s_ambrosia_config.source_directory() + subdirectory + "/" + token + ".nectar.txt" );
-                if( !file_exists(sub_project_file) )
-                {
-                    debug(4) << "nectar_loader::extract_nectar::sub target name and subproject file name do not match.\n";
-                    sub_file = find_nectar_file( subdirectory );
-                    if( error_status() )
-                        return; // no *.nectar.txt file found
-
-                    debug(4) << "nectar_loader::extract_nectar::found sub-.nectar.txt file: " << sub_file << ".\n";
-                    sub_project_file = subdirectory + "/" + sub_file;
-                }
-                debug(4) << "nectar_loader::extract_nectar::Opening subproject file: " << sub_project_file << ".\n";
-                auto stream_ptr = open_ifstream( sub_project_file );
-                auto& stream = *stream_ptr;
-                if( stream )
-                {
-                    // Get sub target dependencies
-                    dependency_list dependencies;
-                    read_dependency_list( dependencies );
-                    if( error_status() )
-                        return;
-
-                    // get subdirectory
-                    string subdirectory;
-                    if( m_subdirectory.empty() )
-                        subdirectory = subdirectory;
-                    else
-                        subdirectory = m_subdirectory + "/" + subdirectory;
-
-                    nectar_loader sub_loader( sub_project_file, subdirectory, stream, dependencies );
-                    sub_loader.extract_nectar( targets );
-                    if( error_status() )
-                        return;
-                }*/
                 // Search for sub-project file: sourcedir/token/token.nectar.txt
                 // 1. check for subdirectory
                 const string full_subproject_directory =

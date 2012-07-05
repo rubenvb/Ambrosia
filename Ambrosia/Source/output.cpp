@@ -10,9 +10,9 @@
 #include "output.h"
 
 // C++ includes
-/* <iostream> */
-    using std::cout;
-    using std::ostream;
+#include <iostream>
+  using std::cout;
+  using std::ostream;
 
 ambrosia_namespace_begin
 

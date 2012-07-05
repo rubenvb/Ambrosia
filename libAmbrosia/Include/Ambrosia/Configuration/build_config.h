@@ -24,9 +24,9 @@
 #include "Ambrosia/typedefs.h"
 
 // C++ includes
-/* <map> */
-/* <string> */
-/* <utility> */
+#include <map>
+#include <string>
+#include <utility>
 
 libambrosia_namespace_begin
 
@@ -36,14 +36,16 @@ class ambrosia_config;
 class build_config : public config_base
 {
 public:
-    build_config( const std::string& subdirectory, const config_base& config );
+  build_config( const std::string& subdirectory, const config_base& config );
 
-    const string_map& user_options() const;
+  const string_map& user_options() const;
 
-    friend class target;
+  friend class target;
+
+  std::set<file_type> m_source_types; // source files present to decide which build commands to run
 
 private:
-    string_map m_user_variables; // user string --> value
+  string_map m_user_variables; // user string --> value
 };
 
 libambrosia_namespace_end
