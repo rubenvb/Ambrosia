@@ -23,8 +23,8 @@ libambrosia_namespace_begin
 class error
 {
 public:
-    error( const std::string &message, const string_vector &list = string_vector() );
-    error( const std::string &message, const file_set &list );
+    error( const std::string& message, const string_vector& list = string_vector() );
+    error( const std::string& message, const file_set& list );
     virtual ~error();
 
     virtual void output_message() const;

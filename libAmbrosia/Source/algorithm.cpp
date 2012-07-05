@@ -47,7 +47,7 @@ size_t s_full_directory_name_calls = 0;
 
 /* Freestanding functions
  *************************/
-const std::string full_directory_name( const std::string &first_directory, const std::string &second_directory )
+const std::string full_directory_name( const std::string& first_directory, const std::string& second_directory )
 {
 #ifdef AMBROSIA_DEBUG
     ++s_full_directory_name_calls;
@@ -60,7 +60,7 @@ const std::string full_directory_name( const std::string &first_directory, const
         return first_directory + "/" + second_directory;
 }
 
-bool wildcard_compare( const string &wild_string, const string &full_string )
+bool wildcard_compare( const string& wild_string, const string& full_string )
 {
     auto wild = wild_string.begin();
     auto str = full_string.begin();
@@ -108,7 +108,7 @@ bool wildcard_compare( const string &wild_string, const string &full_string )
     return ( wild==wild_end );
 }
 
-bool wildcard_directory_compare( const string &wild_string, const string &full_string )
+bool wildcard_directory_compare( const string& wild_string, const string& full_string )
 {
     // Written by Jack Handy - jakkhandy@hotmail.com
     // Taken from http://www.codeproject.com/KB/string/wildcmp.aspx
@@ -164,7 +164,7 @@ bool wildcard_directory_compare( const string &wild_string, const string &full_s
 }
 
 template<class T>
-const T merge_sets( T &old_set, const T &add_set )
+const T merge_sets( T& old_set, const T& add_set )
 {
     // TODO: optimize
     T result;
@@ -182,10 +182,10 @@ const T merge_sets( T &old_set, const T &add_set )
     // return duplicates for error handling
     return duplicates;
 }
-template const set<string> merge_sets<set<string> >( set<string> &, const set<string> & );
+template const set<string> merge_sets<set<string> >( set<string>&, const set<string>& );
 
 template<class T>
-const T remove_set( T &old_set, const T &new_set )
+const T remove_set( T& old_set, const T& new_set )
 {
     // TODO: optimize
     T result;
@@ -204,12 +204,12 @@ const T remove_set( T &old_set, const T &new_set )
     // return items not present in old_set
     return not_found;
 }
-template const set<string> remove_set<set<string> >(set<string> &, const set<string> & );
+template const set<string> remove_set<set<string> >(set<string>&, const set<string>& );
 
 /*
  * libAmbrosia dependent functions
  **********************************/
-const string replace_directory_seperators( const string &original )
+const string replace_directory_seperators( const string& original )
 {
     if( '/' == directory_seperator )
     {
@@ -228,7 +228,7 @@ const string replace_directory_seperators( const string &original )
     }
     return replaced;
 }
-const string_pair split_preceding_directory( const string &path )
+const string_pair split_preceding_directory( const string& path )
 {
     const string::size_type index = path.find_last_of( "/" );
     if( index != string::npos )
@@ -242,7 +242,7 @@ const string_pair split_preceding_directory( const string &path )
     else
         return { "", path };
 }
-void skip_BOM( istream &stream, const string &filename )
+void skip_BOM( istream& stream, const string& filename )
 {
     const unsigned char BOM[] = { 0xef, 0xbb, 0xbf };
 
@@ -265,8 +265,8 @@ def dep_resolve(node, resolved, unresolved):
    resolved.append(node)
    unresolved.remove(node)
 */
-void dependency_resolve( target_list &unsorted, target_list::iterator node,
-                         target_list &resolved, target_list &unresolved )
+void dependency_resolve( target_vector& unsorted, target_vector::iterator node,
+                         target_vector& resolved, target_vector& unresolved )
 {
     debug(debug::algorithm) << "dependency_resolve::Resolving: " << (*node)->name() << ".\n";
     unresolved.push_back( std::move(*node) );
@@ -278,7 +278,7 @@ void dependency_resolve( target_list &unsorted, target_list::iterator node,
     {
         const string name( (*it).second );
         debug(debug::algorithm) << "dependency_resolve::Processing edge: " << name << ".\n";
-        const auto find_functor = [&name](const target_list::value_type &t)
+        const auto find_functor = [&name](const target_vector::value_type& t)
                                   {   return name == t->name();   };
 
         if( resolved.end() == find_if(resolved.begin(), resolved.end(),
@@ -307,10 +307,10 @@ void dependency_resolve( target_list &unsorted, target_list::iterator node,
     unresolved.erase( unresolved.end()-1 );
 }
 
-void dependency_sort( target_list &unsorted )
+void dependency_sort( target_vector& unsorted )
 {
-    target_list resolved;
-    target_list unresolved;
+    target_vector resolved;
+    target_vector unresolved;
     resolved.reserve( unsorted.size() );
     unresolved.reserve( unsorted.size() );
 
@@ -322,20 +322,20 @@ void dependency_sort( target_list &unsorted )
     unsorted.swap(resolved);
 }
 
-void filter_dependency_sort( target_list &unsorted )
+void filter_dependency_sort( target_vector& unsorted )
 {
-    target_list resolved;
-    target_list unresolved;
+    target_vector resolved;
+    target_vector unresolved;
     resolved.reserve( unsorted.size() );
     unresolved.reserve( unsorted.size() );
 
-    const auto &target_config_options = project::configuration->target_config_options();
+    const auto& target_config_options = project::configuration->target_config_options();
     const auto end = target_config_options.end();
     for( auto it = target_config_options.begin(); it != end; ++it )
     {
         const string name( (*it).first );
         const auto item = std::find_if( unsorted.begin(), unsorted.end(),
-                                        [&name](const unique_ptr<target> &t) {return name == t->name();} );
+                                        [&name](const unique_ptr<target>& t) {return name == t->name();} );
         if( item == unsorted.end() )
         {
             unsorted.erase( item );
@@ -347,8 +347,8 @@ void filter_dependency_sort( target_list &unsorted )
     unsorted.swap(resolved);
 }
 /*template<class output_iterator>
-void find_matching_files( const string &filename, const size_t line_number,
-                          const map<string, file_set> &directories, output_iterator it )
+void find_matching_files( const string& filename, const size_t line_number,
+                          const map<string, file_set>& directories, output_iterator it )
 {
     string::size_type number_of_matches = 0;
     const auto end = directories.end();
@@ -357,13 +357,13 @@ void find_matching_files( const string &filename, const size_t line_number,
         debug(debug::algorithm) << "Algorithm::find_matching_files::Matching wildcard filename.\n";
         for( auto directory_it = directories.begin(); directory_it != end; ++directory_it )
         {
-            const string &directory = (*directory_it).first;
-            const file_set &files = (*directory_it).second;
+            const string& directory = (*directory_it).first;
+            const file_set& files = (*directory_it).second;
             const auto files_end = files.end();
             debug(debug::algorithm) << "Algorithm::find_matching_files::Matching files in " << directory << ".\n";
             for( auto files_it = files.begin(); files_it != files_end; ++files_it)
             {
-                const string &file = (*files_it).first;
+                const string& file = (*files_it).first;
                 debug(debug::algorithm) << "Algorithm::find_matching_files::Matching " << filename << " to " << file << ".\n";
                 if( wildcard_compare(filename, file) )
                 {
@@ -379,12 +379,12 @@ void find_matching_files( const string &filename, const size_t line_number,
     {
         for( auto directory_it = directories.begin(); directory_it != end; ++directory_it )
         {
-            const string &directory = (*directory_it).first;
-            const file_set &files = (*directory_it).second;
+            const string& directory = (*directory_it).first;
+            const file_set& files = (*directory_it).second;
             const auto files_end = files.end();
             for( auto files_it = files.begin(); files_it != files_end; ++files_it )
             {
-                const string &file = (*files_it).first;
+                const string& file = (*files_it).first;
                 if( file == filename )
                 {
                     if( number_of_matches > 0 )
@@ -401,7 +401,7 @@ void find_matching_files( const string &filename, const size_t line_number,
     }
 }
 template void find_matching_files<insert_iterator<file_set> >
-    ( const string &, const size_t line_number,
-      const map<string, file_set> &, insert_iterator<file_set> );*/
+    ( const string&, const size_t line_number,
+      const map<string, file_set>&, insert_iterator<file_set> );*/
 
 libambrosia_namespace_end

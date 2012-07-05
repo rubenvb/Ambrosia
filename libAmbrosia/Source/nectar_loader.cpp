@@ -60,8 +60,8 @@ libambrosia_namespace_begin
 const set<char> s_special_characters = { '(', ')', '{', '}', ':', ',' };
 const set<char> s_special_characters_newline = { '(', ')', '{', '}', ':', ',', '\n' };
 
-nectar_loader::nectar_loader( const string &full_filename, const string &sub_directory,
-                              istream &stream, const dependency_set &list )
+nectar_loader::nectar_loader( const string& full_filename, const string& sub_directory,
+                              istream& stream, const dependency_set& list )
 :   m_filename( full_filename ),
     m_subdirectory( sub_directory ),
     m_stream( stream ),
@@ -75,7 +75,7 @@ nectar_loader::nectar_loader( const string &full_filename, const string &sub_dir
 nectar_loader::~nectar_loader()
 {   }
 
-void nectar_loader::extract_nectar( target_vector &targets )
+void nectar_loader::extract_nectar( target_vector& targets )
 {
     debug(debug::nectar_parser) << "nectar_loader::extract_nectar::Processing file: " << m_filename << ".\n";
 
@@ -160,7 +160,7 @@ void nectar_loader::extract_nectar( target_vector &targets )
                 }
                 debug(4) << "nectar_loader::extract_nectar::Opening subproject file: " << sub_project_file << ".\n";
                 auto stream_ptr = open_ifstream( sub_project_file );
-                auto &stream = *stream_ptr;
+                auto& stream = *stream_ptr;
                 if( stream )
                 {
                     // Get sub target dependencies
@@ -202,7 +202,7 @@ void nectar_loader::extract_nectar( target_vector &targets )
                 }
                 // Opening project file
                 auto stream_ptr = open_ifstream( full_subproject_filename );
-                auto &stream = *stream_ptr;
+                auto& stream = *stream_ptr;
                 if( stream )
                 {
                     debug(debug::nectar) << "nectar_loader::extract_nectar:Opening file " << full_subproject_filename << " succeeded.\n";
@@ -232,20 +232,20 @@ void nectar_loader::extract_nectar( target_vector &targets )
 /*
  * Warning output
  *****************/
-void nectar_loader::syntax_warning( const std::string &message, const string_vector &warning_list ) const
+void nectar_loader::syntax_warning( const std::string& message, const string_vector& warning_list ) const
 {
     debug(debug::status) << "nectar_loader::syntax_warning::Emitting a syntax warning now.\n";
     cerr << "\nSyntax warning: " + m_filename + "\n" +
               "       line " + to_string(m_line_number) + "\n" +
               "       " + message << "\n";
     std::for_each( warning_list.begin(), warning_list.end(),
-                   []( const string &item)
+                   []( const string& item)
                    { cerr << "\n\t" << item; } );
 }
 /*
  * Lexing
  *********/
-bool nectar_loader::next_token( string &token, const std::set<char> &special_characters )
+bool nectar_loader::next_token( string& token, const std::set<char>& special_characters )
 {
     // TODO: test the *full* hell out of this function
     // FIXME: ugly as hell, alternatives welcome.
@@ -331,7 +331,7 @@ bool nectar_loader::next_token( string &token, const std::set<char> &special_cha
 
     return !token.empty();
 }
-bool nectar_loader::next_list_token( std::string &token )
+bool nectar_loader::next_list_token( std::string& token )
 {
     debug(debug::parser) << "nectar_loader::next_list_token::reading next list item.\n";
     size_t curly_braces_count = 0;
@@ -365,7 +365,7 @@ bool nectar_loader::next_list_token( std::string &token )
     return true;
 }
 
-void nectar_loader::read_dependency_list( dependency_set &dependencies )
+void nectar_loader::read_dependency_list( dependency_set& dependencies )
 {
     // copy "parent" dependencies
     dependencies = m_dependency_list;
@@ -428,7 +428,7 @@ void nectar_loader::read_dependency_list( dependency_set &dependencies )
 /*
  * Parsing
  **********/
-bool nectar_loader::test_condition( const std::function<bool(const string&)> &config_contains )
+bool nectar_loader::test_condition( const std::function<bool(const string&)>& config_contains )
 {
     bool result = true;
     bool empty_conditional = true;
@@ -594,7 +594,7 @@ void nectar_loader::process_dependency_list_conditional()
 void nectar_loader::process_inner_conditional()
 {
     debug(debug::parser) << "nectar_loader::process_inner_conditional::Using target config:\n" << p_target->config().config() << "\n";
-    if( test_condition( [this](const string &item){ return contains(p_target->config().config(), item); }) )
+    if( test_condition( [this](const string& item){ return contains(p_target->config().config(), item); }) )
         debug(debug::parser) << "nectar_loader::process_inner_conditional::condition returned true, nothing to skip.\n";
     else
     {
@@ -655,7 +655,7 @@ void nectar_loader::parse_build_directory( const file_type )
 {
     throw nectar_error( "Build directory list parsing isn't done yet.", m_filename, m_line_number );
 }
-void nectar_loader::parse_variable_list( string_set & )
+void nectar_loader::parse_variable_list( string_set& )
 {
     throw nectar_error( "Variable list parsing isn't done yet.", m_filename, m_line_number );
 }
@@ -771,13 +771,13 @@ void nectar_loader::parse_target()
     }
 }
 
-void nectar_loader::validate_variable( const string &config )
+void nectar_loader::validate_variable( const string& config )
 {
     if( config.find_first_of("*?/$") != string::npos )
         throw syntax_error( "Variable names must not contain the following characters: *?/$",
                             m_filename, m_line_number );
 }
-void nectar_loader::validate_filename( const string &filename )
+void nectar_loader::validate_filename( const string& filename )
 {
     const string::size_type index = filename.find_first_of( "/?*" );
     if( index != string::npos && '/' != filename[index])
@@ -787,7 +787,7 @@ void nectar_loader::validate_filename( const string &filename )
                                 m_filename, m_line_number );
     }
 }
-void nectar_loader::validate_directory( const string &directory )
+void nectar_loader::validate_directory( const string& directory )
 {
     if( !(directory.find_first_of("*?") == string::npos) )
         throw syntax_error( "Wildcard characters ?* are not allowed in directory names.",

@@ -23,7 +23,7 @@ libambrosia_namespace_begin
 class soft_error : public error
 {
 public:
-    soft_error( const std::string &message );
+    soft_error( const std::string& message );
     ~soft_error();
 };
 

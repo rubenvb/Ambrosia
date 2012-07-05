@@ -23,7 +23,7 @@ libambrosia_namespace_begin
 class commandline_error : public error
 {
 public:
-    commandline_error( const std::string &message, const size_t argument_number );
+    commandline_error( const std::string& message, const size_t argument_number );
 
     void output_message() const;
 

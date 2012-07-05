@@ -15,7 +15,7 @@
 
 libambrosia_namespace_begin
 
-internal_error::internal_error( const std::string &message )
+internal_error::internal_error( const std::string& message )
 :   error( message )
 {   }
 

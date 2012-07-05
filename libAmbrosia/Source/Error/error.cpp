@@ -21,11 +21,11 @@
 
 libambrosia_namespace_begin
 
-error::error( const string &message, const string_vector &list )
+error::error( const string& message, const string_vector& list )
 :   m_message( message ),
     m_list( list )
 {   }
-error::error( const std::string &message, const file_set &list )
+error::error( const std::string& message, const file_set& list )
 :   m_message( message ),
     m_list( list.size() )
 {
@@ -43,7 +43,7 @@ void error::output_message() const
     if( !m_list.empty() )
     {
         std::for_each( m_list.begin(), m_list.end(),
-                       [](const string &item)
+                       [](const string& item)
                        {
                            cerr << "\t" << item << "\n";
                        } );

@@ -20,7 +20,7 @@
 
 libambrosia_namespace_begin
 
-commandline_error::commandline_error( const string &message, const size_t argument_number )
+commandline_error::commandline_error( const string& message, const size_t argument_number )
 :   error( message ),
     m_argument_number( argument_number )
 {   }

@@ -20,7 +20,7 @@ libambrosia_namespace_begin
 class internal_error : public error
 {
 public:
-    internal_error( const std::string &message );
+    internal_error( const std::string& message );
 
     void output_message() const;
 };

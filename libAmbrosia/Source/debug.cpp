@@ -53,7 +53,7 @@ extern const map<debug::type, std::string> debug_map_inverse =
                   {debug::always,        "all"} };
 
 debug::debug( const type debug_level )
-    :   m_output( debug_level & s_level )
+    :   m_output( debug_level& s_level )
 #else // AMBROSIA_DEBUG
 debug::debug( const type )
 #endif // AMRBOSIA_DEBUG
@@ -62,7 +62,7 @@ debug::debug( const type )
 // specialization for string_set
 template<>
 #ifdef AMBROSIA_DEBUG
-debug& debug::operator<<( const string_set & strings )
+debug& debug::operator<<( const string_set& strings )
 {
     if( m_output )
     {
@@ -70,11 +70,11 @@ debug& debug::operator<<( const string_set & strings )
             std::cerr << "\t<empty list>\n";
         else
             std::for_each( strings.begin(), strings.end(),
-                           [strings](const std::string &item)
+                           [strings](const std::string& item)
                            { std::cerr << "\t" << item << "\n"; } );
     }
 #else // AMBROSIA_DEBUG
-debug& debug::operator<<( const string_set & )
+debug& debug::operator<<( const string_set& )
 {
 #endif // AMBROSIA_DEBUG
     return *this;

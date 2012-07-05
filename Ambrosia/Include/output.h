@@ -21,7 +21,7 @@ class output
 {
 public:
     template<typename T>
-    output& operator<<( const T &output )
+    output& operator<<( const T& output )
     {
         s_output_stream << output;
         return *this;
@@ -34,7 +34,7 @@ public:
         return *this;
     }
 private:
-    static std::ostream &s_output_stream;
+    static std::ostream& s_output_stream;
 };
 
 ambrosia_namespace_end

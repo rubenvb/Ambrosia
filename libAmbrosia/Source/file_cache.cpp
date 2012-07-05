@@ -34,7 +34,7 @@ file_cache::file_cache()
     m_build_files()
 {   }
 
-const string file_cache::find_nectar_file( const string &directory, config_base* config )
+const string file_cache::find_nectar_file( const string& directory, config_base* config )
 {
     debug(debug::files) << "nectar::find_nectar_file called for: " << directory << ".\n";
     config->set_source_directory( directory );
@@ -52,7 +52,7 @@ const string file_cache::find_nectar_file( const string &directory, config_base*
     return string("");
 }
 
-bool file_cache::find_project_file( const string &path, config_base* config )
+bool file_cache::find_project_file( const string& path, config_base* config )
 {
     debug(debug::files) << "nectar::find_project_file::Called for " << path << ".\n";
 
@@ -83,7 +83,7 @@ bool file_cache::find_project_file( const string &path, config_base* config )
     return false;
 }
 
-const file_set & file_cache::get_source_file_set( const std::string &directory )
+const file_set& file_cache::get_source_file_set( const std::string& directory )
 {
     debug(debug::files) << "file_set::get_source_file_set::Finding directory listing for "
                         << directory << ".\n";
@@ -98,15 +98,15 @@ const file_set & file_cache::get_source_file_set( const std::string &directory )
     }
 }
 
-const file_set file_cache::find_source_file( const string &filename, const config_base* config,
-                                             const string_set &directories )
+const file_set file_cache::find_source_file( const string& filename, const config_base* config,
+                                             const string_set& directories )
 {
     debug(debug::files) << "file_cache::find_source_file::Called.\n";
-    const string &source_directory = config->source_directory();
+    const string& source_directory = config->source_directory();
     // handle filename with directory prepended
     const string_pair directory_filename( split_preceding_directory(filename) );
-    const string &preceding_directory = directory_filename.first;
-    const string &true_filename = directory_filename.second;
+    const string& preceding_directory = directory_filename.first;
+    const string& true_filename = directory_filename.second;
     // handle empty "directories" case
     string_set directories_to_search;
     if( directories.empty() )
@@ -114,7 +114,7 @@ const file_set file_cache::find_source_file( const string &filename, const confi
     else
     {
         std::for_each( directories.begin(), directories.end(),
-                       [&](const string & directory)
+                       [&](const string& directory)
                        {
                            const string full_dir = full_directory_name( source_directory,
                                                                         full_directory_name(directory, preceding_directory) );
@@ -140,16 +140,16 @@ const file_set file_cache::find_source_file( const string &filename, const confi
     const auto end = directories_to_search.end();
     for( auto it = directories_to_search.begin(); it != end; ++it )
     {
-        const string &directory = full_directory_name( source_directory, *it );
+        const string& directory = full_directory_name( source_directory, *it );
 
         debug(debug::files) << "file_cache::find_source_file::Loading directory contents for: "
                             << directory << ".\n";
-        const file_set &files_on_disk = get_source_file_set( directory );
+        const file_set& files_on_disk = get_source_file_set( directory );
 
         const auto end = files_on_disk.end();
         for( auto it = files_on_disk.begin(); it != end; ++it )
         {
-            const file &entry = *it;
+            const file& entry = *it;
             debug(debug::files) << "file_cache::find_source_file::Matching " << entry.first
                                 << " vs " << true_filename << ".\n";
             if( wildcard_compare(true_filename, entry.first) )
@@ -162,15 +162,15 @@ const file_set file_cache::find_source_file( const string &filename, const confi
     debug(debug::files) << "file_cache::find_source_file::Found " << result.size() << " match(es).\n";
     return result;
 }
-const file_set file_cache::match_source_files( const string &filename, const config_base* config,
-                                               const string_set &directories )
+const file_set file_cache::match_source_files( const string& filename, const config_base* config,
+                                               const string_set& directories )
 {
     debug(debug::files) << "file_cache::match_source_files::Matching " << filename
                         << " to all files in the source directories.\n";
     file_set result;
     const string_pair directory_filename( split_preceding_directory(filename) );
-    const string &preceding_directory( directory_filename.first );
-    const string &true_filename( directory_filename.second );
+    const string& preceding_directory( directory_filename.first );
+    const string& true_filename( directory_filename.second );
 
     // search all directories, appended with preceding_directory
     const auto directory_end = directories.end();
@@ -185,7 +185,7 @@ const file_set file_cache::match_source_files( const string &filename, const con
         debug(debug::files) << "file_cache::match_source_files::Looking in " << directory << " for matches.\n";
 
 
-        const file_set &files_on_disk = get_source_file_set( directory );
+        const file_set& files_on_disk = get_source_file_set( directory );
 
         debug(debug::files) << "file_cache::match_source_files::Searching for match with " << files_on_disk.size() << " files.\n";
 
@@ -193,7 +193,7 @@ const file_set file_cache::match_source_files( const string &filename, const con
         const auto files_end = files_on_disk.end();
         for( auto files_it = files_on_disk.begin(); files_it != files_end; ++files_it )
         {
-            const file &entry = *files_it; // filename and last modified time
+            const file& entry = *files_it; // filename and last modified time
             debug(debug::files) << "file_cache::match_source_files::Matching " << entry.first
                                 << " with " << true_filename << ".\n";
             if( wildcard_compare(true_filename, entry.first) )
@@ -208,7 +208,7 @@ const file_set file_cache::match_source_files( const string &filename, const con
     return result;
 }
 
-void file_cache::add_source_directory( const std::string &directory )
+void file_cache::add_source_directory( const std::string& directory )
 {
 #ifdef AMBROSIA_DEBUG
     if( !directory_exists(directory) )
@@ -221,12 +221,12 @@ void file_cache::add_source_directory( const std::string &directory )
         debug(debug::files) << "file_cache::add_source_directory::Directory already present, and scanned.\n";
     else
     {
-        file_set &new_files = (*result.first).second;
+        file_set& new_files = (*result.first).second;
         scan_directory( std::inserter(new_files, new_files.begin()), directory );
         debug(debug::files) << "file_cache::add_source_directory::Directory scanned.\n";
     }
 }
-void file_cache::add_build_directory( const std::string &directory )
+void file_cache::add_build_directory( const std::string& directory )
 {
     if( !directory_exists(directory) )
         // TODO: Create directory so scan_directory works OK. Check if creation was possible.
@@ -238,7 +238,7 @@ void file_cache::add_build_directory( const std::string &directory )
         debug(debug::files) << "file_cache::add_source_directory::Directory already present, and scanned.\n";
     else
     {
-        file_set &new_files = (*result.first).second;
+        file_set& new_files = (*result.first).second;
         scan_directory( std::inserter(new_files, new_files.begin()), directory );
     }
 }

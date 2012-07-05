@@ -109,12 +109,12 @@ const std::string current_working_directory()
     }
     throw std::runtime_error("Cannot determine the current path; the path is apparently unreasonably long");
 }
-bool directory_exists( const string &directory )
+bool directory_exists( const string& directory )
 {
 #if _WIN32
     wstring directoryW( convert_to_utf16(directory) );
     struct _stat64 status;
-    if( _wstat64(directoryW.c_str(), &status) == 0 )
+    if( _wstat64(directoryW.c_str(),& status) == 0 )
 #else // _WIN32
     struct stat status;
     if( stat(directory.c_str(), &status) == 0 )
@@ -127,7 +127,7 @@ bool directory_exists( const string &directory )
     debug(debug::type::platform) << "platform::directory_exists::" << directory << " is not a directory.\n";
     return false;
 }
-bool file_exists( const string &filename )
+bool file_exists( const string& filename )
 {
 #if _WIN32
     wstring filenameW( convert_to_utf16(filename) );

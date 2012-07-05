@@ -36,9 +36,9 @@ class ambrosia_config;
 class build_config : public config_base
 {
 public:
-    build_config( const std::string &subdirectory, const config_base &config );
+    build_config( const std::string& subdirectory, const config_base& config );
 
-    const string_map & user_options() const;
+    const string_map& user_options() const;
 
     friend class target;
 

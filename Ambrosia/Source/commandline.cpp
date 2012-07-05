@@ -37,11 +37,11 @@
 
 ambrosia_namespace_begin
 
-void apply_commandline_options( const string_vector &arguments, lib::file_cache &files )
+void apply_commandline_options( const string_vector& arguments, lib::file_cache& files )
 {
     // Debug output
     std::for_each( arguments.begin(), arguments.end(),
-                   [](const string &option)
+                   [](const string& option)
                    {
                        static int i=1;
                        debug(debug::type::commandline) << "commandline::apply_commandline_options::argument: " << i++ << ": " << option << ".\n";
@@ -63,7 +63,7 @@ void apply_commandline_options( const string_vector &arguments, lib::file_cache 
     for( auto it = arguments.begin(); it != arguments.end(); ++it )
     {
         argument_number++;
-        const string &current = *it;
+        const string& current = *it;
         string::size_type index = current.find_first_not_of( "-:" );
         switch( index )
         {
@@ -87,7 +87,7 @@ void apply_commandline_options( const string_vector &arguments, lib::file_cache 
                     string_set options;
                     if( (it+1) != arguments.end() && *(it+1) == ":" )
                     {
-                        const string &list_of_options = *(++it);
+                        const string& list_of_options = *(++it);
                         ++argument_number;
                         do
                         {
@@ -145,7 +145,7 @@ void apply_commandline_options( const string_vector &arguments, lib::file_cache 
     assert( lib::file_exists(lib::project::configuration->project_file()) );
 }
 
-void add_build_target( const string &target, const string_set &options )
+void add_build_target( const string& target, const string_set& options )
 {
     // TODO: fixme: this function does wrong things
     const string::size_type index = target.find( ":" );
@@ -173,7 +173,7 @@ void add_build_target( const string &target, const string_set &options )
     }
 }
 
-void set_internal_option( const std::string &option, const std::string &value,
+void set_internal_option( const std::string& option, const std::string& value,
                           const size_t argument_number )
 {
     debug(debug::commandline) << "commandline::set_internal_option::" << option
@@ -226,7 +226,7 @@ void set_internal_option( const std::string &option, const std::string &value,
                                       argument_number );
 }
 
-bool add_configuration_options( const string &options, lib::ambrosia_config* /*config*/ )
+bool add_configuration_options( const string& options, lib::ambrosia_config* /*config*/ )
 {
     debug(debug::commandline) << "commandline::addd_configuration_options::Target configuration option: "
                               << options << " set.\n";

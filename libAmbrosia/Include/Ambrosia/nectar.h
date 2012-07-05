@@ -28,14 +28,14 @@ class ambrosia_config;
 class target;
 
 // locates a unique .nectar.txt file in file. More than one emits an error
-//const std::string find_nectar_file( const std::string &directory );
+//const std::string find_nectar_file( const std::string& directory );
 // finds and sets project file
-//bool find_project_file( const std::string &path, ambrosia_config &config );
+//bool find_project_file( const std::string& path, ambrosia_config& config );
 
 // converts all project file content to internal representation, adding to the container where "it" outputs to
-void drink_nectar( const std::string &filename, target_vector &targets );
+void drink_nectar( const std::string& filename, target_vector& targets );
 // uses s_ambrosia_config to apply the requested build configuration
-void apply_build_config( target_vector &targets );
+void apply_build_config( target_vector& targets );
 
 libambrosia_namespace_end
 

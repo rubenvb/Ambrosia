@@ -25,14 +25,14 @@ class target;
 class node
 {
 public:
-    node( const std::string &name );
+    node( const std::string& name );
     virtual ~node();
 
-    void add_node( const target &dependency ); // sets error status in event of duplicates
-    const std::string &name() const;
+    void add_node( const target& dependency ); // sets error status in event of duplicates
+    const std::string& name() const;
     const std::set<const target*> edges() const;
-    bool operator<( const node &n ) const;
-    bool operator==( const node &n ) const;
+    bool operator<( const node& n ) const;
+    bool operator==( const node& n ) const;
 
 protected:
     std::string m_name;

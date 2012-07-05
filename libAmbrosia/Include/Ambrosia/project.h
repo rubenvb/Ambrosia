@@ -28,8 +28,8 @@ class file_cache;
 class project
 {
 public:
-    project( file_cache &file_cache );
-    project( ambrosia_config &ambrosia_config, file_cache &file_cache );
+    project( file_cache& file_cache );
+    project( ambrosia_config& ambrosia_config, file_cache& file_cache );
 
     void read_project_files();
 
@@ -49,8 +49,8 @@ public:
     static ambrosia_config* configuration;
 
 private:
-    file_cache &m_file_cache;
-    target_list m_targets;
+    file_cache& m_file_cache;
+    target_vector m_targets;
     string_list m_commands;
 };
 

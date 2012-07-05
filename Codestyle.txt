@@ -22,12 +22,12 @@ in the project.
     class A
     {
     public:
-        A( const int member, const B &b ) : m_member(member), m_b(b) {}
+        A( const int member, const B& b ) : m_member(member), m_b(b) {}
 
-        const B &b() const;
-        const int &member() const;
+        const B& b() const;
+        const int& member() const;
         void set_member( const int member );
-        void set_b( const B &b );
+        void set_b( const B& b );
 
     private:
         int m_member

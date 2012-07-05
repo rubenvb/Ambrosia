@@ -32,8 +32,8 @@ libambrosia_namespace_begin
 
 // Static variable initialization
 
-target::target( const string &subdirectory,
-                const dependency_set &dependencies, const ambrosia_config &config )
+target::target( const string& subdirectory,
+                const dependency_set& dependencies, const ambrosia_config& config )
 :   node(subdirectory + "::global"),
     m_type( target_type::global ),
     m_dependencies( dependencies ),
@@ -43,8 +43,8 @@ target::target( const string &subdirectory,
     m_libraries(),
     m_output_name( subdirectory + "::global" )
 {   }
-target::target( const string &name, const target_type type,
-                const dependency_set &dependencies, const build_config &config )
+target::target( const string& name, const target_type type,
+                const dependency_set& dependencies, const build_config& config )
 :   node( name ),
     m_type( type ),
     m_dependencies( dependencies ),
@@ -61,7 +61,7 @@ target::target( const string &name, const target_type type,
 /*
  * Getters
  **********/
-const string & target::name() const
+const string& target::name() const
 {
     return m_name;
 }
@@ -69,24 +69,24 @@ target_type target::type() const
 {
     return m_type;
 }
-const dependency_set & target::dependencies() const
+const dependency_set& target::dependencies() const
 {
     return m_dependencies;
 }
 /*
  * Setters
  **********/
-build_config & target::config()
+build_config& target::config()
 {
     return m_build_config;
 }
-const build_config & target::config() const
+const build_config& target::config() const
 {
     return m_build_config;
 }
 
-void target::add_source_file( const file_type type, const string &filename,
-                              const string &nectar_file, const size_t line_number )
+void target::add_source_file( const file_type type, const string& filename,
+                              const string& nectar_file, const size_t line_number )
 {
     if( contains(filename, "*?") )
     {
@@ -110,19 +110,19 @@ void target::add_source_file( const file_type type, const string &filename,
             default:
                 string_vector ambiguous;
                 std::for_each( matches.begin(), matches.end(),
-                               [&ambiguous](const file &f)
+                               [&ambiguous](const file& f)
                                { ambiguous.push_back(f.first); } );
                 return emit_error_list( {ambiguous} );
         }
     }
 }
-void target::remove_file( const file_type type, const string &filename )
+void target::remove_file( const file_type type, const string& filename )
 {
     s_file_cache.match_source_files( filename, &m_build_config,
                                      m_source_directories[type] );
     emit_error( "target::remove_file::Unimplementented." );
 }
-bool target::add_source_directory( const file_type type, const string &directory )
+bool target::add_source_directory( const file_type type, const string& directory )
 {
     const string full_subdirectory_name = full_directory_name( m_build_config.source_directory(), directory );
 
@@ -135,24 +135,24 @@ bool target::add_source_directory( const file_type type, const string &directory
     m_source_directories[type].insert( directory );
     return true;
 }
-void target::remove_directory( const file_type type, const string &directory )
+void target::remove_directory( const file_type type, const string& directory )
 {
     if( m_source_directories[type].erase(directory) )
         emit_warning_list( {directory} );
 }
-bool target::add_library( const string &library )
+bool target::add_library( const string& library )
 {
     debug(debug::target) << "target::add_library::Adding library " << library << " to target " << m_name << ".\n";
     //TODO: check if library can be linked
     return !(m_libraries.insert(library).second);
 }
-void target::remove_library( const string &library )
+void target::remove_library( const string& library )
 {
     if( m_libraries.erase(library) )
         emit_warning_list( {library} );
 }
 
-void target::set_output_name( const std::string &name )
+void target::set_output_name( const std::string& name )
 {
     m_output_name = name;
 }

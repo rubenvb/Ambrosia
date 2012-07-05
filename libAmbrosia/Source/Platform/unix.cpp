@@ -53,7 +53,7 @@ const os build_os = os::Linux;
 /*
  * Mostly platform dependently implemented functions
  ****************************************************/
-bool is_absolute_path( const string &path )
+bool is_absolute_path( const string& path )
 {
     if( path.empty() )
         return false;
@@ -62,7 +62,7 @@ bool is_absolute_path( const string &path )
 }
 
 template<class output_iterator>
-void scan_directory( output_iterator it, const string &directory_name )
+void scan_directory( output_iterator it, const string& directory_name )
 {
     DIR* dir;
     struct dirent* entry;
@@ -92,10 +92,10 @@ void scan_directory( output_iterator it, const string &directory_name )
 
     closedir( dir );
 }
-template void scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string & );
+template void scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string& );
 
 template<class output_iterator>
-void recursive_scan_directory( output_iterator it, const string &relative_directory, const string &directory_name )
+void recursive_scan_directory( output_iterator it, const string& relative_directory, const string& directory_name )
 {
     DIR* dir;
     struct dirent* entry;
@@ -140,16 +140,16 @@ void recursive_scan_directory( output_iterator it, const string &relative_direct
     closedir( dir );
 }
 // explicit instantiation
-template void recursive_scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string &, const string & );
+template void recursive_scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string&, const string& );
 
 /*
  * Ugly workarounds
  *******************/
-unique_ptr<ifstream> open_ifstream( const std::string &filename )
+unique_ptr<ifstream> open_ifstream( const std::string& filename )
 {
     return unique_ptr<ifstream>( new ifstream(filename) );
 }
-unique_ptr<ofstream> open_ofstream( const std::string &filename )
+unique_ptr<ofstream> open_ofstream( const std::string& filename )
 {
     return unique_ptr<ofstream>( new ofstream(filename) );
 }

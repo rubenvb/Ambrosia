@@ -51,14 +51,14 @@ public:
 #endif // AMBROSIA_DEBUG
     template<typename T>
     #ifdef AMBROSIA_DEBUG
-    debug& operator<<( const T &output )
+    debug& operator<<( const T& output )
     {
         if( m_output )
             std::cerr << output;
         if( !std::cerr )
             throw internal_error( "std::cerr was left in an invalid state." );
     #else // AMBROSIA_DEBUG
-    debug& operator<<( const T & )
+    debug& operator<<( const T& )
     {
     #endif // AMBROSIA_DEBUG
         return *this;
@@ -90,7 +90,7 @@ extern const std::map<debug::type, std::string> debug_map_inverse;
 #endif // AMBROSIA_DEBUG
 
 template<>
-debug& debug::operator<<( const string_set & );
+debug& debug::operator<<( const string_set& );
 
 libambrosia_namespace_end
 

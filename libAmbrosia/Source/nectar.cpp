@@ -39,11 +39,11 @@
 
 libambrosia_namespace_begin
 
-void drink_nectar( const std::string &filename, target_vector &targets )
+void drink_nectar( const std::string& filename, target_vector& targets )
 {
     // open file
     auto stream_ptr( open_ifstream(filename) );
-    auto &stream = *stream_ptr;
+    auto& stream = *stream_ptr;
     if( !stream )
         return emit_error( "Unable to open nectar file: " + filename );
 
@@ -54,7 +54,7 @@ void drink_nectar( const std::string &filename, target_vector &targets )
     loader.extract_nectar( targets );
 }
 
-void apply_build_config( target_vector &/*targets*/ )
+void apply_build_config( target_vector& /*targets*/ )
 {
     emit_error( "nectar::apply_build_config::Not implemented." );
 }

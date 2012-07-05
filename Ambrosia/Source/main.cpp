@@ -72,11 +72,11 @@ try {
     //     << "full_directory_name() was called " << s_full_directory_name_calls << " times.\n";
 #endif*/
 }
-catch( libambrosia::error &e )
+catch( libambrosia::error& e )
 {
     e.output_message();
 }
-catch( std::exception &e )
+catch( std::exception& e )
 {
     cout << "something bad happened:\n";
     cout << e.what();

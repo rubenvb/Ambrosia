@@ -20,8 +20,8 @@
 
 libambrosia_namespace_begin
 
-syntax_error::syntax_error( const string &message, const string &filename,
-                            const size_t line_number, const string_vector &list )
+syntax_error::syntax_error( const string& message, const string& filename,
+                            const size_t line_number, const string_vector& list )
 :   nectar_error( message, filename, line_number, list )
 {   }
 

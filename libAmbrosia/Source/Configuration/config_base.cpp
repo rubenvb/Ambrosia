@@ -64,7 +64,7 @@ config_base::~config_base()
 /*
  * Setters
  **********/
-void config_base::set_source_directory( const string &source_directory )
+void config_base::set_source_directory( const string& source_directory )
 {
     if( !directory_exists(source_directory) )
         throw internal_error( "Attempting to call config_base::set_source_directory with"
@@ -75,50 +75,50 @@ void config_base::set_source_directory( const string &source_directory )
     debug(debug::config) << "config_base::set_source_directory::Adding " << m_source_directory << " to s_file_store.\n";
     s_file_cache.add_source_directory( m_source_directory );
 }
-void config_base::set_project_file( const string &project_file )
+void config_base::set_project_file( const string& project_file )
 {
     m_project_file = project_file;
 }
-bool config_base::add_config( const string &config )
+bool config_base::add_config( const string& config )
 {
     return m_config.insert( config ).second;
 }
-bool config_base::remove_config( const string &config )
+bool config_base::remove_config( const string& config )
 {
     return m_config.erase( config );
 }
 /*
  * Getters
  **********/
-string_set & config_base::config()
+string_set& config_base::config()
 {
     return m_config;
 }
-const string_set & config_base::config() const
+const string_set& config_base::config() const
 {
     return m_config;
 }
-const string & config_base::source_directory() const
+const string& config_base::source_directory() const
 {
     return m_source_directory;
 }
-const string & config_base::project_file() const
+const string& config_base::project_file() const
 {
     return m_project_file;
 }
-const string & config_base::build_directory() const
+const string& config_base::build_directory() const
 {
     return m_build_directory;
 }
-const os & config_base::target_os() const
+const os& config_base::target_os() const
 {
     return m_target_os;
 }
-const architecture & config_base::target_architecture() const
+const architecture& config_base::target_architecture() const
 {
     return m_target_architecture;
 }
-const toolchain & config_base::target_toolchain() const
+const toolchain& config_base::target_toolchain() const
 {
     return m_target_toolchain;
 }

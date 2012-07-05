@@ -85,7 +85,7 @@ const os build_os = os::Windows;
  * Windows support functions
  ****************************/
 // UTF16 -> UTF8 conversion
-const string convert_to_utf8( const wstring &utf16_string )
+const string convert_to_utf8( const wstring& utf16_string )
 {
     // get length
     int length = WideCharToMultiByte( CP_UTF8, 0,
@@ -109,7 +109,7 @@ const string convert_to_utf8( const wstring &utf16_string )
     }
 }
 // UTF8 -> UTF16 conversion
-const wstring convert_to_utf16( const string &utf8_string )
+const wstring convert_to_utf16( const string& utf8_string )
 {
     // get length
     int length = MultiByteToWideChar( CP_UTF8, 0,
@@ -143,13 +143,13 @@ time_t get_time(FILETIME const& ft)
 /*
  * Mostly platform dependently implemented functions
  ****************************************************/
-bool is_absolute_path( const string &path )
+bool is_absolute_path( const string& path )
 {
     return !PathIsRelativeW( convert_to_utf16(path).c_str() );
 }
 
 template<class output_iterator>
-void scan_directory( output_iterator it, const std::string &directory_name )
+void scan_directory( output_iterator it, const std::string& directory_name )
 {
     const wstring directory_name_wide = convert_to_utf16( directory_name );
     wstring directory_wide( directory_name_wide + L"\\*" );
@@ -169,10 +169,10 @@ void scan_directory( output_iterator it, const std::string &directory_name )
             break;
     }
 }
-template void scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string & );
+template void scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string& );
 
 template<class output_iterator>
-void recursive_scan_directory( output_iterator it, const string &relative_directory, const string &directory_name )
+void recursive_scan_directory( output_iterator it, const string& relative_directory, const string& directory_name )
 {
     const wstring directory_name_wide = convert_to_utf16( directory_name );
     const wstring relative_directory_wide = convert_to_utf16( relative_directory );
@@ -219,43 +219,43 @@ void recursive_scan_directory( output_iterator it, const string &relative_direct
     }
 }
 // explicit instantiation
-template void recursive_scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string &, const string & );
+template void recursive_scan_directory<insert_iterator<file_set> >( insert_iterator<file_set>, const string&, const string& );
 
 /*
  * Ugly workarounds
  *******************/
 #if _WIN32
 # if __GLIBCXX__
-unique_ptr<istream> open_ifstream( const string &filename )
+unique_ptr<istream> open_ifstream( const string& filename )
 {
     FILE* c_file = _wfopen( convert_to_utf16(filename).c_str(), L"r" );
     __gnu_cxx::stdio_filebuf<char>* buffer = new __gnu_cxx::stdio_filebuf<char>( c_file, std::ios_base::in, 1 );
 
     return std::unique_ptr<istream>( new istream(buffer) );
 }
-unique_ptr<ostream> open_ofstream( const string &filename )
+unique_ptr<ostream> open_ofstream( const string& filename )
 {
     FILE* c_file = _wfopen( convert_to_utf16(filename).c_str(), L"w+" );
     __gnu_cxx::stdio_filebuf<char>* buffer = new __gnu_cxx::stdio_filebuf<char>( c_file, std::ios_base::out, 1 );
     return unique_ptr<ostream>( new ostream(buffer) );
 }
 # elif _MSC_VER
-unique_ptr<ifstream> open_ifstream( const string &filename )
+unique_ptr<ifstream> open_ifstream( const string& filename )
 {
     return unique_ptr<ifstream>(new ifstream(convert_to_utf16(filename)) );
 }
-unique_ptr<ofstream> open_ofstream( const string &filename )
+unique_ptr<ofstream> open_ofstream( const string& filename )
 {
     return unique_ptr<ofstream>( new ofstream(convert_to_utf16(filename)) );
 }
 
 # else
 // Warning! unknown fstream implementation - no unicode filename support
-unique_ptr<ifstream> open_ifstream( const string &filename )
+unique_ptr<ifstream> open_ifstream( const string& filename )
 {
     return unique_ptr<ifstream>(new ifstream(filename) );
 }
-unique_ptr<ofstream> open_ofstream( const string &filename )
+unique_ptr<ofstream> open_ofstream( const string& filename )
 {
     return unique_ptr<ofstream>( new ofstream(filename) );
 }

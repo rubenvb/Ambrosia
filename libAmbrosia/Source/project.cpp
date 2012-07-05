@@ -26,13 +26,13 @@ libambrosia_namespace_begin
 
 ambrosia_config* project::configuration = NULL;
 
-project::project( ambrosia_config &ambrosia_config, file_cache &file_cache)
+project::project( ambrosia_config& ambrosia_config, file_cache& file_cache)
 :   m_file_cache(file_cache),
     m_targets()
 {
     configuration = &ambrosia_config;
 }
-project::project( file_cache &file_cache)
+project::project( file_cache& file_cache)
 :   m_file_cache(file_cache),
     m_targets()
 {   }
@@ -41,9 +41,9 @@ project::project( file_cache &file_cache)
 void project::read_project_files()
 {
     // open file
-    const string &filename = configuration->project_file();
+    const string& filename = configuration->project_file();
     auto stream_ptr = open_ifstream(filename);
-    auto &stream = *stream_ptr;
+    auto& stream = *stream_ptr;
     if(!stream )
         throw error( "Unable to open *.nectar.txt file: " + filename );
 
@@ -77,6 +77,12 @@ void project::apply_target_configuration()
 
 void project::generate_commands()
 {
+    // assume targets are in the correct dependent order
+    for(auto target_it = m_targets.begin(); target_it != m_targets.end(); ++target_it)
+    {
+        const target& current = *target_it;
+    }
+
     throw error( "generate_commands is not implemented yet." );
 }
 
