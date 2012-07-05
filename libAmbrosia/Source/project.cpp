@@ -27,13 +27,15 @@ libambrosia_namespace_begin
 ambrosia_config* project::configuration = NULL;
 
 project::project( ambrosia_config& ambrosia_config, file_cache& file_cache)
-:   m_file_cache(file_cache),
+:   m_commands(),
+    m_file_cache(file_cache),
     m_targets()
 {
     configuration = &ambrosia_config;
 }
 project::project( file_cache& file_cache)
-:   m_file_cache(file_cache),
+:   m_commands(),
+    m_file_cache(file_cache),
     m_targets()
 {   }
 
@@ -80,7 +82,7 @@ void project::generate_commands()
     // assume targets are in the correct dependent order
     for(auto target_it = m_targets.begin(); target_it != m_targets.end(); ++target_it)
     {
-        const target& current = *target_it;
+        //const target& current = **target_it;
     }
 
     throw error( "generate_commands is not implemented yet." );

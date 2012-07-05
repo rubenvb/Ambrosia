@@ -49,9 +49,9 @@ public:
     static ambrosia_config* configuration;
 
 private:
+    string_vector m_commands;
     file_cache& m_file_cache;
     target_vector m_targets;
-    string_list m_commands;
 };
 
 libambrosia_namespace_end

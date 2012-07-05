@@ -61,9 +61,7 @@ SOURCES += \
     Source/Generators/cgenerator.cpp \
     Source/Error/generator.cpp \
     Source/Error/generator_maps.cpp \
-    Source/Platform/unix.cpp \
     Source/Platform/common.cpp \
-    Source/Platform/windows.cpp \
     Source/algorithm.cpp \
     Source/debug.cpp \
     Source/enum_maps.cpp \
@@ -75,9 +73,9 @@ SOURCES += \
     Source/status.cpp \
     Source/target.cpp
 
-*win32*:SOURCES +=
-*linux*:SOURCES +=
-*mac*:SOURCES +=
+*win32*:SOURCES += Source/Platform/windows.cpp
+*linux*:SOURCES += Source/Platform/unix.cpp
+*mac*:SOURCES += Source/Platform/unix.cpp
 
 OTHER_FILES += libAmbrosia.nectar.txt
 
