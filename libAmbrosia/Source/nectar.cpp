@@ -46,7 +46,7 @@ void drink_nectar(const string& filename,
   auto stream_ptr(open_ifstream(filename));
   auto& stream = *stream_ptr;
   if(!stream)
-    return emit_error("Unable to open nectar file: " + filename);
+    throw error("Unable to open nectar file: " + filename);
 
   // read targets
   debug(debug::files) << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
@@ -57,7 +57,7 @@ void drink_nectar(const string& filename,
 
 void apply_build_config(target_vector& /*targets*/)
 {
-  emit_error("nectar::apply_build_config::Not implemented.");
+  throw error("nectar::apply_build_config::Not implemented.");
 }
 
 libambrosia_namespace_end

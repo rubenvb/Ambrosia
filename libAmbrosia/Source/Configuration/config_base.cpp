@@ -133,7 +133,7 @@ toolchain config_base::detect_toolchain() const
 }
 toolchain config_base::detect_toolchain(toolchain requested_toolchain) const
 {
-  emit_error("detect_toolchain needs to validate input");
+  throw error("detect_toolchain needs to validate input");
   return requested_toolchain;
 }
 void config_base::initialize_config()

@@ -11,6 +11,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
+#include "Ambrosia/Error/internal_error.h"
 #include "Ambrosia/status.h"
 
 // C++ includes
@@ -32,8 +33,8 @@ node::~node()
 
 void node::add_node(const target& dependency)
 {
-  if(!m_edges.insert( &dependency ).second)
-    emit_error("Double dependency for node " + m_name + ": " + dependency.name() + ".");
+  if(!m_edges.insert(&dependency).second)
+    throw internal_error("Double dependency for node " + m_name + ": " + dependency.name() + ".");
 }
 const std::string& node::name() const
 {

@@ -13,6 +13,7 @@
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/enum_maps.h"
+#include "Ambrosia/Error/commandline_error.h"
 #include "Ambrosia/file_cache.h"
 #include "Ambrosia/platform.h"
 #include "Ambrosia/status.h"
@@ -33,16 +34,14 @@ ambrosia_config::ambrosia_config()
 /*
  * Setters
  **********/
-void ambrosia_config::set_ambrosia_cross(const std::string& cross)
+void ambrosia_config::set_ambrosia_cross(const std::string& cross,
+                                         const size_t argument_number)
 {
   debug(debug::config) << "ambrosia_config::Checking and setting cross-compilation options through Ambrosia specification.\n";
 
   // verify format
   if(!wildcard_compare("*-*-*", cross))
-  {
-    emit_error("Ambrosia cross-compile specification should be of the form \'OS-Architecture-Toolchain\'.\n");
-    return;
-  }
+    throw commandline_error("Ambrosia cross-compile specification should be of the form \'OS-Architecture-Toolchain\'.\n", argument_number);
   else
     debug(debug::config) << "ambrosia_config::cross has correct format.\n";
 
@@ -62,36 +61,38 @@ void ambrosia_config::set_ambrosia_cross(const std::string& cross)
   // set the appropriate internal options
   os new_os = build_os; // shut up uninitialized warning
   if(!map_value(os_map, os_string, new_os))
-    emit_error("Specified invalid target OS: " + os_string);
+    throw commandline_error("Specified invalid target OS: " + os_string, argument_number);
   else
     m_target_os = new_os;
   architecture new_architecture = build_architecture; // shut up uninitialized warning
   if(map_value(architecture_map, architecture_string, new_architecture))
-    emit_error("Specified invalid target bitness: " + architecture_string);
+    throw commandline_error("Specified invalid target bitness: " + architecture_string, argument_number);
   else
     m_target_architecture = new_architecture;
   toolchain new_toolchain = toolchain::GNU; // shut up uninitialized warning
   if(map_value(toolchain_map, toolchain_string, new_toolchain))
-    emit_error("Specified invalid target toolchain: " + toolchain_string);
+    throw commandline_error("Specified invalid target toolchain: " + toolchain_string, argument_number);
   else
     m_target_toolchain = new_toolchain;
 }
 void ambrosia_config::set_gnu_prefix(const std::string& /*prefix*/)
 {
-    // TODO: detect and set common GNU/GCC target triplets
-    emit_error("Cross-compiling through GNU prefix has not been implemented yet.");
+  // TODO: detect and set common GNU/GCC target triplets
+  throw error("Cross-compiling through GNU prefix has not been implemented yet.");
 }
 void ambrosia_config::add_target_config_options(const std::string& target,
                                                 const string_set& options)
 {
-    string_set duplicates = merge_sets(m_target_config_options[target], options);
-    if(!duplicates.empty())
-        emit_warning("");
+  string_set duplicates = merge_sets(m_target_config_options[target], options);
+  if(!duplicates.empty())
+    emit_warning("");
+
+  throw error("add_target_config_options is unimplemented.");
 }
 
 const map_string_set_string& ambrosia_config::target_config_options() const
 {
-    return m_target_config_options;
+  return m_target_config_options;
 }
 
 libambrosia_namespace_end

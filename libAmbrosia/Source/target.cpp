@@ -14,6 +14,7 @@
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/enum_maps.h"
+#include "Ambrosia/Error/nectar_error.h"
 #include "Ambrosia/file_cache.h"
 #include "Ambrosia/platform.h"
 #include "Ambrosia/status.h"
@@ -110,7 +111,7 @@ void target::add_source_file(const file_type type,
       default:
         string_vector ambiguous;
         std::for_each(matches.begin(), matches.end(), [&ambiguous](const file& f) { ambiguous.push_back(f.first); });
-        return emit_error_list({ambiguous});
+        throw nectar_error("Ambiguity in file selection: ", filename, line_number, ambiguous);
     }
   }
   // add build config source type to determine which command generators need to be run
@@ -122,7 +123,7 @@ void target::remove_file(const file_type type,
   // search for file, check if there are any other files of the same type,
   //  and remove the "source file config" for generation phase.
   s_file_cache.match_source_files(filename, &m_build_config, m_source_directories[type]);
-  emit_error("target::remove_file::Unimplementented.");
+  throw error("target::remove_file::Unimplementented.");
 }
 bool target::add_source_directory(const file_type type,
                                   const string& directory)

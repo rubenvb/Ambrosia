@@ -185,7 +185,7 @@ void set_internal_option(const std::string& option,
   if("cross" == option)
   {
     debug(debug::commandline) << "commandline::set_internal_option::Cross-compiling for " << value << ".\n";
-    project::configuration->set_ambrosia_cross(value);
+    project::configuration->set_ambrosia_cross(value, argument_number);
   }
 #ifdef AMBROSIA_DEBUG
   else if("d" == option || "debug" == option)
