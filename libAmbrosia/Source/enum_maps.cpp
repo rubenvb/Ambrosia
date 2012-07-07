@@ -10,12 +10,12 @@
 #include "Ambrosia/enum_maps.h"
 
 // C++ includes
-/* <functional> */
-    using std::binary_function;
-/* <map> */
-    using std::map;
-/* <string> */
-    using std::string;
+#include <functional>
+  using std::binary_function;
+#include <map>
+  using std::map;
+#include <string>
+  using std::string;
 
 libambrosia_namespace_begin
 

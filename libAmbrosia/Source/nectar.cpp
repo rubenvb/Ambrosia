@@ -22,41 +22,42 @@
 
 // C++ includes
 #include <fstream>
-    using std::ifstream;
+  using std::ifstream;
 #include <iterator>
-    using std::back_insert_iterator;
+  using std::back_insert_iterator;
 #include <memory>
-    using std::unique_ptr;
-/* <set> */
-    using std::set;
-/* <string> */
-    using std::string;
-/* <vector> */
-    using std::vector;
+  using std::unique_ptr;
+#include <set>
+  using std::set;
+#include <string>
+  using std::string;
+#include <vector>
+  using std::vector;
 
 // C-ish includes
 #include <ctime>
 
 libambrosia_namespace_begin
 
-void drink_nectar( const std::string& filename, target_vector& targets )
+void drink_nectar(const string& filename,
+                  target_vector& targets )
 {
-    // open file
-    auto stream_ptr( open_ifstream(filename) );
-    auto& stream = *stream_ptr;
-    if( !stream )
-        return emit_error( "Unable to open nectar file: " + filename );
+  // open file
+  auto stream_ptr(open_ifstream(filename));
+  auto& stream = *stream_ptr;
+  if(!stream)
+    return emit_error("Unable to open nectar file: " + filename);
 
-    // read targets
-    debug(debug::files) << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
-    nectar_loader loader( filename, "", stream );
+  // read targets
+  debug(debug::files) << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
+  nectar_loader loader(filename, "", stream);
 
-    loader.extract_nectar( targets );
+  loader.extract_nectar(targets);
 }
 
-void apply_build_config( target_vector& /*targets*/ )
+void apply_build_config(target_vector& /*targets*/)
 {
-    emit_error( "nectar::apply_build_config::Not implemented." );
+  emit_error("nectar::apply_build_config::Not implemented.");
 }
 
 libambrosia_namespace_end

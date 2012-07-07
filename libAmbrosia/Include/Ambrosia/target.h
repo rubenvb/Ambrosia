@@ -27,9 +27,9 @@
 #include "Ambrosia/typedefs.h"
 
 // C++ includes
-/* <string> */
-/* <utility> */
-/* <vector> */
+#include <string>
+#include <utility>
+#include <vector>
 
 libambrosia_namespace_begin
 

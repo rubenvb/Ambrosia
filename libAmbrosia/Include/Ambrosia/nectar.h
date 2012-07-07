@@ -18,7 +18,7 @@
 // C++ includes
 #include <iterator>
 #include <memory>
-/* <set> */
+#include <set>
 #include <string>
 
 libambrosia_namespace_begin

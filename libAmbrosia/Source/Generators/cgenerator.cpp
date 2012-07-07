@@ -6,6 +6,7 @@
   *
   **/
 
+// Class include
 #include "Ambrosia/Generators/cgenerator.h"
 
 libambrosia_namespace_begin

@@ -16,29 +16,21 @@
 #include "Ambrosia/debug.h"
 #include "Ambrosia/status.h"
 #include "Ambrosia/platform.h"
-/* "typedefs.h" */
+#include "Ambrosia/typedefs.h"
 
 // C++ includes
-#include <iterator>
-    using std::insert_iterator;
-#include <algorithm>
-/* <map> */
-    using std::map;
-#include <stdexcept>
-    using std::runtime_error;
-/* <string> */
-    using std::string;
-/* <utility> */
-    using std::pair;
+#include <string>
+  using std::string;
 
 libambrosia_namespace_begin
 
-build_config::build_config( const string& subdirectory, const config_base& config )
-:   config_base( config ),
-    m_source_types(),
-    m_user_variables()
+build_config::build_config(const string& subdirectory,
+                           const config_base& config)
+: config_base(config),
+  m_source_types(),
+  m_user_variables()
 {
-    m_source_directory = full_directory_name( m_source_directory, subdirectory );
+  m_source_directory = full_directory_name( m_source_directory, subdirectory );
 }
 
 /*

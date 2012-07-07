@@ -22,8 +22,8 @@
 
 // C++ includes
 #include <iosfwd>
-/* <utility> */
-/* <vector> */
+#include <utility>
+#include <vector>
 
 libambrosia_namespace_begin
 
