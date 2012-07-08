@@ -10,6 +10,7 @@
 #define AMBROSIA_DEBUG_H
 
 // Ambrosia includes
+#include "Ambrosia/enums.h"
 #include "Ambrosia/Error/internal_error.h"
 #include "Ambrosia/global.h"
 #include "Ambrosia/typedefs.h"
@@ -36,6 +37,7 @@ public:
     platform      = 1 << 8,
     status        = 1 << 9,
     config        = 1 << 10,
+    command_gen   = 1 << 11,
     initial       = 1 << 30,
     always        = 0xffffffff
     // ...
@@ -87,10 +89,12 @@ private:
 #ifdef AMBROSIA_DEBUG
 extern const std::map<std::string, debug::type> debug_map;
 extern const std::map<debug::type, std::string> debug_map_inverse;
-#endif // AMBROSIA_DEBUG
 
 template<>
 debug& debug::operator<<(const string_set&);
+template<>
+debug& debug::operator<<(const std::set<file_type>&);
+#endif // AMBROSIA_DEBUG
 
 libambrosia_namespace_end
 

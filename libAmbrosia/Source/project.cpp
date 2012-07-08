@@ -83,7 +83,17 @@ void project::generate_commands()
   // assume targets are in the correct dependent order
   for(auto target_it = m_targets.begin(); target_it != m_targets.end(); ++target_it)
   {
-    //const target& current = **target_it;
+    const target& current = **target_it;
+    if(current.name().find("::global") != string::npos)
+    {
+      debug(debug::command_gen) << "Skipping generation of build commands for target: " << current.name() << "\n";
+      continue;
+    }
+
+    debug(debug::command_gen) << "Generating build commands for target: " << current.name() << "\n"
+                              << "for the following types of source files:\n"
+                              << current.config().m_source_types << "\n";
+
   }
 
   throw error("generate_commands is not implemented yet.");
