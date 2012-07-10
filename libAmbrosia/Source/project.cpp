@@ -84,7 +84,7 @@ void project::generate_commands()
   for(auto target_it = m_targets.begin(); target_it != m_targets.end(); ++target_it)
   {
     const target& current = **target_it;
-    if(current.name().find("::global") != string::npos)
+    if(current.m_type == target_type::global)
     {
       debug(debug::command_gen) << "Skipping generation of build commands for target: " << current.name() << "\n";
       continue;
@@ -92,7 +92,8 @@ void project::generate_commands()
 
     debug(debug::command_gen) << "Generating build commands for target: " << current.name() << "\n"
                               << "for the following types of source files:\n"
-                              << current.config().m_source_types << "\n";
+                              << current.m_build_config.m_source_types << "\n";
+
 
   }
 

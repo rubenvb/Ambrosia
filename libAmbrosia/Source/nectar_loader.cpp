@@ -123,7 +123,7 @@ void nectar_loader::extract_nectar(target_vector& targets)
           if(!next_token(token) && "{" == token)
             throw syntax_error("Expected '{' after " + map_value(target_type_map_inverse, type) + " target name.", m_filename, m_line_number);
 
-          targets.emplace_back(std::unique_ptr<target>(new target(target_name, type, dependencies, targets[0]->config())));
+          targets.emplace_back(std::unique_ptr<target>(new target(target_name, type, dependencies, targets[0]->m_build_config)));
 
           p_target = targets.back().get();
           parse_target();
@@ -190,6 +190,55 @@ void nectar_loader::syntax_warning(const string& message,
 /*
  * Lexing
  *********/
+/* replacement written quickly by DeadMG. Look into this.
+bool nectar_loader::next_token(string& token,
+                               const set<char>& special_characters)
+{
+  token.clear();
+  char c;
+  auto addchar = [&] { token.append(1, c); };
+  m_stream.get(c);
+  if (contains(special_characters, c)) {
+    addchar();
+    return true;
+  }
+  // Consume but don't do anything with whitespace
+  if (std::isspace(c, m_stream.getloc())) {
+    return next_token(token, special_characters);
+  }
+  switch(c) {
+    case '"': {
+      //addchar();
+      while(m_stream.get(c) && c != '"') {
+        // Something about first char being whitespace exception
+        if (c == '\n') // exception
+        addchar();
+      }
+      if (!m_stream) // exception
+      //addchar();
+      return true;
+    }
+    case '\n': {
+      ++m_line_number;
+      return next_token(token, special_characters);
+    }
+    case '#': {
+      while(m_stream.get(c) && c != '\n');
+      if (!m_stream) // unterminated comment exception
+      m_stream.putback('\n');
+      return next_token(token, special_characters);
+    }
+  }
+  // Identifier, I *think*
+  // Hard to extract the original logic..
+  // So I just went with the traditional [a-zA-Z_] regex.
+  addchar();
+  while(m_stream.get(c) && ((c >= 'a' && c <= '\z') || (c >= 'A' && c <= 'Z') || c == '_'))
+    addchar();
+  m_stream.putback(c);
+    return true;
+}
+*/
 bool nectar_loader::next_token(string& token,
                                const set<char>& special_characters)
 {
@@ -213,7 +262,7 @@ bool nectar_loader::next_token(string& token,
       else if(token.empty() && std::isspace(c, m_stream.getloc()))
         throw syntax_error("Beginning quote must not be followed by a whitespace.", m_filename, m_line_number);
       else
-        goto add_char;
+        token.append(1, c);
     }
     else
     {
@@ -250,7 +299,7 @@ bool nectar_loader::next_token(string& token,
           ++m_line_number;
         }
         else
-          goto add_char;
+          token.append(1, c);
       }
       else if(std::isspace(c, m_stream.getloc()) || contains(special_characters, c))
       { // special characters or whitespace seperate tokens
@@ -259,12 +308,8 @@ bool nectar_loader::next_token(string& token,
         break;
       }
       else if('\"' == c)
-      {
         throw syntax_error("Beginning quotes must be preceded by a whitespace or a special character.", m_filename, m_line_number);
-        return false;
-      }
       else
-        add_char:
         token.append(1, c);
     }
   }
@@ -521,8 +566,8 @@ void nectar_loader::process_dependency_list_conditional()
 
 void nectar_loader::process_inner_conditional()
 {
-  debug(debug::parser) << "nectar_loader::process_inner_conditional::Using target config:\n" << p_target->config().config() << "\n";
-  if(test_condition([this](const string& item){ return contains(p_target->config().config(), item); }))
+  debug(debug::parser) << "nectar_loader::process_inner_conditional::Using target config:\n" << p_target->m_build_config.config() << "\n";
+  if(test_condition([this](const string& item){ return contains(p_target->m_build_config.config(), item); }))
     debug(debug::parser) << "nectar_loader::process_inner_conditional::condition returned true, nothing to skip.\n";
   else
   {
@@ -595,7 +640,7 @@ void nectar_loader::parse_library_list()
   {
     // LIBS items must be of the form '-lsomelib' or '-Lsomedirectory'
     if(token.size() <= 2)
-      goto return_error;
+      throw syntax_error("LIBS items must be of the form \'-lsomelib\'' and/or \'-Lsomedirectory\'", m_filename, m_line_number);
     else if(!token.compare(0, 2, "-l"))
     {
       token = token.substr(2);
@@ -616,16 +661,13 @@ void nectar_loader::parse_library_list()
       }
     }
     else
-    {
-      return_error:
       throw syntax_error("LIBS items must be of the form \'-lsomelib\'' and/or \'-Lsomedirectory\'", m_filename, m_line_number);
-    }
   }
 }
 
 void nectar_loader::parse_target()
 {
-  const target_type type = p_target->type();
+  const target_type type = p_target->m_type;
   const std::string target_name(p_target->name());
   debug(debug::parser) << "nectar_loader::parse_target::Processing named target section: " << target_name << ".\n";
   size_t curly_brace_count = 1; // parsing starts inside curly braces block
@@ -643,7 +685,7 @@ void nectar_loader::parse_target()
     else if("CONFIG" == token)
     {
       debug(debug::parser) << "nectar_loader::parse_target::CONFIG detected.\n";
-      parse_variable_list(p_target->config().config());
+      parse_variable_list(p_target->m_build_config.config());
     }
     else if ("NAME" == token)
     {
@@ -659,7 +701,7 @@ void nectar_loader::parse_target()
       {
         if("\n" != token)
         {
-          p_target->set_output_name(token);
+          p_target->m_output_name = token;
           continue;
         }
       }

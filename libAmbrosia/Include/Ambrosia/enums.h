@@ -80,24 +80,7 @@ enum class file_type
   Qt_rc
   // ...
 };
-inline file_type get_general_type( const file_type type )
-{
-  switch( type )
-  {
-    case file_type::source:
-    case file_type::source_c:
-    case file_type::source_cxx:
-    case file_type::source_java:
-    case file_type::source_fortran:
-      return file_type::source;
-    case file_type::header:
-    case file_type::header_c:
-    case file_type::header_cxx:
-      return file_type::header;
-    default:
-      return type;
-  }
-}
+
 enum class generator_string
 {
   compiler, // compiler program name (without target prefixes)

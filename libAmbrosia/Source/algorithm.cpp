@@ -284,7 +284,7 @@ void dependency_resolve(target_vector& unsorted,
   unresolved.push_back(std::move(*node));
   unsorted.erase(unsorted.begin());
 
-  const auto edges = unresolved.back()->dependencies();
+  const auto edges = unresolved.back()->m_dependencies;
   const auto end = edges.end();
   for(auto it = edges.begin(); it != end; ++it)
   {
