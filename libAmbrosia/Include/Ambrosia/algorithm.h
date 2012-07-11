@@ -1,10 +1,20 @@
 /**
-  * Ambrosia/algorithm.h
-  * Ambrosia's handy semi-generic algorithms.
-  *
-  * Author: Ruben Van Boxem
-  *
-  **/
+ *
+ * Project Ambrosia: Ambrosia library
+ *
+ * Written in 2012 by Ruben Van Boxem <vanboxem.ruben@gmail.com>
+ *
+ * To the extent possible under law, the author(s) have dedicated all copyright and related
+ * and neighboring rights to this software to the public domain worldwide. This software is
+ * distributed without any warranty.
+ *
+ * You should have received a copy of the CC0 Public Domain Dedication along with this software.
+ * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
+ *
+ * Ambrosia/algorithm.h
+ * Ambrosia's handy semi-generic algorithms.
+ *
+ **/
 
 #ifndef AMBROSIA_ALGORITHM_H
 #define AMBROSIA_ALGORITHM_H
@@ -199,7 +209,6 @@ inline file_type detect_type(const file_type general_type, const std::string& fi
       return general_type;
   }
 }
-
 
 // Dependency resolving algorithm
 void dependency_resolve(target_vector& unsorted,

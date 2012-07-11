@@ -1,14 +1,24 @@
 /**
-  * Parser/nectar_loader.h
-  * Class that extracts principal information from the project file:
-  *  - canonical tokenization
-  *  - target names
-  *  - dependencies
-  *  - TODO: user options
-  *
-  * Author: Ruben Van Boxem
-  *
-  **/
+ *
+ * Project Ambrosia: Ambrosia library
+ *
+ * Written in 2012 by Ruben Van Boxem <vanboxem.ruben@gmail.com>
+ *
+ * To the extent possible under law, the author(s) have dedicated all copyright and related
+ * and neighboring rights to this software to the public domain worldwide. This software is
+ * distributed without any warranty.
+ *
+ * You should have received a copy of the CC0 Public Domain Dedication along with this software.
+ * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
+ *
+ * Parser/nectar_loader.h
+ * Class that extracts principal information from the project file:
+ *  - canonical tokenization
+ *  - target names
+ *  - dependencies
+ *  - TODO: user options
+ *
+ **/
 
 #ifndef AMBROSIA_NECTAR_LOADER_H
 #define AMBROSIA_NECTAR_LOADER_H
