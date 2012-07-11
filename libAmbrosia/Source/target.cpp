@@ -139,13 +139,13 @@ void target::remove_library(const string& library)
   if(m_libraries.erase(library))
     emit_warning_list( {library} );
 }
-/*void target::set_output_name(const std::string& name)
+const file_set& target::source_files(const file_type type) const
 {
-  m_output_name = name;
-}*/
+  const auto it = m_source_files.find(type);
+  if(it == m_source_files.end() || (*it).second.empty())
+    throw internal_error("target::source_files called with a file_type for which no source files are present");
 
-/*
- * Private functions
- ********************/
+  return (*it).second;
+}
 
 libambrosia_namespace_end

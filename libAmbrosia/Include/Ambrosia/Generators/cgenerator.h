@@ -13,7 +13,7 @@
  *
  * Ambrosia/Generators/cgenerator.cpp
  * Command generator for C-style languages.
- *  Base class for C++(, ObjC, ObjC++)
+ *  Base class for C(, ObjC, ObjC++)
  *
  **/
 
@@ -24,14 +24,21 @@
 #include "Ambrosia/global.h"
 
 // libAmbrosia includes
+#include "Ambrosia/Generators/generator.h"
 #include "Ambrosia/typedefs.h"
 
 libambrosia_namespace_begin
 
-class cgenerator
+// Forward declarations
+class build_config;
+
+class cgenerator : public generator
 {
 public:
-  cgenerator();
+  cgenerator(const build_config& config);
+  virtual ~cgenerator();
+
+  virtual bool next_command(std::string& command);
 };
 
 libambrosia_namespace_end

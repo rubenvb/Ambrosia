@@ -19,9 +19,34 @@
 // Class include
 #include "Ambrosia/Generators/generator.h"
 
+// libAmbrosia includes
+#include "Ambrosia/algorithm.h"
+#include "Ambrosia/enum_maps.h"
+#include "Ambrosia/Error/internal_error.h"
+#include "Ambrosia/Generators/cgenerator.h"
+#include "Ambrosia/Generators/cxxgenerator.h"
+
+// C++ includes
+#include <memory>
+  using std::unique_ptr;
+
 libambrosia_namespace_begin
 
-generator::generator()
+generator::generator(const build_config& /*config*/)
 {  }
+
+unique_ptr<generator> get_generator(const file_type type, const build_config& config)
+{
+  switch(type)
+  {
+    case file_type::source_c:
+      return unique_ptr<generator>(new cgenerator(config));
+    case file_type::source_cxx:
+      return unique_ptr<generator>(new cxxgenerator(config));
+    default:
+      throw internal_error("invalid command generator requested: " + map_value(file_type_map_inverse, type) + ".");
+  }
+}
+
 
 libambrosia_namespace_end

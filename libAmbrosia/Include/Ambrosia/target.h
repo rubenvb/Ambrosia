@@ -69,6 +69,7 @@ public:
                         const std::string& directory);
   bool add_library(const std::string& library);
   void remove_library(const std::string& library);
+  const file_set& source_files(const file_type type) const;
 
   build_config m_build_config; // build configuration, inherited from global target's build_config
   const dependency_set m_dependencies; // dependency+type

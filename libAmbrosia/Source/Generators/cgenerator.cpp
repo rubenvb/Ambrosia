@@ -19,9 +19,13 @@
 // Class include
 #include "Ambrosia/Generators/cgenerator.h"
 
+// libAmbrosia includes
+#include "Ambrosia/Configuration/build_config.h"
+
 libambrosia_namespace_begin
 
-cgenerator::cgenerator()
+cgenerator::cgenerator(const build_config& config)
+: generator(config)
 {   }
 
 libambrosia_namespace_end

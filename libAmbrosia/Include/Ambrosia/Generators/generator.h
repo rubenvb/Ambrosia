@@ -22,13 +22,28 @@
 // Global include
 #include "Ambrosia/global.h"
 
+// libAmbrosia includes
+#include "Ambrosia/enums.h"
+
+// C++ includes
+#include <memory>
+#include <string>
+
 libambrosia_namespace_begin
+
+// Forward declarations
+class build_config;
 
 class generator
 {
 public:
-  generator();
+  generator(const build_config& config);
+  virtual ~generator();
+
+  virtual bool next_command(std::string& command) = 0;
 };
+
+std::unique_ptr<generator> get_generator(const file_type type, const build_config& config);
 
 libambrosia_namespace_end
 

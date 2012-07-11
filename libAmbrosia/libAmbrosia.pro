@@ -59,7 +59,8 @@ HEADERS += \
     Include/Ambrosia/Error/internal_error.h \
     Include/Ambrosia/Generators/cgenerator.h \
     Include/Ambrosia/Generators/generator.h \
-    Include/Ambrosia/Generators/generator_maps.h
+    Include/Ambrosia/Generators/generator_maps.h \
+    Include/Ambrosia/Generators/cxxgenerator.h
 
 SOURCES += \
     Source/Configuration/ambrosia_config.cpp \
@@ -84,7 +85,8 @@ SOURCES += \
     Source/node.cpp \
     Source/project.cpp \
     Source/status.cpp \
-    Source/target.cpp
+    Source/target.cpp \
+    Source/Generators/cxxgenerator.cpp
 
 *win32*:SOURCES += Source/Platform/windows.cpp
 *linux*:SOURCES += Source/Platform/unix.cpp

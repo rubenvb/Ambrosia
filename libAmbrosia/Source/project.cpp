@@ -24,9 +24,12 @@
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/Error/error.h"
+#include "Ambrosia/Generators/generator.h"
 #include "Ambrosia/nectar_loader.h"
 
 // C++ includes
+#include <memory>
+  using std::unique_ptr;
 #include <string>
   using std::string;
 #include <fstream>
@@ -96,17 +99,20 @@ void project::generate_commands()
     const target& current = **target_it;
     if(current.m_type == target_type::global)
     {
-      debug(debug::command_gen) << "Skipping generation of build commands for target: " << current.name() << "\n";
+      debug(debug::command_gen) << "project::generate_commands::Skipping generation of build commands for target: " << current.name() << "\n";
       continue;
     }
+    debug(debug::command_gen) << "project::generate_commands::Generating build commands for target: " << current.name() << "\n"
+                              << "\tfor the following types of source files:\n"
+                              << "\t" << current.m_build_config.m_source_types << "\n";
 
-    debug(debug::command_gen) << "Generating build commands for target: " << current.name() << "\n"
-                              << "for the following types of source files:\n"
-                              << current.m_build_config.m_source_types << "\n";
-
-
+    for(auto type_it = current.m_build_config.m_source_types.begin(); type_it != current.m_build_config.m_source_types.end(); ++type_it)
+    {
+      const auto& type = *type_it;
+      //const auto& source_files = current.source_files(type);
+      unique_ptr<generator> generator = get_generator(type, current.m_build_config);
+    }
   }
-
   throw error("generate_commands is not implemented yet.");
 }
 
