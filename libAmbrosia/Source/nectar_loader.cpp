@@ -117,7 +117,7 @@ void nectar_loader::extract_nectar(target_vector& targets)
     }
     else if("app" == token || "lib" == token)
     {
-      const target_type type((*target_type_map.find(token)).second);
+      const target_type type = map_value(target_type_map, token);
       debug(debug::parser) << "nectar_loader::extract_nectar::" << token << " section found at line " << m_line_number << ".\n";
       if(next_token(token))
       {
@@ -133,7 +133,7 @@ void nectar_loader::extract_nectar(target_vector& targets)
           if(!next_token(token) && "{" == token)
             throw syntax_error("Expected '{' after " + map_value(target_type_map_inverse, type) + " target name.", m_filename, m_line_number);
 
-          targets.emplace_back(std::unique_ptr<target>(new target(target_name, type, dependencies, targets[0]->m_build_config)));
+          targets.emplace_back(new target(target_name, type, dependencies, targets[0]->m_build_config));
 
           p_target = targets.back().get();
           parse_target();
