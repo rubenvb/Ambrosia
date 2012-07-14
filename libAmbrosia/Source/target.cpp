@@ -81,7 +81,8 @@ void target::add_source_file(const file_type type,
     const file_set matches = s_file_cache.match_source_files(filename, &m_build_config, m_source_directories[type]);
     if(matches.empty())
       return emit_nectar_error("No files matching " + filename + " found.", nectar_file, line_number);
-    //FIXME: this should add files to m_source_files and check for ambiguities like below
+
+
   }
   else
   {
@@ -147,7 +148,7 @@ const file_set& target::source_files(const file_type type) const
   {
     debug(debug::target) << "target::source_files::Attempt at getting at source file_set for " << map_value(file_type_map_inverse, type)
                          << " which is either nonexistent or empty.\n";
-    throw internal_error("target::source_files called with a file_type for which no source files are present");
+    throw internal_error("target::source_files called with a file_type for which no source files are present.");
   }
   return (*it).second;
 }

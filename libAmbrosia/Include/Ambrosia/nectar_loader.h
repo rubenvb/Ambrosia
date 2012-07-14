@@ -51,7 +51,7 @@ public:
                 const dependency_set& list = {});
   ~nectar_loader();
 
-  void extract_nectar(target_vector& targets);
+  void extract_nectar(project& project);
 
   // Disallow copy(constructor)ing and assignment (shuts up warning of -Weffc++)
   nectar_loader& operator=(const nectar_loader&) = delete;

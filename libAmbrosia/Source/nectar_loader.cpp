@@ -84,7 +84,7 @@ nectar_loader::nectar_loader(const string& full_filename,
 nectar_loader::~nectar_loader()
 {   }
 
-void nectar_loader::extract_nectar(target_vector& targets)
+void nectar_loader::extract_nectar(project& project)
 {
   debug(debug::nectar_parser) << "nectar_loader::extract_nectar::Processing file: " << m_filename << ".\n";
 
@@ -92,7 +92,7 @@ void nectar_loader::extract_nectar(target_vector& targets)
   skip_BOM(m_stream, m_filename);
 
   // create global target
-  targets.emplace_back(unique_ptr<target>(new target(m_subdirectory, {}, *project::configuration)));
+  project.m_targets.emplace_back(unique_ptr<target>(new target(m_subdirectory, {}, *project::configuration)));
 
   string token;
   while(next_token(token))
@@ -109,7 +109,7 @@ void nectar_loader::extract_nectar(target_vector& targets)
       m_global_processed = true;
       if(next_token(token) && "{" == token)
       {
-        p_target = targets[0].get();
+        p_target = project.m_targets[0].get();
         parse_target();
       }
       else
@@ -133,9 +133,9 @@ void nectar_loader::extract_nectar(target_vector& targets)
           if(!next_token(token) && "{" == token)
             throw syntax_error("Expected \'{\' after " + map_value(target_type_map_inverse, type) + " target name.", m_filename, m_line_number);
 
-          targets.emplace_back(new target(m_subdirectory, target_name, type, dependencies, targets[0]->m_build_config));
+          project.m_targets.emplace_back(new target(m_subdirectory, target_name, type, dependencies, project.m_targets[0]->m_build_config));
 
-          p_target = targets.back().get();
+          p_target = project.m_targets.back().get();
           parse_target();
         }
       }
@@ -171,7 +171,7 @@ void nectar_loader::extract_nectar(target_vector& targets)
           read_dependency_list(dependencies);
 
           nectar_loader subloader(subproject_filename, full_directory_name(m_subdirectory, token), stream, dependencies);
-          subloader.extract_nectar(targets);
+          subloader.extract_nectar(project);
         }
         else // opening file failed
           throw nectar_error("Error opening subproject file: " + full_subproject_filename + ".",  m_filename, m_line_number);

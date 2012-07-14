@@ -21,11 +21,9 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
-#include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
-#include "Ambrosia/file_cache.h"
 #include "Ambrosia/platform.h"
-#include "Ambrosia/status.h"
+#include "Ambrosia/project.h"
 #include "Ambrosia/target.h"
 #include "Ambrosia/typedefs.h"
 #include "Ambrosia/nectar_loader.h"
@@ -49,20 +47,20 @@
 
 libambrosia_namespace_begin
 
-void drink_nectar(const string& filename,
-                  target_vector& targets )
+void drink_nectar(project& project)
 {
   // open file
+  const string& filename = project.configuration->project_file();
   auto stream_ptr(open_ifstream(filename));
   auto& stream = *stream_ptr;
   if(!stream)
-    throw error("Unable to open nectar file: " + filename);
+    throw error("Unable to open *.nectar.txt file: " + filename);
 
   // read targets
   debug(debug::files) << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
   nectar_loader loader(filename, "", stream);
 
-  loader.extract_nectar(targets);
+  loader.extract_nectar(project);
 }
 
 void apply_build_config(target_vector& /*targets*/)

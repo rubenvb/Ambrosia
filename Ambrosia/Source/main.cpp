@@ -19,12 +19,13 @@
 // Ambrosia includes
 #include "commandline.h"
 #include "help_and_version_output.h"
-using namespace ambrosia;
 
 // libAmbrosia includes
 #include "Ambrosia/Error/error.h"
 #include "Ambrosia/file_cache.h"
 #include "Ambrosia/project.h"
+
+using namespace ambrosia;
 
 // C-ish includes
 #include <cstdlib>
@@ -56,7 +57,8 @@ try {
 
   apply_commandline_options(string_vector(argv+1, argv+argc), file_cache);
 
-  project.read_project_files();
+  //project.read_project_files();
+  drink_nectar(project);
 #ifdef AMBROSIA_DEBUG
   const double project_read_time = difftime(time(0), t);
   t = time(0);

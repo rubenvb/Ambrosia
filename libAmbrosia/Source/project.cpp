@@ -42,34 +42,17 @@ ambrosia_config* project::configuration = NULL;
 
 project::project(ambrosia_config& ambrosia_config,
                  file_cache& file_cache)
-: m_commands(),
-  m_file_cache(file_cache),
-  m_targets()
+: m_targets(),
+  m_commands(),
+  m_file_cache(file_cache)
 {
   configuration = &ambrosia_config;
 }
 project::project(file_cache& file_cache)
-: m_commands(),
-  m_file_cache(file_cache),
-  m_targets()
+: m_targets(),
+  m_commands(),
+  m_file_cache(file_cache)
 {   }
-
-// read project file(s) and store the info and dependencies in target_list
-void project::read_project_files()
-{
-  // open file
-  const string& filename = configuration->project_file();
-  auto stream_ptr = open_ifstream(filename);
-  auto& stream = *stream_ptr;
-  if(!stream )
-    throw error("Unable to open *.nectar.txt file: " + filename);
-
-  // read targets
-  debug(debug::files) << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
-  nectar_loader loader(filename, "", stream);
-
-  loader.extract_nectar(m_targets);
-}
 
 // Filter target_list and sort the targets that need to be built.
 void project::apply_target_configuration()
@@ -100,7 +83,7 @@ void project::generate_commands()
     const target& current = **target_it;
     if(current.m_type == target_type::global)
     {
-      debug(debug::command_gen) << "project::generate_commands::Skipping generation of build commands for target: " << current.name() << "\n";
+      debug(debug::command_gen) << "project::generate_commands::Skipping generation of build commands for target: " << current.name() << ".\n";
       continue;
     }
     debug(debug::command_gen) << "project::generate_commands::Generating build commands for target: " << current.name() << "\n"

@@ -42,8 +42,6 @@ public:
   project(ambrosia_config& ambrosia_config,
           file_cache& file_cache);
 
-  void read_project_files();
-
   // Determine projects to be built and apply build configuration.
   void apply_target_configuration();
 
@@ -57,12 +55,13 @@ public:
   // Run the build commands.
   void execute_build_commands();
 
+  target_vector m_targets;
+
   static ambrosia_config* configuration;
 
 private:
   string_vector m_commands;
   file_cache& m_file_cache;
-  target_vector m_targets;
 };
 
 libambrosia_namespace_end
