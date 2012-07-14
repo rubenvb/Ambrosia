@@ -20,12 +20,21 @@
 #include "Ambrosia/Generators/cxxgenerator.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Configuration/build_config.h"
+#include "Ambrosia/target.h"
 
 libambrosia_namespace_begin
 
-cxxgenerator::cxxgenerator(const build_config& config)
-: cgenerator(config)
+cxxgenerator::cxxgenerator(const target& target)
+: cgenerator(target)
 {   }
+
+cxxgenerator::~cxxgenerator()
+{   }
+
+bool cxxgenerator::next_command(std::string& /*command*/)
+{
+  return false;
+}
+
 
 libambrosia_namespace_end

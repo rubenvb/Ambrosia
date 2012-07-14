@@ -32,17 +32,21 @@
 
 libambrosia_namespace_begin
 
-generator::generator(const build_config& /*config*/)
+generator::generator(const target& target)
+: m_target(target)
 {  }
 
-unique_ptr<generator> get_generator(const file_type type, const build_config& config)
+generator::~generator()
+{   }
+
+unique_ptr<generator> get_generator(const file_type type, const target& target)
 {
   switch(type)
   {
     case file_type::source_c:
-      return unique_ptr<generator>(new cgenerator(config));
+      return unique_ptr<generator>(new cgenerator(target));
     case file_type::source_cxx:
-      return unique_ptr<generator>(new cxxgenerator(config));
+      return unique_ptr<generator>(new cxxgenerator(target));
     default:
       throw internal_error("invalid command generator requested: " + map_value(file_type_map_inverse, type) + ".");
   }

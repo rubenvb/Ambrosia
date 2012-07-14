@@ -51,7 +51,8 @@ public:
          const dependency_set& dependencies,
          const ambrosia_config& config);
   // other targets are based off of global
-  target(const std::string& name,
+  target(const std::string& subdirectory,
+         const std::string& name,
          const target_type type,
          const dependency_set& dependencies,
          const build_config& config);

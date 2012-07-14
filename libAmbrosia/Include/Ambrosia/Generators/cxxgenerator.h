@@ -25,12 +25,12 @@
 libambrosia_namespace_begin
 
 // Forward declarations
-class build_config;
+class target;
 
 class cxxgenerator : public cgenerator
 {
 public:
-  cxxgenerator(const build_config& config);
+  cxxgenerator(const target& target);
   virtual ~cxxgenerator();
 
   bool next_command(std::string& command);

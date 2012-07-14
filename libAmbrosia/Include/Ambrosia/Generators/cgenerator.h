@@ -30,15 +30,18 @@
 libambrosia_namespace_begin
 
 // Forward declarations
-class build_config;
+class target;
 
 class cgenerator : public generator
 {
 public:
-  cgenerator(const build_config& config);
+  cgenerator(const target& target);
   virtual ~cgenerator();
 
   virtual bool next_command(std::string& command);
+
+private:
+  file_set::const_iterator current;
 };
 
 libambrosia_namespace_end

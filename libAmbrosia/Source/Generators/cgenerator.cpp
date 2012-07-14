@@ -20,12 +20,29 @@
 #include "Ambrosia/Generators/cgenerator.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Configuration/build_config.h"
+#include "Ambrosia/target.h"
+
+// C++ includes
+#include <sstream>
+  using std::ostringstream;
 
 libambrosia_namespace_begin
 
-cgenerator::cgenerator(const build_config& config)
-: generator(config)
+cgenerator::cgenerator(const target& target)
+: generator(target),
+  current(target.source_files(file_type::source_c).begin())
 {   }
+
+cgenerator::~cgenerator()
+{   }
+
+bool cgenerator::next_command(std::string& command)
+{
+
+  ostringstream stream;
+  stream << command;
+
+  return false;
+}
 
 libambrosia_namespace_end

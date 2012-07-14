@@ -44,20 +44,21 @@ libambrosia_namespace_begin
 target::target(const string& subdirectory,
                const dependency_set& dependencies,
                const ambrosia_config& config)
-: node(subdirectory + "::global"),
+: node(subdirectory + "::global"), //TODO: fix for multilevel subdirectories
   m_build_config(subdirectory, config),
   m_dependencies(dependencies),
-  m_output_name(subdirectory + "::global"),
+  m_output_name(),
   m_type(target_type::global),
   m_source_directories(),
   m_source_files(),
   m_libraries()
 {   }
-target::target(const string& name,
+target::target(const string& subdirectory,
+               const string& name,
                const target_type type,
                const dependency_set& dependencies,
                const build_config& config)
-: node(name),
+: node(subdirectory + "::" + name), //TODO: fix for multilevel subdirectories
   m_build_config(config),
   m_dependencies(dependencies),
   m_output_name(name),
@@ -143,8 +144,11 @@ const file_set& target::source_files(const file_type type) const
 {
   const auto it = m_source_files.find(type);
   if(it == m_source_files.end() || (*it).second.empty())
+  {
+    debug(debug::target) << "target::source_files::Attempt at getting at source file_set for " << map_value(file_type_map_inverse, type)
+                         << " which is either nonexistent or empty.\n";
     throw internal_error("target::source_files called with a file_type for which no source files are present");
-
+  }
   return (*it).second;
 }
 

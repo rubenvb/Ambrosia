@@ -23,6 +23,7 @@
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
+#include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/error.h"
 #include "Ambrosia/Generators/generator.h"
 #include "Ambrosia/nectar_loader.h"
@@ -109,8 +110,14 @@ void project::generate_commands()
     for(auto type_it = current.m_build_config.m_source_types.begin(); type_it != current.m_build_config.m_source_types.end(); ++type_it)
     {
       const auto& type = *type_it;
-      //const auto& source_files = current.source_files(type);
-      unique_ptr<generator> generator = get_generator(type, current.m_build_config);
+      debug(debug::command_gen) << "project::generate_commands::Generating commands for " << map_value(file_type_map_inverse, type) << " files.\n";
+      unique_ptr<generator> generator = get_generator(type, current);
+      const auto& source_files = current.source_files(type);
+      for(auto file_it = source_files.begin(); file_it != source_files.end(); ++file_it)
+      {
+
+      }
+
     }
   }
   throw error("generate_commands is not implemented yet.");

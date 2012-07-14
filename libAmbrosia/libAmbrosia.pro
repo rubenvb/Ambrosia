@@ -73,8 +73,6 @@ SOURCES += \
     Source/Error/soft_error.cpp \
     Source/Error/syntax_error.cpp \
     Source/Generators/cgenerator.cpp \
-    Source/Error/generator.cpp \
-    Source/Error/generator_maps.cpp \
     Source/Platform/common.cpp \
     Source/algorithm.cpp \
     Source/debug.cpp \
@@ -86,7 +84,9 @@ SOURCES += \
     Source/project.cpp \
     Source/status.cpp \
     Source/target.cpp \
-    Source/Generators/cxxgenerator.cpp
+    Source/Generators/cxxgenerator.cpp \
+    Source/Generators/generator.cpp \
+    Source/Generators/generator_maps.cpp
 
 *win32*:SOURCES += Source/Platform/windows.cpp
 *linux*:SOURCES += Source/Platform/unix.cpp

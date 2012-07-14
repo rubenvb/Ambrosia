@@ -32,18 +32,21 @@
 libambrosia_namespace_begin
 
 // Forward declarations
-class build_config;
+class target;
 
 class generator
 {
 public:
-  generator(const build_config& config);
+  generator(const target& target);
   virtual ~generator();
 
   virtual bool next_command(std::string& command) = 0;
+
+protected:
+  const target& m_target;
 };
 
-std::unique_ptr<generator> get_generator(const file_type type, const build_config& config);
+std::unique_ptr<generator> get_generator(const file_type type, const target& target);
 
 libambrosia_namespace_end
 

@@ -106,14 +106,14 @@ void nectar_loader::extract_nectar(target_vector& targets)
       if(m_global_processed)
         throw syntax_error("Second global section found in nectar file. Only one global section per *.nectar.txt file is allowed.", m_filename, m_line_number);
 
-    m_global_processed = true;
-    if(next_token(token) && "{" == token)
-    {
-      p_target = targets[0].get();
-      parse_target();
-    }
-    else
-      throw syntax_error("\'global\' must be followed by \'{\'.", m_filename, m_line_number);
+      m_global_processed = true;
+      if(next_token(token) && "{" == token)
+      {
+        p_target = targets[0].get();
+        parse_target();
+      }
+      else
+        throw syntax_error("\'global\' must be followed by \'{\'.", m_filename, m_line_number);
     }
     else if("app" == token || "lib" == token)
     {
@@ -131,9 +131,9 @@ void nectar_loader::extract_nectar(target_vector& targets)
           read_dependency_list(dependencies);
 
           if(!next_token(token) && "{" == token)
-            throw syntax_error("Expected '{' after " + map_value(target_type_map_inverse, type) + " target name.", m_filename, m_line_number);
+            throw syntax_error("Expected \'{\' after " + map_value(target_type_map_inverse, type) + " target name.", m_filename, m_line_number);
 
-          targets.emplace_back(new target(target_name, type, dependencies, targets[0]->m_build_config));
+          targets.emplace_back(new target(m_subdirectory, target_name, type, dependencies, targets[0]->m_build_config));
 
           p_target = targets.back().get();
           parse_target();
