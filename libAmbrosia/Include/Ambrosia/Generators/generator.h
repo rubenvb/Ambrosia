@@ -37,16 +37,19 @@ class target;
 class generator
 {
 public:
-  generator(const target& target);
+  generator(const file_type type,
+            const target& target);
   virtual ~generator();
 
   virtual bool next_command(std::string& command) = 0;
 
 protected:
+  const file_type m_type;
   const target& m_target;
 };
 
-std::unique_ptr<generator> get_generator(const file_type type, const target& target);
+std::unique_ptr<generator> get_generator(const file_type type,
+                                         const target& target);
 
 libambrosia_namespace_end
 

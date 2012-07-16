@@ -96,14 +96,14 @@ void project::generate_commands()
       debug(debug::command_gen) << "project::generate_commands::Generating commands for " << map_value(file_type_map_inverse, type) << " files.\n";
       unique_ptr<generator> generator = get_generator(type, current);
       const auto& source_files = current.source_files(type);
-      for(auto file_it = source_files.begin(); file_it != source_files.end(); ++file_it)
+      std::string command;
+      for(auto file_it = source_files.begin(); file_it != source_files.end() && generator->next_command(command); ++file_it)
       {
-
+        m_commands.push_back(command);
       }
-
     }
   }
-  throw error("generate_commands is not implemented yet.");
+  throw error("generate_commands is not completely implemented yet.");
 }
 
 void project::execute_build_commands()

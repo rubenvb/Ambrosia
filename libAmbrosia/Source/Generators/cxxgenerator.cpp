@@ -24,8 +24,9 @@
 
 libambrosia_namespace_begin
 
-cxxgenerator::cxxgenerator(const target& target)
-: cgenerator(target)
+cxxgenerator::cxxgenerator(const file_type type,
+                           const target& target)
+: cgenerator(type, target)
 {   }
 
 cxxgenerator::~cxxgenerator()

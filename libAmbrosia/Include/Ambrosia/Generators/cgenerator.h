@@ -35,7 +35,8 @@ class target;
 class cgenerator : public generator
 {
 public:
-  cgenerator(const target& target);
+  cgenerator(const file_type type,
+             const target& target);
   virtual ~cgenerator();
 
   virtual bool next_command(std::string& command);

@@ -75,33 +75,47 @@ void target::add_source_file(const file_type type,
                              const string& nectar_file,
                              const size_t line_number)
 {
-  const file_type detected_type(detect_type(type, filename));
   if(contains(filename, "*?"))
   {
+    // find file matches
     const file_set matches = s_file_cache.match_source_files(filename, &m_build_config, m_source_directories[type]);
     if(matches.empty())
       return emit_nectar_error("No files matching " + filename + " found.", nectar_file, line_number);
 
-
+    // add matches, files already present cause error
+    string_vector duplicates;
+    for(auto it = matches.begin(); it != matches.end(); ++it)
+    {
+      const auto& current = *it;
+      const file_type detected_type = detect_type(type, current.first);
+      if(!m_source_files[detected_type].insert(current).second)
+        duplicates.push_back(current.first);
+      else
+        m_build_config.m_source_types.insert(detected_type);
+    }
+    if(!duplicates.empty())
+      throw nectar_error("Wildcard matches already added files: ", nectar_file, line_number, duplicates);
   }
   else
   {
-    const file_set matches = s_file_cache.find_source_file( filename, &m_build_config, m_source_directories[type]);
+    const file_set matches = s_file_cache.find_source_file(filename, &m_build_config, m_source_directories[type]);
     switch(matches.size())
     {
       case 0:
         return emit_nectar_error("No matches to file " + filename + " found.", nectar_file, line_number);
       case 1:
+      {
+        const file_type detected_type = detect_type(type, filename);
         m_source_files[detected_type].insert(*matches.begin());
+        m_build_config.m_source_types.insert(detected_type);
         break;
+      }
       default:
         string_vector ambiguous;
         std::for_each(matches.begin(), matches.end(), [&ambiguous](const file& f) { ambiguous.push_back(f.first); });
         throw nectar_error("Ambiguity in file selection: ", filename, line_number, ambiguous);
     }
   }
-  // add build config source type to determine which command generators need to be run
-  m_build_config.m_source_types.insert(detected_type); // no need to check failure: only needs to be present
 }
 void target::remove_file(const file_type type,
                          const string& filename)
@@ -129,6 +143,8 @@ void target::remove_directory(const file_type type,
 {
   if(m_source_directories[type].erase(directory))
     emit_warning_list({directory});
+
+  throw error("target::remove_directory has a flaky implementation.");
 }
 bool target::add_library(const string& library)
 {
@@ -140,9 +156,17 @@ void target::remove_library(const string& library)
 {
   if(m_libraries.erase(library))
     emit_warning_list( {library} );
+
+  throw error("remove_library has flaky implementation.");
 }
 const file_set& target::source_files(const file_type type) const
 {
+  debug(debug::target) << "target::source_files::Source files present:\n";
+  for(auto it = m_source_files.begin(); it != m_source_files.end(); ++it)
+  {
+    const auto& current = *it;
+    debug(debug::target) << "\t" << map_value(file_type_map_inverse, current.first) << ": " << current.second.size() << ".\n";
+  }
   const auto it = m_source_files.find(type);
   if(it == m_source_files.end() || (*it).second.empty())
   {

@@ -28,9 +28,10 @@
 
 libambrosia_namespace_begin
 
-cgenerator::cgenerator(const target& target)
-: generator(target),
-  current(target.source_files(file_type::source_c).begin())
+cgenerator::cgenerator(const file_type type,
+                       const target& target)
+: generator(type, target),
+  current(target.source_files(m_type).begin())
 {   }
 
 cgenerator::~cgenerator()

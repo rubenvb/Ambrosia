@@ -11,7 +11,7 @@
 # If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 #
 
-lib libAmbrosia
+lib Ambrosia
 {
     HEADER_DIRS Include/Ambrosia
     SOURCE_DIRS Source \

@@ -30,7 +30,8 @@ class target;
 class cxxgenerator : public cgenerator
 {
 public:
-  cxxgenerator(const target& target);
+  cxxgenerator(const file_type type,
+               const target& target);
   virtual ~cxxgenerator();
 
   bool next_command(std::string& command);

@@ -72,6 +72,8 @@ try {
   t = time(0);
 #endif
 
+  project.execute_build_commands();
+
 #ifdef AMBROSIA_DEBUG
   const double build_time = difftime(time(0), t);
   cerr << "Runtimes:\n"
