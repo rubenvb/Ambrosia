@@ -90,12 +90,22 @@ void apply_commandline_options(const string_vector& arguments,
           m_first_dashless_argument = false;
           debug(debug::commandline) << "begin::Possible project file or directory: \'" << current << "\'.\n";
 
-          files.find_project_file(current, lib::project::configuration);
+          files.find_project_file(current, project::configuration);
 
           // if project_file is still empty, "current" is really a target name
           //  to be built, skip to below next else
-          if(lib::project::configuration->project_file().empty())
-            goto add_target;
+          if(!project::configuration->project_file().empty())
+            continue;
+
+          if(files.find_project_file(".", project::configuration))
+          {
+            debug(debug::commandline) << "commandline::Project file found in current directory \'.\': " << project::configuration->project_file() << ".\n";
+            lib::emit_warning("Ambrosia does not recommend an in-source build.");
+          }
+          else
+            throw error("No project file found in specified path or current directory.");
+
+          goto add_target;
         }
         else
         {
@@ -144,15 +154,7 @@ void apply_commandline_options(const string_vector& arguments,
   }
   // if project file is not yet set, search current directory
   if(project::configuration->project_file().empty())
-  {
-    if(files.find_project_file(".", project::configuration))
-    {
-      debug(debug::commandline) << "commandline::Project file found in current directory \'.\': " << project::configuration->project_file() << ".\n";
-      lib::emit_warning("Ambrosia does not recommend an in-source build.");
-    }
-    else
-      throw error("No project file found in specified path or current directory.");
-  }
+
   debug(debug::commandline) << "commandline::apply_commandline_options::Checking if project file was found.\n";
   // Ensure that a valid project file has been found
   assert(lib::file_exists(lib::project::configuration->project_file()));

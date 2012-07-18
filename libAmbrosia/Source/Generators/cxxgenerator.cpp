@@ -22,6 +22,10 @@
 // libAmbrosia includes
 #include "Ambrosia/target.h"
 
+// C++ includes
+#include <string>
+  using std::string;
+
 libambrosia_namespace_begin
 
 cxxgenerator::cxxgenerator(const file_type type,
@@ -32,10 +36,16 @@ cxxgenerator::cxxgenerator(const file_type type,
 cxxgenerator::~cxxgenerator()
 {   }
 
-bool cxxgenerator::next_command(std::string& /*command*/)
+const string_vector cxxgenerator::generate_commands()
 {
-  return false;
+  string_vector commands;
+
+  return commands;
 }
 
+const string cxxgenerator::generate_link_command()
+{
+  return "";
+}
 
 libambrosia_namespace_end

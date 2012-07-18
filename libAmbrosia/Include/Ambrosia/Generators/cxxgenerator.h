@@ -34,7 +34,9 @@ public:
                const target& target);
   virtual ~cxxgenerator();
 
-  bool next_command(std::string& command);
+  const string_vector generate_commands();
+
+  const std::string generate_link_command();
 };
 
 libambrosia_namespace_end

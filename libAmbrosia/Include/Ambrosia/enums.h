@@ -105,8 +105,10 @@ enum class generator_string
   debug_argument, // produce debug info
   optimize, // standard "release" configuration optimization
   optimize_none, // explicitely turn off optimizations
+  optimize_common, // options that make debugging impossible but added because Ambrosia is awesome
   optimize_size, // optimize for size
-  optimize_extreme // full optimization, not guaranteed to be better than 'optimize_release'
+  optimize_extreme, // full optimization, not guaranteed to be better than 'optimize_release'
+  optimize_lto // Link-time-optimization or link time code generation: -flto or /GL and /LTCG
 };
 
 ambrosia_namespace_end

@@ -95,12 +95,8 @@ void project::generate_commands()
       const auto& type = *type_it;
       debug(debug::command_gen) << "project::generate_commands::Generating commands for " << map_value(file_type_map_inverse, type) << " files.\n";
       unique_ptr<generator> generator = get_generator(type, current);
-      const auto& source_files = current.source_files(type);
-      std::string command;
-      for(auto file_it = source_files.begin(); file_it != source_files.end() && generator->next_command(command); ++file_it)
-      {
-        m_commands.push_back(command);
-      }
+      const string_vector commands = generator->generate_commands();
+      m_commands.insert(m_commands.end(), commands.begin(), commands.end());
     }
   }
   throw error("generate_commands is not completely implemented yet.");

@@ -24,6 +24,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/enums.h"
+#include "Ambrosia/typedefs.h"
 
 // C++ includes
 #include <memory>
@@ -41,7 +42,7 @@ public:
             const target& target);
   virtual ~generator();
 
-  virtual bool next_command(std::string& command) = 0;
+  virtual const string_vector generate_commands() = 0;
 
 protected:
   const file_type m_type;

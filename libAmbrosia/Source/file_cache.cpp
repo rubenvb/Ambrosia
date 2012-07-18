@@ -121,13 +121,12 @@ const file_set file_cache::find_source_file(const string& filename,
   // handle empty "directories" case
   string_set directories_to_search;
   if(directories.empty())
-    directories_to_search = {""};
+    directories_to_search.insert(source_directory);
   else
   {
     std::for_each(directories.begin(), directories.end(), [&](const string& directory)
                   {
-                    const string full_dir = full_directory_name( source_directory,
-                    full_directory_name(directory, preceding_directory) );
+                    const string full_dir = full_directory_name(source_directory, full_directory_name(directory, preceding_directory));
                     if(directory_exists(full_dir))
                     {
                       debug(debug::files) << "file_cache::find_source_file::Adding deduced directory to search list: " << full_dir << "\n";
@@ -137,7 +136,7 @@ const file_set file_cache::find_source_file(const string& filename,
                     debug(debug::files) << "file_cache::find_source_file::Not adding non-existing deduced directory to search list: " << full_dir << ".\n";
                   });
     if(directories_to_search.empty())
-      directories_to_search = {""};
+      directories_to_search.insert(source_directory);
   }
   debug(debug::files) << "file_cache::find_source_file::Looking for " << filename << " in the following subdirectories of " << source_directory << ":\n"
                       << directories_to_search;
@@ -147,7 +146,7 @@ const file_set file_cache::find_source_file(const string& filename,
   const auto end = directories_to_search.end();
   for(auto it = directories_to_search.begin(); it != end; ++it)
   {
-    const string& directory = full_directory_name(source_directory, *it);
+    const string& directory = *it;
 
     debug(debug::files) << "file_cache::find_source_file::Loading directory contents for: " << directory << ".\n";
     const file_set& files_on_disk = get_source_file_set(directory);

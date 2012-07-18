@@ -20,30 +20,43 @@
 #include "Ambrosia/Generators/cgenerator.h"
 
 // libAmbrosia includes
+#include "Ambrosia/debug.h"
 #include "Ambrosia/target.h"
 
 // C++ includes
 #include <sstream>
   using std::ostringstream;
+#include <string>
+  using std::string;
 
 libambrosia_namespace_begin
 
 cgenerator::cgenerator(const file_type type,
                        const target& target)
-: generator(type, target),
-  current(target.source_files(m_type).begin())
+: generator(type, target)
 {   }
 
 cgenerator::~cgenerator()
 {   }
 
-bool cgenerator::next_command(std::string& command)
+const string_vector cgenerator::generate_commands()
 {
+  string_vector commands;
+  std::stringstream command;
+  // compile commands
+  for(auto it = m_target.source_files(m_type).begin(); it != m_target.source_files(m_type).end(); ++it)
+  {
 
-  ostringstream stream;
-  stream << command;
+  }
+  // link command
+  commands.push_back(generate_link_command());
 
-  return false;
+  return commands;
+}
+
+const string cgenerator::generate_link_command()
+{
+  return "";
 }
 
 libambrosia_namespace_end

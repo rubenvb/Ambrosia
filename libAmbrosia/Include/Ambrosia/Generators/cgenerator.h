@@ -39,10 +39,9 @@ public:
              const target& target);
   virtual ~cgenerator();
 
-  virtual bool next_command(std::string& command);
+  virtual const string_vector generate_commands();
 
-private:
-  file_set::const_iterator current;
+  virtual const std::string generate_link_command();
 };
 
 libambrosia_namespace_end
