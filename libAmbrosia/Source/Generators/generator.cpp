@@ -23,8 +23,6 @@
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/internal_error.h"
-#include "Ambrosia/Generators/cgenerator.h"
-#include "Ambrosia/Generators/cxxgenerator.h"
 
 // C++ includes
 #include <memory>
@@ -34,26 +32,12 @@ libambrosia_namespace_begin
 
 generator::generator(const file_type type,
                      const target& target)
-: m_type(type),
+: m_generator_map(),
+  m_type(type),
   m_target(target)
 {  }
 
 generator::~generator()
 {   }
-
-unique_ptr<generator> get_generator(const file_type type,
-                                    const target& target)
-{
-  switch(type)
-  {
-    case file_type::source_c:
-      return unique_ptr<generator>(new cgenerator(type, target));
-    case file_type::source_cxx:
-      return unique_ptr<generator>(new cxxgenerator(type, target));
-    default:
-      throw internal_error("invalid command generator requested: " + map_value(file_type_map_inverse, type) + ".");
-  }
-}
-
 
 libambrosia_namespace_end

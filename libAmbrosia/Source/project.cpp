@@ -25,7 +25,7 @@
 #include "Ambrosia/debug.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/error.h"
-#include "Ambrosia/Generators/generator.h"
+#include "Ambrosia/Generators/compile_and_link_generator.h"
 #include "Ambrosia/nectar_loader.h"
 
 // C++ includes
@@ -93,10 +93,17 @@ void project::generate_commands()
     for(auto type_it = current.m_build_config.m_source_types.begin(); type_it != current.m_build_config.m_source_types.end(); ++type_it)
     {
       const auto& type = *type_it;
-      debug(debug::command_gen) << "project::generate_commands::Generating commands for " << map_value(file_type_map_inverse, type) << " files.\n";
-      unique_ptr<generator> generator = get_generator(type, current);
-      const string_vector commands = generator->generate_commands();
-      m_commands.insert(m_commands.end(), commands.begin(), commands.end());
+      debug(debug::command_gen) << "project::generate_commands::Generating commands for " << current.source_files(type).size() << " "
+                                << map_value(file_type_map_inverse, type) << " files.\n";
+      //TODO generalize to a "get_generator function when there are languages supported that need a different style of processing
+      unique_ptr<generator> generator(new compile_and_link_generator(type, current));
+
+      const string_vector commands = generator->generate_parallel_commands();
+
+      //TODO: debug output of commands, or storage in a per-target list for nice output.
+
+      //TODO: fix ugly function call below
+      m_commands[current.name()].insert(m_commands[current.name()].end(), commands.begin(), commands.end());
     }
   }
   throw error("generate_commands is not completely implemented yet.");

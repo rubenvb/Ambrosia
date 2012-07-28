@@ -51,6 +51,7 @@ typedef std::pair<std::string, std::set<std::string>> pair_string_string_set;
 typedef std::map<std::string, std::set<std::string>> map_string_set_string;
 typedef std::pair<std::string, time_t> file;
 typedef std::map<std::string, time_t> file_set;
+typedef std::map<std::string, string_vector> map_string_string_vector;
 
 ambrosia_namespace_end
 
@@ -75,7 +76,8 @@ typedef std::set<std::pair<target_type, std::string>> dependency_set;
 typedef std::map<std::string, file_set> map_string_file_set;
 typedef std::map<file_type, string_set> map_file_type_string_set;
 typedef std::map<file_type, file_set> map_file_type_file_set;
-typedef std::map<toolchain, std::map<generator_string, std::string>> generator_map;
+typedef std::map<generator_string, std::string> generator_map;
+typedef std::map<file_type, std::map<toolchain, generator_map>> command_map;
 
 libambrosia_namespace_end
 

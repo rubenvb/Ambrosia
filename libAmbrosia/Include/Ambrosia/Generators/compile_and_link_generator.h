@@ -11,14 +11,15 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Generators/cgenerator.cpp
+ * Ambrosia/Generators/compile_and_link_generator.cpp
  * Command generator for C-style languages.
  *  Base class for C(, ObjC, ObjC++)
+ *  Might be extended/improved for every compile+link language in the future.
  *
  **/
 
-#ifndef CGENERATOR_H
-#define CGENERATOR_H
+#ifndef compile_and_link_generator_H
+#define compile_and_link_generator_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -32,18 +33,18 @@ libambrosia_namespace_begin
 // Forward declarations
 class target;
 
-class cgenerator : public generator
+class compile_and_link_generator : public generator
 {
 public:
-  cgenerator(const file_type type,
+  compile_and_link_generator(const file_type type,
              const target& target);
-  virtual ~cgenerator();
+  virtual ~compile_and_link_generator();
 
-  virtual const string_vector generate_commands();
+  virtual const string_vector generate_parallel_commands();
 
-  virtual const std::string generate_link_command();
+  virtual const string_vector generate_final_commands();
 };
 
 libambrosia_namespace_end
 
-#endif // CGENERATOR_H
+#endif // compile_and_link_generator_H

@@ -42,15 +42,18 @@ public:
             const target& target);
   virtual ~generator();
 
-  virtual const string_vector generate_commands() = 0;
+  // First, parallel executable commands, that are not influenced by eg missing link libraries from other targets
+  // Example: the C/C++ compile commands that produce object files that will be linked together in the final step
+  //TODO: what about generated headers? --> First make it possible to "generate headers"!!
+  virtual const string_vector generate_parallel_commands() = 0;
+  // Final (link) command that produces the target's output file(s). Cannot be called before the parallel commands have all  finished
+  virtual const string_vector generate_final_commands() = 0;
 
 protected:
+  generator_map m_generator_map;
   const file_type m_type;
   const target& m_target;
 };
-
-std::unique_ptr<generator> get_generator(const file_type type,
-                                         const target& target);
 
 libambrosia_namespace_end
 

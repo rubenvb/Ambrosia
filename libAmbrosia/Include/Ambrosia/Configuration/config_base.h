@@ -59,31 +59,31 @@ public:
   const toolchain& target_toolchain() const;
 
 protected:
-    // Environment PATH
-    const string_vector m_environment_PATH;
-    // build platform identification
-    architecture m_build_architecture;
-    environment m_build_environment;
-    os m_build_os;
-    toolchain m_build_toolchain; // useful for building tools used in the build
+  // Environment PATH
+  const string_vector m_environment_PATH;
+  // build platform identification
+  architecture m_build_architecture;
+  environment m_build_environment;
+  os m_build_os;
+  toolchain m_build_toolchain; // useful for building tools used in the build
 
-    // target platform identification
-    architecture m_target_architecture;
-    os m_target_os;
-    toolchain m_target_toolchain;
+  // target platform identification
+  architecture m_target_architecture;
+  os m_target_os;
+  toolchain m_target_toolchain;
 
-    std::string m_source_directory;
+  std::string m_source_directory;
 
 private:
-    string_set m_config; // mostly platform dependent stuff
-    std::string m_project_file;
-    std::string m_build_directory; // if source and build dir are equal, this is ./build
-    // Platform detection functions
-    architecture detect_build_architecture() const;
-    environment detect_build_environment() const;
-    toolchain detect_toolchain() const;
-    toolchain detect_toolchain( toolchain requested_toolchain ) const;
-    void initialize_config();
+  string_set m_config; // mostly platform dependent stuff
+  std::string m_project_file;
+  std::string m_build_directory; // if source and build dir are equal, this is ./build
+  // Platform detection functions
+  architecture detect_build_architecture() const;
+  environment detect_build_environment() const;
+  toolchain detect_toolchain() const;
+  toolchain detect_toolchain( toolchain requested_toolchain ) const;
+  void initialize_config();
 };
 
 libambrosia_namespace_end

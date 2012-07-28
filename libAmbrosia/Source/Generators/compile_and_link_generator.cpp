@@ -11,16 +11,17 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Generators/cgenerator.cpp
+ * Ambrosia/Generators/compile_and_link_generator.cpp
  * Class implementation.
  *
  **/
 
 // Class include
-#include "Ambrosia/Generators/cgenerator.h"
+#include "Ambrosia/Generators/compile_and_link_generator.h"
 
 // libAmbrosia includes
 #include "Ambrosia/debug.h"
+#include "Ambrosia/project.h"
 #include "Ambrosia/target.h"
 
 // C++ includes
@@ -31,15 +32,17 @@
 
 libambrosia_namespace_begin
 
-cgenerator::cgenerator(const file_type type,
+compile_and_link_generator::compile_and_link_generator(const file_type type,
                        const target& target)
 : generator(type, target)
+{
+  //m_generator_map.at(generator_string::compiler) =
+}
+
+compile_and_link_generator::~compile_and_link_generator()
 {   }
 
-cgenerator::~cgenerator()
-{   }
-
-const string_vector cgenerator::generate_commands()
+const string_vector compile_and_link_generator::generate_parallel_commands()
 {
   string_vector commands;
   std::stringstream command;
@@ -48,15 +51,13 @@ const string_vector cgenerator::generate_commands()
   {
 
   }
-  // link command
-  commands.push_back(generate_link_command());
 
   return commands;
 }
 
-const string cgenerator::generate_link_command()
+const string_vector compile_and_link_generator::generate_final_commands()
 {
-  return "";
+  return {};
 }
 
 libambrosia_namespace_end

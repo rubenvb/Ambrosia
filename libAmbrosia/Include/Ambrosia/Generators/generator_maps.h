@@ -36,6 +36,9 @@ extern const generator_map objcxxgenerator_map;
 // Fortran, java, etc..
 // ...
 
+// map to map the maps according to file_type
+extern const command_map the_huge_command_map;
+
 libambrosia_namespace_end
 
 #endif // GENERATOR_MAPS_H

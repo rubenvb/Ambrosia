@@ -49,8 +49,11 @@ public:
   // NEEDS REDESIGN AND SMARTNESS THAT IS NOW ABSENT
   //void determine_output_files();
 
-  // Generate commands only for the files that need to be built.
+  //TODO: Generate commands only for the files that need to be built.
   void generate_commands();
+
+  // Get the build commands (slow due to string comparison to find target, but only used in debug or other even slower output)
+  const string_vector commands(const std::string& target_name) { return m_commands[target_name]; }
 
   // Run the build commands.
   void execute_build_commands();
@@ -60,7 +63,7 @@ public:
   static ambrosia_config* configuration;
 
 private:
-  string_vector m_commands;
+  map_string_string_vector m_commands; // commands per target, easier for debugging, info and fancy output.
   file_cache& m_file_cache;
 };
 

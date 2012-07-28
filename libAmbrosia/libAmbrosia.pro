@@ -57,10 +57,9 @@ HEADERS += \
     Include/Ambrosia/Error/soft_error.h \
     Include/Ambrosia/Error/commandline_error.h \
     Include/Ambrosia/Error/internal_error.h \
-    Include/Ambrosia/Generators/cgenerator.h \
     Include/Ambrosia/Generators/generator.h \
     Include/Ambrosia/Generators/generator_maps.h \
-    Include/Ambrosia/Generators/cxxgenerator.h
+    Include/Ambrosia/Generators/compile_and_link_generator.h
 
 SOURCES += \
     Source/Configuration/ambrosia_config.cpp \
@@ -72,7 +71,6 @@ SOURCES += \
     Source/Error/nectar_error.cpp \
     Source/Error/soft_error.cpp \
     Source/Error/syntax_error.cpp \
-    Source/Generators/cgenerator.cpp \
     Source/Platform/common.cpp \
     Source/algorithm.cpp \
     Source/debug.cpp \
@@ -84,9 +82,9 @@ SOURCES += \
     Source/project.cpp \
     Source/status.cpp \
     Source/target.cpp \
-    Source/Generators/cxxgenerator.cpp \
     Source/Generators/generator.cpp \
-    Source/Generators/generator_maps.cpp
+    Source/Generators/generator_maps.cpp \
+    Source/Generators/compile_and_link_generator.cpp
 
 *win32*:SOURCES += Source/Platform/windows.cpp
 *linux*:SOURCES += Source/Platform/unix.cpp

@@ -38,6 +38,7 @@ libambrosia_namespace_begin
 
 ambrosia_config::ambrosia_config()
 : config_base(),
+  m_gnu_prefix(),
   m_target_config_options()
 {    }
 
@@ -84,11 +85,6 @@ void ambrosia_config::set_ambrosia_cross(const std::string& cross,
     throw commandline_error("Specified invalid target toolchain: " + toolchain_string, argument_number);
   else
     m_target_toolchain = new_toolchain;
-}
-void ambrosia_config::set_gnu_prefix(const std::string& /*prefix*/)
-{
-  // TODO: detect and set common GNU/GCC target triplets
-  throw error("Cross-compiling through GNU prefix has not been implemented yet.");
 }
 void ambrosia_config::add_target_config_options(const std::string& target,
                                                 const string_set& options)

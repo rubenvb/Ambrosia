@@ -97,6 +97,8 @@ void apply_commandline_options(const string_vector& arguments,
           if(!project::configuration->project_file().empty())
             continue;
 
+          lib::emit_warning("No source directory specified");
+
           if(files.find_project_file(".", project::configuration))
           {
             debug(debug::commandline) << "commandline::Project file found in current directory \'.\': " << project::configuration->project_file() << ".\n";
@@ -122,8 +124,7 @@ void apply_commandline_options(const string_vector& arguments,
               string::size_type index = list_of_options.find(',');
               const string option = list_of_options.substr(previous_index, index);
               if(!options.insert(option).second)
-                throw commandline_error("Duplicate config option to target " + target + ": "
-                                        + option, argument_number);
+                throw commandline_error("Duplicate config option to target " + target + ": " + option, argument_number);
             } while(index != string::npos);
           }
           add_build_target(target, options);
@@ -230,7 +231,7 @@ void set_internal_option(const std::string& option,
   else if("gnu-prefix" == option)
   {
     debug(debug::commandline) << "commandline::set_internal_option::Cross-compiling with GNU prefix " << value << ".\n";
-    project::configuration->set_gnu_prefix(value);
+    project::configuration->m_gnu_prefix = value + '-'; // add the prefix dash here so you get for example "x86_64-linux-gnu-gcc"
   }
   else
     throw commandline_error("Unknown option passed to Ambrosia: \n\t-" + option + "=" + value, argument_number);
