@@ -43,22 +43,7 @@ public:
   void set_project_file( const std::string& project_file );
   bool add_config( const std::string& config );
   bool remove_config( const std::string& config );
-  // add user option settings
-  void set_user_option( const std::string& option, const std::string& value );
 
-  /*
-   * Getters
-   **********/
-  string_set& config();
-  const string_set& config() const;
-  const std::string& source_directory() const;
-  const std::string& project_file() const;
-  const std::string& build_directory() const;
-  const os& target_os() const;
-  const architecture& target_architecture() const;
-  const toolchain& target_toolchain() const;
-
-protected:
   // Environment PATH
   const string_vector m_environment_PATH;
   // build platform identification
@@ -74,15 +59,15 @@ protected:
 
   std::string m_source_directory;
 
-private:
   string_set m_config; // mostly platform dependent stuff
   std::string m_project_file;
   std::string m_build_directory; // if source and build dir are equal, this is ./build
+
+private:
   // Platform detection functions
   architecture detect_build_architecture() const;
   environment detect_build_environment() const;
-  toolchain detect_toolchain() const;
-  toolchain detect_toolchain( toolchain requested_toolchain ) const;
+  toolchain detect_toolchain(toolchain requested_toolchain = toolchain::GNU) const;
   void initialize_config();
 };
 

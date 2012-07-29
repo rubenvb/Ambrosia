@@ -27,15 +27,6 @@
 
 libambrosia_namespace_begin
 
-// C-style languages
-extern const generator_map cgenerator_map;
-extern const generator_map cxxgenerator_map;
-extern const generator_map objcgenerator_map;
-extern const generator_map objcxxgenerator_map;
-
-// Fortran, java, etc..
-// ...
-
 // map to map the maps according to file_type
 extern const command_map the_huge_command_map;
 

@@ -148,7 +148,7 @@ void nectar_loader::extract_nectar(project& project)
       {
         // Search for sub-project file: sourcedir/token/token.nectar.txt
         // 1. check for subdirectory
-        const string full_subproject_directory = full_directory_name(project::configuration->source_directory(), full_directory_name(m_subdirectory, token));
+        const string full_subproject_directory = full_directory_name(project::configuration->m_source_directory, full_directory_name(m_subdirectory, token));
         if(!directory_exists(full_subproject_directory))
           throw nectar_error("Directory " + full_subproject_directory + " not found.\n"
                              "Subproject names must be identical to the subproject names.", m_filename, m_line_number );
@@ -576,8 +576,8 @@ void nectar_loader::process_dependency_list_conditional()
 
 void nectar_loader::process_inner_conditional()
 {
-  debug(debug::parser) << "nectar_loader::process_inner_conditional::Using target config:\n" << p_target->m_build_config.config() << "\n";
-  if(test_condition([this](const string& item){ return contains(p_target->m_build_config.config(), item); }))
+  debug(debug::parser) << "nectar_loader::process_inner_conditional::Using target config:\n" << p_target->m_build_config.m_config << "\n";
+  if(test_condition([this](const string& item){ return contains(p_target->m_build_config.m_config, item); }))
     debug(debug::parser) << "nectar_loader::process_inner_conditional::condition returned true, nothing to skip.\n";
   else
   {
@@ -695,7 +695,7 @@ void nectar_loader::parse_target()
     else if("CONFIG" == token)
     {
       debug(debug::parser) << "nectar_loader::parse_target::CONFIG detected.\n";
-      parse_variable_list(p_target->m_build_config.config());
+      parse_variable_list(p_target->m_build_config.m_config);
     }
     else if ("NAME" == token)
     {

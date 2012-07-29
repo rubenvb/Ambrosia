@@ -96,54 +96,21 @@ bool config_base::remove_config(const string& config)
 {
   return m_config.erase(config);
 }
-/*
- * Getters
- **********/
-string_set& config_base::config()
-{
-  return m_config;
-}
-const string_set& config_base::config() const
-{
-  return m_config;
-}
-const string& config_base::source_directory() const
-{
-  return m_source_directory;
-}
-const string& config_base::project_file() const
-{
-  return m_project_file;
-}
-const string& config_base::build_directory() const
-{
-  return m_build_directory;
-}
-const os& config_base::target_os() const
-{
-  return m_target_os;
-}
-const architecture& config_base::target_architecture() const
-{
-  return m_target_architecture;
-}
-const toolchain& config_base::target_toolchain() const
-{
-  return m_target_toolchain;
-}
 
 // Platform detection functions
 environment config_base::detect_build_environment() const
 {
+  emit_warning("config_base::detect_build_environment::not quite implemented completely yet.");
+#if _WIN32
   return environment::cmd;
-}
-toolchain config_base::detect_toolchain() const
-{
-  return toolchain::GNU;
+#else
+  return environment::bash;
+#endif
 }
 toolchain config_base::detect_toolchain(toolchain requested_toolchain) const
 {
-  throw error("detect_toolchain needs to validate input");
+  //TODO check toolchain availability, but not here, as gnu_prefix etc could alter the name of the executables.
+  emit_warning("detect_toolchain needs to validate input.");
   return requested_toolchain;
 }
 void config_base::initialize_config()

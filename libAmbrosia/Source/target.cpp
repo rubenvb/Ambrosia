@@ -128,7 +128,7 @@ void target::remove_file(const file_type type,
 bool target::add_source_directory(const file_type type,
                                   const string& directory)
 {
-  const string full_subdirectory_name = full_directory_name(m_build_config.source_directory(), directory);
+  const string full_subdirectory_name = full_directory_name(m_build_config.m_source_directory, directory);
 
   debug(debug::target) << "target::add_source_directory::Checking if directory " << full_subdirectory_name << " exists.\n";
   if(!directory_exists(full_subdirectory_name))
@@ -161,12 +161,6 @@ void target::remove_library(const string& library)
 }
 const file_set& target::source_files(const file_type type) const
 {
-  debug(debug::target) << "target::source_files::Source files present:\n";
-  for(auto it = m_source_files.begin(); it != m_source_files.end(); ++it)
-  {
-    const auto& current = *it;
-    debug(debug::target) << "\t" << map_value(file_type_map_inverse, current.first) << ": " << current.second.size() << ".\n";
-  }
   const auto it = m_source_files.find(type);
   if(it == m_source_files.end() || (*it).second.empty())
   {

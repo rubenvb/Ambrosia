@@ -23,6 +23,7 @@
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/internal_error.h"
+#include "Ambrosia/Generators/generator_maps.h"
 
 // C++ includes
 #include <memory>
@@ -32,7 +33,7 @@ libambrosia_namespace_begin
 
 generator::generator(const file_type type,
                      const target& target)
-: m_generator_map(),
+: m_generator_map(the_huge_command_map.at(type).at(target.m_build_config.m_target_toolchain)),
   m_type(type),
   m_target(target)
 {  }

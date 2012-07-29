@@ -60,7 +60,7 @@ enum class conditional_operator
 {   // defines operator precedence
   right_parenthesis, // )
   left_parenthesis,  // (
-  and_op,           // +
+  and_op,            // +
   or_op,             // |
   not_op             // !
 };
@@ -97,7 +97,6 @@ enum class generator_string
   linker, // linker program name
   output_argument, // precedes output file name
   compile_argument, // compile to object file
-  linker_argument, // arguments for linking
   object_suffix, // suffix for intermediate object files
   import_library_suffix, // .dll.a, .lib
   static_library_suffix, // .a, .lib

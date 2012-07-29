@@ -50,7 +50,7 @@ libambrosia_namespace_begin
 void drink_nectar(project& project)
 {
   // open file
-  const string& filename = project.configuration->project_file();
+  const string& filename = project.configuration->m_project_file;
   auto stream_ptr(open_ifstream(filename));
   auto& stream = *stream_ptr;
   if(!stream)

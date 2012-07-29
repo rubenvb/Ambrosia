@@ -113,7 +113,7 @@ const file_set file_cache::find_source_file(const string& filename,
                                             const string_set& directories )
 {
   debug(debug::files) << "file_cache::find_source_file::Called.\n";
-  const string& source_directory = config->source_directory();
+  const string& source_directory = config->m_source_directory;
   // handle filename with directory prepended
   const string_pair directory_filename(split_preceding_directory(filename));
   const string& preceding_directory = directory_filename.first;
@@ -181,7 +181,7 @@ const file_set file_cache::match_source_files(const string& filename,
   const auto directory_end = directories.end();
   for(auto directory_it = directories.begin(); directory_it != directory_end; ++directory_it)
   {
-    const string directory(full_directory_name(config->source_directory(), *directory_it + preceding_directory));
+    const string directory(full_directory_name(config->m_source_directory, *directory_it + preceding_directory));
     if(!directory_exists(directory))
     {
       debug(debug::files) << "file_cache::match_source_files::Skipping nonexistent directory: " << directory << ".\n";

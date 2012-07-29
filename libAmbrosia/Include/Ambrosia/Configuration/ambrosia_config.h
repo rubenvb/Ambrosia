@@ -44,7 +44,7 @@ public:
   // Setters
   void set_ambrosia_cross(const std::string& cross,
                           const size_t argument_number);
-  void set_gnu_prefix(const std::string& prefix); // handles a lot of standard GNU triplets
+  //void set_gnu_prefix(const std::string& prefix); // handles a lot of standard GNU triplets
   // add target or add additional config options to one target
   void add_target_config_options(const std::string& target,
                                  const string_set& options);

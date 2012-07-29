@@ -94,14 +94,14 @@ void apply_commandline_options(const string_vector& arguments,
 
           // if project_file is still empty, "current" is really a target name
           //  to be built, skip to below next else
-          if(!project::configuration->project_file().empty())
+          if(!project::configuration->m_project_file.empty())
             continue;
 
           lib::emit_warning("No source directory specified");
 
           if(files.find_project_file(".", project::configuration))
           {
-            debug(debug::commandline) << "commandline::Project file found in current directory \'.\': " << project::configuration->project_file() << ".\n";
+            debug(debug::commandline) << "commandline::Project file found in current directory \'.\': " << project::configuration->m_project_file << ".\n";
             lib::emit_warning("Ambrosia does not recommend an in-source build.");
           }
           else
@@ -153,12 +153,10 @@ void apply_commandline_options(const string_vector& arguments,
         throw commandline_error("Invalid commandline argument: " + current, argument_number);
     }
   }
-  // if project file is not yet set, search current directory
-  if(project::configuration->project_file().empty())
-
   debug(debug::commandline) << "commandline::apply_commandline_options::Checking if project file was found.\n";
   // Ensure that a valid project file has been found
-  assert(lib::file_exists(lib::project::configuration->project_file()));
+  if(!lib::file_exists(lib::project::configuration->m_project_file))
+    throw lib::internal_error("commandline::apply_commandline_options::Project file should not be empty now.");
 }
 
 void add_build_target(const string& target, const string_set& options)

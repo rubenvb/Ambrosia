@@ -31,7 +31,6 @@ const command_map the_huge_command_map =
          {generator_string::linker,           "gcc"},
          {generator_string::output_argument,  "-o"},
          {generator_string::compile_argument, "-c"},
-         {generator_string::linker_argument,  ""},
          {generator_string::object_suffix,    ".o"},
          {generator_string::debug_argument,   "-g"},
          {generator_string::optimize_none,    "-O0"},
@@ -71,7 +70,6 @@ const command_map the_huge_command_map =
          {generator_string::linker,           "g++"},
          {generator_string::output_argument,  "-o"},
          {generator_string::compile_argument, "-c"},
-         {generator_string::linker_argument,  ""},
          {generator_string::object_suffix,    ".o"},
          {generator_string::debug_argument,   "-g"},
          {generator_string::optimize_none,    "-O0"},
@@ -94,7 +92,16 @@ const command_map the_huge_command_map =
         }
       },
       {toolchain::LLVM,
-        {{generator_string::compiler,         "clang"}
+        {{generator_string::compiler,         "clang++"},
+         {generator_string::linker,           "clang++"},
+         {generator_string::output_argument,  "-o"},
+         {generator_string::compile_argument, "-c"},
+         {generator_string::object_suffix,    ".o"},
+         {generator_string::debug_argument,   "-g"},
+         {generator_string::optimize_none,    "-O0"},
+         {generator_string::optimize,         "-O2"},
+         {generator_string::optimize_size,    "-Os"},
+         {generator_string::optimize_extreme, "-O3"}
         }
       },
       {toolchain::Intel,
@@ -104,6 +111,5 @@ const command_map the_huge_command_map =
     }
   }
 };
-const generator_map objcgenerator_map;
-const generator_map objcxxgenerator_map;
+
 libambrosia_namespace_end
