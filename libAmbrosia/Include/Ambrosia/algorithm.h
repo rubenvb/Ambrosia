@@ -73,20 +73,20 @@ const T remove_set(T& old_set,
 inline bool contains(const std::string& token,
                      const std::string& characters)
 {
-  return (std::find_first_of(token.begin(), token.end(), characters.begin(), characters.end()) != token.end());
+  return (std::find_first_of(std::begin(token), std::end(token), std::begin(characters), std::end(characters)) != std::end(token));
 }
 template <class K, class V>
 bool contains(const std::map<K, V>& map,
               const K key)
 {
-  return (map.find(key) != map.end());
+  return (map.find(key) != std::end(map));
 }
 // returns true if container contains element
 template <class container>
 bool contains(const container& cont,
               const typename container::value_type& elem)
 {
-  return (std::find(cont.begin(), cont.end(), elem) != cont.end());
+  return (std::find(std::begin(cont), std::end(cont), elem) != std::end(cont));
 }
 
 inline bool has_space(const std::string& str)
@@ -131,7 +131,7 @@ inline const std::string output_form(const std::string token)
   else
     return token;
 }
-template<class T>
+/*template<class T>
 const T& map_value(const std::vector<T>& map,
                    const typename std::vector<T>::size_type key)
 {
@@ -143,7 +143,7 @@ const T& map_value(const std::map<Y,T>& map,
                    const Y& key)
 {
   return (*map.find(key)).second;
-}
+}*/
 // put mapped value in value and return true if found, otherwise return false
 template<class T, class Y>
 bool map_value(const std::map<Y,T>& map,
@@ -151,7 +151,7 @@ bool map_value(const std::map<Y,T>& map,
                T& value)
 {
   const auto it = map.find(key);
-  if(it != map.end())
+  if(it != std::end(map))
   {
     value = (*it).second;
     return true;

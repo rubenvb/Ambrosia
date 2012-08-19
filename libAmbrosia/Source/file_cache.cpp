@@ -55,7 +55,7 @@ const string file_cache::find_nectar_file(const string& directory,
     case 0:
       throw error("No *.nectar.txt file found in " + directory);
     case 1:
-      return (*candidates.begin()).first; // first = filename, second = modified
+      return std::begin(candidates)->first; // first = filename, second = modified
     default:
       throw error("Multiple *.nectar.txt files found in directory: " + directory, candidates);
   }
@@ -98,7 +98,7 @@ const file_set& file_cache::get_source_file_set(const std::string& directory)
 {
   debug(debug::files) << "file_set::get_source_file_set::Finding directory listing for " << directory << ".\n";
   const auto result = m_source_files.find(directory);
-  if(result != m_source_files.end())
+  if(result != std::end(m_source_files))
     return m_source_files[directory];
   else
   {
@@ -124,7 +124,7 @@ const file_set file_cache::find_source_file(const string& filename,
     directories_to_search.insert(source_directory);
   else
   {
-    std::for_each(directories.begin(), directories.end(), [&](const string& directory)
+    std::for_each(std::begin(directories), std::end(directories), [&](const string& directory)
                   {
                     const string full_dir = full_directory_name(source_directory, full_directory_name(directory, preceding_directory));
                     if(directory_exists(full_dir))
@@ -143,16 +143,14 @@ const file_set file_cache::find_source_file(const string& filename,
 
   file_set result;
 
-  const auto end = directories_to_search.end();
-  for(auto it = directories_to_search.begin(); it != end; ++it)
+  for(auto it = std::begin(directories_to_search); it != std::end(directories_to_search); ++it)
   {
     const string& directory = *it;
 
     debug(debug::files) << "file_cache::find_source_file::Loading directory contents for: " << directory << ".\n";
     const file_set& files_on_disk = get_source_file_set(directory);
 
-    const auto end = files_on_disk.end();
-    for(auto it = files_on_disk.begin(); it != end; ++it)
+    for(auto it = std::begin(files_on_disk); it != std::end(files_on_disk); ++it)
     {
       const file& entry = *it;
       debug(debug::files) << "file_cache::find_source_file::Matching " << entry.first << " vs " << true_filename << ".\n";
@@ -178,8 +176,7 @@ const file_set file_cache::match_source_files(const string& filename,
   const string& true_filename( directory_filename.second );
 
   // search all directories, appended with preceding_directory
-  const auto directory_end = directories.end();
-  for(auto directory_it = directories.begin(); directory_it != directory_end; ++directory_it)
+  for(auto directory_it = std::begin(directories); directory_it != std::end(directories); ++directory_it)
   {
     const string directory(full_directory_name(config->m_source_directory, *directory_it + preceding_directory));
     if(!directory_exists(directory))
@@ -194,8 +191,7 @@ const file_set file_cache::match_source_files(const string& filename,
     debug(debug::files) << "file_cache::match_source_files::Searching for match with " << files_on_disk.size() << " files.\n";
 
     // match all files that were scanned from disk to the wildcard filename
-    const auto files_end = files_on_disk.end();
-    for(auto files_it = files_on_disk.begin(); files_it != files_end; ++files_it)
+    for(auto files_it = std::begin(files_on_disk); files_it != std::end(files_on_disk); ++files_it)
     {
       const file& entry = *files_it; // filename and last modified time
       debug(debug::files) << "file_cache::match_source_files::Matching " << entry.first << " with " << true_filename << ".\n";
@@ -223,8 +219,8 @@ void file_cache::add_source_directory(const string& directory)
     debug(debug::files) << "file_cache::add_source_directory::Directory already present, and scanned.\n";
   else
   {
-    file_set& new_files = (*result.first).second;
-    scan_directory(std::inserter(new_files, new_files.begin()), directory);
+    file_set& new_files = result.first->second;
+    scan_directory(std::inserter(new_files, std::begin(new_files)), directory);
     debug(debug::files) << "file_cache::add_source_directory::Directory scanned.\n";
   }
 }
@@ -240,8 +236,8 @@ void file_cache::add_build_directory(const std::string& directory)
     debug(debug::files) << "file_cache::add_source_directory::Directory already present, and scanned.\n";
   else
   {
-    file_set& new_files = (*result.first).second;
-    scan_directory(std::inserter(new_files, new_files.begin()), directory);
+    file_set& new_files = result.first->second;
+    scan_directory(std::inserter(new_files, std::begin(new_files)), directory);
   }
 }
 

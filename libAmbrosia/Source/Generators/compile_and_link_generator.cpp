@@ -35,9 +35,7 @@ libambrosia_namespace_begin
 compile_and_link_generator::compile_and_link_generator(const file_type type,
                        const target& target)
 : generator(type, target)
-{
-  //m_generator_map.at(generator_string::compiler) =
-}
+{   }
 
 compile_and_link_generator::~compile_and_link_generator()
 {   }
@@ -45,10 +43,22 @@ compile_and_link_generator::~compile_and_link_generator()
 const string_vector compile_and_link_generator::generate_parallel_commands()
 {
   string_vector commands;
-  std::stringstream command;
-  // compile commands
-  for(auto it = m_target.source_files(m_type).begin(); it != m_target.source_files(m_type).end(); ++it)
+  ostringstream command;
+
+  for(auto it = std::begin(m_target.source_files(m_type)); it != std::end(m_target.source_files(m_type)); ++it)
   {
+    // compiler (e.g. 'gcc')
+    command << m_generator_map.at(generator_string::compiler);
+    // compile argument (e.g. '-c')
+    const string& compile_argument = m_generator_map.at(generator_string::compile_argument);
+    if(!compile_argument.empty())
+      command << " " << compile_argument;
+    // source file
+    command << " " << it->first;
+    // output argument (e.g. '-o')
+    const string& output_argument = m_generator_map.at(generator_string::output_argument);
+    if(!output_argument.empty())
+      command << " " << output_argument;
 
   }
 

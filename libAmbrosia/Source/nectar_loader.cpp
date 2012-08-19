@@ -117,7 +117,7 @@ void nectar_loader::extract_nectar(project& project)
     }
     else if("app" == token || "lib" == token)
     {
-      const target_type type = map_value(target_type_map, token);
+      const target_type type = target_type_map.at(token);
       debug(debug::parser) << "nectar_loader::extract_nectar::" << token << " section found at line " << m_line_number << ".\n";
       if(next_token(token))
       {
@@ -125,13 +125,13 @@ void nectar_loader::extract_nectar(project& project)
           throw nectar_error("Syntax error: Expected " + token + " name after " + token + ".", m_filename, m_line_number);
         else
         {
-          debug(debug::parser) << "nectar_loader::extract_nectar::Processing " << map_value(target_type_map_inverse, type) << ": " << token << ".\n";
+          debug(debug::parser) << "nectar_loader::extract_nectar::Processing " << target_type_map_inverse.at(type) << ": " << token << ".\n";
           const string target_name(token);
           dependency_set dependencies(m_dependency_list);
           read_dependency_list(dependencies);
 
           if(!next_token(token) && "{" == token)
-            throw syntax_error("Expected \'{\' after " + map_value(target_type_map_inverse, type) + " target name.", m_filename, m_line_number);
+            throw syntax_error("Expected \'{\' after " + target_type_map_inverse.at(type) + " target name.", m_filename, m_line_number);
 
           project.m_targets.emplace_back(new target(m_subdirectory, target_name, type, dependencies, project.m_targets[0]->m_build_config));
 
@@ -195,7 +195,8 @@ void nectar_loader::syntax_warning(const string& message,
   cerr << "\nSyntax warning: " + m_filename + "\n" +
           "       line " + to_string(m_line_number) + "\n" +
           "       " + message << "\n";
-  std::for_each( warning_list.begin(), warning_list.end(), [](const string& item) { cerr << "\n\t" << item; });
+  std::for_each(std::begin(warning_list), std::end(warning_list),
+                [](const string& item) { cerr << "\n\t" << item; });
 }
 /*
  * Lexing
@@ -407,7 +408,7 @@ void nectar_loader::read_dependency_list(dependency_set& dependencies)
         if(!dependencies.insert(element).second)
         {
           if(!contains(m_dependency_list, element))
-            throw syntax_error("Double dependency listed: " + map_value(target_type_map_inverse, type) + " " + token + ".", m_filename, m_line_number);
+            throw syntax_error("Double dependency listed: " + target_type_map_inverse.at(type) + " " + token + ".", m_filename, m_line_number);
         }
       }
     }
@@ -455,7 +456,7 @@ bool nectar_loader::test_condition(const function<bool(const string&)>& config_c
             throw syntax_error( "And operator not implemented yet.",
             m_filename, m_line_number );
           default:
-            throw std::logic_error( "nectar_loader::test_condition:Operator " + map_value(conditional_operator_map_inverse, op) + " unexpected." );
+            throw std::logic_error( "nectar_loader::test_condition:Operator " + conditional_operator_map_inverse.at(op) + " unexpected." );
         }
       }
     }
@@ -473,7 +474,7 @@ bool nectar_loader::test_condition(const function<bool(const string&)>& config_c
         negate = !negate;
       else if(previous_was_operator)
       {
-        throw syntax_error("Expected config item after conditional operator " + map_value(conditional_operator_map_inverse, op) + " unexpected.",
+        throw syntax_error("Expected config item after conditional operator " + conditional_operator_map_inverse.at(op) + " unexpected.",
                            m_filename, m_line_number);
       }
       else
@@ -482,7 +483,7 @@ bool nectar_loader::test_condition(const function<bool(const string&)>& config_c
     else // "token" is a config string
     {
       debug(debug::conditional) << "nectar_loader::test_condition:Testing config string \'" << token << "\'" << " with operator "
-                                << map_value(conditional_operator_map_inverse, op) << ".\n";
+                                << conditional_operator_map_inverse.at(op) << ".\n";
       empty_conditional = false;
       switch(op)
       {
@@ -496,7 +497,7 @@ bool nectar_loader::test_condition(const function<bool(const string&)>& config_c
           result = result && config_contains(token);
           break;
         default:
-          throw std::logic_error("nectar_loader::test_condition:Operator " + map_value(conditional_operator_map_inverse, op) + " not expected." );
+          throw std::logic_error("nectar_loader::test_condition:Operator " + conditional_operator_map_inverse.at(op) + " not expected." );
       }
       debug(debug::conditional) << "nectar_loader::test_condition:Current condition state is " << to_string(result) << ".\n";
     }
@@ -599,7 +600,7 @@ void nectar_loader::process_inner_list_conditional()
 
 void nectar_loader::parse_file_list(const file_type type)
 {
-  debug(debug::parser) << "nectar_loader::parse_file_list::Parsing " << map_value(file_type_map_inverse, type) << " file list.\n";
+  debug(debug::parser) << "nectar_loader::parse_file_list::Parsing " << file_type_map_inverse.at(type) << " file list.\n";
   bool empty = true; // a list must not be empty
   string token;
 
@@ -733,7 +734,7 @@ void nectar_loader::parse_target()
       } // or a list of directories
       else if(map_value(directory_type_map, token, type))
       {
-        debug(debug::parser) << "nectar_loader::parse_target::" << map_value(file_type_map_inverse, type) << " directory list detected.\n";
+        debug(debug::parser) << "nectar_loader::parse_target::" << file_type_map_inverse.at(type) << " directory list detected.\n";
         const file_type general_type = get_general_type(type);
         if(general_type == file_type::source || type == file_type::header)
           parse_source_directory_list(type);

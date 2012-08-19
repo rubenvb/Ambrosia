@@ -115,12 +115,12 @@ toolchain config_base::detect_toolchain(toolchain requested_toolchain) const
 }
 void config_base::initialize_config()
 {
-  m_config = { map_value(os_map_inverse, m_target_os), // Target OS
-               map_value(architecture_map_inverse, m_target_architecture), // Target Architecture
-               map_value(toolchain_map_inverse, m_target_toolchain), // Toolchain
-               "build_" + map_value(os_map_inverse, m_build_os), // Build OS
-               "build_" + map_value(architecture_map_inverse, m_build_architecture), // Build architecture
-               map_value(environment_map_inverse, m_build_environment) // Shell environment
+  m_config = { os_map_inverse.at(m_target_os), // Target OS
+               architecture_map_inverse.at(m_target_architecture), // Target Architecture
+               toolchain_map_inverse.at(m_target_toolchain), // Toolchain
+               "build_" + os_map_inverse.at(m_build_os), // Build OS
+               "build_" + architecture_map_inverse.at(m_build_architecture), // Build architecture
+               environment_map_inverse.at(m_build_environment) // Shell environment
              };
   // Convenience config strings
   if( m_target_os == os::Windows && m_target_toolchain == toolchain::GNU )

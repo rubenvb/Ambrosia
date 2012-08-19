@@ -58,7 +58,7 @@ void apply_commandline_options(const string_vector& arguments,
                                lib::file_cache& files)
 {
   // Debug output
-  std::for_each(arguments.begin(), arguments.end(),
+  std::for_each(std::begin(arguments), std::end(arguments),
                 [](const string& option)
                 { static int i=1;
                   debug(debug::type::commandline) << "commandline::apply_commandline_options::argument: " << i++ << ": " << option << ".\n"; });
@@ -76,7 +76,7 @@ void apply_commandline_options(const string_vector& arguments,
   // Options to be filled in, with default values, if any
   size_t argument_number = 0;
   bool m_first_dashless_argument = true;
-  for(auto it = arguments.begin(); it != arguments.end(); ++it)
+  for(auto it = std::begin(arguments); it != std::end(arguments); ++it)
   {
     argument_number++;
     const string& current = *it;
@@ -114,7 +114,7 @@ void apply_commandline_options(const string_vector& arguments,
           add_target:
           const string target = current;
           string_set options;
-          if((it+1) != arguments.end() && *(it+1) == ":")
+          if((it+1) != std::end(arguments) && *(it+1) == ":")
           {
             const string& list_of_options = *(++it);
             ++argument_number;
@@ -156,7 +156,7 @@ void apply_commandline_options(const string_vector& arguments,
   debug(debug::commandline) << "commandline::apply_commandline_options::Checking if project file was found.\n";
   // Ensure that a valid project file has been found
   if(!lib::file_exists(lib::project::configuration->m_project_file))
-    throw lib::internal_error("commandline::apply_commandline_options::Project file should not be empty now.");
+    throw lib::error("No project file specified on the commandline, nor was one found in the current directory.");
 }
 
 void add_build_target(const string& target, const string_set& options)

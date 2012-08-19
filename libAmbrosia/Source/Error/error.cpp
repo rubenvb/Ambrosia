@@ -41,8 +41,8 @@ error::error(const std::string& message,
 : m_message(message),
   m_list(list.size())
 {
-  auto dest = m_list.begin();
-  std::for_each(list.begin(), list.end(), [=](const file& item) mutable
+  auto dest = std::begin(m_list);
+  std::for_each(std::begin(list), std::end(list), [=](const file& item) mutable
                                           { *dest++ = item.first; });
 }
 error::~error()
@@ -54,7 +54,7 @@ void error::output_message() const
           "\t" << m_message << "\n";
   if(!m_list.empty())
   {
-    std::for_each(m_list.begin(), m_list.end(),
+    std::for_each(std::begin(m_list), std::end(m_list),
                   [](const string& item)
                   { cerr << "\t" << item << "\n";});
   }

@@ -59,7 +59,7 @@ void project::apply_target_configuration()
 {
   const map_string_set_string target_config = configuration->target_config_options();
 
-  for(auto it = target_config.begin(); it != target_config.end(); ++it)
+  for(auto it = std::begin(target_config); it != std::end(target_config); ++it)
   {
 
   }
@@ -78,7 +78,7 @@ void project::apply_target_configuration()
 void project::generate_commands()
 {
   // assume targets are in the correct dependent order
-  for(auto target_it = m_targets.begin(); target_it != m_targets.end(); ++target_it)
+  for(auto target_it = std::begin(m_targets); target_it != std::end(m_targets); ++target_it)
   {
     const target& current = **target_it;
     if(current.m_type == target_type::global)
@@ -90,11 +90,11 @@ void project::generate_commands()
                               << "\tfor the following types of source files:\n"
                               << "\t" << current.m_build_config.m_source_types << "\n";
 
-    for(auto type_it = current.m_build_config.m_source_types.begin(); type_it != current.m_build_config.m_source_types.end(); ++type_it)
+    for(auto type_it = std::begin(current.m_build_config.m_source_types); type_it != std::end(current.m_build_config.m_source_types); ++type_it)
     {
       const auto& type = *type_it;
       debug(debug::command_gen) << "project::generate_commands::Generating commands for " << current.source_files(type).size() << " "
-                                << map_value(file_type_map_inverse, type) << " files.\n";
+                                << file_type_map_inverse.at(type) << " files.\n";
       //TODO generalize to a "get_generator function when there are languages supported that need a different style of processing
       unique_ptr<generator> generator(new compile_and_link_generator(type, current));
 
@@ -103,7 +103,7 @@ void project::generate_commands()
       //TODO: debug output of commands, or storage in a per-target list for nice output.
 
       //TODO: fix ugly function call below
-      m_commands[current.name()].insert(m_commands[current.name()].end(), commands.begin(), commands.end());
+      m_commands[current.name()].insert(std::end(m_commands[current.name()]), std::begin(commands), std::end(commands));
     }
   }
   throw error("generate_commands is not completely implemented yet.");

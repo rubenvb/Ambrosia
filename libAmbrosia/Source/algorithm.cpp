@@ -78,10 +78,10 @@ bool wildcard_compare(const string& wild_string,
   // Taken from http://www.codeproject.com/KB/string/wildcmp.aspx
   // Adapted by Ruben Van Boxem for Ambrosia
 
-  auto wild = wild_string.begin();
-  auto str = full_string.begin();
-  const auto wild_end = wild_string.end();
-  const auto string_end = full_string.end();
+  auto wild = std::begin(wild_string);
+  auto str = std::begin(full_string);
+  const auto wild_end = std::end(wild_string);
+  const auto string_end = std::end(full_string);
 
   auto cp = string_end;
   auto mp = wild_end;
@@ -131,15 +131,13 @@ bool wildcard_directory_compare(const string& wild_string,
   // Taken from http://www.codeproject.com/KB/string/wildcmp.aspx
   // Adapted by Ruben Van Boxem for Ambrosia
 
-  auto wild = wild_string.begin();
-  auto str = full_string.begin();
-  const auto wild_end = wild_string.end();
-  const auto string_end = full_string.end();
+  auto wild = std::begin(wild_string);
+  auto str = std::begin(full_string);
 
-  auto cp = string_end;
-  auto mp = wild_end;
+  auto cp = std::end(full_string);
+  auto mp = std::end(wild_string);
 
-  while(str != string_end && (*wild != '*'))
+  while(str != std::end(full_string) && (*wild != '*'))
   {
     if((*wild != *str) && (*wild != '?'))
       return false;
@@ -147,12 +145,12 @@ bool wildcard_directory_compare(const string& wild_string,
     ++wild;
     ++str;
   }
-  while(str != string_end) // string != end
+  while(str != std::end(full_string)) // string != end
   {
     if(*wild == '*')
     {
       ++wild;
-      if(wild == wild_end)
+      if(wild == std::end(wild_string))
         return true;
 
       mp = wild;
@@ -173,11 +171,11 @@ bool wildcard_directory_compare(const string& wild_string,
       ++cp;
     }
   }
-  while(wild != wild_end && *wild == '*')
+  while(wild != std::end(wild_string) && *wild == '*')
   {
     ++wild;
   }
-  return (wild==wild_end);
+  return (wild==std::end(wild_string));
 }
 
 template<class T>
@@ -188,13 +186,13 @@ const T merge_sets(T& old_set,
   T result;
   T duplicates;
   // get merged set
-  std::set_union(old_set.begin(), old_set.end(),
-                 add_set.begin(), add_set.end(),
-                 insert_iterator<string_set>(result, result.begin()));
+  std::set_union(std::begin(old_set), std::end(old_set),
+                 std::begin(add_set), std::end(add_set),
+                 insert_iterator<string_set>(result, std::begin(result)));
   // get duplicates
-  std::set_intersection(old_set.begin(), old_set.end(),
-                        add_set.begin(), add_set.end(),
-                        insert_iterator<string_set>(duplicates, duplicates.begin()));
+  std::set_intersection(std::begin(old_set), std::end(old_set),
+                        std::begin(add_set), std::end(add_set),
+                        insert_iterator<string_set>(duplicates, std::begin(duplicates)));
   old_set.swap(result);
   // return duplicates for error handling
   return duplicates;
@@ -210,14 +208,14 @@ const T remove_set(T& old_set,
   T not_found;
 
   // find elements in new_set that are not in old_set
-  std::set_symmetric_difference(new_set.begin(), new_set.end(),
-                                old_set.begin(), old_set.end(),
-                                std::inserter(not_found, not_found.begin()));
+  std::set_symmetric_difference(std::begin(new_set), std::end(new_set),
+                                std::begin(old_set), std::end(old_set),
+                                std::inserter(not_found, std::end(not_found)));
 
   // remove elements in new_set
-  std::set_difference(old_set.begin(), old_set.end(),
-                      new_set.begin(), new_set.end(),
-                      std::inserter(result, result.begin()));
+  std::set_difference(std::begin(old_set), std::end(old_set),
+                      std::begin(new_set), std::end(new_set),
+                      std::inserter(result, std::begin(result)));
   old_set.swap(result);
   // return items not present in old_set
   return not_found;
@@ -292,36 +290,35 @@ void dependency_resolve(target_vector& unsorted,
 {
   debug(debug::algorithm) << "dependency_resolve::Resolving: " << (*node)->name() << ".\n";
   unresolved.push_back(std::move(*node));
-  unsorted.erase(unsorted.begin());
+  unsorted.erase(std::begin(unsorted));
 
   const auto edges = unresolved.back()->m_dependencies;
-  const auto end = edges.end();
-  for(auto it = edges.begin(); it != end; ++it)
+  for(auto it = std::begin(edges); it != std::end(edges); ++it)
   {
     const string name((*it).second);
     debug(debug::algorithm) << "dependency_resolve::Processing edge: " << name << ".\n";
     const auto find_functor = [&name](const target_vector::value_type& t)
                               { return name == t->name(); };
 
-    if(resolved.end() == find_if(resolved.begin(), resolved.end(), find_functor))
+    if(std::end(resolved) == find_if(std::begin(resolved), std::end(resolved), find_functor))
     {
-      if(unresolved.end() != find_if(unresolved.begin(), unresolved.end(), find_functor))
+      if(std::end(unresolved) != find_if(std::begin(unresolved), std::end(unresolved), find_functor))
         throw internal_error("Circular dependency detected: " + unresolved.back()->name() + " -> " + name + ".");
 
       // check if dependency is already resolved or still needs to be processed
-      auto new_node = std::find_if(unsorted.begin(), unsorted.end(), find_functor);
-      if(new_node != unsorted.end())
+      auto new_node = std::find_if(std::begin(unsorted), std::end(unsorted), find_functor);
+      if(new_node != std::end(unsorted))
         dependency_resolve(unsorted, new_node, resolved, unresolved);
       else
       {
-        new_node = std::find_if(resolved.begin(), resolved.end(), find_functor);
-        if(new_node == resolved.end())
+        new_node = std::find_if(std::begin(resolved), std::end(resolved), find_functor);
+        if(new_node == std::end(resolved))
           throw internal_error("Dependency not defined: " + name);
       }
     }
   }
   resolved.push_back(std::move(unresolved.back()));
-  unresolved.erase(unresolved.end()-1);
+  unresolved.erase(std::end(unresolved)-1);
 }
 
 void dependency_sort(target_vector& unsorted)
@@ -333,7 +330,7 @@ void dependency_sort(target_vector& unsorted)
 
   while(!unsorted.empty())
   {
-    dependency_resolve(unsorted, unsorted.begin(), resolved, unresolved);
+    dependency_resolve(unsorted, std::begin(unsorted), resolved, unresolved);
   }
   unsorted.swap(resolved);
 }
@@ -346,18 +343,17 @@ void filter_dependency_sort(target_vector& unsorted)
   unresolved.reserve(unsorted.size());
 
   const auto& target_config_options = project::configuration->target_config_options();
-  const auto end = target_config_options.end();
-  for(auto it = target_config_options.begin(); it != end; ++it)
+  for(auto it = std::begin(target_config_options); it != std::end(target_config_options); ++it)
   {
     const string name((*it).first);
-    const auto item = std::find_if(unsorted.begin(), unsorted.end(),
+    const auto item = std::find_if(std::begin(unsorted), std::end(unsorted),
                                    [&name](const unique_ptr<target>& t) { return name == t->name(); });
-    if(item == unsorted.end())
+    if(item == std::end(unsorted))
     {
       unsorted.erase(item);
       continue; // skip dependency_resolve, of course
     }
-    dependency_resolve(unsorted, unsorted.begin(), resolved, unresolved);
+    dependency_resolve(unsorted, std::begin(unsorted), resolved, unresolved);
   }
   unsorted.swap(resolved);
 }

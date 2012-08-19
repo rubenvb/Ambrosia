@@ -51,6 +51,8 @@ target::target(const string& subdirectory,
   m_type(target_type::global),
   m_source_directories(),
   m_source_files(),
+  m_object_files(),
+  m_output_file(),
   m_libraries()
 {   }
 target::target(const string& subdirectory,
@@ -65,9 +67,11 @@ target::target(const string& subdirectory,
   m_type(type),
   m_source_directories(),
   m_source_files(),
+  m_object_files(),
+  m_output_file(),
   m_libraries()
 {
-  debug(debug::target) << "target::Created " << map_value(target_type_map_inverse, type) << ": " << name << ".\n";
+  debug(debug::target) << "target::Created " << target_type_map_inverse.at(type) << ": " << name << ".\n";
 }
 
 void target::add_source_file(const file_type type,
@@ -84,7 +88,7 @@ void target::add_source_file(const file_type type,
 
     // add matches, files already present cause error
     string_vector duplicates;
-    for(auto it = matches.begin(); it != matches.end(); ++it)
+    for(auto it = std::begin(matches); it != std::end(matches); ++it)
     {
       const auto& current = *it;
       const file_type detected_type = detect_type(type, current.first);
@@ -112,13 +116,13 @@ void target::add_source_file(const file_type type,
       }
       default:
         string_vector ambiguous;
-        std::for_each(matches.begin(), matches.end(), [&ambiguous](const file& f) { ambiguous.push_back(f.first); });
+        std::for_each(std::begin(matches), std::end(matches), [&ambiguous](const file& f) { ambiguous.push_back(f.first); });
         throw nectar_error("Ambiguity in file selection: ", filename, line_number, ambiguous);
     }
   }
 }
-void target::remove_file(const file_type type,
-                         const string& filename)
+void target::remove_source_file(const file_type type,
+                                const string& filename)
 {
   // search for file, check if there are any other files of the same type,
   //  and remove the "source file config" for generation phase.
@@ -138,7 +142,7 @@ bool target::add_source_directory(const file_type type,
   m_source_directories[type].insert(directory);
   return true;
 }
-void target::remove_directory(const file_type type,
+void target::remove_source_directory(const file_type type,
                               const string& directory)
 {
   if(m_source_directories[type].erase(directory))
@@ -146,29 +150,32 @@ void target::remove_directory(const file_type type,
 
   throw error("target::remove_directory has a flaky implementation.");
 }
+const file_set& target::source_files(const file_type type) const
+{
+  const auto it = m_source_files.find(type);
+  if(it == std::end(m_source_files) || (*it).second.empty())
+  {
+    debug(debug::target) << "target::source_files::Attempt at getting at source file_set for " << file_type_map_inverse.at(type)
+                         << " which is either nonexistent or empty.\n";
+    throw internal_error("target::source_files called with a file_type for which no source files are present.");
+  }
+  return (*it).second;
+}
+
 bool target::add_library(const string& library)
 {
   debug(debug::target) << "target::add_library::Adding library " << library << " to target " << m_name << ".\n";
   //TODO: check if library can be linked
   return !(m_libraries.insert(library).second);
 }
-void target::remove_library(const string& library)
+void target::remove_library(const string& /*library*/)
 {
-  if(m_libraries.erase(library))
-    emit_warning_list( {library} );
-
-  throw error("remove_library has flaky implementation.");
+  throw error("target::remove_library is unimplemented.");
 }
-const file_set& target::source_files(const file_type type) const
+
+void target::generate_object_filenames()
 {
-  const auto it = m_source_files.find(type);
-  if(it == m_source_files.end() || (*it).second.empty())
-  {
-    debug(debug::target) << "target::source_files::Attempt at getting at source file_set for " << map_value(file_type_map_inverse, type)
-                         << " which is either nonexistent or empty.\n";
-    throw internal_error("target::source_files called with a file_type for which no source files are present.");
-  }
-  return (*it).second;
+
 }
 
 libambrosia_namespace_end

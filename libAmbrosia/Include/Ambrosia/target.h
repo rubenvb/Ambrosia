@@ -50,28 +50,34 @@ public:
   target(const std::string& subdirectory,
          const dependency_set& dependencies,
          const ambrosia_config& config);
-  // other targets are based off of global
+  // other targets are based off of global's build_config
   target(const std::string& subdirectory,
          const std::string& name,
          const target_type type,
          const dependency_set& dependencies,
          const build_config& config);
 
-  // file_set operations
+  // source file modifiers and accessor
   void add_source_file(const file_type type,
                        const std::string& filename,
                        const std::string& nectar_file,
                        const size_t line_number);
-  void remove_file(const file_type type,
+  void remove_source_file(const file_type type,
                    const std::string& filename );
   bool add_source_directory(const file_type type,
                             const std::string& directory);
-  void remove_directory(const file_type type,
+  void remove_source_directory(const file_type type,
                         const std::string& directory);
-  bool add_library(const std::string& library);
-  void remove_library(const std::string& library);
   const file_set& source_files(const file_type type) const;
 
+  // libraries to be linked
+  bool add_library(const std::string& library);
+  void remove_library(const std::string& library);
+
+  // output object filenames
+  void generate_object_filenames();
+
+  // variables
   build_config m_build_config; // build configuration, inherited from global target's build_config
   const dependency_set m_dependencies; // dependency+type
   std::string m_output_name;
@@ -80,6 +86,8 @@ public:
 private:
   map_file_type_string_set m_source_directories; // source directories per file type
   map_file_type_file_set m_source_files; // source files per file type with last modified time
+  map_file_type_file_set m_object_files; // object files per file type with last modified time
+  std::string m_output_file;
   string_set m_libraries; // libraries to be linked
 };
 

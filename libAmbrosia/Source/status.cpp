@@ -66,13 +66,13 @@ void emit_error(const string& message)
   debug(debug::status) << "status::emit_error:Emitting error here:\n\t" << message << "\n";
   current_status = status::error;
   error_messages += "\nError: " + message;
-  std::for_each(error_list.begin(), error_list.end(), []( const string& item) { error_messages += "\n\t" + item; });
+  std::for_each(std::begin(error_list), std::end(error_list), []( const string& item) { error_messages += "\n\t" + item; });
 }
 
 void emit_warning(const string& message)
 {
   cerr << "\nWarning: " + message + "\n";
-  std::for_each( warning_list.begin(), warning_list.end(), []( const string& item) { cerr << "\n\t" << item; });
+  std::for_each(std::begin(warning_list), std::end(warning_list), []( const string& item) { cerr << "\n\t" << item; });
 }
 void emit_nectar_error(const string& message,
                        const string& filename,
@@ -95,7 +95,7 @@ void emit_nectar_warning(const string& message,
 void emit_error_list(const string_vector& list)
 {
   current_status = status::list;
-  error_list.insert(error_list.end(), list.begin(), list.end());
+  error_list.insert(std::begin(error_list), std::begin(list), std::end(list));
 }
 void emit_warning_list( const string_vector& list )
 {

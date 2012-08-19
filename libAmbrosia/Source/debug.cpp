@@ -86,7 +86,7 @@ debug& debug::operator<<(const string_set& strings)
     if(strings.empty())
       std::cerr << "\t<empty list>\n";
     else
-      std::for_each(strings.begin(), strings.end(), [strings](const std::string& item) { std::cerr << "\t" << item << "\n"; });
+      std::for_each(std::begin(strings), std::end(strings), [strings](const std::string& item) { std::cerr << "\t" << item << "\n"; });
   }
   return *this;
 }
@@ -98,12 +98,11 @@ debug& debug::operator<<(const set<file_type>& type_list)
     if(type_list.empty())
       std::cerr << "\t<empty list>\n";
     else
-      std::for_each(type_list.begin(), type_list.end(), [type_list](const file_type type){ std::cerr << "\t" << map_value(file_type_map_inverse, type); });
+      std::for_each(std::begin(type_list), std::end(type_list), [type_list](const file_type type){ std::cerr << "\t" << file_type_map_inverse.at(type); });
   }
   return *this;
 }
 
 #endif // AMBROSIA_DEBUG
-
 
 libambrosia_namespace_end
