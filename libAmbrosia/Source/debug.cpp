@@ -37,38 +37,38 @@ libambrosia_namespace_begin
 debug::type debug::s_level = // debug::initial
         static_cast<debug::type>(debug::commandline ^ debug::platform ^ debug::initial ^ debug::command_gen);
 
-extern const map<std::string, debug::type> debug_map =
-                { {"commandline",   debug::commandline},
-                  {"algorithm",     debug::algorithm},
-                  {"nectar",        debug::nectar},
-                  {"lexer",         debug::lexer},
-                  {"parser",        debug::parser},
-                  {"NoT ReAcHABle", debug::nectar_parser},
-                  {"conditional",   debug::conditional},
-                  {"target",        debug::target},
-                  {"files",         debug::files},
-                  {"platform",      debug::platform},
-                  {"status",        debug::status},
-                  {"config",        debug::config},
-                  {"command_gen",   debug::command_gen},
-                  {"initial",       debug::initial},
-                  {"all",           debug::always} };
-extern const map<debug::type, std::string> debug_map_inverse =
-                { {debug::commandline,   "commandline"},
-                  {debug::algorithm,     "algorithm"},
-                  {debug::nectar,        "nectar"},
-                  {debug::lexer,         "lexer"},
-                  {debug::parser,        "parser"},
-                  {debug::nectar_parser, "nectar and parser"},
-                  {debug::conditional,   "conditional"},
-                  {debug::target,        "target"},
-                  {debug::files,         "files"},
-                  {debug::platform,      "platform"},
-                  {debug::status,        "status"},
-                  {debug::config,        "config"},
-                  {debug::command_gen,   "command_gen"},
-                  {debug::initial,       "initial"},
-                  {debug::always,        "all"} };
+const map<std::string, debug::type> debug_map =
+         { {"commandline",   debug::commandline},
+           {"algorithm",     debug::algorithm},
+           {"nectar",        debug::nectar},
+           {"lexer",         debug::lexer},
+           {"parser",        debug::parser},
+           {"NoT ReAcHABle", debug::nectar_parser},
+           {"conditional",   debug::conditional},
+           {"target",        debug::target},
+           {"files",         debug::files},
+           {"platform",      debug::platform},
+           {"status",        debug::status},
+           {"config",        debug::config},
+           {"command_gen",   debug::command_gen},
+           {"initial",       debug::initial},
+           {"all",           debug::always} };
+const map<debug::type, std::string> debug_map_inverse =
+         { {debug::commandline,   "commandline"},
+           {debug::algorithm,     "algorithm"},
+           {debug::nectar,        "nectar"},
+           {debug::lexer,         "lexer"},
+           {debug::parser,        "parser"},
+           {debug::nectar_parser, "nectar and parser"},
+           {debug::conditional,   "conditional"},
+           {debug::target,        "target"},
+           {debug::files,         "files"},
+           {debug::platform,      "platform"},
+           {debug::status,        "status"},
+           {debug::config,        "config"},
+           {debug::command_gen,   "command_gen"},
+           {debug::initial,       "initial"},
+           {debug::always,        "all"} };
 
 debug::debug(const type debug_level)
 : m_output(debug_level& s_level)

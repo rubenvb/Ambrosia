@@ -51,8 +51,8 @@ void drink_nectar(project& project)
 {
   // open file
   const string& filename = project.configuration->m_project_file;
-  auto stream_ptr(open_ifstream(filename));
-  auto& stream = *stream_ptr;
+  const auto&& stream_ptr(open_ifstream(filename));
+  auto&& stream = *stream_ptr;
   if(!stream)
     throw error("Unable to open *.nectar.txt file: " + filename);
 

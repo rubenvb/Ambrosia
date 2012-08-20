@@ -88,7 +88,7 @@ void target::add_source_file(const file_type type,
 
     // add matches, files already present cause error
     string_vector duplicates;
-    for(auto it = std::begin(matches); it != std::end(matches); ++it)
+    for(auto&& it = std::begin(matches); it != std::end(matches); ++it)
     {
       const auto& current = *it;
       const file_type detected_type = detect_type(type, current.first);
@@ -152,7 +152,7 @@ void target::remove_source_directory(const file_type type,
 }
 const file_set& target::source_files(const file_type type) const
 {
-  const auto it = m_source_files.find(type);
+  const auto&& it = m_source_files.find(type);
   if(it == std::end(m_source_files) || (*it).second.empty())
   {
     debug(debug::target) << "target::source_files::Attempt at getting at source file_set for " << file_type_map_inverse.at(type)
@@ -175,7 +175,7 @@ void target::remove_library(const string& /*library*/)
 
 void target::generate_object_filenames()
 {
-
+  //for(auto&& it = m_source_files; it != ; ++it)
 }
 
 libambrosia_namespace_end

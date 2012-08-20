@@ -161,7 +161,7 @@ void nectar_loader::extract_nectar(project& project)
           debug(debug::nectar) << "nectar_loader::extract_nectar:Subproject filename is same as subdirectory.\n";
         }
         // Opening project file
-        auto stream_ptr = open_ifstream(full_subproject_filename);
+        const auto&& stream_ptr = open_ifstream(full_subproject_filename);
         auto& stream = *stream_ptr;
         if(stream)
         {

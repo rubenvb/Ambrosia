@@ -45,7 +45,7 @@ const string_vector compile_and_link_generator::generate_parallel_commands()
   string_vector commands;
   ostringstream command;
 
-  for(auto it = std::begin(m_target.source_files(m_type)); it != std::end(m_target.source_files(m_type)); ++it)
+  for(auto&& it = std::begin(m_target.source_files(m_type)); it != std::end(m_target.source_files(m_type)); ++it)
   {
     // compiler (e.g. 'gcc')
     command << m_generator_map.at(generator_string::compiler);
@@ -60,6 +60,9 @@ const string_vector compile_and_link_generator::generate_parallel_commands()
     if(!output_argument.empty())
       command << " " << output_argument;
 
+    commands.push_back(command.str());
+    debug(debug::command_gen) << "compile_and_link_generator::generate_parallel_commands::command: " << command.str() << "\n";
+    command.str("");
   }
 
   return commands;

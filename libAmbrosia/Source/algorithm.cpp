@@ -78,10 +78,10 @@ bool wildcard_compare(const string& wild_string,
   // Taken from http://www.codeproject.com/KB/string/wildcmp.aspx
   // Adapted by Ruben Van Boxem for Ambrosia
 
-  auto wild = std::begin(wild_string);
-  auto str = std::begin(full_string);
-  const auto wild_end = std::end(wild_string);
-  const auto string_end = std::end(full_string);
+  auto&& wild = std::begin(wild_string);
+  auto&& str = std::begin(full_string);
+  const auto&& wild_end = std::end(wild_string);
+  const auto&& string_end = std::end(full_string);
 
   auto cp = string_end;
   auto mp = wild_end;
@@ -131,8 +131,8 @@ bool wildcard_directory_compare(const string& wild_string,
   // Taken from http://www.codeproject.com/KB/string/wildcmp.aspx
   // Adapted by Ruben Van Boxem for Ambrosia
 
-  auto wild = std::begin(wild_string);
-  auto str = std::begin(full_string);
+  auto&& wild = std::begin(wild_string);
+  auto&& str = std::begin(full_string);
 
   auto cp = std::end(full_string);
   auto mp = std::end(wild_string);
@@ -292,13 +292,13 @@ void dependency_resolve(target_vector& unsorted,
   unresolved.push_back(std::move(*node));
   unsorted.erase(std::begin(unsorted));
 
-  const auto edges = unresolved.back()->m_dependencies;
-  for(auto it = std::begin(edges); it != std::end(edges); ++it)
+  const auto& edges = unresolved.back()->m_dependencies;
+  for(auto&& it = std::begin(edges); it != std::end(edges); ++it)
   {
     const string name((*it).second);
     debug(debug::algorithm) << "dependency_resolve::Processing edge: " << name << ".\n";
-    const auto find_functor = [&name](const target_vector::value_type& t)
-                              { return name == t->name(); };
+    const auto&& find_functor = [&name](const target_vector::value_type& t)
+                                { return name == t->name(); };
 
     if(std::end(resolved) == find_if(std::begin(resolved), std::end(resolved), find_functor))
     {
@@ -306,7 +306,7 @@ void dependency_resolve(target_vector& unsorted,
         throw internal_error("Circular dependency detected: " + unresolved.back()->name() + " -> " + name + ".");
 
       // check if dependency is already resolved or still needs to be processed
-      auto new_node = std::find_if(std::begin(unsorted), std::end(unsorted), find_functor);
+      auto&& new_node = std::find_if(std::begin(unsorted), std::end(unsorted), find_functor);
       if(new_node != std::end(unsorted))
         dependency_resolve(unsorted, new_node, resolved, unresolved);
       else
@@ -343,7 +343,7 @@ void filter_dependency_sort(target_vector& unsorted)
   unresolved.reserve(unsorted.size());
 
   const auto& target_config_options = project::configuration->target_config_options();
-  for(auto it = std::begin(target_config_options); it != std::end(target_config_options); ++it)
+  for(auto&& it = std::begin(target_config_options); it != std::end(target_config_options); ++it)
   {
     const string name((*it).first);
     const auto item = std::find_if(std::begin(unsorted), std::end(unsorted),

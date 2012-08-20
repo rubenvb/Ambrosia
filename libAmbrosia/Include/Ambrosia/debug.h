@@ -35,20 +35,20 @@ class debug
 public:
   enum type : uint32_t
   {
-    commandline   = 1 << 0,
-    algorithm     = 1 << 1,
-    nectar        = 1 << 2,
-    lexer         = 1 << 3,
-    parser        = 1 << 4,
+    commandline   = 1,
+    algorithm     = 2,
+    nectar        = 4,
+    lexer         = 8,
+    parser        = 16,
     nectar_parser = nectar | parser,
-    conditional   = 1 << 5,
-    target        = 1 << 6,
-    files         = 1 << 7,
-    platform      = 1 << 8,
-    status        = 1 << 9,
-    config        = 1 << 10,
-    command_gen   = 1 << 11,
-    initial       = 1 << 30,
+    conditional   = 32,
+    target        = 64,
+    files         = 128,
+    platform      = 256,
+    status        = 512,
+    config        = 1024,
+    command_gen   = 2048,
+    initial       = 4096,
     always        = 0xffffffff
     // ...
   };

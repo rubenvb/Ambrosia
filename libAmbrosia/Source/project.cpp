@@ -59,7 +59,7 @@ void project::apply_target_configuration()
 {
   const map_string_set_string target_config = configuration->target_config_options();
 
-  for(auto it = std::begin(target_config); it != std::end(target_config); ++it)
+  for(auto&& it = std::begin(target_config); it != std::end(target_config); ++it)
   {
 
   }
@@ -78,7 +78,7 @@ void project::apply_target_configuration()
 void project::generate_commands()
 {
   // assume targets are in the correct dependent order
-  for(auto target_it = std::begin(m_targets); target_it != std::end(m_targets); ++target_it)
+  for(auto&& target_it = std::begin(m_targets); target_it != std::end(m_targets); ++target_it)
   {
     const target& current = **target_it;
     if(current.m_type == target_type::global)
@@ -90,7 +90,7 @@ void project::generate_commands()
                               << "\tfor the following types of source files:\n"
                               << "\t" << current.m_build_config.m_source_types << "\n";
 
-    for(auto type_it = std::begin(current.m_build_config.m_source_types); type_it != std::end(current.m_build_config.m_source_types); ++type_it)
+    for(auto&& type_it = std::begin(current.m_build_config.m_source_types); type_it != std::end(current.m_build_config.m_source_types); ++type_it)
     {
       const auto& type = *type_it;
       debug(debug::command_gen) << "project::generate_commands::Generating commands for " << current.source_files(type).size() << " "

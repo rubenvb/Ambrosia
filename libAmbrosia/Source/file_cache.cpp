@@ -143,14 +143,14 @@ const file_set file_cache::find_source_file(const string& filename,
 
   file_set result;
 
-  for(auto it = std::begin(directories_to_search); it != std::end(directories_to_search); ++it)
+  for(auto&& it = std::begin(directories_to_search); it != std::end(directories_to_search); ++it)
   {
     const string& directory = *it;
 
     debug(debug::files) << "file_cache::find_source_file::Loading directory contents for: " << directory << ".\n";
     const file_set& files_on_disk = get_source_file_set(directory);
 
-    for(auto it = std::begin(files_on_disk); it != std::end(files_on_disk); ++it)
+    for(auto&& it = std::begin(files_on_disk); it != std::end(files_on_disk); ++it)
     {
       const file& entry = *it;
       debug(debug::files) << "file_cache::find_source_file::Matching " << entry.first << " vs " << true_filename << ".\n";
@@ -176,7 +176,7 @@ const file_set file_cache::match_source_files(const string& filename,
   const string& true_filename( directory_filename.second );
 
   // search all directories, appended with preceding_directory
-  for(auto directory_it = std::begin(directories); directory_it != std::end(directories); ++directory_it)
+  for(auto&& directory_it = std::begin(directories); directory_it != std::end(directories); ++directory_it)
   {
     const string directory(full_directory_name(config->m_source_directory, *directory_it + preceding_directory));
     if(!directory_exists(directory))
@@ -191,7 +191,7 @@ const file_set file_cache::match_source_files(const string& filename,
     debug(debug::files) << "file_cache::match_source_files::Searching for match with " << files_on_disk.size() << " files.\n";
 
     // match all files that were scanned from disk to the wildcard filename
-    for(auto files_it = std::begin(files_on_disk); files_it != std::end(files_on_disk); ++files_it)
+    for(auto&& files_it = std::begin(files_on_disk); files_it != std::end(files_on_disk); ++files_it)
     {
       const file& entry = *files_it; // filename and last modified time
       debug(debug::files) << "file_cache::match_source_files::Matching " << entry.first << " with " << true_filename << ".\n";

@@ -85,8 +85,8 @@ public:
 
 private:
   map_file_type_string_set m_source_directories; // source directories per file type
-  map_file_type_file_set m_source_files; // source files per file type with last modified time
-  map_file_type_file_set m_object_files; // object files per file type with last modified time
+  map_file_type_set_file_pair m_source_files; // source files per file type with last modified time
+  map_file_type_set_file_pair m_object_files; // object files per file type with last modified time
   std::string m_output_file;
   string_set m_libraries; // libraries to be linked
 };

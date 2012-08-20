@@ -150,7 +150,7 @@ bool map_value(const std::map<Y,T>& map,
                const Y& key,
                T& value)
 {
-  const auto it = map.find(key);
+  const auto&& it = map.find(key);
   if(it != std::end(map))
   {
     value = (*it).second;
