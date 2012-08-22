@@ -21,6 +21,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
+#include "Ambrosia/build_element.h"
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/enum_maps.h"
@@ -80,30 +81,35 @@ void project::generate_commands()
   // assume targets are in the correct dependent order
   for(auto&& target_it = std::begin(m_targets); target_it != std::end(m_targets); ++target_it)
   {
-    const target& current = **target_it;
+    target& current = **target_it;
     if(current.m_type == target_type::global)
     {
-      debug(debug::command_gen) << "project::generate_commands::Skipping generation of build commands for target: " << current.name() << ".\n";
+      debug(debug::command_gen) << "project::generate_commands::Skipping generation of build commands for target: " << current.name << ".\n";
       continue;
     }
-    debug(debug::command_gen) << "project::generate_commands::Generating build commands for target: " << current.name() << "\n"
+    debug(debug::command_gen) << "project::generate_commands::Generating build commands for target: " << current.name << "\n"
+                              << "\tfor output in this directory: " << current.m_build_config.m_build_directory << "\n"
                               << "\tfor the following types of source files:\n"
                               << "\t" << current.m_build_config.m_source_types << "\n";
+
+    // verify the build config is OK to use
+    current.verify_configuration();
 
     for(auto&& type_it = std::begin(current.m_build_config.m_source_types); type_it != std::end(current.m_build_config.m_source_types); ++type_it)
     {
       const auto& type = *type_it;
-      debug(debug::command_gen) << "project::generate_commands::Generating commands for " << current.source_files(type).size() << " "
+      debug(debug::command_gen) << "project::generate_commands::Generating commands for " << current.files(type).size() << " "
                                 << file_type_map_inverse.at(type) << " files.\n";
       //TODO generalize to a "get_generator function when there are languages supported that need a different style of processing
       unique_ptr<generator> generator(new compile_and_link_generator(type, current));
 
+      generator->generate_object_filenames();
       const string_vector commands = generator->generate_parallel_commands();
 
       //TODO: debug output of commands, or storage in a per-target list for nice output.
 
       //TODO: fix ugly function call below
-      m_commands[current.name()].insert(std::end(m_commands[current.name()]), std::begin(commands), std::end(commands));
+      m_commands[current.name].insert(std::end(m_commands[current.name]), std::begin(commands), std::end(commands));
     }
   }
   throw error("generate_commands is not completely implemented yet.");

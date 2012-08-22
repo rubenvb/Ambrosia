@@ -42,6 +42,8 @@ public:
             const target& target);
   virtual ~generator();
 
+  // Zeroth, output object filenames
+  virtual void generate_object_filenames() = 0;
   // First, parallel executable commands, that are not influenced by eg missing link libraries from other targets
   // Example: the C/C++ compile commands that produce object files that will be linked together in the final step
   //TODO: what about generated headers? --> First make it possible to "generate headers"!!

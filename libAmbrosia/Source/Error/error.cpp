@@ -44,7 +44,7 @@ error::error(const std::string& message,
   auto&& dest = std::begin(m_list);
   std::for_each(std::begin(list), std::end(list),
                 [=](const file& item) mutable
-                { *dest++ = item.first; });
+                { *dest++ = item.name; });
 }
 error::~error()
 {   }

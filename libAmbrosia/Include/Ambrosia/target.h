@@ -57,7 +57,7 @@ public:
          const dependency_set& dependencies,
          const build_config& config);
 
-  // source file modifiers and accessor
+  // file modifiers and accessor
   void add_source_file(const file_type type,
                        const std::string& filename,
                        const std::string& nectar_file,
@@ -68,11 +68,14 @@ public:
                             const std::string& directory);
   void remove_source_directory(const file_type type,
                         const std::string& directory);
-  const file_set& source_files(const file_type type) const;
+  const build_element_set& files(const file_type type) const;
 
   // libraries to be linked
   bool add_library(const std::string& library);
   void remove_library(const std::string& library);
+
+  // configuration verification
+  void verify_configuration() const;
 
   // output object filenames
   void generate_object_filenames();
@@ -85,8 +88,7 @@ public:
 
 private:
   map_file_type_string_set m_source_directories; // source directories per file type
-  map_file_type_set_file_pair m_source_files; // source files per file type with last modified time
-  map_file_type_set_file_pair m_object_files; // object files per file type with last modified time
+  map_file_type_build_element_set m_files; // source and object files per file type with last modified time
   std::string m_output_file;
   string_set m_libraries; // libraries to be linked
 };

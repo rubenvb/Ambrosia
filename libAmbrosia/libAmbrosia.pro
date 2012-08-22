@@ -17,8 +17,8 @@ CONFIG += static
 CONFIG -= qt
 DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
 
-*g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic-errors -Wextra -Wall -Wconversion \
-                        -Weffc++ -Wmissing-include-dirs -Wstrict-aliasing -Werror
+*g++*:QMAKE_CXXFLAGS += -std=c++11 -pedantic-errors -Wextra -Wall -Wconversion \
+                        -Wmissing-include-dirs -Wstrict-aliasing -Werror
 CONFIG( debug, debug|release ) {
     LIBSUFFIX = d
     DEFINES += AMBROSIA_DEBUG
@@ -59,7 +59,9 @@ HEADERS += \
     Include/Ambrosia/Error/internal_error.h \
     Include/Ambrosia/Generators/generator.h \
     Include/Ambrosia/Generators/generator_maps.h \
-    Include/Ambrosia/Generators/compile_and_link_generator.h
+    Include/Ambrosia/Generators/compile_and_link_generator.h \
+    Include/Ambrosia/build_element.h \
+    Include/Ambrosia/file.h
 
 SOURCES += \
     Source/Configuration/ambrosia_config.cpp \

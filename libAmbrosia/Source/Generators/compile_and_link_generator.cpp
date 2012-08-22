@@ -20,6 +20,8 @@
 #include "Ambrosia/Generators/compile_and_link_generator.h"
 
 // libAmbrosia includes
+#include "Ambrosia/algorithm.h"
+#include "Ambrosia/build_element.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/project.h"
 #include "Ambrosia/target.h"
@@ -35,17 +37,34 @@ libambrosia_namespace_begin
 compile_and_link_generator::compile_and_link_generator(const file_type type,
                        const target& target)
 : generator(type, target)
-{   }
+{
+  debug(debug::command_gen) << "compile_and_link_generator::compile_and_link_generator::Generator created for output in \""
+                            << target.m_build_config.m_build_directory << "\"\n";
+}
 
 compile_and_link_generator::~compile_and_link_generator()
 {   }
+
+void compile_and_link_generator::generate_object_filenames()
+{
+  debug(debug::command_gen) << "compile_and_link_generator::Generating object filenames for " << m_target.name << " that will be built in "
+                            << "\"" << m_target.m_build_config.m_build_directory << "\".\n";
+  const build_element_set& files = m_target.files(m_type);
+  for(auto&& it = std::begin(files); it != std::end(files); ++it)
+  {
+    const build_element& current = *it;
+    current.object_file.name = full_directory_name(m_target.m_build_config.m_build_directory, get_basename(current.source_file.name))
+                               + m_generator_map.at(generator_string::object_suffix);
+    debug(debug::command_gen) << "compile_and_link_generator::generate_object_filenames::object file: " << current.object_file.name << "\n";
+  }
+}
 
 const string_vector compile_and_link_generator::generate_parallel_commands()
 {
   string_vector commands;
   ostringstream command;
 
-  for(auto&& it = std::begin(m_target.source_files(m_type)); it != std::end(m_target.source_files(m_type)); ++it)
+  for(auto&& it = std::begin(m_target.files(m_type)); it != std::end(m_target.files(m_type)); ++it)
   {
     // compiler (e.g. 'gcc')
     command << m_generator_map.at(generator_string::compiler);
@@ -54,11 +73,13 @@ const string_vector compile_and_link_generator::generate_parallel_commands()
     if(!compile_argument.empty())
       command << " " << compile_argument;
     // source file
-    command << " " << it->first;
+    command << " " << it->source_file.name;
     // output argument (e.g. '-o')
     const string& output_argument = m_generator_map.at(generator_string::output_argument);
     if(!output_argument.empty())
       command << " " << output_argument;
+    // object filename
+    command << " " << it->object_file.name;
 
     commands.push_back(command.str());
     debug(debug::command_gen) << "compile_and_link_generator::generate_parallel_commands::command: " << command.str() << "\n";

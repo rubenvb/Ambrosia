@@ -40,6 +40,8 @@ public:
              const target& target);
   virtual ~compile_and_link_generator();
 
+  virtual void generate_object_filenames();
+
   virtual const string_vector generate_parallel_commands();
 
   virtual const string_vector generate_final_commands();

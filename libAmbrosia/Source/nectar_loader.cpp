@@ -21,6 +21,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
+#include "Ambrosia/build_element.h"
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/Error/syntax_error.h"
@@ -622,11 +623,11 @@ void nectar_loader::parse_source_directory_list( const file_type type )
   // gather all list items
   while(next_list_token(token))
   {
-    const string subdirectory_name = full_directory_name(m_subdirectory, token);
+    //const string subdirectory_name = full_directory_name(m_subdirectory, token);
 
     empty_list = false;
 
-    if(!p_target->add_source_directory(type, subdirectory_name))
+    if(!p_target->add_source_directory(type, token))
       error_list.push_back("line " + to_string(m_line_number) +": " + token); // add the bad directory to error_list
   }
   if(empty_list)
@@ -679,7 +680,7 @@ void nectar_loader::parse_library_list()
 void nectar_loader::parse_target()
 {
   const target_type type = p_target->m_type;
-  const std::string target_name(p_target->name());
+  const std::string target_name(p_target->name);
   debug(debug::parser) << "nectar_loader::parse_target::Processing named target section: " << target_name << ".\n";
   size_t curly_brace_count = 1; // parsing starts inside curly braces block
   string token;

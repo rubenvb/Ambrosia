@@ -20,6 +20,7 @@
 #include "Ambrosia/algorithm.h"
 
 // libAmbrosia includes
+#include "Ambrosia/build_element.h"
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/Error/internal_error.h"
@@ -188,16 +189,16 @@ const T merge_sets(T& old_set,
   // get merged set
   std::set_union(std::begin(old_set), std::end(old_set),
                  std::begin(add_set), std::end(add_set),
-                 insert_iterator<string_set>(result, std::begin(result)));
+                 std::inserter(result, std::end(result)));
   // get duplicates
   std::set_intersection(std::begin(old_set), std::end(old_set),
                         std::begin(add_set), std::end(add_set),
-                        insert_iterator<string_set>(duplicates, std::begin(duplicates)));
+                        std::inserter(duplicates, std::end(duplicates)));
   old_set.swap(result);
   // return duplicates for error handling
   return duplicates;
 }
-template const set<string> merge_sets<set<string>>(set<string>&, const set<string>&);
+template const string_set merge_sets<string_set>(string_set&, const string_set&);
 
 template<class T>
 const T remove_set(T& old_set,
@@ -220,7 +221,7 @@ const T remove_set(T& old_set,
   // return items not present in old_set
   return not_found;
 }
-template const set<string> remove_set<set<string>>(set<string>&, const set<string>&);
+template const string_set remove_set<string_set>(string_set&, const string_set&);
 
 /*
  * libAmbrosia dependent functions
@@ -288,7 +289,7 @@ void dependency_resolve(target_vector& unsorted,
                         target_vector& resolved,
                         target_vector& unresolved )
 {
-  debug(debug::algorithm) << "dependency_resolve::Resolving: " << (*node)->name() << ".\n";
+  debug(debug::algorithm) << "dependency_resolve::Resolving: " << (*node)->name << ".\n";
   unresolved.push_back(std::move(*node));
   unsorted.erase(std::begin(unsorted));
 
@@ -298,12 +299,12 @@ void dependency_resolve(target_vector& unsorted,
     const string name((*it).second);
     debug(debug::algorithm) << "dependency_resolve::Processing edge: " << name << ".\n";
     const auto&& find_functor = [&name](const target_vector::value_type& t)
-                                { return name == t->name(); };
+                                { return name == t->name; };
 
     if(std::end(resolved) == find_if(std::begin(resolved), std::end(resolved), find_functor))
     {
       if(std::end(unresolved) != find_if(std::begin(unresolved), std::end(unresolved), find_functor))
-        throw internal_error("Circular dependency detected: " + unresolved.back()->name() + " -> " + name + ".");
+        throw internal_error("Circular dependency detected: " + unresolved.back()->name + " -> " + name + ".");
 
       // check if dependency is already resolved or still needs to be processed
       auto&& new_node = std::find_if(std::begin(unsorted), std::end(unsorted), find_functor);
@@ -347,7 +348,7 @@ void filter_dependency_sort(target_vector& unsorted)
   {
     const string name((*it).first);
     const auto item = std::find_if(std::begin(unsorted), std::end(unsorted),
-                                   [&name](const unique_ptr<target>& t) { return name == t->name(); });
+                                   [&name](const unique_ptr<target>& t) { return name == t->name; });
     if(item == std::end(unsorted))
     {
       unsorted.erase(item);

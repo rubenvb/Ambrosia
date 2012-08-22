@@ -21,6 +21,7 @@
 
 // Ambrosia includes
 #include "Ambrosia/algorithm.h"
+#include "Ambrosia/build_element.h"
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/enum_maps.h"
@@ -50,28 +51,29 @@ target::target(const string& subdirectory,
   m_output_name(),
   m_type(target_type::global),
   m_source_directories(),
-  m_source_files(),
-  m_object_files(),
+  m_files(),
   m_output_file(),
   m_libraries()
-{   }
+{
+  debug(debug::target) << "target::Created global target: " << name << ".\n";
+}
 target::target(const string& subdirectory,
                const string& name,
                const target_type type,
                const dependency_set& dependencies,
                const build_config& config)
 : node(subdirectory + "::" + name), //TODO: fix for multilevel subdirectories
-  m_build_config(config),
+  m_build_config(subdirectory, config),
   m_dependencies(dependencies),
   m_output_name(name),
   m_type(type),
   m_source_directories(),
-  m_source_files(),
-  m_object_files(),
+  m_files(),
   m_output_file(),
   m_libraries()
 {
-  debug(debug::target) << "target::Created " << target_type_map_inverse.at(type) << ": " << name << ".\n";
+  debug(debug::config) << "target::passed in build_config's m_build_directory:" << config.m_build_directory << "\n";
+  debug(debug::target) << "target::Created " << target_type_map_inverse.at(type) << " target: " << name << ".\n";
 }
 
 void target::add_source_file(const file_type type,
@@ -90,10 +92,10 @@ void target::add_source_file(const file_type type,
     string_vector duplicates;
     for(auto&& it = std::begin(matches); it != std::end(matches); ++it)
     {
-      const auto& current = *it;
-      const file_type detected_type = detect_type(type, current.first);
-      if(!m_source_files[detected_type].insert(current).second)
-        duplicates.push_back(current.first);
+      const file& current = *it;
+      const file_type detected_type = detect_type(type, current.name);
+      if(!m_files[detected_type].insert(current).second)
+        duplicates.push_back(current.name);
       else
         m_build_config.m_source_types.insert(detected_type);
     }
@@ -110,13 +112,13 @@ void target::add_source_file(const file_type type,
       case 1:
       {
         const file_type detected_type = detect_type(type, filename);
-        m_source_files[detected_type].insert(*matches.begin());
+        m_files[detected_type].insert(*matches.begin());
         m_build_config.m_source_types.insert(detected_type);
         break;
       }
       default:
         string_vector ambiguous;
-        std::for_each(std::begin(matches), std::end(matches), [&ambiguous](const file& f) { ambiguous.push_back(f.first); });
+        std::for_each(std::begin(matches), std::end(matches), [&ambiguous](const file& f) { ambiguous.push_back(f.name); });
         throw nectar_error("Ambiguity in file selection: ", filename, line_number, ambiguous);
     }
   }
@@ -150,10 +152,10 @@ void target::remove_source_directory(const file_type type,
 
   throw error("target::remove_directory has a flaky implementation.");
 }
-const file_set& target::source_files(const file_type type) const
+const build_element_set &target::files(const file_type type) const
 {
-  const auto&& it = m_source_files.find(type);
-  if(it == std::end(m_source_files) || (*it).second.empty())
+  const auto&& it = m_files.find(type);
+  if(it == std::end(m_files) || (*it).second.empty())
   {
     debug(debug::target) << "target::source_files::Attempt at getting at source file_set for " << file_type_map_inverse.at(type)
                          << " which is either nonexistent or empty.\n";
@@ -164,7 +166,7 @@ const file_set& target::source_files(const file_type type) const
 
 bool target::add_library(const string& library)
 {
-  debug(debug::target) << "target::add_library::Adding library " << library << " to target " << m_name << ".\n";
+  debug(debug::target) << "target::add_library::Adding library " << library << " to target " << name << ".\n";
   //TODO: check if library can be linked
   return !(m_libraries.insert(library).second);
 }
@@ -173,9 +175,9 @@ void target::remove_library(const string& /*library*/)
   throw error("target::remove_library is unimplemented.");
 }
 
-void target::generate_object_filenames()
+void target::verify_configuration() const
 {
-  //for(auto&& it = m_source_files; it != ; ++it)
+
 }
 
 libambrosia_namespace_end

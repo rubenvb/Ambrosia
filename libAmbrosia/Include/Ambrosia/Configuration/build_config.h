@@ -30,6 +30,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/Configuration/config_base.h"
+#include "Ambrosia/debug.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/typedefs.h"
 
@@ -46,11 +47,11 @@ class ambrosia_config;
 class build_config : public config_base
 {
 public:
-  build_config( const std::string& subdirectory, const config_base& config );
+  build_config(const std::string& subdirectory, const config_base& config);
+
+  //build_config(const build_config& config) = delete;
 
   const string_map& user_options() const;
-
-  friend class target;
 
   std::set<file_type> m_source_types; // source files present to decide which build commands to run
 

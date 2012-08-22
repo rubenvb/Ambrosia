@@ -35,7 +35,7 @@
 libambrosia_namespace_begin
 
 node::node(const string& name)
-: m_name( name ),
+: name(name),
   m_edges()
 {   }
 node::~node()
@@ -44,11 +44,7 @@ node::~node()
 void node::add_node(const target& dependency)
 {
   if(!m_edges.insert(&dependency).second)
-    throw internal_error("Double dependency for node " + m_name + ": " + dependency.name() + ".");
-}
-const std::string& node::name() const
-{
-  return m_name;
+    throw internal_error("Double dependency for node " + name + ": " + dependency.name + ".");
 }
 const set<const target*> node::edges() const
 {
@@ -56,11 +52,11 @@ const set<const target*> node::edges() const
 }
 bool node::operator<(const node& n) const
 {
-  return m_name < n.name();
+  return name < n.name;
 }
 bool node::operator==(const node& n) const
 {
-  return m_name==n.name();
+  return name==n.name;
 }
 
 libambrosia_namespace_end

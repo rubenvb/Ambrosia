@@ -39,8 +39,6 @@ libambrosia_namespace_begin
 class ambrosia_config : public config_base
 {
 public:
-  ambrosia_config();
-
   // Setters
   void set_ambrosia_cross(const std::string& cross,
                           const size_t argument_number);

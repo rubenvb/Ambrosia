@@ -25,6 +25,7 @@
 #include "global.h"
 
 // libAmbrosia includes
+#include "Ambrosia/build_element.h"
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/status.h"
 #include "Ambrosia/target.h"
@@ -45,11 +46,6 @@ public:
   // Determine projects to be built and apply build configuration.
   void apply_target_configuration();
 
-  // Determine the names and locations of output files to determine commands to be generated.
-  // NEEDS REDESIGN AND SMARTNESS THAT IS NOW ABSENT
-  //void determine_output_files();
-
-  //TODO: Generate commands only for the files that need to be built.
   void generate_commands();
 
   // Get the build commands (slow due to string comparison to find target, but only used in debug or other even slower output)

@@ -32,17 +32,17 @@ class config_base
 {
 public:
   config_base();
-  config_base( toolchain requested_toolchain );
-  virtual ~config_base() = 0; // abstractify class
+  config_base(toolchain requested_toolchain);
+  virtual ~config_base() = 0; // virtual base
 
   /*
    * Setters
    **********/
   // source directory and file where the object's config_base is attached to
-  void set_source_directory( const std::string& source_directory );
-  void set_project_file( const std::string& project_file );
-  bool add_config( const std::string& config );
-  bool remove_config( const std::string& config );
+  void set_source_directory(const std::string& source_directory);
+  void set_project_file(const std::string& project_file);
+  bool add_config(const std::string& config);
+  bool remove_config(const std::string& config );
 
   // Environment PATH
   const string_vector m_environment_PATH;

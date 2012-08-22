@@ -36,12 +36,6 @@
 
 libambrosia_namespace_begin
 
-ambrosia_config::ambrosia_config()
-: config_base(),
-  m_gnu_prefix(),
-  m_target_config_options()
-{    }
-
 /*
  * Setters
  **********/

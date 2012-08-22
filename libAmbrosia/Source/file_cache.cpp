@@ -55,7 +55,7 @@ const string file_cache::find_nectar_file(const string& directory,
     case 0:
       throw error("No *.nectar.txt file found in " + directory);
     case 1:
-      return std::begin(candidates)->first; // first = filename, second = modified
+      return std::begin(candidates)->name;
     default:
       throw error("Multiple *.nectar.txt files found in directory: " + directory, candidates);
   }
@@ -153,11 +153,11 @@ const file_set file_cache::find_source_file(const string& filename,
     for(auto&& it = std::begin(files_on_disk); it != std::end(files_on_disk); ++it)
     {
       const file& entry = *it;
-      debug(debug::files) << "file_cache::find_source_file::Matching " << entry.first << " vs " << true_filename << ".\n";
-      if(wildcard_compare(true_filename, entry.first))
+      debug(debug::files) << "file_cache::find_source_file::Matching " << entry.name << " vs " << true_filename << ".\n";
+      if(wildcard_compare(true_filename, entry.name))
       {
-        debug(debug::files) << "file_cache::find_source_file::Match found: " << entry.first << "\n";
-        result.insert({directory + "/" + entry.first, entry.second});
+        debug(debug::files) << "file_cache::find_source_file::Match found: " << entry.name << "\n";
+        result.insert({directory + "/" + entry.name, entry.time_modified});
       }
     }
   }
@@ -194,11 +194,11 @@ const file_set file_cache::match_source_files(const string& filename,
     for(auto&& files_it = std::begin(files_on_disk); files_it != std::end(files_on_disk); ++files_it)
     {
       const file& entry = *files_it; // filename and last modified time
-      debug(debug::files) << "file_cache::match_source_files::Matching " << entry.first << " with " << true_filename << ".\n";
-      if(wildcard_compare(true_filename, entry.first))
+      debug(debug::files) << "file_cache::match_source_files::Matching " << entry.name << " with " << true_filename << ".\n";
+      if(wildcard_compare(true_filename, entry.name))
       {
-        debug(debug::files) << "file_cache::match_source_files::Matched " << true_filename << " to " << directory << "/" << entry.first << ".\n";
-        result.insert({directory + "/" + entry.first, entry.second});
+        debug(debug::files) << "file_cache::match_source_files::Matched " << true_filename << " to " << directory << "/" << entry.name << ".\n";
+        result.insert({directory + "/" + entry.name, entry.time_modified});
       }
     }
   }

@@ -23,6 +23,7 @@
 #include "Ambrosia/global.h"
 
 // libAmbrosia includes
+#include "Ambrosia/debug.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/platform.h"
 #include "Ambrosia/target.h"
@@ -40,7 +41,7 @@ libambrosia_namespace_begin
 extern size_t s_full_directory_name_calls;
 #endif
 
-/* Freestanding functions (libAmbrosia independent, including no untransparent error handling)
+/* Freestanding functions (libAmbrosia independent)
  *************************/
 // merges directory and subdirectory names to one, does the right thing if the second part is empty
 const std::string full_directory_name(const std::string& first_directory,
@@ -55,10 +56,23 @@ bool wildcard_directory_compare(const std::string& wildcard_string,
 inline const std::string get_extension(const std::string& filename)
 {
   const size_t index = filename.rfind('.');
-  if(index!=std::string::npos)
+  if(index != std::string::npos)
     return filename.substr(index+1);
   else
-    return "";
+    return {};
+}
+// get filename basename, without preceding directories
+inline const std::string get_basename(const std::string& path)
+{
+  const size_t extension_index = path.rfind('.');
+  const size_t path_seperator_index = path.rfind('/', extension_index);
+
+  if(extension_index == std::string::npos)
+    return {};
+  else if(path_seperator_index == std::string::npos)
+    return path.substr(0, std::min(extension_index-1, extension_index)); // handle extension_index==0
+  else
+    return path.substr(path_seperator_index+1, extension_index-path_seperator_index-1);
 }
 
 // adds items in new_set to old_set, and returns any duplicates

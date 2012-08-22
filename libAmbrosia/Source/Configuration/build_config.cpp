@@ -40,17 +40,11 @@ build_config::build_config(const string& subdirectory,
   m_source_types(),
   m_user_variables()
 {
-  m_source_directory = full_directory_name( m_source_directory, subdirectory );
+  m_source_directory = full_directory_name(m_source_directory, subdirectory);
+  debug(debug::config) << "build_config::build_config::Build directory for " << m_source_directory << " was: \"" << m_build_directory << "\".\n";
+  // check multiple 'sub' levels for correctness below:
+  m_build_directory = full_directory_name(m_build_directory, subdirectory);
+  debug(debug::config) << "build_config::build_config::Build directory for " << m_source_directory << " is now: \"" << m_build_directory << "\".\n";
 }
-
-/*
- * Setters
- **********/
-
-
-/*
- * Getters
- **********/
-
 
 libambrosia_namespace_end
