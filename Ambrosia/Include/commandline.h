@@ -38,7 +38,7 @@ void apply_commandline_options(const string_vector& options,
                                lib::file_cache& files);
 
 void add_build_target(const std::string& target,
-                      const string_set& options = {});
+                      const string_set& options = string_set());
 
 void set_internal_option(const std::string& option,
                          const std::string& value,

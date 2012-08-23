@@ -48,7 +48,7 @@ public:
   nectar_loader(const std::string& full_filename,
                 const std::string& sub_directory,
                 std::istream& stream,
-                const dependency_set& list = {});
+                const dependency_set& list = dependency_set());
   ~nectar_loader();
 
   void extract_nectar(project& project);
@@ -69,7 +69,7 @@ private:
  * Warning output
  *****************/
   void syntax_warning(const std::string& message,
-                      const string_vector& warning_list = {}) const;
+                      const string_vector& warning_list = string_vector()) const;
 /*
  * Lexing
  *********/

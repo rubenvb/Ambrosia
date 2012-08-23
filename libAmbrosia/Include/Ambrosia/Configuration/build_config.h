@@ -47,7 +47,9 @@ class ambrosia_config;
 class build_config : public config_base
 {
 public:
-  build_config(const std::string& subdirectory, const config_base& config);
+  build_config(const std::string& subdirectory,
+               const std::string& target_name_suffix,
+               const config_base& config);
 
   //build_config(const build_config& config) = delete;
 

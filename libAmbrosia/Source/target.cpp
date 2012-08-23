@@ -46,7 +46,7 @@ target::target(const string& subdirectory,
                const dependency_set& dependencies,
                const ambrosia_config& config)
 : node(subdirectory + "::global"), //TODO: fix for multilevel subdirectories
-  m_build_config(subdirectory, config),
+  m_build_config(subdirectory, "", config),
   m_dependencies(dependencies),
   m_output_name(),
   m_type(target_type::global),
@@ -63,7 +63,7 @@ target::target(const string& subdirectory,
                const dependency_set& dependencies,
                const build_config& config)
 : node(subdirectory + "::" + name), //TODO: fix for multilevel subdirectories
-  m_build_config(subdirectory, config),
+  m_build_config(subdirectory, "_" + name, config),
   m_dependencies(dependencies),
   m_output_name(name),
   m_type(type),
