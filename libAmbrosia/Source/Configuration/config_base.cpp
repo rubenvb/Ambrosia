@@ -82,7 +82,6 @@ void config_base::set_source_directory(const string& source_directory)
   debug(debug::config) << "config_base::set_source_directory::Setting source directory to: " << source_directory << "\n";
   m_source_directory = source_directory;
   debug(debug::config) << "config_base::set_source_directory::Adding " << m_source_directory << " to s_file_store.\n";
-  s_file_cache.add_source_directory(m_source_directory);
 }
 void config_base::set_project_file(const string& project_file)
 {
@@ -116,17 +115,18 @@ toolchain config_base::detect_toolchain(toolchain requested_toolchain) const
 void config_base::initialize_config()
 {
   m_config = {os_map_inverse.at(m_target_os), // Target OS
-              architecture_map_inverse.at(m_target_architecture), // Target Architecture
+              architecture_map_inverse.at(m_target_architecture), // Target architecture
               toolchain_map_inverse.at(m_target_toolchain), // Toolchain
               "build_" + os_map_inverse.at(m_build_os), // Build OS
               "build_" + architecture_map_inverse.at(m_build_architecture), // Build architecture
-              environment_map_inverse.at(m_build_environment) // Shell environment
+              environment_map_inverse.at(m_build_environment), // Shell environment
+              "debug" // debug build is the default
              };
   // Convenience config strings
   if(m_target_os == os::Windows && m_target_toolchain == toolchain::GNU)
-    m_config.insert( "mingw" );
+    m_config.insert("mingw");
   if(m_target_os == os::Linux || m_target_os == os::MacOSX)
-    m_config.insert( "unix" );
+    m_config.insert("unix");
 }
 
 libambrosia_namespace_end

@@ -37,7 +37,7 @@
 libambrosia_namespace_begin
 
 //TODO:REMOVE
-file_cache s_file_cache;
+//file_cache s_file_cache;
 
 file_cache::file_cache()
 : m_source_files(),

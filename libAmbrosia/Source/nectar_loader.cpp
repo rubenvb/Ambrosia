@@ -93,7 +93,7 @@ void nectar_loader::extract_nectar(project& project)
   skip_BOM(m_stream, m_filename);
 
   // create global target
-  project.m_targets.emplace_back(unique_ptr<target>(new target(m_subdirectory, {}, *project::configuration)));
+  project.m_targets.emplace_back(unique_ptr<target>(new target(m_subdirectory, {}, *project::configuration, project.m_file_cache)));
 
   string token;
   while(next_token(token))
@@ -134,7 +134,7 @@ void nectar_loader::extract_nectar(project& project)
           if(!next_token(token) && "{" == token)
             throw syntax_error("Expected \'{\' after " + target_type_map_inverse.at(type) + " target name.", m_filename, m_line_number);
 
-          project.m_targets.emplace_back(new target(m_subdirectory, target_name, type, dependencies, project.m_targets[0]->m_build_config));
+          project.m_targets.emplace_back(new target(m_subdirectory, target_name, type, dependencies, project.m_targets[0]->m_build_config, project.m_file_cache));
 
           p_target = project.m_targets.back().get();
           parse_target();

@@ -28,6 +28,9 @@
 
 libambrosia_namespace_begin
 
+// Forward declarations
+class file_cache;
+
 class config_base
 {
 public:
@@ -59,7 +62,7 @@ public:
 
   std::string m_source_directory;
 
-  string_set m_config; // mostly platform dependent stuff
+  string_set m_config;
   std::string m_project_file;
   std::string m_build_directory; // if source and build dir are equal, this is ./build
 

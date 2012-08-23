@@ -49,13 +49,15 @@ public:
   // 'global' target with subproject-wide dependencies
   target(const std::string& subdirectory,
          const dependency_set& dependencies,
-         const ambrosia_config& config);
+         const ambrosia_config& config,
+         file_cache& cache);
   // other targets are based off of global's build_config
   target(const std::string& subdirectory,
          const std::string& name,
          const target_type type,
          const dependency_set& dependencies,
-         const build_config& config);
+         const build_config& config,
+         file_cache& cache);
 
   // file modifiers and accessor
   void add_source_file(const file_type type,
@@ -74,9 +76,6 @@ public:
   bool add_library(const std::string& library);
   void remove_library(const std::string& library);
 
-  // configuration verification
-  void verify_configuration() const;
-
   // output object filenames
   void generate_object_filenames();
 
@@ -87,6 +86,7 @@ public:
   const target_type m_type; // target type
 
 private:
+  file_cache& m_file_cache; // project's file_cache
   map_file_type_string_set m_source_directories; // source directories per file type
   map_file_type_build_element_set m_files; // source and object files per file type with last modified time
   std::string m_output_file;

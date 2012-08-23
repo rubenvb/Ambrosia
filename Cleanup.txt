@@ -1,19 +1,5 @@
-This file lists a couple of items that need drastic improvement or general
-code cleanup.
+This file lists a couple of items that need drastic improvement or general code cleanup.
 
-1. ambrosia::error class
-    This seemed the best way to handle internal library errors, and to be able
-    to abstract away return codes up to the level of Ambrosia's application
-    states. Apart from the ugly syntax, it works quite well except in:
-     - begin::event(), in case 0, where a lot of checks need to be made because
-     this is the only place where an end_state can be returned.
+1. nectar_loader: the parser is ugly as hell.
 
-2. target_parser integration into nectar_loader
-    It should be perfectly possible to integrate target_parser into nectar_loader,
-     or at least integrate the text parsing into nectar_loader and have target_parser
-     as a utility class/function set. Currently, the real parsing is handled in reader,
-     and thus must be called externally, while it's a normal step of the "nectar
-     loading" process.
-    On the other hand, the split functionality allows "skipping over" the unbuilt
-     targets. The "skipping" won't be very performant, as everything still goes through
-     a lexer of sorts. Perhaps nectar_loader is the place for this.
+2. file_cache: both the project class and each target hold references to the same single file_cache instance. This can be improved.

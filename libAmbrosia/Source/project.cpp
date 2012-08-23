@@ -44,15 +44,15 @@ ambrosia_config* project::configuration = NULL;
 project::project(ambrosia_config& ambrosia_config,
                  file_cache& file_cache)
 : m_targets(),
-  m_commands(),
-  m_file_cache(file_cache)
+  m_file_cache(file_cache),
+  m_commands()
 {
   configuration = &ambrosia_config;
 }
 project::project(file_cache& file_cache)
 : m_targets(),
-  m_commands(),
-  m_file_cache(file_cache)
+  m_file_cache(file_cache),
+  m_commands()
 {   }
 
 // Filter target_list and sort the targets that need to be built.
@@ -91,9 +91,6 @@ void project::generate_commands()
                               << "\tfor output in this directory: " << current.m_build_config.m_build_directory << "\n"
                               << "\tfor the following types of source files:\n"
                               << "\t" << current.m_build_config.m_source_types << "\n";
-
-    // verify the build config is OK to use
-    current.verify_configuration();
 
     for(auto&& type_it = std::begin(current.m_build_config.m_source_types); type_it != std::end(current.m_build_config.m_source_types); ++type_it)
     {

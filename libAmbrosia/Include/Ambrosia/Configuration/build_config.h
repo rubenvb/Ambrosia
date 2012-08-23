@@ -51,8 +51,6 @@ public:
                const std::string& target_name_suffix,
                const config_base& config);
 
-  //build_config(const build_config& config) = delete;
-
   const string_map& user_options() const;
 
   std::set<file_type> m_source_types; // source files present to decide which build commands to run

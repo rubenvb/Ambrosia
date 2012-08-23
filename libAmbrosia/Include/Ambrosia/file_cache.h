@@ -52,6 +52,7 @@ public:
   const file_set match_source_files(const std::string& filename,
                                     const config_base* config,
                                     const string_set& directories = string_set());
+  // Find
   // Read directory contents from disk (don't complain if already present).
   void add_source_directory(const std::string& directory = "");
   void add_build_directory(const std::string& directory);
@@ -61,7 +62,7 @@ private:
   map_string_file_set m_build_files;  // all files in s_ambrosia_config::m_build_directory
 };
 
-extern file_cache s_file_cache;
+//extern file_cache s_file_cache;
 
 libambrosia_namespace_end
 

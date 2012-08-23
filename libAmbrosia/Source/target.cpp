@@ -44,12 +44,14 @@ libambrosia_namespace_begin
 
 target::target(const string& subdirectory,
                const dependency_set& dependencies,
-               const ambrosia_config& config)
+               const ambrosia_config& config,
+               file_cache& cache)
 : node(subdirectory + "::global"), //TODO: fix for multilevel subdirectories
   m_build_config(subdirectory, "", config),
   m_dependencies(dependencies),
   m_output_name(),
   m_type(target_type::global),
+  m_file_cache(cache),
   m_source_directories(),
   m_files(),
   m_output_file(),
@@ -61,12 +63,14 @@ target::target(const string& subdirectory,
                const string& name,
                const target_type type,
                const dependency_set& dependencies,
-               const build_config& config)
+               const build_config& config,
+               file_cache& cache)
 : node(subdirectory + "::" + name), //TODO: fix for multilevel subdirectories
   m_build_config(subdirectory, "_" + name, config),
   m_dependencies(dependencies),
   m_output_name(name),
   m_type(type),
+  m_file_cache(cache),
   m_source_directories(),
   m_files(),
   m_output_file(),
@@ -84,7 +88,7 @@ void target::add_source_file(const file_type type,
   if(contains(filename, "*?"))
   {
     // find file matches
-    const file_set matches = s_file_cache.match_source_files(filename, &m_build_config, m_source_directories[type]);
+    const file_set matches = m_file_cache.match_source_files(filename, &m_build_config, m_source_directories[type]);
     if(matches.empty())
       return emit_nectar_error("No files matching " + filename + " found.", nectar_file, line_number);
 
@@ -104,7 +108,7 @@ void target::add_source_file(const file_type type,
   }
   else
   {
-    const file_set matches = s_file_cache.find_source_file(filename, &m_build_config, m_source_directories[type]);
+    const file_set matches = m_file_cache.find_source_file(filename, &m_build_config, m_source_directories[type]);
     switch(matches.size())
     {
       case 0:
@@ -128,7 +132,7 @@ void target::remove_source_file(const file_type type,
 {
   // search for file, check if there are any other files of the same type,
   //  and remove the "source file config" for generation phase.
-  s_file_cache.match_source_files(filename, &m_build_config, m_source_directories[type]);
+  m_file_cache.match_source_files(filename, &m_build_config, m_source_directories[type]);
   throw error("target::remove_file::Unimplementented.");
 }
 bool target::add_source_directory(const file_type type,
@@ -140,7 +144,7 @@ bool target::add_source_directory(const file_type type,
   if(!directory_exists(full_subdirectory_name))
     return false;
 
-  s_file_cache.add_source_directory(full_subdirectory_name);
+  m_file_cache.add_source_directory(full_subdirectory_name);
   m_source_directories[type].insert(directory);
   return true;
 }
@@ -173,11 +177,6 @@ bool target::add_library(const string& library)
 void target::remove_library(const string& /*library*/)
 {
   throw error("target::remove_library is unimplemented.");
-}
-
-void target::verify_configuration() const
-{
-
 }
 
 libambrosia_namespace_end

@@ -55,12 +55,11 @@ public:
   void execute_build_commands();
 
   target_vector m_targets;
-
+  file_cache& m_file_cache;
   static ambrosia_config* configuration;
 
 private:
   map_string_string_vector m_commands; // commands per target, easier for debugging, info and fancy output.
-  file_cache& m_file_cache;
 };
 
 libambrosia_namespace_end

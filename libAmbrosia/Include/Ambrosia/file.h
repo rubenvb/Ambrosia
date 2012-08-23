@@ -23,7 +23,6 @@
 #include "global.h"
 
 // C++ includes
-#include <initializer_list>
 #include <string>
 
 libambrosia_namespace_begin

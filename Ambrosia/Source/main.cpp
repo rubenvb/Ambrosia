@@ -48,6 +48,9 @@ try {
 #ifdef AMBROSIA_DEBUG
   time_t t = time(0);
 #endif
+  // up stream performance
+  std::ios_base::sync_with_stdio(false);
+
   // Welcome message
   print_version_information();
 
