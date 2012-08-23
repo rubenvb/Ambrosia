@@ -39,6 +39,8 @@ libambrosia_namespace_begin
 class ambrosia_config : public config_base
 {
 public:
+  ambrosia_config() : config_base(), m_gnu_prefix(), m_dump_commands(false), m_target_config_options()
+  {   }
   // Setters
   void set_ambrosia_cross(const std::string& cross,
                           const size_t argument_number);
@@ -56,6 +58,7 @@ public:
   const map_string_set_string& target_config_options() const;
 
   std::string m_gnu_prefix;
+  bool m_dump_commands;
 
 private:
   map_string_set_string m_target_config_options;

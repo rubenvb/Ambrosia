@@ -49,7 +49,7 @@ public:
   void generate_commands();
 
   // Get the build commands (slow due to string comparison to find target, but only used in debug or other even slower output)
-  const string_vector commands(const std::string& target_name) { return m_commands[target_name]; }
+  void dump_commands() const;
 
   // Run the build commands.
   void execute_build_commands();

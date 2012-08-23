@@ -51,6 +51,7 @@ const map<std::string, debug::type> debug_map =
            {"status",        debug::status},
            {"config",        debug::config},
            {"command_gen",   debug::command_gen},
+           {"command_exec",  debug::command_exec},
            {"initial",       debug::initial},
            {"all",           debug::always} };
 const map<debug::type, std::string> debug_map_inverse =
@@ -67,6 +68,7 @@ const map<debug::type, std::string> debug_map_inverse =
            {debug::status,        "status"},
            {debug::config,        "config"},
            {debug::command_gen,   "command_gen"},
+           {debug::command_exec, "command_exec"},
            {debug::initial,       "initial"},
            {debug::always,        "all"} };
 

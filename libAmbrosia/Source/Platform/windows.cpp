@@ -20,6 +20,7 @@
 #include "Ambrosia/platform.h"
 
 // libAmbrosia includes
+#include "Ambrosia/algorithm.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/typedefs.h"
 
@@ -222,6 +223,104 @@ void recursive_scan_directory(output_iterator it,
 }
 // explicit instantiation
 template void recursive_scan_directory<insert_iterator<file_set>>(insert_iterator<file_set>, const string&, const string&);
+
+int execute_command(const string &command,
+                    string &string_cout,
+                    string &string_cerr)
+{
+  // adapted from http://msdn.microsoft.com/en-us/library/ms682499%28VS.110%29.aspx
+  SECURITY_ATTRIBUTES attributes;
+
+  attributes.nLength = sizeof(SECURITY_ATTRIBUTES); // Set the bInheritHandle flag so pipe handles are inherited.
+  attributes.bInheritHandle = TRUE;
+  attributes.lpSecurityDescriptor = NULL;
+
+  // Create a pipe for the child process's STDOUT
+  HANDLE stdout_read_handle;
+  HANDLE stdout_write_handle;
+  if(!CreatePipe(&stdout_read_handle, &stdout_write_handle, &attributes, 0))
+    throw error("Win32 error: Unable to create pipe for stdout.");
+  // Create pipe for the child process's STDERR
+  HANDLE stderr_read_handle;
+  HANDLE stderr_write_handle;
+  if(!CreatePipe(&stderr_read_handle, &stderr_write_handle, &attributes, 0))
+    throw error("Win32 error: Unable to create pipe for stderr.");
+  // Ensure the read handle to the pipe for STDOUT is not inherited.
+  if(!SetHandleInformation(stdout_read_handle, HANDLE_FLAG_INHERIT, 0))
+    throw error("Win32 error: Unable to set stdout read handle inheritability.");
+
+  PROCESS_INFORMATION process_info = {0,0,0,0};
+  STARTUPINFOW startup_info = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+  startup_info.cb = sizeof(STARTUPINFOW);
+  startup_info.hStdError = stderr_write_handle;
+  startup_info.hStdOutput =stdout_write_handle;
+  startup_info.dwFlags |= STARTF_USESTDHANDLES;
+
+  std::wstring commandW = convert_to_utf16(command);
+
+  if(!CreateProcessW(NULL, // app
+                     &commandW[0], // command line
+                     NULL, // process security attributes
+                     NULL, // primary thread security attributes
+                     TRUE, // handles are inherited
+                     0, // creation flags
+                     NULL, // use parent's environment
+                     NULL, // use parent's current directory
+                     &startup_info, // STARTUPINFOW pointer
+                     &process_info)) // receives PROCESS_INFORMATION
+    throw error("Win32 error: failed to call CreateProcess for command \'" + command + "\'\n"
+                "\t with error: " + to_string(GetLastError()));
+
+  debug(debug::platform) << "platform::execute_command::CreateProcess call successful.\n";
+
+  // Close thread handle
+  CloseHandle(process_info.hThread);
+  // Get process exit code
+  DWORD exit_code = STILL_ACTIVE;
+while(exit_code == STILL_ACTIVE)
+{
+  if(!GetExitCodeProcess(process_info.hProcess, &exit_code))
+    throw error("Win32 error: failed to call GetExitCodeProcess with error: " + to_string(GetLastError()));
+}
+  debug(debug::platform) << "platform::execute_command::Process exit code: " << exit_code << "\n";
+
+  // close process handle
+  CloseHandle(process_info.hProcess);
+
+  debug(debug::platform) << "platform::execute_command::Closed process_info handles.\n";
+
+  // close write ends of pipes
+  CloseHandle(stdout_write_handle);
+  CloseHandle(stderr_write_handle);
+
+  // Read from pipes
+  constexpr size_t buffer_size = 4096;
+  string buffer;
+  buffer.resize(buffer_size);
+  DWORD bytes_read = 0;
+
+  debug(debug::platform) << "platform::execute_command::reading from stdout pipe.\n";
+  while(ReadFile(stdout_read_handle, &buffer[0], buffer_size, &bytes_read, NULL) && bytes_read != 0)
+  {
+    string_cout.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
+    debug(debug::platform) << "platform::execute_command::Read " << bytes_read << " bytes from stdout pipe:\n"
+                           << string_cout << "\n";
+  }
+  debug(debug::platform) << "platform::execute_command::reading from stderr pipe.\n";
+  while(ReadFile(stderr_read_handle, &buffer[0], buffer_size, &bytes_read, NULL) && bytes_read != 0)
+  {
+    string_cerr.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
+    debug(debug::platform) << "platform::execute_command::Read " << bytes_read << " bytes from stderr pipe:\n"
+                           << string_cerr << "\n";
+  }
+  // Close pipe read handles
+  CloseHandle(stdout_read_handle);
+  CloseHandle(stderr_read_handle);
+
+
+  return 0;
+}
 
 /*
  * Ugly workarounds

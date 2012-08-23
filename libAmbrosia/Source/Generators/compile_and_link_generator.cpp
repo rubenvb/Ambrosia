@@ -63,11 +63,35 @@ const string_vector compile_and_link_generator::generate_parallel_commands()
 {
   string_vector commands;
   ostringstream command;
+  string languagestd;
+  if(!contains(m_target.m_build_config.m_config, "msvc"))
+  {
+    switch(m_type)
+    {
+      case file_type::source_c:
+        emit_warning("C language standard defaults to c99");
+        languagestd = "-std=c99";
+        break;
+      case file_type::source_cxx:
+        emit_warning("C++ language standard defaults to C++11");
+        languagestd = "-std=c++11";
+        break;
+      case file_type::source_fortran:
+        emit_warning("Fortran language standard defaults to f2008");
+        languagestd = "-std=f2008";
+        break;
+      default:
+        break;
+    }
+  }
 
   for(auto&& it = std::begin(m_target.files(m_type)); it != std::end(m_target.files(m_type)); ++it)
   {
     // compiler (e.g. 'gcc')
     command << m_generator_map.at(generator_string::compiler);
+    // language standard
+    if(!languagestd.empty())
+      command << " " << languagestd;
     // compile argument (e.g. '-c')
     const string& compile_argument = m_generator_map.at(generator_string::compile_argument);
     if(!compile_argument.empty())

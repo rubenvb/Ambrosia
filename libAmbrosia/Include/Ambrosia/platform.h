@@ -72,6 +72,10 @@ template<class output_iterator>
 void recursive_scan_directory(output_iterator it,
                               const std::string& relative_directory,
                               const std::string& directory_name = "" );
+// Execute command, and store stdout and stderr output in respective strings
+int execute_command(const std::string& command,
+                    std::string& std_out,
+                    std::string& std_err);
 
 /*
  * Ugly workarounds

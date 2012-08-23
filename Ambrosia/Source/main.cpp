@@ -22,6 +22,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/Error/error.h"
+#include "Ambrosia/Error/soft_error.h"
 #include "Ambrosia/file_cache.h"
 #include "Ambrosia/project.h"
 
@@ -70,6 +71,9 @@ try {
 
   project.generate_commands();
 
+  if(lib::project::configuration->m_dump_commands)
+    project.dump_commands();
+
 #ifdef AMBROSIA_DEBUG
   const double command_generation_time = difftime(time(0), t);
   t = time(0);
@@ -85,9 +89,16 @@ try {
        << "Actual build time: " << build_time << ".";
 #endif
 }
+catch(libambrosia::soft_error& e)
+{
+#ifdef AMBROSIA_DEBUG
+  e.output_message();
+#endif
+}
+
 catch(libambrosia::error& e)
 {
-    e.output_message();
+  e.output_message();
 }
 catch(std::exception& e)
 {

@@ -48,7 +48,8 @@ public:
     status        = 512,
     config        = 1024,
     command_gen   = 2048,
-    initial       = 4096,
+    command_exec  = 4096,
+    initial       = 8192,
     always        = 0xffffffff
     // ...
   };

@@ -231,6 +231,11 @@ void set_internal_option(const std::string& option,
     debug(debug::commandline) << "commandline::set_internal_option::Cross-compiling with GNU prefix " << value << ".\n";
     project::configuration->m_gnu_prefix = value + '-'; // add the prefix dash here so you get for example "x86_64-linux-gnu-gcc"
   }
+  else if("dump-commands" == option)
+  {
+    debug(debug::commandline) << "commandline::set_internal_option::Dumping generated commands.\n";
+    project::configuration->m_dump_commands = true;
+  }
   else
     throw commandline_error("Unknown option passed to Ambrosia: \n\t-" + option + "=" + value, argument_number);
 }
