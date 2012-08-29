@@ -56,7 +56,7 @@ bool node::operator<(const node& n) const
 }
 bool node::operator==(const node& n) const
 {
-  return name==n.name;
+  return name == n.name;
 }
 
 libambrosia_namespace_end

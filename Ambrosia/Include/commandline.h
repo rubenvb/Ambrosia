@@ -34,6 +34,20 @@ libambrosia_namespace_end
 
 ambrosia_namespace_begin
 
+enum class internal_option
+{
+  dump_commands
+  //...
+};
+extern std::multimap<internal_option, std::string> internal_option_map;
+extern std::multimap<std::string, internal_option> internal_option_map_reverse;
+
+enum class internal_value_option
+{
+  debug,
+  gnu_prefix
+};
+
 void apply_commandline_options(const string_vector& options,
                                lib::file_cache& files);
 
@@ -41,8 +55,10 @@ void add_build_target(const std::string& target,
                       const string_set& options = string_set());
 
 void set_internal_option(const std::string& option,
-                         const std::string& value,
                          const size_t argument_number);
+void set_internal_value_option(const std::string& option,
+                               const std::string& value,
+                               const size_t argument_number);
 
 void set_program_option(const std::string& option,
                         const std::string& value);

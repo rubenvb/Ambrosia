@@ -145,19 +145,7 @@ inline const std::string output_form(const std::string token)
   else
     return token;
 }
-/*template<class T>
-const T& map_value(const std::vector<T>& map,
-                   const typename std::vector<T>::size_type key)
-{
-  return map[key];
-}
-// return mapped value
-template<class T, class Y>
-const T& map_value(const std::map<Y,T>& map,
-                   const Y& key)
-{
-  return (*map.find(key)).second;
-}*/
+
 // put mapped value in value and return true if found, otherwise return false
 template<class T, class Y>
 bool map_value(const std::map<Y,T>& map,
@@ -225,12 +213,15 @@ inline file_type detect_type(const file_type general_type, const std::string& fi
 }
 
 // Dependency resolving algorithm
+/*void dependency_resolve(target_vector::iterator current,
+                        target_vector& resolved,
+                        target_vector& unresolved);*/
 void dependency_resolve(target_vector& unsorted,
                         target_vector::iterator node,
                         target_vector& resolved,
                         target_vector& unresolved);
 // Dependency resolving sort
-void dependency_sort(target_vector& unsorted);
+//void dependency_sort(target_vector& unsorted);
 // Dependency resolving sort that filters out targets not present in s_ambrosia_config::targets_config
 void filter_dependency_sort(target_vector& unsorted);
 

@@ -35,6 +35,8 @@ class soft_error : public error
 public:
   soft_error(const std::string& message);
   ~soft_error();
+
+  void output_message() const;
 };
 
 libambrosia_namespace_end

@@ -96,7 +96,8 @@ enum class generator_string
   compiler, // compiler program name (without target prefixes)
   linker, // linker program name
   output_argument, // precedes output file name
-  compile_argument, // compile to object file
+  compile_argument, // compile to object filew without linking
+  include_argument, // precedes extra include directory
   object_suffix, // suffix for intermediate object files
   import_library_suffix, // .dll.a, .lib
   static_library_suffix, // .a, .lib

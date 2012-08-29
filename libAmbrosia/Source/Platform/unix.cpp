@@ -150,6 +150,12 @@ void recursive_scan_directory(output_iterator it,
 // explicit instantiation
 template void recursive_scan_directory<insert_iterator<file_set> >(insert_iterator<file_set>, const string&, const string&);
 
+bool create_directory(const string &name)
+{
+  // from simple example from OpenGroup docs
+  return mkdir(name, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+}
+
 /*
  * Ugly workarounds
  *******************/

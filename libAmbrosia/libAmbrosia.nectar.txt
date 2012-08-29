@@ -13,10 +13,11 @@
 
 lib Ambrosia
 {
-    HEADER_DIRS Include/Ambrosia
+    HEADER_DIRS Include
     SOURCE_DIRS Source \
                 Source/Configuration \
-                Source/Error
+                Source/Error \
+                Source/Generatore
 
     SOURCES *.cpp \
             Platform/common.cpp

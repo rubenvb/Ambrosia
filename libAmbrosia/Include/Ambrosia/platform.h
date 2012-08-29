@@ -72,6 +72,9 @@ template<class output_iterator>
 void recursive_scan_directory(output_iterator it,
                               const std::string& relative_directory,
                               const std::string& directory_name = "" );
+// Create a directory, with all parent directories
+bool create_directory(const std::string& name);
+void create_directory_recursive(const std::string& name);
 // Execute command, and store stdout and stderr output in respective strings
 int execute_command(const std::string& command,
                     std::string& std_out,

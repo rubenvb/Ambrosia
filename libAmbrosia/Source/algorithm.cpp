@@ -275,15 +275,41 @@ void skip_BOM(istream& stream,
 
 /*
 def dep_resolve(node, resolved, unresolved):
-   unresolved.append(node)
+   unresolved.append(node) # skip this, already present
    for edge in node.edges:
       if edge not in resolved:
          if edge in unresolved:
             raise Exception('Circular reference detected: %s -> %s' % (node.name, edge.name))
          dep_resolve(edge, resolved, unresolved)
    resolved.append(node)
-   unresolved.remove(node)
+   unresolved.remove(node) # do this, clear the original target_vector
 */
+/*void dependency_resolve(target_vector::iterator current,
+                        target_vector& resolved,
+                        target_vector& unresolved)
+{
+  const string& node_name = (*current)->name;
+  debug(debug::algorithm) << "dependency_resolve::Resolving: " << node_name << ".\n";
+
+  const auto& edges = (*current)->m_dependencies;
+  for(auto&& it = std::begin(edges); it != std::end(edges); ++it)
+  {
+    const string& edge_name = it->second;
+    const auto&& find_functor = [&edge_name](const target_vector::value_type& t)
+                                { return edge_name == t->name; };
+
+    if(find_if(std::begin(resolved), std::end(resolved), find_functor) == std::end(resolved))
+    {
+      if(find_if(std::begin(unresolved), std::end(unresolved), find_functor) != std::end(resolved))
+        throw internal_error("Circular dependency detected: " + node_name + "->" + edge_name + ".");
+
+      dependency_resolve(*it, resolved, unresolved);
+    }
+  }
+  resolved.push_back(current);
+  unresolved.erase(current);
+}
+
 void dependency_resolve(target_vector& unsorted,
                         target_vector::iterator node,
                         target_vector& resolved,
@@ -333,7 +359,7 @@ void dependency_sort(target_vector& unsorted)
   {
     dependency_resolve(unsorted, std::begin(unsorted), resolved, unresolved);
   }
-  unsorted.swap(resolved);
+  //unsorted.swap(resolved);
 }
 
 void filter_dependency_sort(target_vector& unsorted)
@@ -357,63 +383,6 @@ void filter_dependency_sort(target_vector& unsorted)
     dependency_resolve(unsorted, std::begin(unsorted), resolved, unresolved);
   }
   unsorted.swap(resolved);
-}
-/*template<class output_iterator>
-void find_matching_files( const string& filename, const size_t line_number,
-                          const map<string, file_set>& directories, output_iterator it )
-{
-    string::size_type number_of_matches = 0;
-    const auto end = directories.end();
-    if( filename.find_first_of("*?") != string::npos )
-    {
-        debug(debug::algorithm) << "Algorithm::find_matching_files::Matching wildcard filename.\n";
-        for( auto directory_it = directories.begin(); directory_it != end; ++directory_it )
-        {
-            const string& directory = (*directory_it).first;
-            const file_set& files = (*directory_it).second;
-            const auto files_end = files.end();
-            debug(debug::algorithm) << "Algorithm::find_matching_files::Matching files in " << directory << ".\n";
-            for( auto files_it = files.begin(); files_it != files_end; ++files_it)
-            {
-                const string& file = (*files_it).first;
-                debug(debug::algorithm) << "Algorithm::find_matching_files::Matching " << filename << " to " << file << ".\n";
-                if( wildcard_compare(filename, file) )
-                {
-                    debug(debug::algorithm) << "Algorithm::find_matching_files::Found match: " << directory << directory_seperator << file << ".\n";
-                    it = { directory + directory_seperator + file, (*files_it).second };
-                    ++number_of_matches;
-                }
-            }
-
-        }
-    }
-    else
-    {
-        for( auto directory_it = directories.begin(); directory_it != end; ++directory_it )
-        {
-            const string& directory = (*directory_it).first;
-            const file_set& files = (*directory_it).second;
-            const auto files_end = files.end();
-            for( auto files_it = files.begin(); files_it != files_end; ++files_it )
-            {
-                const string& file = (*files_it).first;
-                if( file == filename )
-                {
-                    if( number_of_matches > 0 )
-                        throw nectar_error( "Ambiguous filename match: directory=\"" + directory + "\", filename=\"" + filename + "\"",
-                                            filename, line_number );
-                    else
-                    {
-                        it = { directory + directory_seperator + file, (*files_it).second };
-                        ++number_of_matches;
-                    }
-                }
-            }
-        }
-    }
-}
-template void find_matching_files<insert_iterator<file_set> >
-    ( const string&, const size_t line_number,
-      const map<string, file_set>&, insert_iterator<file_set> );*/
+}*/
 
 libambrosia_namespace_end

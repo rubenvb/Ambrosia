@@ -74,7 +74,7 @@ typedef std::unique_ptr<target> target_ptr;
 typedef std::vector<target_ptr> target_vector;
 
 // heterogeneous typedefs
-typedef std::set<std::pair<target_type, std::string>> dependency_set;
+typedef std::set<std::tuple<target_type, std::string, target*>> dependency_set;
 typedef std::map<generator_string, std::string> generator_map;
 typedef std::map<file_type, std::map<toolchain, generator_map>> command_map;
 typedef std::map<file_type, build_element_set> map_file_type_build_element_set;

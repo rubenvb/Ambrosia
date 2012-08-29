@@ -45,26 +45,28 @@ extern const std::set<char> s_special_characters_newline;
 class nectar_loader
 {
 public:
-  nectar_loader(const std::string& full_filename,
+  nectar_loader(project& project,
+                const std::string& full_filename,
                 const std::string& sub_directory,
                 std::istream& stream,
                 const dependency_set& list = dependency_set());
   ~nectar_loader();
 
-  void extract_nectar(project& project);
+  void extract_nectar();
 
   // Disallow copy(constructor)ing and assignment (shuts up warning of -Weffc++)
   nectar_loader& operator=(const nectar_loader&) = delete;
   nectar_loader(const nectar_loader&) = delete;
 
 private:
-    const std::string& m_filename; // used for error reporting
-    const std::string m_subdirectory; // used for file searching, without ambrosia_config.source_directory() !
-    std::istream& m_stream; // file input stream
-    size_t m_line_number; // used for error reporting
-    const dependency_set& m_dependency_list;
-    bool m_global_processed; // only one global section per project file is allowed
-    target* p_target;
+  project& m_project;
+  const std::string& m_filename; // used for error reporting
+  const std::string m_subdirectory; // used for file searching, without ambrosia_config.source_directory() !
+  std::istream& m_stream; // file input stream
+  size_t m_line_number; // used for error reporting
+  const dependency_set& m_dependency_list;
+  bool m_global_processed; // only one global section per project file is allowed
+  target* p_target;
 /*
  * Warning output
  *****************/

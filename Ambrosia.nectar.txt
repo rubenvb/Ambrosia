@@ -11,5 +11,7 @@
 # If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 #
 
+# subproject libAmbrosia
 sub libAmbrosia
+# subproject Ambrosia, depends on all libraries in the above
 sub Ambrosia : lib libAmbrosia

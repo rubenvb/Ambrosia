@@ -70,6 +70,24 @@ void project::apply_target_configuration()
   throw error("project::apply_target_configuration::Not yet implemented.");
 }
 
+void project::sort_targets()
+{
+  debug(debug::dependencies) << "project::dependency_sort_targets::Pre-sort order:\n";
+  std::for_each(std::begin(m_targets), std::end(m_targets),
+                [](const target_ptr& t) { debug(debug::dependencies) << "\t" << t->name << "\n"; });
+  /*target_vector resolved;
+  while(!m_targets.empty())
+  {
+    dependency_resolve(std::begin(m_targets), resolved, m_targets);
+  }
+
+  m_targets.swap(resolved);*/
+  //filter_dependency_sort(m_targets);
+  debug(debug::dependencies) << "project::dependency_sort_targets::Post-sort order:\n";
+  std::for_each(std::begin(m_targets), std::end(m_targets),
+                [](const target_ptr& t) { debug(debug::dependencies) << "\t" << t->name << "\n"; });
+}
+
 void project::generate_commands()
 {
   // assume targets are in the correct dependent order

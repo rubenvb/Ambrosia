@@ -46,9 +46,13 @@ public:
   // Determine projects to be built and apply build configuration.
   void apply_target_configuration();
 
+  // sort the targets in dependency order.
+  void sort_targets();
+
+  // Generate commands, duh!
   void generate_commands();
 
-  // Get the build commands (slow due to string comparison to find target, but only used in debug or other even slower output)
+  // Output the build commands
   void dump_commands() const;
 
   // Run the build commands.

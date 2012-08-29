@@ -69,6 +69,8 @@ try {
 #endif
   // project.apply_project_configuration();
 
+  project.sort_targets();
+
   project.generate_commands();
 
   if(lib::project::configuration->m_dump_commands)
@@ -95,7 +97,6 @@ catch(libambrosia::soft_error& e)
   e.output_message();
 #endif
 }
-
 catch(libambrosia::error& e)
 {
   e.output_message();
@@ -103,5 +104,5 @@ catch(libambrosia::error& e)
 catch(std::exception& e)
 {
     cout << "something bad happened:\n";
-    cout << e.what();
+    cout << e.what() << "\n";
 }

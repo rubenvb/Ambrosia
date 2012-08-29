@@ -20,6 +20,8 @@
 #include "Ambrosia/Error/soft_error.h"
 
 // C++ includes
+#include <iostream>
+  using std::cerr;
 #include <string>
   using std::string;
 
@@ -31,5 +33,11 @@ soft_error::soft_error(const string& message)
 
 soft_error::~soft_error()
 {   }
+
+void soft_error::output_message() const
+{
+  cerr << "Soft error:\n"
+       << "\t" << m_message << "\n";
+}
 
 libambrosia_namespace_end

@@ -49,7 +49,8 @@ public:
     config        = 1024,
     command_gen   = 2048,
     command_exec  = 4096,
-    initial       = 8192,
+    dependencies  = 8192,
+    initial       = 16384,
     always        = 0xffffffff
     // ...
   };

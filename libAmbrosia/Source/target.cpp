@@ -144,6 +144,7 @@ bool target::add_source_directory(const file_type type,
   if(!directory_exists(full_subdirectory_name))
     return false;
 
+  debug(debug::target) << "target::add_source_directory::Adding " << file_type_map_inverse.at(type) << " directory: " << full_subdirectory_name << ".\n";
   m_file_cache.add_source_directory(full_subdirectory_name);
   m_source_directories[type].insert(directory);
   return true;

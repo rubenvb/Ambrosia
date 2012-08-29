@@ -74,7 +74,7 @@ const string_vector compile_and_link_generator::generate_parallel_commands()
         break;
       case file_type::source_cxx:
         emit_warning("C++ language standard defaults to C++11");
-        languagestd = "-std=c++11";
+        languagestd = "-std=c++0x";
         break;
       case file_type::source_fortran:
         emit_warning("Fortran language standard defaults to f2008");
@@ -87,6 +87,9 @@ const string_vector compile_and_link_generator::generate_parallel_commands()
 
   for(auto&& it = std::begin(m_target.files(m_type)); it != std::end(m_target.files(m_type)); ++it)
   {
+    string_pair split_name = split_preceding_directory(it->object_file.name);
+    create_directory_recursive(split_name.first);
+
     // compiler (e.g. 'gcc')
     command << m_generator_map.at(generator_string::compiler);
     // language standard
@@ -104,6 +107,12 @@ const string_vector compile_and_link_generator::generate_parallel_commands()
       command << " " << output_argument;
     // object filename
     command << " " << it->object_file.name;
+    // include directories
+    const string_set& header_dirs = m_target.source_directories(file_type::header);
+    for(auto&& it = std::begin(header_dirs); it != std::end(header_dirs); ++it)
+    {
+      command << " " << m_generator_map.at(generator_string::include_argument) << "\"" << full_directory_name(m_target.m_build_config.m_source_directory, *it) << "\"";
+    }
 
     commands.push_back(command.str());
     debug(debug::command_gen) << "compile_and_link_generator::generate_parallel_commands::command: " << command.str() << "\n";

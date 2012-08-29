@@ -70,7 +70,10 @@ public:
                             const std::string& directory);
   void remove_source_directory(const file_type type,
                         const std::string& directory);
+  const string_set source_directories(const file_type type) const
+  { return m_source_directories.at(type); }
   const build_element_set& files(const file_type type) const;
+  //{ return m_files.at(type); }
 
   // libraries to be linked
   bool add_library(const std::string& library);

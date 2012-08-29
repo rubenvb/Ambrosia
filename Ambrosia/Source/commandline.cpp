@@ -135,11 +135,12 @@ void apply_commandline_options(const string_vector& arguments,
         {
           const string::size_type index = current.find("=",1);
           if(index == string::npos || index == current.size()-1)
-            throw commandline_error("Ambrosia internal options must be set by \'-option=value\' type arguments.", argument_number);
+            set_internal_option(current.substr(1), argument_number);
+            //throw commandline_error("Ambrosia internal options must be set by \'-option=value\' type arguments.", argument_number);
 
           const string option(current.substr(1,index-1));
           const string value(current.substr(index+1, string::npos));
-          set_internal_option(option, value, argument_number);
+          set_internal_value_option(option, value, argument_number);
         }
         else if(current[0] == ':')
           add_configuration_options(current.substr(1), project::configuration);
@@ -187,11 +188,21 @@ void add_build_target(const string& target, const string_set& options)
   }
 }
 
-void set_internal_option(const std::string& option,
-                         const std::string& value,
-                         const size_t argument_number )
+void set_internal_option(const string& option,
+                         const size_t argument_number)
 {
-  debug(debug::commandline) << "commandline::set_internal_option::" << option << " with value \'" << value << "\' being set.\n";
+  debug(debug::commandline) << "commandline::set_internal_option::" << option << " without value being set.\n";
+  if("dump-commands" == option)
+    project::configuration->m_dump_commands = true;
+  else
+    throw commandline_error("Unknown option: " + option, argument_number);
+}
+
+void set_internal_value_option(const std::string& option,
+                               const std::string& value,
+                               const size_t argument_number )
+{
+  debug(debug::commandline) << "commandline::set_internal_value_option::" << option << " with value \'" << value << "\' being set.\n";
 
   if("cross" == option)
   {
