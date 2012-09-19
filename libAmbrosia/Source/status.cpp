@@ -38,8 +38,8 @@ libambrosia_namespace_begin
 status current_status = status::OK;
 string error_messages = string();
 string warning_messages = string();
-string_vector error_list{};
-string_vector warning_list{};
+string_vector error_list = string_vector();
+string_vector warning_list = string_vector();
 #ifdef AMBROSIA_DEBUG
 size_t s_error_status_calls = 0;
 #endif

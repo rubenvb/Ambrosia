@@ -157,7 +157,7 @@ const file_set file_cache::find_source_file(const string& filename,
       if(wildcard_compare(true_filename, entry.name))
       {
         debug(debug::files) << "file_cache::find_source_file::Match found: " << entry.name << "\n";
-        result.insert({directory + "/" + entry.name, entry.time_modified});
+        result.insert(file(directory + "/" + entry.name, entry.time_modified));
       }
     }
   }
@@ -173,7 +173,7 @@ const file_set file_cache::match_source_files(const string& filename,
   file_set result;
   const string_pair directory_filename(split_preceding_directory(filename));
   const string& preceding_directory(directory_filename.first);
-  const string& true_filename( directory_filename.second );
+  const string& true_filename(directory_filename.second);
 
   // search all directories, appended with preceding_directory
   for(auto&& directory_it = std::begin(directories); directory_it != std::end(directories); ++directory_it)
@@ -198,7 +198,7 @@ const file_set file_cache::match_source_files(const string& filename,
       if(wildcard_compare(true_filename, entry.name))
       {
         debug(debug::files) << "file_cache::match_source_files::Matched " << true_filename << " to " << directory << "/" << entry.name << ".\n";
-        result.insert({directory + "/" + entry.name, entry.time_modified});
+        result.insert(file(directory + "/" + entry.name, entry.time_modified));
       }
     }
   }
@@ -214,7 +214,7 @@ void file_cache::add_source_directory(const string& directory)
 #endif
 
   debug(debug::files) << "file_cache::add_source_directory::Scanning files in source directory: " << directory << ".\n";
-  const auto result = m_source_files.insert({directory, file_set()});
+  const auto result = m_source_files.insert(std::make_pair(directory, file_set()));
   if(!result.second)
     debug(debug::files) << "file_cache::add_source_directory::Directory already present, and scanned.\n";
   else
@@ -231,7 +231,7 @@ void file_cache::add_build_directory(const std::string& directory)
     debug(debug::files) << "file_cache::add_build_direcctory::Creating build directory: " << directory << ".\n";
 
   debug(debug::files) << "file_cache::add_build_directory::Scanning files in build directory: " << directory << ".\n";
-  const auto result = m_build_files.insert({directory, file_set()});
+  const auto result = m_build_files.insert(std::make_pair(directory, file_set()));
   if(!result.second)
     debug(debug::files) << "file_cache::add_source_directory::Directory already present, and scanned.\n";
   else

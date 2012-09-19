@@ -59,7 +59,7 @@ inline const std::string get_extension(const std::string& filename)
   if(index != std::string::npos)
     return filename.substr(index+1);
   else
-    return {};
+    return std::string();
 }
 // get filename basename, without preceding directories
 inline const std::string get_basename(const std::string& path)
@@ -68,7 +68,7 @@ inline const std::string get_basename(const std::string& path)
   const size_t path_seperator_index = path.rfind('/', extension_index);
 
   if(extension_index == std::string::npos)
-    return {};
+    return std::string();
   else if(path_seperator_index == std::string::npos)
     return path.substr(0, std::min(extension_index-1, extension_index)); // handle extension_index==0
   else

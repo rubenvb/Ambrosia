@@ -253,12 +253,12 @@ const string_pair split_preceding_directory(const string& path)
   {
     // handle path ending in directory seperator
     if(index == path.size()-1)
-      return {"", path.substr(0,index-1)};
+      return std::make_pair("", path.substr(0,index-1));
   else
-    return {path.substr(0, index), path.substr(index+1)};
+    return std::make_pair(path.substr(0, index), path.substr(index+1));
   }
   else
-    return {"", path};
+    return std::make_pair("", path);
 }
 void skip_BOM(istream& stream,
               const string& filename)

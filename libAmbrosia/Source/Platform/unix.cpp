@@ -153,7 +153,8 @@ template void recursive_scan_directory<insert_iterator<file_set> >(insert_iterat
 bool create_directory(const string &name)
 {
   // from simple example from OpenGroup docs
-  return mkdir(name, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  bool result = mkdir(name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  return result;
 }
 
 /*

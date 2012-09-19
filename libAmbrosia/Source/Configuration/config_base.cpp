@@ -21,6 +21,7 @@
 
 // libambrosia includes
 #include "Ambrosia/algorithm.h"
+#include "Ambrosia/boost_wrapper.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/Error/internal_error.h"
 #include "Ambrosia/enums.h"
@@ -28,7 +29,6 @@
 #include "Ambrosia/file_cache.h"
 #include "Ambrosia/platform.h"
 #include "Ambrosia/status.h"
-
 // C++ includes
 #include <string>
   using std::string;
@@ -93,7 +93,8 @@ bool config_base::add_config(const string& config)
 }
 bool config_base::remove_config(const string& config)
 {
-  return m_config.erase(config);
+  // MSVC C4800 without the "0 !="
+  return 0 != m_config.erase(config);
 }
 
 // Platform detection functions
@@ -114,14 +115,16 @@ toolchain config_base::detect_toolchain(toolchain requested_toolchain) const
 }
 void config_base::initialize_config()
 {
-  m_config = {os_map_inverse.at(m_target_os), // Target OS
-              architecture_map_inverse.at(m_target_architecture), // Target architecture
-              toolchain_map_inverse.at(m_target_toolchain), // Toolchain
-              "build_" + os_map_inverse.at(m_build_os), // Build OS
-              "build_" + architecture_map_inverse.at(m_build_architecture), // Build architecture
-              environment_map_inverse.at(m_build_environment), // Shell environment
-              "debug" // debug build is the default
-             };
+  m_config =
+    list_entries_begin
+      entry_begin os_map_inverse.at(m_target_os) entry_end // Target OS
+      entry_begin architecture_map_inverse.at(m_target_architecture) entry_end // Target architecture
+      entry_begin toolchain_map_inverse.at(m_target_toolchain) entry_end // Toolchain
+      entry_begin "build_" + os_map_inverse.at(m_build_os) entry_end // Build OS
+      entry_begin "build_" + architecture_map_inverse.at(m_build_architecture) entry_end // Build architecture
+      entry_begin environment_map_inverse.at(m_build_environment) entry_end // Shell environment
+      entry_begin "debug" entry_end // debug build is the default
+    entries_end;       
   // Convenience config strings
   if(m_target_os == os::Windows && m_target_toolchain == toolchain::GNU)
     m_config.insert("mingw");

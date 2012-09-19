@@ -153,7 +153,7 @@ void target::remove_source_directory(const file_type type,
                               const string& directory)
 {
   if(m_source_directories[type].erase(directory))
-    emit_warning_list({directory});
+    emit_warning_list(string_vector(1,directory));
 
   throw error("target::remove_directory has a flaky implementation.");
 }

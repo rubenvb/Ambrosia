@@ -19,112 +19,123 @@
 // Map declarations
 #include "Ambrosia/Generators/generator_maps.h"
 
+// libAmbrosia includes
+#include "Ambrosia/boost_wrapper.h"
+
 libambrosia_namespace_begin
 
 // C-style languages
 const command_map the_huge_command_map =
-{
-  {file_type::source_c,
-    {
-      {toolchain::GNU,
-        {{generator_string::compiler,         "gcc"},
-         {generator_string::linker,           "gcc"},
-         {generator_string::output_argument,  "-o"},
-         {generator_string::compile_argument, "-c"},
-         {generator_string::include_argument, "-I"},
-         {generator_string::object_suffix,    ".o"},
-         {generator_string::debug_argument,   "-g"},
-         {generator_string::optimize_none,    "-O0"},
-         {generator_string::optimize_common,  "-fomit-frame-pointer -momit-leaf-frame-pointer"},
-         {generator_string::optimize,         "-O2"},
-         {generator_string::optimize_size,    "-Os"},
-         {generator_string::optimize_extreme, "-O3"}
-        }
-      },
-      {toolchain::Microsoft,
-        {{generator_string::compiler,         "cl"},
-         {generator_string::linker,           "link"},
-         {generator_string::output_argument,  ""},
-         {generator_string::compile_argument, "/c"},
-         {generator_string::include_argument, "/I"},
-         {generator_string::object_suffix,    ".obj"},
-         {generator_string::debug_argument,   ""},
-         {generator_string::optimize_none,    "/Od"},
-         {generator_string::optimize,         "/O2"},
-         {generator_string::optimize_size,    "/O1"},
-         {generator_string::optimize_extreme, "/Ox"}
-        }
-      },
-      {toolchain::LLVM,
-        {{generator_string::compiler,         "clang"},
-         {generator_string::linker,           "clang"},
-         {generator_string::output_argument,  "-o"},
-         {generator_string::compile_argument, "-c"},
-         {generator_string::include_argument, "-I"},
-         {generator_string::object_suffix,    ".o"},
-         {generator_string::debug_argument,   "-g"},
-         {generator_string::optimize_none,    "-O0"},
-         {generator_string::optimize,         "-O2"},
-         {generator_string::optimize_size,    "-Os"},
-         {generator_string::optimize_extreme, "-O3"}
-        }
-      },
-      {toolchain::Intel,
-        {{generator_string::compiler,         "icc"}
-        }
-      }
-    }
-  },
-  {file_type::source_cxx,
-    {
-      {toolchain::GNU,
-        {{generator_string::compiler,         "g++"},
-         {generator_string::linker,           "g++"},
-         {generator_string::output_argument,  "-o"},
-         {generator_string::compile_argument, "-c"},
-         {generator_string::include_argument, "-I"},
-         {generator_string::object_suffix,    ".o"},
-         {generator_string::debug_argument,   "-g"},
-         {generator_string::optimize_none,    "-O0"},
-         {generator_string::optimize,         "-O2"},
-         {generator_string::optimize_size,    "-Os"},
-         {generator_string::optimize_extreme, "-O3"}
-        }
-      },
-      {toolchain::Microsoft,
-        {{generator_string::compiler,         "cl"},
-         {generator_string::linker,           "link"},
-         {generator_string::output_argument,  ""},
-         {generator_string::compile_argument, "/c"},
-         {generator_string::include_argument, "/I"},
-         {generator_string::object_suffix,    ".obj"},
-         {generator_string::debug_argument,   ""},
-         {generator_string::optimize_none,    "/Od"},
-         {generator_string::optimize,         "/O2"},
-         {generator_string::optimize_size,    "/O1"},
-         {generator_string::optimize_extreme, "/Ox"}
-        }
-      },
-      {toolchain::LLVM,
-        {{generator_string::compiler,         "clang++"},
-         {generator_string::linker,           "clang++"},
-         {generator_string::output_argument,  "-o"},
-         {generator_string::compile_argument, "-c"},
-         {generator_string::include_argument, "-I"},
-         {generator_string::object_suffix,    ".o"},
-         {generator_string::debug_argument,   "-g"},
-         {generator_string::optimize_none,    "-O0"},
-         {generator_string::optimize,         "-O2"},
-         {generator_string::optimize_size,    "-Os"},
-         {generator_string::optimize_extreme, "-O3"}
-        }
-      },
-      {toolchain::Intel,
-        {{generator_string::compiler,         "icc"}
-        }
-      }
-    }
-  }
-};
+  map_entries_begin
+    entry_begin file_type::source_c,
+      map_entries_begin
+        entry_begin toolchain::GNU,
+          map_entries_begin 
+            entry_begin generator_string::compiler,         "gcc" entry_end
+            entry_begin generator_string::linker,           "gcc" entry_end
+            entry_begin generator_string::output_argument,  "-o" entry_end
+            entry_begin generator_string::compile_argument, "-c" entry_end
+            entry_begin generator_string::include_argument, "-I" entry_end
+            entry_begin generator_string::object_suffix,    ".o" entry_end
+            entry_begin generator_string::debug_argument,   "-g" entry_end
+            entry_begin generator_string::optimize_none,    "-O0" entry_end
+            entry_begin generator_string::optimize_common,  "-fomit-frame-pointer -momit-leaf-frame-pointer" entry_end
+            entry_begin generator_string::optimize,         "-O2" entry_end
+            entry_begin generator_string::optimize_size,    "-Os" entry_end
+            entry_begin generator_string::optimize_extreme, "-O3" entry_end
+          entries_end
+        entry_end
+        entry_begin toolchain::Microsoft,
+          map_entries_begin
+            entry_begin generator_string::compiler,         "cl" entry_end
+            entry_begin generator_string::linker,           "link" entry_end
+            entry_begin generator_string::output_argument,  "" entry_end
+            entry_begin generator_string::compile_argument, "/c" entry_end
+            entry_begin generator_string::include_argument, "/I" entry_end
+            entry_begin generator_string::object_suffix,    ".obj" entry_end
+            entry_begin generator_string::debug_argument,   "" entry_end
+            entry_begin generator_string::optimize_none,    "/Od" entry_end
+            entry_begin generator_string::optimize,         "/O2" entry_end
+            entry_begin generator_string::optimize_size,    "/O1" entry_end
+            entry_begin generator_string::optimize_extreme, "/Ox" entry_end
+          entries_end
+        entry_end
+        entry_begin toolchain::LLVM,
+          map_entries_begin 
+            entry_begin generator_string::compiler,         "clang" entry_end
+            entry_begin generator_string::linker,           "clang" entry_end
+            entry_begin generator_string::output_argument,  "-o" entry_end
+            entry_begin generator_string::compile_argument, "-c" entry_end
+            entry_begin generator_string::include_argument, "-I" entry_end
+            entry_begin generator_string::object_suffix,    ".o" entry_end
+            entry_begin generator_string::debug_argument,   "-g" entry_end
+            entry_begin generator_string::optimize_none,    "-O0" entry_end
+            entry_begin generator_string::optimize,         "-O2" entry_end
+            entry_begin generator_string::optimize_size,    "-Os" entry_end
+            entry_begin generator_string::optimize_extreme, "-O3" entry_end
+          entries_end
+        entry_end
+        entry_begin toolchain::Intel,
+          map_entries_begin
+            entry_begin generator_string::compiler,         "icc" entry_end
+          entries_end
+        entry_end
+      entries_end
+    entry_end
+    entry_begin file_type::source_cxx,
+      map_entries_begin
+       entry_begin toolchain::GNU,
+         map_entries_begin
+            entry_begin generator_string::compiler,         "g++" entry_end
+            entry_begin generator_string::linker,           "g++" entry_end
+            entry_begin generator_string::output_argument,  "-o" entry_end
+            entry_begin generator_string::compile_argument, "-c" entry_end
+            entry_begin generator_string::include_argument, "-I" entry_end
+            entry_begin generator_string::object_suffix,    ".o" entry_end
+            entry_begin generator_string::debug_argument,   "-g" entry_end
+            entry_begin generator_string::optimize_none,    "-O0" entry_end
+            entry_begin generator_string::optimize,         "-O2" entry_end
+            entry_begin generator_string::optimize_size,    "-Os" entry_end
+            entry_begin generator_string::optimize_extreme, "-O3" entry_end
+          entries_end
+        entry_end
+        entry_begin toolchain::Microsoft,
+          map_entries_begin
+            entry_begin generator_string::compiler,         "cl" entry_end
+            entry_begin generator_string::linker,           "link" entry_end
+            entry_begin generator_string::output_argument,  "" entry_end
+            entry_begin generator_string::compile_argument, "/c" entry_end
+            entry_begin generator_string::include_argument, "/I" entry_end
+            entry_begin generator_string::object_suffix,    ".obj" entry_end
+            entry_begin generator_string::debug_argument,   "" entry_end
+            entry_begin generator_string::optimize_none,    "/Od" entry_end
+            entry_begin generator_string::optimize,         "/O2" entry_end
+            entry_begin generator_string::optimize_size,    "/O1" entry_end
+            entry_begin generator_string::optimize_extreme, "/Ox" entry_end
+          entries_end
+        entry_end
+        entry_begin toolchain::LLVM,
+          map_entries_begin
+            entry_begin generator_string::compiler,         "clang++" entry_end
+            entry_begin generator_string::linker,           "clang++" entry_end
+            entry_begin generator_string::output_argument,  "-o" entry_end
+            entry_begin generator_string::compile_argument, "-c" entry_end
+            entry_begin generator_string::include_argument, "-I" entry_end
+            entry_begin generator_string::object_suffix,    ".o" entry_end
+            entry_begin generator_string::debug_argument,   "-g" entry_end
+            entry_begin generator_string::optimize_none,    "-O0" entry_end
+            entry_begin generator_string::optimize,         "-O2" entry_end
+            entry_begin generator_string::optimize_size,    "-Os" entry_end
+            entry_begin generator_string::optimize_extreme, "-O3" entry_end
+          entries_end
+        entry_end
+        entry_begin toolchain::Intel,
+          map_entries_begin
+            entry_begin generator_string::compiler,         "icc" entry_end
+          entries_end
+        entry_end
+      entries_end
+    entry_end
+  entries_end;
 
 libambrosia_namespace_end

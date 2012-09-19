@@ -21,6 +21,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
+#include "Ambrosia/boost_wrapper.h"
 #include "Ambrosia/build_element.h"
 #include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/debug.h"
@@ -65,8 +66,25 @@
 
 libambrosia_namespace_begin
 
-const set<char> s_special_characters = {'(', ')', '{', '}', ':', ','};
-const set<char> s_special_characters_newline = {'(', ')', '{', '}', ':', ',', '\n'};
+const set<char> s_special_characters = 
+  list_entries_begin
+    entry_begin '(' entry_end
+    entry_begin ')' entry_end
+    entry_begin '{' entry_end
+    entry_begin '}' entry_end
+    entry_begin ':' entry_end
+    entry_begin ',' entry_end
+  entries_end;
+const set<char> s_special_characters_newline = 
+  list_entries_begin
+    entry_begin '(' entry_end
+    entry_begin ')' entry_end
+    entry_begin '{' entry_end
+    entry_begin '}' entry_end
+    entry_begin ':' entry_end
+    entry_begin ',' entry_end
+    entry_begin '\n' entry_end
+  entries_end;
 
 nectar_loader::nectar_loader(project& project,
                              const string& full_filename,
@@ -80,7 +98,7 @@ nectar_loader::nectar_loader(project& project,
   m_line_number(1),
   m_dependency_list(list),
   m_global_processed(false),
-  p_target() // ooh, a dangerous null pointer!
+  p_target(nullptr) // ooh, a dangerous null pointer!
 {
   debug(debug::nectar) << "nectar_loader::nectar_loader::filename is " << full_filename << "\n";
 }
@@ -95,7 +113,7 @@ void nectar_loader::extract_nectar()
   skip_BOM(m_stream, m_filename);
 
   // create global target
-  m_project.m_targets.emplace_back(unique_ptr<target>(new target(m_subdirectory, {}, *project::configuration, m_project.m_file_cache)));
+  m_project.m_targets.emplace_back(target(m_subdirectory, dependency_set(), *project::configuration, m_project.m_file_cache));
 
   string token;
   while(next_token(token))
@@ -112,7 +130,7 @@ void nectar_loader::extract_nectar()
       m_global_processed = true;
       if(next_token(token) && "{" == token)
       {
-        p_target = m_project.m_targets[0].get();
+        p_target = &m_project.m_targets[0];
         parse_target();
       }
       else
@@ -136,9 +154,9 @@ void nectar_loader::extract_nectar()
           if(!next_token(token) && "{" == token)
             throw syntax_error("Expected \'{\' after " + target_type_map_inverse.at(type) + " target name.", m_filename, m_line_number);
 
-          m_project.m_targets.emplace_back(new target(m_subdirectory, target_name, type, dependencies, m_project.m_targets[0]->m_build_config, m_project.m_file_cache));
+          m_project.m_targets.emplace_back(target(m_subdirectory, target_name, type, dependencies, m_project.m_targets[0].m_build_config, m_project.m_file_cache));
 
-          p_target = m_project.m_targets.back().get();
+          p_target = &m_project.m_targets.back();
           parse_target();
         }
       }
@@ -408,7 +426,7 @@ void nectar_loader::read_dependency_list(dependency_set& dependencies)
       {
         target* dependency = nullptr;
         debug(debug::parser) << "nectar_loader::read_dependency_list::Inserting " << target_type_map_inverse.at(type) << " dependency: " << token << ".\n";
-        tuple<target_type, string, target*> element /*= std::make_tuple(*/{type, token, dependency}/*)*/;
+        tuple<target_type, string, target*> element(type, token, dependency);///*= std::make_tuple(*/{type, token, dependency}/*)*/;
         if(!dependencies.insert(element).second)
         {
           if(!contains(m_dependency_list, element))

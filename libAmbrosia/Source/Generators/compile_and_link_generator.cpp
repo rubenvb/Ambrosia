@@ -124,7 +124,7 @@ const string_vector compile_and_link_generator::generate_parallel_commands()
 
 const string_vector compile_and_link_generator::generate_final_commands()
 {
-  return {};
+  return string_vector();
 }
 
 libambrosia_namespace_end

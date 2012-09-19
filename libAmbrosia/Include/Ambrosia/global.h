@@ -25,6 +25,13 @@
 #define libambrosia_namespace_begin namespace ambrosia { namespace lib {
 #define libambrosia_namespace_end } }
 
+// deleted function workarounds
+#ifdef _MSC_VER
+#define DELETED_FUNCTION
+#else
+#define DELETED_FUNCTION = delete
+#endif
+
 libambrosia_namespace_begin
 
 // Versioning

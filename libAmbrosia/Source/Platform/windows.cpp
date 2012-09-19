@@ -166,7 +166,7 @@ void scan_directory(output_iterator it,
   while(true)
   {
     if(!(find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-      it = {convert_to_utf8(find_data.cFileName), get_time(find_data.ftLastWriteTime)};
+      it = file(convert_to_utf8(find_data.cFileName), get_time(find_data.ftLastWriteTime));
     if(!FindNextFileW(handle, &find_data) && GetLastError() == ERROR_NO_MORE_FILES)
       break;
   }
@@ -189,7 +189,7 @@ void recursive_scan_directory(output_iterator it,
 
   _WIN32_FIND_DATAW find_data;
 
-  HANDLE handle = FindFirstFileW( directory_wide.c_str(), &find_data );
+  HANDLE handle = FindFirstFileW(directory_wide.c_str(), &find_data);
   if(handle == INVALID_HANDLE_VALUE)
     return;
 
@@ -212,9 +212,9 @@ void recursive_scan_directory(output_iterator it,
     else
     {
       if(directory_name.empty())
-        it = {convert_to_utf8(find_data.cFileName), get_time(find_data.ftLastWriteTime)};
+        it = file(convert_to_utf8(find_data.cFileName), get_time(find_data.ftLastWriteTime));
       else
-        it = {directory_name + "/" + convert_to_utf8(find_data.cFileName), get_time(find_data.ftLastWriteTime)};
+        it = file(directory_name + "/" + convert_to_utf8(find_data.cFileName), get_time(find_data.ftLastWriteTime));
 
     }
     if(!FindNextFileW(handle, &find_data) && GetLastError() == ERROR_NO_MORE_FILES)
@@ -226,7 +226,8 @@ template void recursive_scan_directory<insert_iterator<file_set>>(insert_iterato
 
 bool create_directory(const string& name)
 {
-  return CreateDirectoryW((L"\\\\?\\" + convert_to_utf16(name)).c_str(), NULL);
+  // MSVC C4800 without the "0 !="
+  return 0 != CreateDirectoryW((L"\\\\?\\" + convert_to_utf16(name)).c_str(), NULL);
 }
 void create_directory_recursive(const string& name)
 {
@@ -320,7 +321,7 @@ int execute_command(const string &command,
   CloseHandle(stderr_write_handle);
 
   // Read from pipes
-  constexpr size_t buffer_size = 1024;
+  const size_t buffer_size = 1024;
   string buffer;
   buffer.resize(buffer_size);
   DWORD bytes_read = 0;

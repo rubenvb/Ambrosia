@@ -29,6 +29,10 @@ libambrosia_namespace_begin
 
 struct file
 {
+  file(const std::string& name = "",
+       const time_t time_modified = 0)
+  : name(name), time_modified(time_modified)
+  {}
   std::string name;
   time_t time_modified;
 

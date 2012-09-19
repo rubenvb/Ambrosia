@@ -26,6 +26,7 @@
 #if _WIN32
   #define S_IFREG _S_IFREG
   #include <direct.h>
+  #define getcwd _getcwd
 #endif
 #if __linux__
   #include <sys/io.h> // For access()
@@ -86,11 +87,12 @@ const vector<string>& get_environment_PATH()
 
 const std::string current_working_directory()
 {
+  //TODO: use Unicode API for Win32
   const size_t chunkSize=255;
   const size_t maxChunks=10240; // 2550 KiBs of current path are more than enough
 
   char stackBuffer[chunkSize]; // Stack buffer for the "normal" case
-  if( getcwd(stackBuffer, sizeof(stackBuffer)) != NULL )
+  if(getcwd(stackBuffer, sizeof(stackBuffer)) != NULL)
     return stackBuffer;
   if( errno!=ERANGE )
     throw std::runtime_error("Cannot determine the current path.");

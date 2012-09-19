@@ -74,7 +74,7 @@ void project::sort_targets()
 {
   debug(debug::dependencies) << "project::dependency_sort_targets::Pre-sort order:\n";
   std::for_each(std::begin(m_targets), std::end(m_targets),
-                [](const target_ptr& t) { debug(debug::dependencies) << "\t" << t->name << "\n"; });
+                [](const target& t) { debug(debug::dependencies) << "\t" << t.name << "\n"; });
   /*target_vector resolved;
   while(!m_targets.empty())
   {
@@ -85,7 +85,7 @@ void project::sort_targets()
   //filter_dependency_sort(m_targets);
   debug(debug::dependencies) << "project::dependency_sort_targets::Post-sort order:\n";
   std::for_each(std::begin(m_targets), std::end(m_targets),
-                [](const target_ptr& t) { debug(debug::dependencies) << "\t" << t->name << "\n"; });
+                [](const target& t) { debug(debug::dependencies) << "\t" << t.name << "\n"; });
 }
 
 void project::generate_commands()
@@ -93,7 +93,7 @@ void project::generate_commands()
   // assume targets are in the correct dependent order
   for(auto&& target_it = std::begin(m_targets); target_it != std::end(m_targets); ++target_it)
   {
-    target& current = **target_it;
+    target& current = *target_it;
     if(current.m_type == target_type::global)
     {
       debug(debug::command_gen) << "project::generate_commands::Skipping generation of build commands for target: " << current.name << ".\n";

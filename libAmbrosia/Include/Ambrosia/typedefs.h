@@ -68,10 +68,8 @@ class target;
 // homogeneous typedefs
 typedef std::unordered_set<file> file_set;
 typedef std::unordered_set<build_element> build_element_set;
-typedef std::unique_ptr<project> project_ptr;
-typedef std::vector<project_ptr> project_vector;
 typedef std::unique_ptr<target> target_ptr;
-typedef std::vector<target_ptr> target_vector;
+typedef std::vector<target> target_vector;
 
 // heterogeneous typedefs
 typedef std::set<std::tuple<target_type, std::string, target*>> dependency_set;

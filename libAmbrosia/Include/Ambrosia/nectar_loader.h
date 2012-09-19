@@ -32,6 +32,7 @@
 
 // C++ includes
 #include <iosfwd>
+#include <functional>
 #include <utility>
 #include <vector>
 
@@ -55,8 +56,8 @@ public:
   void extract_nectar();
 
   // Disallow copy(constructor)ing and assignment (shuts up warning of -Weffc++)
-  nectar_loader& operator=(const nectar_loader&) = delete;
-  nectar_loader(const nectar_loader&) = delete;
+  nectar_loader& operator=(const nectar_loader&) DELETED_FUNCTION;
+  nectar_loader(const nectar_loader&) DELETED_FUNCTION;
 
 private:
   project& m_project;
