@@ -24,7 +24,6 @@
 
 // Common platform includes
 #if _WIN32
-  #define _CRT_SECURE_NO_WARNINGS
   #define S_IFREG _S_IFREG
   #include <direct.h>
   #define getcwd _getcwd

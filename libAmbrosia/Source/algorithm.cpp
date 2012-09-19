@@ -75,7 +75,7 @@ const std::string full_directory_name(const string& first_directory,
 bool wildcard_compare(const string& wild_string,
                       const string& full_string)
 {
-  // Written by Jack Handy - jakkhandy@hotmail.com
+  // Written by Jack Handy - jackhandy@hotmail.com
   // Taken from http://www.codeproject.com/KB/string/wildcmp.aspx
   // Adapted by Ruben Van Boxem for Ambrosia
 
@@ -115,10 +115,13 @@ bool wildcard_compare(const string& wild_string,
     {
       wild = mp;
       str = cp;
+      if(cp == string_end)
+        return false;
+
       ++cp;
     }
   }
-  while(*wild == '*')
+  while(wild != wild_end && *wild == '*')
   {
     ++wild;
   }
@@ -128,7 +131,7 @@ bool wildcard_compare(const string& wild_string,
 bool wildcard_directory_compare(const string& wild_string,
                                 const string& full_string)
 {
-  // Written by Jack Handy - jakkhandy@hotmail.com
+  // Written by Jack Handy - jackhandy@hotmail.com
   // Taken from http://www.codeproject.com/KB/string/wildcmp.aspx
   // Adapted by Ruben Van Boxem for Ambrosia
 

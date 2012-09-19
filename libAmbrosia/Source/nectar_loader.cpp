@@ -385,7 +385,7 @@ bool nectar_loader::next_list_token(string& token)
 void nectar_loader::read_dependency_list(dependency_set& dependencies)
 {
   // copy "parent" dependencies
-  dependencies = m_dependency_list;
+  //dependencies = m_dependency_list;
   debug(debug::parser) << "nectar_loader::read_dependency_list::Reading dependencies.\n";
   bool in_list = false;
   target_type type;
@@ -426,7 +426,7 @@ void nectar_loader::read_dependency_list(dependency_set& dependencies)
       {
         target* dependency = nullptr;
         debug(debug::parser) << "nectar_loader::read_dependency_list::Inserting " << target_type_map_inverse.at(type) << " dependency: " << token << ".\n";
-        tuple<target_type, string, target*> element(type, token, dependency);///*= std::make_tuple(*/{type, token, dependency}/*)*/;
+        std::pair<target_type, string> element = std::make_pair(type, token);
         if(!dependencies.insert(element).second)
         {
           if(!contains(m_dependency_list, element))
