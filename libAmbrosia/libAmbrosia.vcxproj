@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{3B31FF4B-1593-4EB1-96D3-96A0475DCCE4}</ProjectGuid>
+    <RootNamespace>libAmbrosia</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\algorithm.cpp" />
+    <ClCompile Include="Source\Configuration\ambrosia_config.cpp" />
+    <ClCompile Include="Source\Configuration\build_config.cpp" />
+    <ClCompile Include="Source\Configuration\config_base.cpp" />
+    <ClCompile Include="Source\debug.cpp" />
+    <ClCompile Include="Source\enum_maps.cpp" />
+    <ClCompile Include="Source\Error\commandline_error.cpp" />
+    <ClCompile Include="Source\Error\error.cpp" />
+    <ClCompile Include="Source\Error\internal_error.cpp" />
+    <ClCompile Include="Source\Error\nectar_error.cpp" />
+    <ClCompile Include="Source\Error\soft_error.cpp" />
+    <ClCompile Include="Source\Error\syntax_error.cpp" />
+    <ClCompile Include="Source\file_cache.cpp" />
+    <ClCompile Include="Source\Generators\compile_and_link_generator.cpp" />
+    <ClCompile Include="Source\Generators\generator.cpp" />
+    <ClCompile Include="Source\Generators\generator_maps.cpp" />
+    <ClCompile Include="Source\nectar.cpp" />
+    <ClCompile Include="Source\nectar_loader.cpp" />
+    <ClCompile Include="Source\node.cpp" />
+    <ClCompile Include="Source\Platform\common.cpp" />
+    <ClCompile Include="Source\Platform\unix.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\windows.cpp" />
+    <ClCompile Include="Source\project.cpp" />
+    <ClCompile Include="Source\status.cpp" />
+    <ClCompile Include="Source\target.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\Ambrosia\algorithm.h" />
+    <ClInclude Include="Include\Ambrosia\build_element.h" />
+    <ClInclude Include="Include\Ambrosia\Configuration\ambrosia_config.h" />
+    <ClInclude Include="Include\Ambrosia\Configuration\build_config.h" />
+    <ClInclude Include="Include\Ambrosia\Configuration\config_base.h" />
+    <ClInclude Include="Include\Ambrosia\debug.h" />
+    <ClInclude Include="Include\Ambrosia\enums.h" />
+    <ClInclude Include="Include\Ambrosia\enum_maps.h" />
+    <ClInclude Include="Include\Ambrosia\Error\commandline_error.h" />
+    <ClInclude Include="Include\Ambrosia\Error\error.h" />
+    <ClInclude Include="Include\Ambrosia\Error\internal_error.h" />
+    <ClInclude Include="Include\Ambrosia\Error\nectar_error.h" />
+    <ClInclude Include="Include\Ambrosia\Error\soft_error.h" />
+    <ClInclude Include="Include\Ambrosia\Error\syntax_error.h" />
+    <ClInclude Include="Include\Ambrosia\file.h" />
+    <ClInclude Include="Include\Ambrosia\file_cache.h" />
+    <ClInclude Include="Include\Ambrosia\Generators\compile_and_link_generator.h" />
+    <ClInclude Include="Include\Ambrosia\Generators\generator.h" />
+    <ClInclude Include="Include\Ambrosia\Generators\generator_maps.h" />
+    <ClInclude Include="Include\Ambrosia\global.h" />
+    <ClInclude Include="Include\Ambrosia\nectar.h" />
+    <ClInclude Include="Include\Ambrosia\nectar_loader.h" />
+    <ClInclude Include="Include\Ambrosia\node.h" />
+    <ClInclude Include="Include\Ambrosia\platform.h" />
+    <ClInclude Include="Include\Ambrosia\project.h" />
+    <ClInclude Include="Include\Ambrosia\status.h" />
+    <ClInclude Include="Include\Ambrosia\target.h" />
+    <ClInclude Include="Include\Ambrosia\typedefs.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
