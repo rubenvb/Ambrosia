@@ -91,10 +91,13 @@ try {
        << "Actual build time: " << build_time << ".";
 #endif
 }
+#ifdef AMBROSIA_DEBUG
 catch(libambrosia::soft_error& e)
 {
-#ifdef AMBROSIA_DEBUG
   e.output_message();
+#else
+catch(libambrosia::soft_error&)
+{
 #endif
 }
 catch(libambrosia::error& e)
