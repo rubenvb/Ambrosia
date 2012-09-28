@@ -50,13 +50,10 @@ public:
   build_config(const std::string& subdirectory,
                const std::string& target_name_suffix,
                const config_base& config);
+  build_config(const ambrosia_config& configuration);
 
-  const string_map& user_options() const;
-
-  std::set<file_type> m_source_types; // source files present to decide which build commands to run
-
-private:
-  string_map m_user_variables; // user string --> value
+  std::set<file_type> source_types; // source files present to decide which build commands to run
+  string_map user_variables; // user string --> value
 };
 
 libambrosia_namespace_end

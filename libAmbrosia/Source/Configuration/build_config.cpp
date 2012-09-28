@@ -38,14 +38,19 @@ build_config::build_config(const string& subdirectory,
                            const string& target_name_suffix,
                            const config_base& config)
 : config_base(config),
-  m_source_types(),
-  m_user_variables()
+  source_types(),
+  user_variables()
 {
-  m_source_directory = full_directory_name(m_source_directory, subdirectory);
-  debug(debug::config) << "build_config::build_config::Build directory for " << m_source_directory << " was: \"" << m_build_directory << "\".\n";
+  source_directory = full_directory_name(source_directory, subdirectory);
+  debug(debug::config) << "build_config::build_config::Build directory for " << source_directory << " was: \"" << build_directory << "\".\n";
   // check multiple 'sub' levels for correctness below:
-  m_build_directory = full_directory_name(m_build_directory, subdirectory + target_name_suffix);
-  debug(debug::config) << "build_config::build_config::Build directory for " << m_source_directory << " is now: \"" << m_build_directory << "\".\n";
+  build_directory = full_directory_name(build_directory, subdirectory + target_name_suffix);
+  debug(debug::config) << "build_config::build_config::Build directory for " << source_directory << " is now: \"" << build_directory << "\".\n";
 }
+build_config::build_config(const ambrosia_config& configuration)
+: config_base(configuration),
+  source_types(),
+  user_variables()
+{   }
 
 libambrosia_namespace_end

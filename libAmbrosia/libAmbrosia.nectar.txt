@@ -17,7 +17,7 @@ lib Ambrosia
     SOURCE_DIRS Source \
                 Source/Configuration \
                 Source/Error \
-                Source/Generatore
+                Source/Generators
 
     SOURCES *.cpp \
             Platform/common.cpp

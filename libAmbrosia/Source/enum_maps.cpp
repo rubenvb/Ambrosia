@@ -67,7 +67,7 @@ const map<string, toolchain> vendor_map =
     entry_begin "Intel",     toolchain::Intel entry_end
   entries_end;
 const map<toolchain, string> vendor_map_inverse =
-  map_entries_begin 
+  map_entries_begin
     entry_begin toolchain::GNU,       "GNU" entry_end
     entry_begin toolchain::Microsoft, "Microsoft" entry_end
     entry_begin toolchain::LLVM,      "LLVM" entry_end
@@ -82,7 +82,7 @@ const map<string, toolchain> toolchain_map =
     entry_begin"icc",   toolchain::Intel entry_end
   entries_end;
 const map<toolchain, string> toolchain_map_inverse =
-  map_entries_begin 
+  map_entries_begin
     entry_begin toolchain::GNU,       "gcc" entry_end
     entry_begin toolchain::Microsoft, "msvc" entry_end
     entry_begin toolchain::LLVM,      "clang" entry_end
@@ -90,7 +90,7 @@ const map<toolchain, string> toolchain_map_inverse =
   entries_end;
 
 const map<string, environment> environment_map =
-  map_entries_begin 
+  map_entries_begin
     entry_begin "cmd",  environment::cmd entry_end
     entry_begin "Bash", environment::bash entry_end
   entries_end;
@@ -105,7 +105,7 @@ const map<string, target_type> target_type_map =
     entry_begin "global",  target_type::global entry_end
     entry_begin "app",     target_type::app entry_end
     entry_begin "lib",     target_type::lib entry_end
-    entry_begin "sub",     target_type::sub entry_end
+    entry_begin "sub",     target_type::project entry_end
     entry_begin "install", target_type::install entry_end
     entry_begin "test",    target_type::test entry_end
   entries_end;
@@ -114,7 +114,7 @@ const map<target_type, string> target_type_map_inverse =
     entry_begin target_type::global,  "global" entry_end
     entry_begin target_type::app,     "app" entry_end
     entry_begin target_type::lib,     "lib" entry_end
-    entry_begin target_type::sub,     "sub" entry_end
+    entry_begin target_type::project, "sub" entry_end
     entry_begin target_type::install, "install" entry_end
     entry_begin target_type::test,    "test" entry_end
   entries_end;

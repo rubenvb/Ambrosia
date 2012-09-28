@@ -45,7 +45,7 @@ class target;
 // converts all project file content to internal representation, adding to the container where "it" outputs to
 void drink_nectar(project& project);
 // uses s_ambrosia_config to apply the requested build configuration
-void apply_build_config(target_vector& targets);
+void apply_build_config(target_ptr_vector& targets);
 
 libambrosia_namespace_end
 

@@ -26,31 +26,22 @@
 
 // libAmbrosia includes
 #include "Ambrosia/build_element.h"
-#include "Ambrosia/Configuration/ambrosia_config.h"
 #include "Ambrosia/status.h"
-#include "Ambrosia/target.h"
+//#include "Ambrosia/target.h"
 #include "Ambrosia/typedefs.h"
 
 libambrosia_namespace_begin
 
 // Forward declarations
 class file_cache;
-
-class project
+/*
+class project : public target
 {
 public:
-  project(file_cache& file_cache);
-  project(ambrosia_config& ambrosia_config,
-          file_cache& file_cache);
+  project(const std::string& name, ambrosia_config& configuration);
 
   // Determine projects to be built and apply build configuration.
   void apply_target_configuration();
-
-  // sort the targets in dependency order.
-  void sort_targets();
-
-  // Generate commands, duh!
-  void generate_commands();
 
   // Output the build commands
   void dump_commands() const;
@@ -58,13 +49,11 @@ public:
   // Run the build commands.
   void execute_build_commands();
 
-  target_vector m_targets;
-  file_cache& m_file_cache;
-  static ambrosia_config* configuration;
+  target_ptr_vector m_targets;
 
 private:
   map_string_string_vector m_commands; // commands per target, easier for debugging, info and fancy output.
-};
+};*/
 
 libambrosia_namespace_end
 

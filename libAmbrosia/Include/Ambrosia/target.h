@@ -46,26 +46,31 @@ libambrosia_namespace_begin
 class target : public node
 {
 public:
+  target(const target_type type,
+         const std::string& name,
+         const build_config& configuration,
+         const std::string& subdirectory = "",
+         const dependency_set& dependencies = dependency_set());
   // 'global' target with subproject-wide dependencies
-  target(const std::string& subdirectory,
+  /*target(const std::string& subdirectory,
          const dependency_set& dependencies,
-         const ambrosia_config& config,
-         file_cache& cache);
+         const ambrosia_config& configuration,
+         file_cache& cache)*/
   // other targets are based off of global's build_config
   target(const std::string& subdirectory,
          const std::string& name,
          const target_type type,
          const dependency_set& dependencies,
-         const build_config& config,
-         file_cache& cache);
+         const build_config& config);
 
   // file modifiers and accessor
   void add_source_file(const file_type type,
                        const std::string& filename,
+                       file_cache& file_cache,
                        const std::string& nectar_file,
                        const size_t line_number);
   void remove_source_file(const file_type type,
-                   const std::string& filename );
+                   const std::string& filename);
   bool add_source_directory(const file_type type,
                             const std::string& directory);
   void remove_source_directory(const file_type type,
@@ -83,13 +88,12 @@ public:
   void generate_object_filenames();
 
   // variables
-  build_config m_build_config; // build configuration, inherited from global target's build_config
-  const dependency_set m_dependencies; // dependency+type
-  std::string m_output_name;
-  const target_type m_type; // target type
+  build_config configuration; // build configuration, inherited from global target's build_config
+  const dependency_set dependencies; // dependency+type
+  std::string output_name;
+  const target_type type; // target type
 
 private:
-  file_cache& m_file_cache; // project's file_cache
   map_file_type_string_set m_source_directories; // source directories per file type
   map_file_type_build_element_set m_files; // source and object files per file type with last modified time
   std::string m_output_file;

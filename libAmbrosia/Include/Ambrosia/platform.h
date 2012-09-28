@@ -40,6 +40,16 @@ extern const std::string executable_suffix;
 extern const os build_os;
 extern const architecture build_architecture;
 extern const architecture ambrosia_architecture;
+const toolchain ambrosia_toolchain =
+#ifdef __clang__
+  toolchain::LLVM;
+#elif defined(__ICL)
+  toolchain::Intel;
+#elif defined(_MSC_VER)
+  toolchain::Microsoft;
+#elif defined(__GNUC__)
+  toolchain::GNU;
+#endif
 
 /*
  * Windows support functions

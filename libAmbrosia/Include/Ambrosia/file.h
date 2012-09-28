@@ -16,8 +16,8 @@
  *
  **/
 
-#ifndef FILE_H
-#define FILE_H
+#ifndef AMBROSIA_FILE_H
+#define AMBROSIA_FILE_H
 
 // Global include
 #include "global.h"

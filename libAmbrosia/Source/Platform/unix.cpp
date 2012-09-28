@@ -20,11 +20,15 @@
 #include "Ambrosia/platform.h"
 
 // libAmbrosia includes
+#include "Ambrosia/Error/error.h"
+#include "Ambrosia/debug.h"
 #include "Ambrosia/typedefs.h"
 
 // Platform includes
 #include <dirent.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 // C++ includes
@@ -150,11 +154,88 @@ void recursive_scan_directory(output_iterator it,
 // explicit instantiation
 template void recursive_scan_directory<insert_iterator<file_set> >(insert_iterator<file_set>, const string&, const string&);
 
-bool create_directory(const string &name)
+bool create_directory(const string& name)
 {
   // from simple example from OpenGroup docs
   bool result = mkdir(name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
   return result;
+}
+void create_directory_recursive(const string& name)
+{
+  const char* dir = name.c_str();
+  char tmp[256];
+  char *p = NULL;
+  size_t len;
+
+  snprintf(tmp, sizeof(tmp),"%s",dir);
+  len = strlen(tmp);
+  if(tmp[len - 1] == '/')
+    tmp[len - 1] = 0;
+  for(p = tmp + 1; *p; p++)
+  {
+    if(*p == '/')
+    {
+      *p = 0;
+      mkdir(tmp, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+      *p = '/';
+    }
+    mkdir(tmp, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  }
+}
+
+int execute_command(const string &command,
+                    string &string_cout,
+                    string &/*string_cerr*/)
+{
+  // Create pipes for redirected output
+  int cout_pipe[2];
+  int cerr_pipe[2];
+  pipe(cout_pipe);
+  pipe(cerr_pipe);
+
+  int exit_code;
+  pid_t pid = fork();
+  switch(pid)
+  {
+    case -1:
+      throw error("fork failed.");
+    case 0:
+      // Close read end in the child
+      close(cout_pipe[0]);
+      close(cout_pipe[0]);
+      // Redirect stdout and stderr
+      dup2(cout_pipe[1],1);
+      dup2(cerr_pipe[1],2);
+      // Close unneeded file descriptors
+      close(cout_pipe[1]);
+      close(cerr_pipe[1]);
+      // execute child program
+      execlp("sh -c", command.c_str());
+      throw error("execlp failed to execute command: " + command + ".");
+      break;
+    default:
+      if(waitpid(pid, &exit_code, 0) != -1)
+        debug(debug::command_exec) << "Child exited with status " << exit_code << ".\n";
+      else
+        throw error("waitpid failed.");
+
+      // Close pipes
+      close(cout_pipe[1]);
+      close(cerr_pipe[1]);
+      // Read from pipes
+      const size_t buffer_size = 1024;
+      string buffer;
+      buffer.resize(buffer_size);
+      ssize_t bytes_read = read(cout_pipe[0], &buffer[0], buffer_size);
+      while(bytes_read > 0)
+      {
+        string_cout.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
+        bytes_read = read(cout_pipe[0], &buffer[0], buffer_size);
+        if(bytes_read == -1)
+          throw error("Failure reading from stdout pipe.");
+      }
+  }
+  return exit_code;
 }
 
 /*

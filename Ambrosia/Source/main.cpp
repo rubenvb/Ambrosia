@@ -57,7 +57,7 @@ try {
 
   lib::ambrosia_config ambrosia_config;
   lib::file_cache file_cache;
-  lib::project project(ambrosia_config, file_cache);
+  lib::project project(file_cache);
 
   apply_commandline_options(string_vector(argv+1, argv+argc), file_cache);
 

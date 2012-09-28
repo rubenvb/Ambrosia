@@ -18,8 +18,8 @@
  *
  **/
 
-#ifndef compile_and_link_generator_H
-#define compile_and_link_generator_H
+#ifndef AMBROSIA_GENERATORS_COMPILE_AND_LINK_GENERATOR_H
+#define AMBROSIA_GENERATORS_COMPILE_AND_LINK_GENERATOR_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -49,4 +49,4 @@ public:
 
 libambrosia_namespace_end
 
-#endif // compile_and_link_generator_H
+#endif // AMBROSIA_GENERATORS_COMPILE_AND_LINK_GENERATOR_H

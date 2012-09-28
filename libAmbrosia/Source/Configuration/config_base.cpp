@@ -36,35 +36,35 @@
 libambrosia_namespace_begin
 
 config_base::config_base()
-: m_environment_PATH(get_environment_PATH()),
-  m_build_architecture(build_architecture),
-  m_build_environment(detect_build_environment()),
-  m_build_os(build_os), // global from Ambrosia/platform.h
-  m_build_toolchain(detect_toolchain()),
-  m_target_architecture(m_build_architecture),
-  m_target_os(m_build_os),
-  m_target_toolchain(detect_toolchain()),
-  m_source_directory(),
-  m_config(),
-  m_project_file(),
-  m_build_directory("./build")
+: environment_PATH(get_environment_PATH()),
+  build_architecture(build_architecture),
+  build_environment(detect_build_environment()),
+  build_os(build_os), // global from Ambrosia/platform.h
+  build_toolchain(detect_toolchain()),
+  target_architecture(build_architecture),
+  target_os(build_os),
+  target_toolchain(detect_toolchain()),
+  source_directory(),
+  config_strings(),
+  project_file(),
+  build_directory("./build")
 {
   initialize_config();
-  debug(debug::config) << "\nconfig_base::config contains:\n" << m_config << "\n";
+  debug(debug::config) << "\nconfig_base::config contains:\n" << config_strings << "\n";
 }
 config_base::config_base(toolchain requested_toolchain)
-: m_environment_PATH(get_environment_PATH()),
-  m_build_architecture(build_architecture),
-  m_build_environment(detect_build_environment()),
-  m_build_os(build_os), // global from Ambrosia/platform.h
-  m_build_toolchain(detect_toolchain()),
-  m_target_architecture(m_build_architecture),
-  m_target_os(m_build_os),
-  m_target_toolchain(detect_toolchain(requested_toolchain)),
-  m_source_directory(),
-  m_config(),
-  m_project_file(),
-  m_build_directory()
+: environment_PATH(get_environment_PATH()),
+  build_architecture(build_architecture),
+  build_environment(detect_build_environment()),
+  build_os(build_os), // global from Ambrosia/platform.h
+  build_toolchain(detect_toolchain()),
+  target_architecture(build_architecture),
+  target_os(build_os),
+  target_toolchain(detect_toolchain(requested_toolchain)),
+  source_directory(),
+  config_strings(),
+  project_file(),
+  build_directory()
 {
   initialize_config();
 }
@@ -80,21 +80,21 @@ void config_base::set_source_directory(const string& source_directory)
     throw internal_error("Attempting to call config_base::set_source_directory with a non-existent directory: " + source_directory);
 
   debug(debug::config) << "config_base::set_source_directory::Setting source directory to: " << source_directory << "\n";
-  m_source_directory = source_directory;
-  debug(debug::config) << "config_base::set_source_directory::Adding " << m_source_directory << " to s_file_store.\n";
+  this->source_directory = source_directory;
+  debug(debug::config) << "config_base::set_source_directory::Adding " << source_directory << " to s_file_store.\n";
 }
 void config_base::set_project_file(const string& project_file)
 {
-  m_project_file = project_file;
+  this->project_file = project_file;
 }
-bool config_base::add_config(const string& config)
+bool config_base::add_config(const string& config_string)
 {
-  return m_config.insert(config).second;
+  return config_strings.insert(config_string).second;
 }
-bool config_base::remove_config(const string& config)
+bool config_base::remove_config(const string& config_string)
 {
   // MSVC C4800 without the "0 !="
-  return 0 != m_config.erase(config);
+  return 0 != config_strings.erase(config_string);
 }
 
 // Platform detection functions
@@ -115,21 +115,21 @@ toolchain config_base::detect_toolchain(toolchain requested_toolchain) const
 }
 void config_base::initialize_config()
 {
-  m_config =
+  config_strings =
     list_entries_begin
-      entry_begin os_map_inverse.at(m_target_os) entry_end // Target OS
-      entry_begin architecture_map_inverse.at(m_target_architecture) entry_end // Target architecture
-      entry_begin toolchain_map_inverse.at(m_target_toolchain) entry_end // Toolchain
-      entry_begin "build_" + os_map_inverse.at(m_build_os) entry_end // Build OS
-      entry_begin "build_" + architecture_map_inverse.at(m_build_architecture) entry_end // Build architecture
-      entry_begin environment_map_inverse.at(m_build_environment) entry_end // Shell environment
+      entry_begin os_map_inverse.at(target_os) entry_end // Target OS
+      entry_begin architecture_map_inverse.at(target_architecture) entry_end // Target architecture
+      entry_begin toolchain_map_inverse.at(target_toolchain) entry_end // Toolchain
+      entry_begin "build_" + os_map_inverse.at(build_os) entry_end // Build OS
+      entry_begin "build_" + architecture_map_inverse.at(build_architecture) entry_end // Build architecture
+      entry_begin environment_map_inverse.at(build_environment) entry_end // Shell environment
       entry_begin "debug" entry_end // debug build is the default
-    entries_end;       
+    entries_end;
   // Convenience config strings
-  if(m_target_os == os::Windows && m_target_toolchain == toolchain::GNU)
-    m_config.insert("mingw");
-  if(m_target_os == os::Linux || m_target_os == os::MacOSX)
-    m_config.insert("unix");
+  if(target_os == os::Windows && target_toolchain == toolchain::GNU)
+    config_strings.insert("mingw");
+  if(target_os == os::Linux || target_os == os::MacOSX)
+    config_strings.insert("unix");
 }
 
 libambrosia_namespace_end

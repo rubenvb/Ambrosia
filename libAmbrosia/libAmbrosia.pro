@@ -61,7 +61,13 @@ HEADERS += \
     Include/Ambrosia/Generators/generator_maps.h \
     Include/Ambrosia/Generators/compile_and_link_generator.h \
     Include/Ambrosia/build_element.h \
-    Include/Ambrosia/file.h
+    Include/Ambrosia/file.h \
+    Include/Ambrosia/ambrosia.h \
+    Include/Ambrosia/Targets/target.h \
+    Include/Ambrosia/Targets/project.h \
+    Include/Ambrosia/Targets/lib.h \
+    Include/Ambrosia/Targets/app.h \
+    Include/Ambrosia/Targets/global.h
 
 SOURCES += \
     Source/Configuration/ambrosia_config.cpp \
@@ -86,7 +92,12 @@ SOURCES += \
     Source/target.cpp \
     Source/Generators/generator.cpp \
     Source/Generators/generator_maps.cpp \
-    Source/Generators/compile_and_link_generator.cpp
+    Source/Generators/compile_and_link_generator.cpp \
+    Source/Targets/target.cpp \
+    Source/Targets/project.cpp \
+    Source/Targets/lib.cpp \
+    Source/Targets/app.cpp \
+    Source/Targets/global.cpp
 
 *win32*:SOURCES += Source/Platform/windows.cpp
 *linux*:SOURCES += Source/Platform/unix.cpp

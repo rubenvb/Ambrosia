@@ -69,7 +69,7 @@ enum class target_type
   global,
   app,
   lib,
-  sub,
+  project,
   install,
   test
 };
@@ -89,26 +89,6 @@ enum class file_type
   Qt_moc,
   Qt_rc
   // ...
-};
-
-enum class generator_string
-{
-  compiler, // compiler program name (without target prefixes)
-  linker, // linker program name
-  output_argument, // precedes output file name
-  compile_argument, // compile to object filew without linking
-  include_argument, // precedes extra include directory
-  object_suffix, // suffix for intermediate object files
-  import_library_suffix, // .dll.a, .lib
-  static_library_suffix, // .a, .lib
-  shared_library_suffix, // .dll, .so
-  debug_argument, // produce debug info
-  optimize, // standard "release" configuration optimization
-  optimize_none, // explicitely turn off optimizations
-  optimize_common, // options that make debugging impossible but added because Ambrosia is awesome
-  optimize_size, // optimize for size
-  optimize_extreme, // full optimization, not guaranteed to be better than 'optimize_release'
-  optimize_lto // Link-time-optimization or link time code generation: -flto or /GL and /LTCG
 };
 
 ambrosia_namespace_end

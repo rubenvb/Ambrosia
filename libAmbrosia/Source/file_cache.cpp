@@ -109,11 +109,11 @@ const file_set& file_cache::get_source_file_set(const std::string& directory)
 }
 
 const file_set file_cache::find_source_file(const string& filename,
-                                            const config_base* config,
+                                            const config_base* configuration,
                                             const string_set& directories )
 {
   debug(debug::files) << "file_cache::find_source_file::Called.\n";
-  const string& source_directory = config->m_source_directory;
+  const string& source_directory = configuration->source_directory;
   // handle filename with directory prepended
   const string_pair directory_filename(split_preceding_directory(filename));
   const string& preceding_directory = directory_filename.first;
@@ -165,7 +165,7 @@ const file_set file_cache::find_source_file(const string& filename,
   return result;
 }
 const file_set file_cache::match_source_files(const string& filename,
-                                              const config_base* config,
+                                              const config_base* configuration,
                                               const string_set& directories)
 {
   debug(debug::files) << "file_cache::match_source_files::Matching " << filename
@@ -178,7 +178,7 @@ const file_set file_cache::match_source_files(const string& filename,
   // search all directories, appended with preceding_directory
   for(auto&& directory_it = std::begin(directories); directory_it != std::end(directories); ++directory_it)
   {
-    const string directory(full_directory_name(config->m_source_directory, *directory_it + preceding_directory));
+    const string directory(full_directory_name(configuration->source_directory, *directory_it + preceding_directory));
     if(!directory_exists(directory))
     {
       debug(debug::files) << "file_cache::match_source_files::Skipping nonexistent directory: " << directory << ".\n";

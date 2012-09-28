@@ -26,8 +26,8 @@
 #include "Ambrosia/Error/internal_error.h"
 #include "Ambrosia/Error/nectar_error.h"
 #include "Ambrosia/platform.h"
-#include "Ambrosia/project.h"
-#include "Ambrosia/target.h"
+//#include "Ambrosia/project.h"
+//#include "Ambrosia/target.h"
 
 // C++ includes
 #include <istream>
@@ -287,105 +287,5 @@ def dep_resolve(node, resolved, unresolved):
    resolved.append(node)
    unresolved.remove(node) # do this, clear the original target_vector
 */
-/*void dependency_resolve(target_vector::iterator current,
-                        target_vector& resolved,
-                        target_vector& unresolved)
-{
-  const string& node_name = (*current)->name;
-  debug(debug::algorithm) << "dependency_resolve::Resolving: " << node_name << ".\n";
-
-  const auto& edges = (*current)->m_dependencies;
-  for(auto&& it = std::begin(edges); it != std::end(edges); ++it)
-  {
-    const string& edge_name = it->second;
-    const auto&& find_functor = [&edge_name](const target_vector::value_type& t)
-                                { return edge_name == t->name; };
-
-    if(find_if(std::begin(resolved), std::end(resolved), find_functor) == std::end(resolved))
-    {
-      if(find_if(std::begin(unresolved), std::end(unresolved), find_functor) != std::end(resolved))
-        throw internal_error("Circular dependency detected: " + node_name + "->" + edge_name + ".");
-
-      dependency_resolve(*it, resolved, unresolved);
-    }
-  }
-  resolved.push_back(current);
-  unresolved.erase(current);
-}
-
-void dependency_resolve(target_vector& unsorted,
-                        target_vector::iterator node,
-                        target_vector& resolved,
-                        target_vector& unresolved )
-{
-  debug(debug::algorithm) << "dependency_resolve::Resolving: " << (*node)->name << ".\n";
-  unresolved.push_back(std::move(*node));
-  unsorted.erase(std::begin(unsorted));
-
-  const auto& edges = unresolved.back()->m_dependencies;
-  for(auto&& it = std::begin(edges); it != std::end(edges); ++it)
-  {
-    const string name((*it).second);
-    debug(debug::algorithm) << "dependency_resolve::Processing edge: " << name << ".\n";
-    const auto&& find_functor = [&name](const target_vector::value_type& t)
-                                { return name == t->name; };
-
-    if(std::end(resolved) == find_if(std::begin(resolved), std::end(resolved), find_functor))
-    {
-      if(std::end(unresolved) != find_if(std::begin(unresolved), std::end(unresolved), find_functor))
-        throw internal_error("Circular dependency detected: " + unresolved.back()->name + " -> " + name + ".");
-
-      // check if dependency is already resolved or still needs to be processed
-      auto&& new_node = std::find_if(std::begin(unsorted), std::end(unsorted), find_functor);
-      if(new_node != std::end(unsorted))
-        dependency_resolve(unsorted, new_node, resolved, unresolved);
-      else
-      {
-        new_node = std::find_if(std::begin(resolved), std::end(resolved), find_functor);
-        if(new_node == std::end(resolved))
-          throw internal_error("Dependency not defined: " + name);
-      }
-    }
-  }
-  resolved.push_back(std::move(unresolved.back()));
-  unresolved.erase(std::end(unresolved)-1);
-}
-
-void dependency_sort(target_vector& unsorted)
-{
-  target_vector resolved;
-  target_vector unresolved;
-  resolved.reserve(unsorted.size());
-  unresolved.reserve(unsorted.size());
-
-  while(!unsorted.empty())
-  {
-    dependency_resolve(unsorted, std::begin(unsorted), resolved, unresolved);
-  }
-  //unsorted.swap(resolved);
-}
-
-void filter_dependency_sort(target_vector& unsorted)
-{
-  target_vector resolved;
-  target_vector unresolved;
-  resolved.reserve(unsorted.size());
-  unresolved.reserve(unsorted.size());
-
-  const auto& target_config_options = project::configuration->target_config_options();
-  for(auto&& it = std::begin(target_config_options); it != std::end(target_config_options); ++it)
-  {
-    const string name((*it).first);
-    const auto item = std::find_if(std::begin(unsorted), std::end(unsorted),
-                                   [&name](const unique_ptr<target>& t) { return name == t->name; });
-    if(item == std::end(unsorted))
-    {
-      unsorted.erase(item);
-      continue; // skip dependency_resolve, of course
-    }
-    dependency_resolve(unsorted, std::begin(unsorted), resolved, unresolved);
-  }
-  unsorted.swap(resolved);
-}*/
 
 libambrosia_namespace_end

@@ -24,7 +24,7 @@
 #include "Ambrosia/build_element.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/project.h"
-#include "Ambrosia/target.h"
+#include "Ambrosia/Targets/target.h"
 
 // C++ includes
 #include <sstream>

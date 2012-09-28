@@ -33,8 +33,7 @@ libambrosia_namespace_begin
 
 generator::generator(const file_type type,
                      const target& target)
-: m_generator_map(the_huge_command_map.at(type).at(target.m_build_config.m_target_toolchain)),
-  m_type(type),
+: m_type(type),
   m_target(target)
 {  }
 

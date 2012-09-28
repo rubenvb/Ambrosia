@@ -16,8 +16,8 @@
  *
  **/
 
-#ifndef GENERATORSGENERATOR_H
-#define GENERATORSGENERATOR_H
+#ifndef AMBROSIA_GENERATORS_GENERATOR_H
+#define AMBROSIA_GENERATORS_GENERATOR_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -52,11 +52,10 @@ public:
   virtual const string_vector generate_final_commands() = 0;
 
 protected:
-  generator_map m_generator_map;
   const file_type m_type;
   const target& m_target;
 };
 
 libambrosia_namespace_end
 
-#endif // GENERATORSGENERATOR_H
+#endif // AMBROSIA_GENERATORS_GENERATOR_H

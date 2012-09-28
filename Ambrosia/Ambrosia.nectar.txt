@@ -11,10 +11,12 @@
 # If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 #
 
-app Ambrosia : lib libAmbrosia
+dep lib Ambrosia
+
+app Ambrosia : lib Ambrosia
 {
-    SOURCE_DIRS Source
-    HEADER_DIRS Include
-    SOURCES *.cpp
-    LIBS -lAmbrosia # library path is automatically added if libAmbrosia is another project in the same tree
+  SOURCE_DIRS Source
+  HEADER_DIRS Include
+  SOURCES *.cpp
+  #LIBS -lAmbrosia # library is automatically added if libAmbrosia is another project in the same tree
 }
