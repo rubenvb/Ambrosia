@@ -22,9 +22,9 @@
 libambrosia_namespace_begin
 
 lib::lib(const std::string& name,
-         const build_config& configuration,
+         const ::libambrosia::configuration& configuration,
          const dependency_set& dependencies)
-: target(name, configuration, dependencies)
+: target(configuration, name, dependencies)
 {   }
 
 libambrosia_namespace_end

@@ -21,10 +21,10 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
-#include "Ambrosia/Configuration/ambrosia_config.h"
+#include "Ambrosia/configuration.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/platform.h"
-#include "Ambrosia/project.h"
+#include "Ambrosia/Targets/project.h"
 #include "Ambrosia/typedefs.h"
 #include "Ambrosia/nectar_loader.h"
 
@@ -32,7 +32,7 @@
 #include <fstream>
   using std::ifstream;
 #include <iterator>
-  using std::back_insert_iterator;
+  using std::inserter;
 #include <memory>
   using std::unique_ptr;
 #include <set>
@@ -47,12 +47,28 @@
 
 libambrosia_namespace_begin
 
-void drink_nectar(project& project,
-                  const ambrosia_config& configuration,
-                  file_cache& file_cache)
+const string find_project_file(const string& directory)
+{
+  debug(debug::files) << "nectar::find_nectar_file called for: " << directory << ".\n";
+  file_set candidates;
+  scan_directory(inserter(candidates, candidates.begin()), directory);
+
+  switch(candidates.size())
+  {
+    case 0:
+      throw error("No *.nectar.txt file found in " + directory);
+    case 1:
+      return std::begin(candidates)->name;
+    default:
+      throw error("Multiple *.nectar.txt files found in directory: " + directory, candidates);
+  }
+  return string("");
+}
+
+void drink_nectar(project& project)
 {
   // open file
-  const string& filename = configuration.project_file;
+  const string& filename = project.configuration.project_file;
   const auto&& stream_ptr(open_ifstream(filename));
   auto&& stream = *stream_ptr;
   if(!stream)
@@ -62,13 +78,13 @@ void drink_nectar(project& project,
   debug(debug::files) << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
   nectar_loader loader(project, filename, "", stream);
 
-  loader.extract_nectar(configuration, file_cache);
+  loader.extract_nectar();
   debug(debug::nectar) << "nectar::drink_nectar::Finished parsing project files.\n";
 }
 
-void apply_build_config(target_ptr_vector& /*targets*/)
+void apply_configuration(target_ptr_vector& /*targets*/)
 {
-  throw error("nectar::apply_build_config::Not implemented.");
+  throw error("nectar::apply_configuration::Not implemented.");
 }
 
 libambrosia_namespace_end

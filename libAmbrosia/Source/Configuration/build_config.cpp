@@ -11,17 +11,17 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Configuration/build_config.cpp
+ * Ambrosia/Configuration/configuration.cpp
  * Class implementation.
  *
  **/
 
 // Class include
-#include "Ambrosia/Configuration/build_config.h"
+#include "Ambrosia/Configuration/configuration.h"
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
-#include "Ambrosia/Configuration/ambrosia_config.h"
+#include "Ambrosia/Configuration/configuration.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/status.h"
@@ -34,23 +34,23 @@
 
 libambrosia_namespace_begin
 
-build_config::build_config(const string& subdirectory,
+/*configuration::configuration(const string& subdirectory,
                            const string& target_name_suffix,
-                           const config_base& config)
-: config_base(config),
+                           const configuration& configuration)
+: configuration(configuration),
   source_types(),
   user_variables()
 {
   source_directory = full_directory_name(source_directory, subdirectory);
-  debug(debug::config) << "build_config::build_config::Build directory for " << source_directory << " was: \"" << build_directory << "\".\n";
+  debug(debug::config) << "configuration::configuration::Build directory for " << source_directory << " was: \"" << build_directory << "\".\n";
   // check multiple 'sub' levels for correctness below:
   build_directory = full_directory_name(build_directory, subdirectory + target_name_suffix);
-  debug(debug::config) << "build_config::build_config::Build directory for " << source_directory << " is now: \"" << build_directory << "\".\n";
+  debug(debug::config) << "configuration::configuration::Build directory for " << source_directory << " is now: \"" << build_directory << "\".\n";
 }
-build_config::build_config(const ambrosia_config& configuration)
-: config_base(configuration),
+configuration::configuration(const configuration& configuration)
+: configuration(configuration),
   source_types(),
   user_variables()
-{   }
+{   }*/
 
 libambrosia_namespace_end

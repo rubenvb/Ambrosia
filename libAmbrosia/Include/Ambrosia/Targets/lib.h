@@ -31,7 +31,7 @@ class lib : public target
 {
 public:
   lib(const std::string& name,
-      const build_config& configuration,
+      const ::libambrosia::configuration& configuration,
       const dependency_set& dependencies);
 };
 

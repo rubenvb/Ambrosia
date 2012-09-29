@@ -11,7 +11,7 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Configuration/ambrosia_config.h
+ * Ambrosia/Configuration/configuration.h
  * Ambrosia's runtime configuration, used as a basis for command generation and project configuration.
  *  This includes:
  *   - build and target platform and toolchain detection.
@@ -20,14 +20,14 @@
  *
  **/
 
-#ifndef AMBROSIA_CONFIGURATION_AMBROSIA_CONFIG_H
-#define AMBROSIA_CONFIGURATION_AMBROSIA_CONFIG_H
+#ifndef configurationURATION_configuration_H
+#define configurationURATION_configuration_H
 
-// Global include
+/*// Global include
 #include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Configuration/config_base.h"
+#include "Ambrosia/configuration.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/typedefs.h"
 
@@ -36,10 +36,10 @@
 
 libambrosia_namespace_begin
 
-class ambrosia_config : public config_base
+class configuration : public configuration
 {
 public:
-  ambrosia_config() : config_base(), m_gnu_prefix(), m_dump_commands(false), m_target_config_options()
+  configuration() : configuration(), m_gnu_prefix(), m_dump_commands(false), m_target_config_options()
   {   }
   // Setters
   void set_ambrosia_cross(const std::string& cross,
@@ -57,13 +57,13 @@ public:
   // getters;
   const map_string_set_string& target_config_options() const;
 
-  std::string m_gnu_prefix;
-  bool m_dump_commands;
+  // Environment PATH
+  const string_vector environment_PATH;
 
 private:
   map_string_set_string m_target_config_options;
 };
 
-libambrosia_namespace_end
+libambrosia_namespace_end*/
 
-#endif // AMBROSIA_CONFIGURATION_AMBROSIA_CONFIG_H
+#endif // configurationURATION_configuration_H

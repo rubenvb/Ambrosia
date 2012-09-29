@@ -11,13 +11,13 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/config_baseuration/config_base.h
- * Abstract class for storing config_baseuration options.
+ * Ambrosia/configurationuration/configuration.h
+ * Abstract class for storing configurationuration options.
  *
  **/
 
-#ifndef AMBROSIA_CONFIG_BASE_H
-#define AMBROSIA_CONFIG_BASE_H
+#ifndef configurationURATION_H
+#define configurationURATION_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -32,21 +32,21 @@ libambrosia_namespace_begin
 // Forward declarations
 class file_cache;
 
-class config_base
+class configuration
 {
 public:
-  config_base();
-  config_base(toolchain requested_toolchain);
-  virtual ~config_base() = 0; // virtual base
+  configuration();
+  configuration(toolchain requested_toolchain);
 
-  /*
-   * Setters
-   **********/
-  // source directory and file where the object's config_base is attached to
+  // parse Ambrosia cross target string and set options
+  void set_ambrosia_cross(const std::string& cross,
+                          const size_t argument_number);
+
+  // source directory and file where the object's configuration is attached to
   void set_source_directory(const std::string& source_directory);
-  void set_project_file(const std::string& project_file);
-  bool add_config(const std::string& config);
-  bool remove_config(const std::string& config );
+  // add target or add additional config options to one target
+  void add_target_config_options(const std::string& target,
+                                 const string_set& options);
 
   // Environment PATH
   const string_vector environment_PATH;
@@ -63,9 +63,15 @@ public:
 
   std::string source_directory;
 
+  std::string name; // specified by NAME in target
+  std::set<file_type> source_types; // source files present to decide which build commands to run
+  string_map user_variables; // user string --> value
   string_set config_strings;
   std::string project_file;
   std::string build_directory; // if source and build dir are equal, this is ./build
+
+  bool dump_commands; // TODO: find better place for this
+  std::string gnu_prefix;
 
 private:
   // Platform detection functions
@@ -77,4 +83,4 @@ private:
 
 libambrosia_namespace_end
 
-#endif // CONFIG_BASE_H
+#endif // configurationURATION_H

@@ -59,13 +59,18 @@ enum class generator_string
 enum class toolchain_option
 {
   compiler, // gcc, clang, cl, icc
+
   include_option, // -I, /I
+
   output_object, // -o, /Fo
   output_pch, // -o, /Fp
   output_debug, //
+
   compile_option, // -c, /c
   compile_debug, // -g, /Zi
+
   object_extension, // .o, .obj
+
   optimize_none, // -O0, /Od
   optimize_normal, // -O2, /O2
   optimize_size, // -Os, /O1
@@ -79,21 +84,43 @@ enum class toolchain_option
   link_strip, // -s, /OPT:ICF
 
   static_library_extension, // .a, .lib
-  import_library_extension, // .dll.a .dll.lib?
-  shared_library_extension, // .so, .dll, .dylib
+  import_library_extension, // .dll.a .dll.lib
 
 };
 typedef std::map<toolchain_option, std::string> toolchain_option_map;
 extern const std::map<toolchain, toolchain_option_map> toolchain_options;
 
 // Language-specific options
+enum class language_option
+{
+  std_c89,
+  std_c90,
+  std_c99,
+  std_c11,
+
+  std_gnu89,
+  std_gnu90,
+  std_gnu99,
+  std_gnu11,
+
+  std_cxx98,
+  std_cxx03,
+  std_cxx11,
+};
+typedef std::map<language_option, std::string> language_option_map;
 extern const std::map<file_type, language_option_map> language_options;
 
-// OS-specific bits
-extern const std::map<os, os_bits_map> os_bits;
+// OS-specific options
+enum class os_option
+{
+  executable_extension,
+  shared_library_extension
+};
+typedef std::map<os_option, std::string> os_option_map;
+extern const std::map<os, os_option_map> os_options;
 
 // map to map the maps according to file_type
-extern const command_map the_huge_command_map;
+//extern const command_map the_huge_command_map;
 
 libambrosia_namespace_end
 

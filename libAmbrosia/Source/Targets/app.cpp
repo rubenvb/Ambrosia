@@ -16,10 +16,15 @@
  *
  **/
 
+// Class include
 #include "Ambrosia/Targets/app.h"
 
+libambrosia_namespace_begin
+
 app::app(const std::string& name,
-         const build_config& configuration,
+         const ::libambrosia::configuration& configuration,
          const dependency_set& dependencies)
-: target(name, configuration, dependencies)
+: target(configuration, name, dependencies)
 {   }
+
+libambrosia_namespace_end

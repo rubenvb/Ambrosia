@@ -25,8 +25,8 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
-#include "Ambrosia/Configuration/ambrosia_config.h"
-  using libambrosia::ambrosia_config;
+#include "Ambrosia/configuration.h"
+  using libambrosia::configuration;
 #include "Ambrosia/debug.h"
   using libambrosia::debug;
 #include "Ambrosia/Error/commandline_error.h"
@@ -38,9 +38,9 @@
 #include "Ambrosia/file_cache.h"
   using libambrosia::file_cache;
 #include "Ambrosia/nectar.h"
-#include "Ambrosia/project.h"
+#include "Ambrosia/Targets/project.h"
   using libambrosia::project;
-#include "Ambrosia/Error/error.h"
+#include "Ambrosia/status.h"
 
 // C-ish includes
 #include <cassert>
@@ -55,7 +55,7 @@
 ambrosia_namespace_begin
 
 void apply_commandline_options(const string_vector& arguments,
-                               lib::file_cache& files)
+                               lib::project& project)
 {
   // Debug output
   std::for_each(std::begin(arguments), std::end(arguments),
@@ -90,18 +90,18 @@ void apply_commandline_options(const string_vector& arguments,
           m_first_dashless_argument = false;
           debug(debug::commandline) << "begin::Possible project file or directory: \'" << current << "\'.\n";
 
-          files.find_project_file(current, project::configuration);
+          project.configuration.project_file = lib::find_project_file(current);
 
           // if project_file is still empty, "current" is really a target name
-          //  to be built, skip to below next else
-          if(!project::configuration->m_project_file.empty())
+          if(!project.configuration.project_file.empty())
             continue;
 
-          lib::emit_warning("No source directory specified");
+          lib::emit_warning("No source directory specified.");
 
-          if(files.find_project_file(".", project::configuration))
+          project.configuration.project_file = lib::find_project_file(".");
+          if(project.configuration.project_file.empty())
           {
-            debug(debug::commandline) << "commandline::Project file found in current directory \'.\': " << project::configuration->m_project_file << ".\n";
+            debug(debug::commandline) << "commandline::Project file found in current directory \'.\': " << project.configuration.project_file << ".\n";
             lib::emit_warning("Ambrosia does not recommend an in-source build.");
           }
           else
@@ -127,7 +127,7 @@ void apply_commandline_options(const string_vector& arguments,
                 throw commandline_error("Duplicate config option to target " + target + ": " + option, argument_number);
             } while(index != string::npos);
           }
-          add_build_target(target, options);
+          add_build_target(project, target, options);
         }
         break;
       case 1:
@@ -143,7 +143,7 @@ void apply_commandline_options(const string_vector& arguments,
           set_internal_value_option(option, value, argument_number);
         }
         else if(current[0] == ':')
-          add_configuration_options(current.substr(1), project::configuration);
+          add_configuration_options(current.substr(1), project.configuration);
         break;
       case 2:
         // TODO: user arguments defined in project file:
@@ -156,18 +156,20 @@ void apply_commandline_options(const string_vector& arguments,
   }
   debug(debug::commandline) << "commandline::apply_commandline_options::Checking if project file was found.\n";
   // Ensure that a valid project file has been found
-  if(!lib::file_exists(lib::project::configuration->m_project_file))
+  if(!lib::file_exists(project.configuration.project_file))
     throw lib::error("No project file specified on the commandline, nor was one found in the current directory.");
 }
 
-void add_build_target(const string& target, const string_set& options)
+void add_build_target(project& project,
+                      const string& target,
+                      const string_set& options)
 {
   // TODO: fixme: this function does wrong things
   const string::size_type index = target.find(":");
   if(index == string::npos)
   {
     debug(debug::commandline) << "commandline::add_build_target::Target to be built: " << target << ".\n";
-    project::configuration->add_target_config_options(target, options);
+    project.configuration.add_target_config_options(target, options);
   }
   else
   {
@@ -184,21 +186,23 @@ void add_build_target(const string& target, const string_set& options)
       if(options.insert(temp).second == false)
         duplicates.insert( temp );
     }
-    project::configuration->add_target_config_options(target_name, options);
+    project.configuration.add_target_config_options(target_name, options);
   }
 }
 
-void set_internal_option(const string& option,
+void set_internal_option(project& project,
+                         const string& option,
                          const size_t argument_number)
 {
   debug(debug::commandline) << "commandline::set_internal_option::" << option << " without value being set.\n";
   if("dump-commands" == option)
-    project::configuration->m_dump_commands = true;
+    project.configuration.dump_commands = true;
   else
     throw commandline_error("Unknown option: " + option, argument_number);
 }
 
-void set_internal_value_option(const std::string& option,
+void set_internal_value_option(project& project,
+                               const std::string& option,
                                const std::string& value,
                                const size_t argument_number )
 {
@@ -207,7 +211,7 @@ void set_internal_value_option(const std::string& option,
   if("cross" == option)
   {
     debug(debug::commandline) << "commandline::set_internal_option::Cross-compiling for " << value << ".\n";
-    project::configuration->set_ambrosia_cross(value, argument_number);
+    project.configuration.set_ambrosia_cross(value, argument_number);
   }
 #ifdef AMBROSIA_DEBUG
   else if("d" == option || "debug" == option)
@@ -240,19 +244,19 @@ void set_internal_value_option(const std::string& option,
   else if("gnu-prefix" == option)
   {
     debug(debug::commandline) << "commandline::set_internal_option::Cross-compiling with GNU prefix " << value << ".\n";
-    project::configuration->m_gnu_prefix = value + '-'; // add the prefix dash here so you get for example "x86_64-linux-gnu-gcc"
+    project.configuration.gnu_prefix = value + '-'; // add the prefix dash here so you get for example "x86_64-linux-gnu-gcc"
   }
   else if("dump-commands" == option)
   {
     debug(debug::commandline) << "commandline::set_internal_option::Dumping generated commands.\n";
-    project::configuration->m_dump_commands = true;
+    project.configuration.dump_commands = true;
   }
   else
     throw commandline_error("Unknown option passed to Ambrosia: \n\t-" + option + "=" + value, argument_number);
 }
 
 bool add_configuration_options(const string& options,
-                               ambrosia_config* /*config*/)
+                               configuration& /*config*/)
 {
   debug(debug::commandline) << "commandline::add_configuration_options::Target configuration option: " << options << " set.\n";
   // put them in a set

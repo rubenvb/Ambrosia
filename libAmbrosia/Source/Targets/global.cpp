@@ -21,11 +21,11 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
-#include "Ambrosia/Configuration/build_config.h"
+#include "Ambrosia/configuration.h"
 
 libambrosia_namespace_begin
 
-global::global(const build_config& configuration,
+global::global(const ::libambrosia::configuration& configuration,
                const std::string& subdirectory)
 : target(configuration)
 {

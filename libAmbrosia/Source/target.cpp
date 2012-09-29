@@ -22,7 +22,7 @@
 // Ambrosia includes
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/build_element.h"
-#include "Ambrosia/Configuration/ambrosia_config.h"
+#include "Ambrosia/Configuration/configuration.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/nectar_error.h"
@@ -44,10 +44,10 @@ libambrosia_namespace_begin
 
 target::target(const string& subdirectory,
                const dependency_set& dependencies,
-               const ambrosia_config& config,
+               const configuration& config,
                file_cache& cache)
 : node(subdirectory + "::global"), //TODO: fix for multilevel subdirectories
-  m_build_config(subdirectory, "", config),
+  m_configuration(subdirectory, "", config),
   m_dependencies(dependencies),
   m_output_name(),
   m_type(target_type::global),
@@ -63,10 +63,10 @@ target::target(const string& subdirectory,
                const string& name,
                const target_type type,
                const dependency_set& dependencies,
-               const build_config& config,
+               const configuration& config,
                file_cache& cache)
 : node(subdirectory + "::" + name), //TODO: fix for multilevel subdirectories
-  m_build_config(subdirectory, "_" + name, config),
+  m_configuration(subdirectory, "_" + name, config),
   m_dependencies(dependencies),
   m_output_name(name),
   m_type(type),
@@ -76,7 +76,7 @@ target::target(const string& subdirectory,
   m_output_file(),
   m_libraries()
 {
-  debug(debug::config) << "target::passed in build_config's m_build_directory:" << config.m_build_directory << "\n";
+  debug(debug::config) << "target::passed in configuration's m_build_directory:" << config.m_build_directory << "\n";
   debug(debug::target) << "target::Created " << target_type_map_inverse.at(type) << " target: " << name << ".\n";
 }
 
@@ -88,7 +88,7 @@ void target::add_source_file(const file_type type,
   if(contains(filename, "*?"))
   {
     // find file matches
-    const file_set matches = m_file_cache.match_source_files(filename, &m_build_config, m_source_directories[type]);
+    const file_set matches = m_file_cache.match_source_files(filename, &m_configuration, m_source_directories[type]);
     if(matches.empty())
       return emit_nectar_error("No files matching " + filename + " found.", nectar_file, line_number);
 
@@ -101,14 +101,14 @@ void target::add_source_file(const file_type type,
       if(!m_files[detected_type].insert(current).second)
         duplicates.push_back(current.name);
       else
-        m_build_config.m_source_types.insert(detected_type);
+        m_configuration.m_source_types.insert(detected_type);
     }
     if(!duplicates.empty())
       throw nectar_error("Wildcard matches already added files: ", nectar_file, line_number, duplicates);
   }
   else
   {
-    const file_set matches = m_file_cache.find_source_file(filename, &m_build_config, m_source_directories[type]);
+    const file_set matches = m_file_cache.find_source_file(filename, &m_configuration, m_source_directories[type]);
     switch(matches.size())
     {
       case 0:
@@ -117,7 +117,7 @@ void target::add_source_file(const file_type type,
       {
         const file_type detected_type = detect_type(type, filename);
         m_files[detected_type].insert(*matches.begin());
-        m_build_config.m_source_types.insert(detected_type);
+        m_configuration.m_source_types.insert(detected_type);
         break;
       }
       default:
@@ -132,13 +132,13 @@ void target::remove_source_file(const file_type type,
 {
   // search for file, check if there are any other files of the same type,
   //  and remove the "source file config" for generation phase.
-  m_file_cache.match_source_files(filename, &m_build_config, m_source_directories[type]);
+  m_file_cache.match_source_files(filename, &m_configuration, m_source_directories[type]);
   throw error("target::remove_file::Unimplementented.");
 }
 bool target::add_source_directory(const file_type type,
                                   const string& directory)
 {
-  const string full_subdirectory_name = full_directory_name(m_build_config.m_source_directory, directory);
+  const string full_subdirectory_name = full_directory_name(m_configuration.m_source_directory, directory);
 
   debug(debug::target) << "target::add_source_directory::Checking if directory " << full_subdirectory_name << " exists.\n";
   if(!directory_exists(full_subdirectory_name))

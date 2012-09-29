@@ -21,10 +21,11 @@
 #include "help_and_version_output.h"
 
 // libAmbrosia includes
+#include "Ambrosia/configuration.h"
 #include "Ambrosia/Error/error.h"
 #include "Ambrosia/Error/soft_error.h"
-#include "Ambrosia/file_cache.h"
-#include "Ambrosia/project.h"
+#include "Ambrosia/nectar.h"
+#include "Ambrosia/Targets/project.h"
 
 using namespace ambrosia;
 
@@ -55,33 +56,32 @@ try {
   // Welcome message
   print_version_information();
 
-  lib::ambrosia_config ambrosia_config;
-  lib::file_cache file_cache;
-  lib::project project(file_cache);
+  lib::configuration configuration;
+  lib::project project(configuration);
 
-  apply_commandline_options(string_vector(argv+1, argv+argc), file_cache);
+  apply_commandline_options(string_vector(argv+1, argv+argc), project);
 
   //project.read_project_files();
-  drink_nectar(project);
+  lib::drink_nectar(project);
 #ifdef AMBROSIA_DEBUG
   const double project_read_time = difftime(time(0), t);
   t = time(0);
 #endif
   // project.apply_project_configuration();
 
-  project.sort_targets();
+  //project.sort_targets();
 
-  project.generate_commands();
+  //project.generate_commands();
 
-  if(lib::project::configuration->m_dump_commands)
-    project.dump_commands();
+  //if(lib::project::configuration->m_dump_commands)
+  //  project.dump_commands();
 
 #ifdef AMBROSIA_DEBUG
   const double command_generation_time = difftime(time(0), t);
   t = time(0);
 #endif
 
-  project.execute_build_commands();
+  //project.execute_build_commands();
 
 #ifdef AMBROSIA_DEBUG
   const double build_time = difftime(time(0), t);

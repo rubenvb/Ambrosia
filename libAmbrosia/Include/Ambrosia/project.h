@@ -38,7 +38,7 @@ class file_cache;
 class project : public target
 {
 public:
-  project(const std::string& name, ambrosia_config& configuration);
+  project(const std::string& name, configuration& configuration);
 
   // Determine projects to be built and apply build configuration.
   void apply_target_configuration();

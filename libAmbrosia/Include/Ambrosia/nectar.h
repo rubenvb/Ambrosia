@@ -34,18 +34,16 @@
 libambrosia_namespace_begin
 
 // forward declarations
-class ambrosia_config;
+class configuration;
 class target;
 
-// locates a unique .nectar.txt file in file. More than one emits an error
-//const std::string find_nectar_file( const std::string& directory );
-// finds and sets project file
-//bool find_project_file( const std::string& path, ambrosia_config& config );
+// locates a unique *.nectar.txt file in directory. More than one emits an error.
+const std::string find_project_file(const std::string& directory);
 
 // converts all project file content to internal representation, adding to the container where "it" outputs to
 void drink_nectar(project& project);
-// uses s_ambrosia_config to apply the requested build configuration
-void apply_build_config(target_ptr_vector& targets);
+// uses s_configuration to apply the requested build configuration
+void apply_configuration(target_ptr_vector& targets);
 
 libambrosia_namespace_end
 

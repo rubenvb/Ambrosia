@@ -29,8 +29,8 @@
 #include "global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Configuration/ambrosia_config.h"
-#include "Ambrosia/Configuration/build_config.h"
+#include "Ambrosia/Configuration/configuration.h"
+#include "Ambrosia/Configuration/configuration.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/node.h"
@@ -48,20 +48,20 @@ class target : public node
 public:
   target(const target_type type,
          const std::string& name,
-         const build_config& configuration,
+         const configuration& configuration,
          const std::string& subdirectory = "",
          const dependency_set& dependencies = dependency_set());
   // 'global' target with subproject-wide dependencies
   /*target(const std::string& subdirectory,
          const dependency_set& dependencies,
-         const ambrosia_config& configuration,
+         const configuration& configuration,
          file_cache& cache)*/
-  // other targets are based off of global's build_config
+  // other targets are based off of global's configuration
   target(const std::string& subdirectory,
          const std::string& name,
          const target_type type,
          const dependency_set& dependencies,
-         const build_config& config);
+         const configuration& config);
 
   // file modifiers and accessor
   void add_source_file(const file_type type,
@@ -88,7 +88,7 @@ public:
   void generate_object_filenames();
 
   // variables
-  build_config configuration; // build configuration, inherited from global target's build_config
+  configuration configuration; // build configuration, inherited from global target's configuration
   const dependency_set dependencies; // dependency+type
   std::string output_name;
   const target_type type; // target type

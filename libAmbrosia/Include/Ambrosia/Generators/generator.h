@@ -24,7 +24,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/enums.h"
-#include "Ambrosia/typedefs.h"
+#include "Ambrosia/Generators/generator_maps.h"
 
 // C++ includes
 #include <memory>
@@ -54,6 +54,9 @@ public:
 protected:
   const file_type m_type;
   const target& m_target;
+  const toolchain_option_map m_toolchain_options;
+  const language_option_map m_language_options;
+  const os_option_map m_os_options;
 };
 
 libambrosia_namespace_end

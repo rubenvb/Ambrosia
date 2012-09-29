@@ -23,7 +23,8 @@
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/build_element.h"
 #include "Ambrosia/debug.h"
-#include "Ambrosia/project.h"
+#include "Ambrosia/status.h"
+#include "Ambrosia/Targets/project.h"
 #include "Ambrosia/Targets/target.h"
 
 // C++ includes
@@ -35,11 +36,11 @@
 libambrosia_namespace_begin
 
 compile_and_link_generator::compile_and_link_generator(const file_type type,
-                       const target& target)
+                                                       const target& target)
 : generator(type, target)
 {
   debug(debug::command_gen) << "compile_and_link_generator::compile_and_link_generator::Generator created for output in \""
-                            << target.m_build_config.m_build_directory << "\"\n";
+                            << target.configuration.build_directory << "\"\n";
 }
 
 compile_and_link_generator::~compile_and_link_generator()
@@ -48,13 +49,13 @@ compile_and_link_generator::~compile_and_link_generator()
 void compile_and_link_generator::generate_object_filenames()
 {
   debug(debug::command_gen) << "compile_and_link_generator::Generating object filenames for " << m_target.name << " that will be built in "
-                            << "\"" << m_target.m_build_config.m_build_directory << "\".\n";
+                            << "\"" << m_target.configuration.build_directory << "\".\n";
   const build_element_set& files = m_target.files(m_type);
   for(auto&& it = std::begin(files); it != std::end(files); ++it)
   {
     const build_element& current = *it;
-    current.object_file.name = full_directory_name(m_target.m_build_config.m_build_directory, get_basename(current.source_file.name))
-                               + m_generator_map.at(generator_string::object_suffix);
+    current.object_file.name = full_directory_name(m_target.configuration.build_directory, get_basename(current.source_file.name))
+                               + m_toolchain_options.at(toolchain_option::object_extension);
     debug(debug::command_gen) << "compile_and_link_generator::generate_object_filenames::object file: " << current.object_file.name << "\n";
   }
 }
@@ -64,7 +65,7 @@ const string_vector compile_and_link_generator::generate_parallel_commands()
   string_vector commands;
   ostringstream command;
   string languagestd;
-  if(!contains(m_target.m_build_config.m_config, "msvc"))
+  if(!contains(m_target.configuration.config_strings, "msvc"))
   {
     switch(m_type)
     {
@@ -91,18 +92,18 @@ const string_vector compile_and_link_generator::generate_parallel_commands()
     create_directory_recursive(split_name.first);
 
     // compiler (e.g. 'gcc')
-    command << m_generator_map.at(generator_string::compiler);
+    command << m_toolchain_options.at(toolchain_option::compiler);
     // language standard
     if(!languagestd.empty())
       command << " " << languagestd;
     // compile argument (e.g. '-c')
-    const string& compile_argument = m_generator_map.at(generator_string::compile_argument);
+    const string& compile_argument = m_toolchain_options.at(toolchain_option::compile_option);
     if(!compile_argument.empty())
       command << " " << compile_argument;
     // source file
     command << " " << it->source_file.name;
     // output argument (e.g. '-o')
-    const string& output_argument = m_generator_map.at(generator_string::output_argument);
+    const string& output_argument = m_toolchain_options.at(toolchain_option::output_object);
     if(!output_argument.empty())
       command << " " << output_argument;
     // object filename
@@ -111,7 +112,7 @@ const string_vector compile_and_link_generator::generate_parallel_commands()
     const string_set& header_dirs = m_target.source_directories(file_type::header);
     for(auto&& it = std::begin(header_dirs); it != std::end(header_dirs); ++it)
     {
-      command << " " << m_generator_map.at(generator_string::include_argument) << "\"" << full_directory_name(m_target.m_build_config.m_source_directory, *it) << "\"";
+      command << " " << m_toolchain_options.at(toolchain_option::include_option) << "\"" << full_directory_name(m_target.configuration.source_directory, *it) << "\"";
     }
 
     commands.push_back(command.str());

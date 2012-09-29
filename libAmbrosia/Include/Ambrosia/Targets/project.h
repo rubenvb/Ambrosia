@@ -23,6 +23,7 @@
 #include "Ambrosia/global.h"
 
 // libAmbrosia includes
+#include "Ambrosia/file_cache.h"
 #include "Ambrosia/Targets/target.h"
 
 libambrosia_namespace_begin
@@ -30,14 +31,14 @@ libambrosia_namespace_begin
 class project : public target
 {
 public:
+  project(const ::libambrosia::configuration& configuration);
   project(const std::string& name,
-          const build_config& configuration,
+          const ::libambrosia::configuration& configuration,
           const dependency_set& dependencies = dependency_set());
 
   target_ptr_vector targets;
 
-private:
-  file_cache& m_file_cache;
+  ::libambrosia::file_cache file_cache;
 };
 
 libambrosia_namespace_end

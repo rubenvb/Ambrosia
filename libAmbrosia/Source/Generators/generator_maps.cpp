@@ -21,11 +21,12 @@
 
 // libAmbrosia includes
 #include "Ambrosia/boost_wrapper.h"
+#include "Ambrosia/typedefs.h"
 
 libambrosia_namespace_begin
 
 // C-style languages
-const command_map the_huge_command_map =
+/*const command_map the_huge_command_map =
   map_entries_begin
     entry_begin file_type::source_c,
       map_entries_begin
@@ -151,6 +152,6 @@ const command_map the_huge_command_map =
         entry_end
       entries_end
     entry_end
-  entries_end;
+  entries_end*/
 
 libambrosia_namespace_end

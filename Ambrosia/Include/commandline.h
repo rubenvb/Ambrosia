@@ -12,7 +12,7 @@
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
  * commandline.h
- * Process commandline options and modify ambrosia_config accordingly.
+ * Process commandline options and modify configuration accordingly.
  *
  **/
 
@@ -27,7 +27,7 @@
 
 // Foward declarations
 libambrosia_namespace_begin
-class ambrosia_config;
+class configuration;
 class file_cache;
 class project;
 libambrosia_namespace_end
@@ -49,9 +49,10 @@ enum class internal_value_option
 };
 
 void apply_commandline_options(const string_vector& options,
-                               lib::file_cache& files);
+                               lib::project& project);
 
-void add_build_target(const std::string& target,
+void add_build_target(lib::project& project,
+                      const std::string& target,
                       const string_set& options = string_set());
 
 void set_internal_option(const std::string& option,
@@ -64,7 +65,7 @@ void set_program_option(const std::string& option,
                         const std::string& value);
 
 bool add_configuration_options(const std::string& options,
-                               lib::ambrosia_config* config);
+                               lib::configuration& config);
 
 ambrosia_namespace_end
 

@@ -19,14 +19,28 @@
 // Class include
 #include "Ambrosia/Targets/target.h"
 
+// C++ includes
+#include <string>
+  using std::string;
+
 libambrosia_namespace_begin
 
-target::target(const build_config& configuration,
+target::target(const ::libambrosia::configuration& configuration,
                const string& name,
                const dependency_set& dependencies)
 : name(name),
   configuration(configuration),
   dependencies(dependencies)
 {   }
+
+void add_source_file(const file_type /*type*/,
+                     const std::string& /*filename*/,
+                     file_cache& /*file_cache*/,
+                     const std::string& /*nectar_file*/,
+                     const size_t /*line_number*/)
+{
+
+}
+
 
 libambrosia_namespace_end

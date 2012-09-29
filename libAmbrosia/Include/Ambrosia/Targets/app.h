@@ -23,6 +23,7 @@
 #include "Ambrosia/global.h"
 
 // libAmbrosia includes
+#include "Ambrosia/configuration.h"
 #include "Ambrosia/Targets/target.h"
 
 libambrosia_namespace_begin
@@ -31,7 +32,7 @@ class app : public target
 {
 public:
   app(const std::string& name,
-      const build_config& configuration,
+      const lib::configuration& configuration,
       const dependency_set& dependencies);
 };
 

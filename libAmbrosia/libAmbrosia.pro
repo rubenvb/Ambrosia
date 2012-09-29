@@ -46,9 +46,8 @@ HEADERS += \
     Include/Ambrosia/algorithm.h \
     Include/Ambrosia/node.h \
     Include/Ambrosia/nectar_loader.h \
-    Include/Ambrosia/Configuration/ambrosia_config.h \
-    Include/Ambrosia/Configuration/build_config.h \
-    Include/Ambrosia/Configuration/config_base.h \
+    Include/Ambrosia/Configuration/configuration.h \
+    Include/Ambrosia/configuration.h \
     Include/Ambrosia/project.h \
     Include/Ambrosia/Error/syntax_error.h \
     Include/Ambrosia/Error/error.h \
@@ -70,9 +69,7 @@ HEADERS += \
     Include/Ambrosia/Targets/global.h
 
 SOURCES += \
-    Source/Configuration/ambrosia_config.cpp \
-    Source/Configuration/build_config.cpp \
-    Source/Configuration/config_base.cpp \
+    Source/configuration.cpp \
     Source/Error/commandline_error.cpp \
     Source/Error/error.cpp \
     Source/Error/internal_error.cpp \

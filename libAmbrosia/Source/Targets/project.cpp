@@ -19,8 +19,18 @@
 // Class include
 #include "Ambrosia/Targets/project.h"
 
+// libAmbrosia includes
+
+libambrosia_namespace_begin
+
+project::project(const ::libambrosia::configuration& configuration)
+: target(configuration)
+{   }
 project::project(const std::string& name,
-                 const build_config& configuration,
-                 const dependency_set& dependencies = dependency_set())
-{
-}
+                 const ::libambrosia::configuration& configuration,
+                 const dependency_set& dependencies)
+: target(configuration, name, dependencies),
+  file_cache(::libambrosia::file_cache())
+{   }
+
+libambrosia_namespace_end

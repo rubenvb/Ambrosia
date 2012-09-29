@@ -11,13 +11,13 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/config_baseuration/config_base.cpp
+ * Ambrosia/configurationuration/configuration.cpp
  * Class implementation.
  *
  **/
 
 // Class include
-#include "Ambrosia/Configuration/config_base.h"
+#include "Ambrosia/configuration.h"
 
 // libambrosia includes
 #include "Ambrosia/algorithm.h"
@@ -35,7 +35,7 @@
 
 libambrosia_namespace_begin
 
-config_base::config_base()
+configuration::configuration()
 : environment_PATH(get_environment_PATH()),
   build_architecture(build_architecture),
   build_environment(detect_build_environment()),
@@ -50,9 +50,9 @@ config_base::config_base()
   build_directory("./build")
 {
   initialize_config();
-  debug(debug::config) << "\nconfig_base::config contains:\n" << config_strings << "\n";
+  debug(debug::config) << "\nconfiguration::config contains:\n" << config_strings << "\n";
 }
-config_base::config_base(toolchain requested_toolchain)
+configuration::configuration(toolchain requested_toolchain)
 : environment_PATH(get_environment_PATH()),
   build_architecture(build_architecture),
   build_environment(detect_build_environment()),
@@ -68,52 +68,50 @@ config_base::config_base(toolchain requested_toolchain)
 {
   initialize_config();
 }
-config_base::~config_base()
-{   }
 
 /*
  * Setters
  **********/
-void config_base::set_source_directory(const string& source_directory)
+void configuration::set_source_directory(const string& source_directory)
 {
   if(!directory_exists(source_directory))
-    throw internal_error("Attempting to call config_base::set_source_directory with a non-existent directory: " + source_directory);
+    throw internal_error("Attempting to call configuration::set_source_directory with a non-existent directory: " + source_directory);
 
-  debug(debug::config) << "config_base::set_source_directory::Setting source directory to: " << source_directory << "\n";
+  debug(debug::config) << "configuration::set_source_directory::Setting source directory to: " << source_directory << "\n";
   this->source_directory = source_directory;
-  debug(debug::config) << "config_base::set_source_directory::Adding " << source_directory << " to s_file_store.\n";
+  debug(debug::config) << "configuration::set_source_directory::Adding " << source_directory << " to s_file_store.\n";
 }
-void config_base::set_project_file(const string& project_file)
+/*void configuration::set_project_file(const string& project_file)
 {
   this->project_file = project_file;
-}
-bool config_base::add_config(const string& config_string)
+}*/
+/*bool configuration::add_config(const string& config_string)
 {
   return config_strings.insert(config_string).second;
 }
-bool config_base::remove_config(const string& config_string)
+bool configuration::remove_config(const string& config_string)
 {
   // MSVC C4800 without the "0 !="
   return 0 != config_strings.erase(config_string);
-}
+}*/
 
 // Platform detection functions
-environment config_base::detect_build_environment() const
+environment configuration::detect_build_environment() const
 {
-  emit_warning("config_base::detect_build_environment::not quite implemented completely yet.");
+  emit_warning("configuration::detect_build_environment::not quite implemented completely yet.");
 #if _WIN32
   return environment::cmd;
 #else
   return environment::bash;
 #endif
 }
-toolchain config_base::detect_toolchain(toolchain requested_toolchain) const
+toolchain configuration::detect_toolchain(toolchain requested_toolchain) const
 {
   //TODO check toolchain availability, but not here, as gnu_prefix etc could alter the name of the executables.
   emit_warning("detect_toolchain needs to validate input.");
   return requested_toolchain;
 }
-void config_base::initialize_config()
+void configuration::initialize_config()
 {
   config_strings =
     list_entries_begin

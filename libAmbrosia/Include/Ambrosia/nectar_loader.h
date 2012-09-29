@@ -27,7 +27,7 @@
 #include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Configuration/build_config.h"
+#include "Ambrosia/configuration.h"
 #include "Ambrosia/nectar.h"
 
 // C++ includes
@@ -57,8 +57,7 @@ public:
                 const dependency_set& list = dependency_set());
   ~nectar_loader();
 
-  void extract_nectar(const ambrosia_config& configuration,
-                      file_cache& file_cache);
+  void extract_nectar();
 
   // Disallow copy(constructor)ing and assignment (shuts up warning of -Weffc++)
   nectar_loader& operator=(const nectar_loader&) DELETED_FUNCTION;
@@ -67,7 +66,7 @@ public:
 private:
   project& m_project;
   const std::string& m_filename; // used for error reporting
-  const std::string m_subdirectory; // used for file searching, without ambrosia_config.source_directory() !
+  const std::string m_subdirectory; // used for file searching, without configuration.source_directory() !
   std::istream& m_stream; // file input stream
   size_t m_line_number; // used for error reporting
   const dependency_set& m_dependency_list;
@@ -82,7 +81,7 @@ private:
  *********/
   bool next_token(std::string& token,
                   const std::set<char>& special_characters = s_special_characters);
-  bool next_list_token(const config_base& configuration,
+  bool next_list_token(const configuration& configuration,
                        std::string& token);
   bool process_conditional();
   // reads colon-lists of dependencies, ends at first '{'
@@ -92,10 +91,10 @@ private:
  **********/
   // conditionals
   bool test_condition(const std::function<bool(const std::string&)>& config_contains);
-  void process_outer_conditional(const config_base& configuration);      // evaluated against s_ambrosia_config, skips full target
-  void process_dependency_list_conditional(const config_base& configuration); // evaluated against s_ambrosia_config, skips dependenc(y/ies)
-  void process_inner_conditional(const config_base& configuration);      // evaluated against m_build_config, skips whole list
-  void process_inner_list_conditional(const config_base& configuration); // evaluated against m_build_config, skips item in list
+  void process_outer_conditional(const configuration& configuration);      // evaluated against s_configuration, skips full target
+  void process_dependency_list_conditional(const configuration& configuration); // evaluated against s_configuration, skips dependenc(y/ies)
+  void process_inner_conditional(const configuration& configuration);      // evaluated against m_configuration, skips whole list
+  void process_inner_list_conditional(const configuration& configuration); // evaluated against m_configuration, skips item in list
   // item lists
   void parse_file_list(target& target,
                        const file_type type); // matches wildcards to filenames and checks existence

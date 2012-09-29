@@ -32,11 +32,11 @@ inline void generate_commands()
       continue;
     }
     debug(debug::command_gen) << "project::generate_commands::Generating build commands for target: " << current.name << "\n"
-                              << "\tfor output in this directory: " << current.m_build_config.m_build_directory << "\n"
+                              << "\tfor output in this directory: " << current.m_configuration.m_build_directory << "\n"
                               << "\tfor the following types of source files:\n"
-                              << "\t" << current.m_build_config.m_source_types << "\n";
+                              << "\t" << current.m_configuration.m_source_types << "\n";
 
-    for(auto&& type_it = std::begin(current.m_build_config.m_source_types); type_it != std::end(current.m_build_config.m_source_types); ++type_it)
+    for(auto&& type_it = std::begin(current.m_configuration.m_source_types); type_it != std::end(current.m_configuration.m_source_types); ++type_it)
     {
       const auto& type = *type_it;
       debug(debug::command_gen) << "project::generate_commands::Generating commands for " << current.files(type).size() << " "

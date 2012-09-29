@@ -21,7 +21,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/build_element.h"
-#include "Ambrosia/Configuration/ambrosia_config.h"
+#include "Ambrosia/configuration.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/Error/internal_error.h"
 #include "Ambrosia/Error/nectar_error.h"

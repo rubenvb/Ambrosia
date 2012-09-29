@@ -23,6 +23,7 @@
 #include "Ambrosia/global.h"
 
 // libAmbrosia includes
+#include "Ambrosia/configuration.h"
 #include "Ambrosia/typedefs.h"
 
 // C++ includes
@@ -30,19 +31,36 @@
 
 libambrosia_namespace_begin
 
-// Forward declarations
-class build_config;
-
 class target
 {
 public:
-  target(const build_config& configuration,
+  target(const configuration& configuration,
          const std::string& name = "",
          const dependency_set& dependencies = dependency_set());
 
+  bool add_source_directory(const file_type type,
+                            const std::string& directory);
+  void add_source_file(const file_type type,
+                       const std::string& filename,
+                       const std::string& nectar_file,
+                       const std::size_t line_number);
+
+  bool add_library(const std::string& library,
+                   const std::string& nectar_file,
+                   const std::size_t line_number);
+
+  const build_element_set& files(const file_type type) const
+  { return m_files.at(type); }
+  const string_set source_directories(const file_type type) const
+  { return m_source_directories.at(type); }
+
   const std::string name;
-  build_config configuration;
+  lib::configuration configuration;
   const dependency_set dependencies;
+
+private:
+  std::map<file_type, build_element_set> m_files;
+  std::map<file_type, string_set> m_source_directories;
 };
 
 libambrosia_namespace_end

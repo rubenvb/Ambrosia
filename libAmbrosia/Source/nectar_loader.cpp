@@ -23,7 +23,7 @@
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/boost_wrapper.h"
 #include "Ambrosia/build_element.h"
-#include "Ambrosia/Configuration/ambrosia_config.h"
+#include "Ambrosia/configuration.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/Error/syntax_error.h"
 #include "Ambrosia/global.h"
@@ -107,8 +107,7 @@ nectar_loader::nectar_loader(project& project,
 nectar_loader::~nectar_loader()
 {   }
 
-void nectar_loader::extract_nectar(const ambrosia_config& configuration,
-                                   file_cache& file_cache)
+void nectar_loader::extract_nectar()
 {
   debug(debug::nectar_parser) << "nectar_loader::extract_nectar::Processing file: " << m_filename << ".\n";
 
@@ -116,14 +115,14 @@ void nectar_loader::extract_nectar(const ambrosia_config& configuration,
   skip_BOM(m_stream, m_filename);
 
   // create global target
-  m_project.targets.emplace_back(new global(configuration, m_subdirectory));
+  m_project.targets.emplace_back(new global(m_project.configuration, m_subdirectory));
 
   string token;
   while(next_token(token))
   {
     debug(debug::parser) << "nectar_loader::extract_nectar::processing token: \'" << token << "\'.\n";
     if("(" == token)
-      process_outer_conditional(configuration);
+      process_outer_conditional(m_project.configuration);
     else if("global" == token)
     {
       debug(debug::parser) << "nectar_loader::extract_nectar::global section found at line " << m_line_number << ".\n";
@@ -133,7 +132,7 @@ void nectar_loader::extract_nectar(const ambrosia_config& configuration,
       m_global_processed = true;
       if(next_token(token) && "{" == token)
       {
-        parse_target(*m_project.targets[0], file_cache);
+        parse_target(*m_project.targets[0], m_project.file_cache);
       }
       else
         throw syntax_error("\'global\' must be followed by \'{\'.", m_filename, m_line_number);
@@ -146,7 +145,7 @@ void nectar_loader::extract_nectar(const ambrosia_config& configuration,
       {
         // Search for sub-project file: sourcedir/token/token.nectar.txt
         // 1. check for subdirectory
-        const string full_subproject_directory = full_directory_name(configuration.source_directory, full_directory_name(m_subdirectory, token));
+        const string full_subproject_directory = full_directory_name(m_project.configuration.source_directory, full_directory_name(m_subdirectory, token));
         if(!directory_exists(full_subproject_directory))
           throw nectar_error("Directory " + full_subproject_directory + " not found.\n"
                              "Subproject names must be identical to the subproject names.", m_filename, m_line_number );
@@ -169,7 +168,7 @@ void nectar_loader::extract_nectar(const ambrosia_config& configuration,
           read_dependency_list(dependencies);
 
           nectar_loader subloader(m_project, subproject_filename, full_directory_name(m_subdirectory, token), stream, dependencies);
-          subloader.extract_nectar(configuration, file_cache);
+          subloader.extract_nectar();
         }
         else // opening file failed
           throw nectar_error("Error opening subproject file: " + full_subproject_filename + ".",  m_filename, m_line_number);
@@ -198,7 +197,7 @@ void nectar_loader::extract_nectar(const ambrosia_config& configuration,
 
           m_project.targets.emplace_back(new app(target_name, m_project.targets[0]->configuration, dependencies));
 
-          parse_target(*m_project.targets.back(), file_cache);
+          parse_target(*m_project.targets.back(), m_project.file_cache);
         }
       }
     }
@@ -223,7 +222,7 @@ void nectar_loader::extract_nectar(const ambrosia_config& configuration,
 
           m_project.targets.emplace_back(new lib(target_name, m_project.targets[0]->configuration, dependencies));
 
-          parse_target(*m_project.targets.back(), file_cache);
+          parse_target(*m_project.targets.back(), m_project.file_cache);
         }
       }
     }
@@ -377,7 +376,7 @@ bool nectar_loader::next_token(string& token,
 
   return !token.empty();
 }
-bool nectar_loader::next_list_token(const config_base& configuration,
+bool nectar_loader::next_list_token(const configuration& configuration,
                                     string& token)
 {
   debug(debug::parser) << "nectar_loader::next_list_token::reading next list item.\n";
@@ -616,16 +615,16 @@ bool nectar_loader::test_condition(const function<bool(const string&)>& config_c
   return result;
 }
 
-void nectar_loader::process_outer_conditional(const config_base& /*configuration*/)
+void nectar_loader::process_outer_conditional(const configuration& /*configuration*/)
 {
   throw nectar_error("Outer conditionals not implemented yet.", m_filename, m_line_number);
 }
-void nectar_loader::process_dependency_list_conditional(const config_base& /*configuration*/)
+void nectar_loader::process_dependency_list_conditional(const configuration& /*configuration*/)
 {
   throw nectar_error("Outer list conditionals not implemented yet.", m_filename, m_line_number);
 }
 
-void nectar_loader::process_inner_conditional(const config_base& configuration)
+void nectar_loader::process_inner_conditional(const configuration& configuration)
 {
   debug(debug::parser) << "nectar_loader::process_inner_conditional::Using target config:\n" << configuration.config_strings << "\n";
   if(test_condition([&configuration](const string& item){ return contains(configuration.config_strings, item); }))
@@ -643,7 +642,7 @@ void nectar_loader::process_inner_conditional(const config_base& configuration)
     }
   }
 }
-void nectar_loader::process_inner_list_conditional(const config_base& /*configuration*/)
+void nectar_loader::process_inner_list_conditional(const configuration& /*configuration*/)
 {
   throw nectar_error("Inner list conditionals not implemented yet.", m_filename, m_line_number);
 }
@@ -662,7 +661,7 @@ void nectar_loader::parse_file_list(target& target,
     target.add_source_file(type, token, m_filename, m_line_number); // errors are assembled in this function
   }
   if(empty)
-    throw syntax_error( "A list must not be empty.", m_filename, m_line_number );
+    throw syntax_error("A list must not be empty.", m_filename, m_line_number);
 }
 void nectar_loader::parse_source_directory_list(target& target,
                                                 const file_type type)
@@ -707,8 +706,8 @@ void nectar_loader::parse_library_list(target& target,
     {
       token = token.substr(2);
       debug(debug::parser) << "nectar_loader::parse_library_list::Found library name: " << token << ".\n";
-      if(target.add_library(token))
-        throw nectar_error("Library is mentioned twice: " + token, m_filename, m_line_number);
+      target.add_library(token, m_filename, m_line_number);
+      //  throw nectar_error("Library is mentioned twice: " + token, m_filename, m_line_number);
     }
     else if(!token.compare(0, 2, "-L"))
     {
@@ -730,7 +729,6 @@ void nectar_loader::parse_library_list(target& target,
 void nectar_loader::parse_target(target& target,
                                  file_cache& file_cache)
 {
-  const target_type type = target.type;
   const std::string target_name(target.name);
   debug(debug::parser) << "nectar_loader::parse_target::Processing named target section: " << target_name << ".\n";
   size_t curly_brace_count = 1; // parsing starts inside curly braces block
@@ -748,13 +746,13 @@ void nectar_loader::parse_target(target& target,
     else if("CONFIG" == token)
     {
       debug(debug::parser) << "nectar_loader::parse_target::CONFIG detected.\n";
-      parse_variable_list(target.configuration.config);
+      parse_variable_list(target.configuration.config_strings);
     }
     else if ("NAME" == token)
     {
       debug(debug::parser) << "nectar_loader::parse_target::NAME detected.\n";
-      if(type == target_type::global)
-        throw syntax_error("global target must not have a name", m_filename, m_line_number);
+      //if(type == target_type::global)
+      //  throw syntax_error("global target must not have a name", m_filename, m_line_number);
 
       if(already_modified_NAME)
         syntax_warning("NAME is being modified twice in this target section.");
@@ -764,7 +762,7 @@ void nectar_loader::parse_target(target& target,
       {
         if("\n" != token)
         {
-          target.output_name = token;
+          target.configuration.name = token;
           continue;
         }
       }

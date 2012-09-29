@@ -22,7 +22,7 @@
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/build_element.h"
-#include "Ambrosia/Configuration/ambrosia_config.h"
+#include "Ambrosia/Configuration/configuration.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/error.h"
@@ -42,7 +42,7 @@
 
 libambrosia_namespace_begin
 
-project::project(const string& name, ambrosia_config& configuration)
+project::project(const string& name, configuration& configuration)
 : target(target_type::project, name, configuration),
   m_targets(),
   m_commands()
