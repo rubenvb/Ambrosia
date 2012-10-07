@@ -52,6 +52,9 @@
 
 libambrosia_namespace_begin
 
+namespace platform
+{
+
 /*
  * Constants
  ************/
@@ -249,5 +252,7 @@ unique_ptr<ofstream> open_ofstream(const std::string& filename)
 {
   return unique_ptr<ofstream>(new ofstream(filename));
 }
+
+} // namespace platform
 
 libambrosia_namespace_end

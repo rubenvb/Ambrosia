@@ -68,7 +68,7 @@ private:
   const std::string& m_filename; // used for error reporting
   const std::string m_subdirectory; // used for file searching, without configuration.source_directory() !
   std::istream& m_stream; // file input stream
-  size_t m_line_number; // used for error reporting
+  std::size_t m_line_number; // used for error reporting
   const dependency_set& m_dependency_list;
   bool m_global_processed; // only one global section per project file is allowed
 /*
@@ -97,9 +97,11 @@ private:
   void process_inner_list_conditional(const configuration& configuration); // evaluated against m_configuration, skips item in list
   // item lists
   void parse_file_list(target& target,
-                       const file_type type); // matches wildcards to filenames and checks existence
+                       const file_type type,
+                       file_cache& file_cache); // matches wildcards to filenames and checks existence
   void parse_source_directory_list(target& target,
-                                   const file_type type); // searches m_source_directory+"/"+m_subdirectory
+                                   const file_type type,
+                                   file_cache& file_cache); // searches m_source_directory+"/"+m_subdirectory
   void parse_build_directory(const file_type type);  // will be created on first use
   void parse_variable_list(string_set& items); // only adds or removes strings from variables
   void parse_library_list(target& target,

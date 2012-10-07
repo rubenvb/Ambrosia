@@ -20,6 +20,8 @@
 #include "Ambrosia/Targets/target.h"
 
 // C++ includes
+#include <cstddef>
+  using std::size_t;
 #include <string>
   using std::string;
 
@@ -33,13 +35,27 @@ target::target(const ::libambrosia::configuration& configuration,
   dependencies(dependencies)
 {   }
 
-void add_source_file(const file_type /*type*/,
-                     const std::string& /*filename*/,
-                     file_cache& /*file_cache*/,
-                     const std::string& /*nectar_file*/,
-                     const size_t /*line_number*/)
+void target::add_source_file(const file_type /*type*/,
+                             const std::string& /*filename*/,
+                             file_cache& /*file_cache*/,
+                             const std::string& /*nectar_file*/,
+                             const size_t /*line_number*/)
 {
 
+}
+bool target::add_source_directory(const file_type /*type*/,
+                                  const std::string& /*directory*/,
+                                  file_cache& /*file_cache*/,
+                                  const std::string& /*nectar_file*/,
+                                  const size_t /*line_number*/)
+{
+  return false;
+}
+bool target::add_library(const string& /*library*/,
+                         const string& /*nectar_file*/,
+                         const size_t /*line_number*/)
+{
+  return false;
 }
 
 

@@ -39,6 +39,8 @@
 #include <sys/stat.h> // For (_w)stat()
 
 // C++ includes
+#include <cstddef>
+  using std::size_t;
 #include <memory>
   using std::unique_ptr;
 #include <stdexcept>
@@ -50,6 +52,9 @@
   using std::vector;
 
 libambrosia_namespace_begin
+
+namespace platform
+{
 
 /*
  * Common platform implementations
@@ -85,7 +90,7 @@ const vector<string>& get_environment_PATH()
   return result;
 }
 
-const std::string current_working_directory()
+const string current_working_directory()
 {
   //TODO: use Unicode API for Win32
   const size_t chunkSize=255;
@@ -148,5 +153,7 @@ bool file_exists(const string& filename)
   debug(debug::platform) << "platform::file_exists::" << filename << " is not a file.\n";
   return false;
 }
+
+} // namespace platform
 
 libambrosia_namespace_end

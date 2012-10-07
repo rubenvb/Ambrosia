@@ -52,7 +52,8 @@ HEADERS += \
     Include/output.h \
     Include/global.h \
     Include/help_and_version_output.h \
-    Include/commandline.h
+    Include/commandline.h \
+    Include/program_options.h
 
 OTHER_FILES += Ambrosia.nectar.txt
 

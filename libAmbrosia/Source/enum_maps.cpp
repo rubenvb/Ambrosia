@@ -79,7 +79,7 @@ const map<string, toolchain> toolchain_map =
     entry_begin "gcc",   toolchain::GNU entry_end
     entry_begin "msvc",  toolchain::Microsoft entry_end
     entry_begin "clang", toolchain::LLVM entry_end
-    entry_begin"icc",   toolchain::Intel entry_end
+    entry_begin "icc",   toolchain::Intel entry_end
   entries_end;
 const map<toolchain, string> toolchain_map_inverse =
   map_entries_begin

@@ -50,7 +50,7 @@ namespace std
   template <>
   struct hash<libambrosia::build_element>
   {
-    size_t operator()(const libambrosia::build_element& b) const
+    std::size_t operator()(const libambrosia::build_element& b) const
     { return hash<string>()(b.source_file.name); }
   };
 }

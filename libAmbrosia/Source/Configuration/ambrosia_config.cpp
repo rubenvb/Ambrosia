@@ -36,56 +36,8 @@
 
 libambrosia_namespace_begin
 
-void configuration::set_ambrosia_cross(const std::string& cross,
-                                         const size_t argument_number)
-{
-  debug(debug::config) << "configuration::Checking and setting cross-compilation options through Ambrosia specification.\n";
 
-  // verify format
-  if(!wildcard_compare("*-*-*", cross))
-    throw commandline_error("Ambrosia cross-compile specification should be of the form \'OS-Architecture-Toolchain\'.\n", argument_number);
-  else
-    debug(debug::config) << "configuration::cross has correct format.\n";
 
-  // find relevant parts and complain if somethin's wrong
-  const string::size_type architecture_index = cross.find("-") + 1;
-  const string::size_type toolchain_index = cross.find("-", architecture_index) + 1;
-
-  // split up the string
-  const string os_string(cross.substr(0, architecture_index-1));
-  const string architecture_string(cross.substr(architecture_index, toolchain_index-architecture_index-1));
-  const string toolchain_string(cross.substr(toolchain_index, string::npos));
-  debug(debug::config) << "configuration::cross options specified:\n"
-                       << "              os = " << os_string << ".\n"
-                       << "              architecture = " << architecture_string << ".\n"
-                       << "              toolchain = " << toolchain_string << ".\n";
-
-  // set the appropriate internal options
-  os new_os = build_os; // shut up uninitialized warning
-  if(!map_value(os_map, os_string, new_os))
-    throw commandline_error("Specified invalid target OS: " + os_string, argument_number);
-  else
-    target_os = new_os;
-  architecture new_architecture ;//= build_architecture; // shut up uninitialized warning
-  if(map_value(architecture_map, architecture_string, new_architecture))
-    throw commandline_error("Specified invalid target bitness: " + architecture_string, argument_number);
-  else
-    target_architecture = new_architecture;
-  toolchain new_toolchain = toolchain::GNU; // shut up uninitialized warning
-  if(map_value(toolchain_map, toolchain_string, new_toolchain))
-    throw commandline_error("Specified invalid target toolchain: " + toolchain_string, argument_number);
-  else
-    target_toolchain = new_toolchain;
-}
-void configuration::add_target_config_options(const std::string& target,
-                                                const string_set& options)
-{
-  string_set duplicates = merge_sets(m_target_config_options[target], options);
-  if(!duplicates.empty())
-    emit_warning("");
-
-  throw error("add_target_config_options is unimplemented.");
-}
 
 const map_string_set_string& configuration::target_config_options() const
 {

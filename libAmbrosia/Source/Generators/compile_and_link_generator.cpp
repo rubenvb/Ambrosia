@@ -89,7 +89,7 @@ const string_vector compile_and_link_generator::generate_parallel_commands()
   for(auto&& it = std::begin(m_target.files(m_type)); it != std::end(m_target.files(m_type)); ++it)
   {
     string_pair split_name = split_preceding_directory(it->object_file.name);
-    create_directory_recursive(split_name.first);
+    platform::create_directory_recursive(split_name.first);
 
     // compiler (e.g. 'gcc')
     command << m_toolchain_options.at(toolchain_option::compiler);

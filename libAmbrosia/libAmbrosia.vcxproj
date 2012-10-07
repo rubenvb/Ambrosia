@@ -26,26 +26,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>Intel C++ Compiler XE 13.0</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>Intel C++ Compiler XE 13.0</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>Intel C++ Compiler XE 13.0</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>Intel C++ Compiler XE 13.0</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -158,7 +158,6 @@
     <ClCompile Include="Source\algorithm.cpp" />
     <ClCompile Include="Source\Configuration\ambrosia_config.cpp" />
     <ClCompile Include="Source\Configuration\build_config.cpp" />
-    <ClCompile Include="Source\Configuration\config_base.cpp" />
     <ClCompile Include="Source\debug.cpp" />
     <ClCompile Include="Source\enum_maps.cpp" />
     <ClCompile Include="Source\Error\commandline_error.cpp" />
@@ -192,7 +191,6 @@
     <ClInclude Include="Include\Ambrosia\build_element.h" />
     <ClInclude Include="Include\Ambrosia\Configuration\ambrosia_config.h" />
     <ClInclude Include="Include\Ambrosia\Configuration\build_config.h" />
-    <ClInclude Include="Include\Ambrosia\Configuration\config_base.h" />
     <ClInclude Include="Include\Ambrosia\debug.h" />
     <ClInclude Include="Include\Ambrosia\enums.h" />
     <ClInclude Include="Include\Ambrosia\enum_maps.h" />

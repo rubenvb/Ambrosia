@@ -232,7 +232,7 @@ template const string_set remove_set<string_set>(string_set&, const string_set&)
 const string replace_directory_seperators(const string& original)
 {
   //TODO: use std::relace_if
-  if('/' == directory_seperator)
+  if('/' == platform::directory_seperator)
   {
     debug(debug::algorithm) << "algorithm::replace_directory_seperators::Forward slash is directory_seperator.\n";
     return original;
@@ -243,7 +243,7 @@ const string replace_directory_seperators(const string& original)
   for(string::size_type i = 0; i < original.size(); ++i)
   {
     if('/' == original[i])
-      replaced[i] = directory_seperator;
+      replaced[i] = platform::directory_seperator;
     else
       replaced[i] = original[i];
   }

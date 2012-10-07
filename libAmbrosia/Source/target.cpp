@@ -80,8 +80,9 @@ target::target(const string& subdirectory,
   debug(debug::target) << "target::Created " << target_type_map_inverse.at(type) << " target: " << name << ".\n";
 }
 
-void target::add_source_file(const file_type type,
+/*void target::add_source_file(const file_type type,
                              const string& filename,
+                             file_cache& file_cache,
                              const string& nectar_file,
                              const size_t line_number)
 {
@@ -178,6 +179,6 @@ bool target::add_library(const string& library)
 void target::remove_library(const string& /*library*/)
 {
   throw error("target::remove_library is unimplemented.");
-}
+}*/
 
 libambrosia_namespace_end

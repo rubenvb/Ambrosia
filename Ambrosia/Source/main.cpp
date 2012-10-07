@@ -19,9 +19,12 @@
 // Ambrosia includes
 #include "commandline.h"
 #include "help_and_version_output.h"
+#include "program_options.h"
 
 // libAmbrosia includes
 #include "Ambrosia/configuration.h"
+#include "Ambrosia/debug.h"
+#include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/error.h"
 #include "Ambrosia/Error/soft_error.h"
 #include "Ambrosia/nectar.h"
@@ -50,16 +53,17 @@ try {
 #ifdef AMBROSIA_DEBUG
   time_t t = time(0);
 #endif
-  // up stream performance
+  // improve iostream performance
   std::ios_base::sync_with_stdio(false);
 
   // Welcome message
   print_version_information();
 
+  program_options options;
   lib::configuration configuration;
   lib::project project(configuration);
 
-  apply_commandline_options(string_vector(argv+1, argv+argc), project);
+  apply_commandline_options(string_vector(argv+1, argv+argc), options, project);
 
   //project.read_project_files();
   lib::drink_nectar(project);

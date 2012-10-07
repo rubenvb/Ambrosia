@@ -36,10 +36,10 @@
 libambrosia_namespace_begin
 
 configuration::configuration()
-: environment_PATH(get_environment_PATH()),
-  build_architecture(build_architecture),
+: environment_PATH(platform::get_environment_PATH()),
+  build_architecture(platform::build_architecture),
   build_environment(detect_build_environment()),
-  build_os(build_os), // global from Ambrosia/platform.h
+  build_os(platform::build_os),
   build_toolchain(detect_toolchain()),
   target_architecture(build_architecture),
   target_os(build_os),
@@ -53,10 +53,10 @@ configuration::configuration()
   debug(debug::config) << "\nconfiguration::config contains:\n" << config_strings << "\n";
 }
 configuration::configuration(toolchain requested_toolchain)
-: environment_PATH(get_environment_PATH()),
-  build_architecture(build_architecture),
+: environment_PATH(platform::get_environment_PATH()),
+  build_architecture(platform::build_architecture),
   build_environment(detect_build_environment()),
-  build_os(build_os), // global from Ambrosia/platform.h
+  build_os(platform::build_os),
   build_toolchain(detect_toolchain()),
   target_architecture(build_architecture),
   target_os(build_os),
@@ -69,12 +69,9 @@ configuration::configuration(toolchain requested_toolchain)
   initialize_config();
 }
 
-/*
- * Setters
- **********/
 void configuration::set_source_directory(const string& source_directory)
 {
-  if(!directory_exists(source_directory))
+  if(!platform::directory_exists(source_directory))
     throw internal_error("Attempting to call configuration::set_source_directory with a non-existent directory: " + source_directory);
 
   debug(debug::config) << "configuration::set_source_directory::Setting source directory to: " << source_directory << "\n";

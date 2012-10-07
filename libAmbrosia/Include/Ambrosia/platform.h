@@ -32,6 +32,9 @@
 
 libambrosia_namespace_begin
 
+namespace platform
+{
+
 /*
  * constants
  *********************/
@@ -100,6 +103,8 @@ int execute_command(const std::string& command,
   std::unique_ptr<std::ifstream> open_ifstream(const std::string& filename);
   std::unique_ptr<std::ofstream> open_ofstream(const std::string& filename);
 #endif
+
+} // namespace platform
 
 libambrosia_namespace_end
 

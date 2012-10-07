@@ -22,50 +22,44 @@
 // Global include
 #include "global.h"
 
+// Ambrosia includes
+#include "program_options.h"
+
 // libAmbrosia includes
 #include "Ambrosia/typedefs.h"
 
 // Foward declarations
 libambrosia_namespace_begin
 class configuration;
-class file_cache;
+class program_options;
 class project;
 libambrosia_namespace_end
 
 ambrosia_namespace_begin
 
-enum class internal_option
-{
-  dump_commands
-  //...
-};
-extern std::multimap<internal_option, std::string> internal_option_map;
-extern std::multimap<std::string, internal_option> internal_option_map_reverse;
-
-enum class internal_value_option
-{
-  debug,
-  gnu_prefix
-};
-
 void apply_commandline_options(const string_vector& options,
+                               program_options& program_options,
                                lib::project& project);
 
-void add_build_target(lib::project& project,
+void add_build_target(program_options& options,
                       const std::string& target,
-                      const string_set& options = string_set());
+                      const string_set& config_strings = string_set());
 
-void set_internal_option(const std::string& option,
-                         const size_t argument_number);
-void set_internal_value_option(const std::string& option,
-                               const std::string& value,
-                               const size_t argument_number);
+void set_program_option(program_options& options,
+                        const std::string& option,
+                        const std::size_t argument_number);
 
-void set_program_option(const std::string& option,
-                        const std::string& value);
+void set_ambrosia_option(lib::project& project,
+                         const std::string& option,
+                         const std::string& value,
+                         const std::size_t argument_number);
+
+void set_ambrosia_cross(lib::configuration& configuration,
+                        const std::string& cross,
+                        const std::size_t argument_number);
 
 bool add_configuration_options(const std::string& options,
-                               lib::configuration& config);
+                               lib::configuration& configuration);
 
 ambrosia_namespace_end
 

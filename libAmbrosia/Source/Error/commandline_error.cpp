@@ -23,6 +23,8 @@
 #include "Ambrosia/algorithm.h"
 
 // C++ includes
+#include <cstddef>
+  using std::size_t;
 #include <iostream>
   using std::cerr;
 #include <string>

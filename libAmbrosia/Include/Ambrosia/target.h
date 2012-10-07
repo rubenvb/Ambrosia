@@ -29,8 +29,8 @@
 #include "global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Configuration/configuration.h"
-#include "Ambrosia/Configuration/configuration.h"
+#include "Ambrosia/configuration.h"
+#include "Ambrosia/configuration.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/node.h"
@@ -64,11 +64,11 @@ public:
          const configuration& config);
 
   // file modifiers and accessor
-  void add_source_file(const file_type type,
+/*  void add_source_file(const file_type type,
                        const std::string& filename,
                        file_cache& file_cache,
                        const std::string& nectar_file,
-                       const size_t line_number);
+                       const std::size_t line_number);
   void remove_source_file(const file_type type,
                    const std::string& filename);
   bool add_source_directory(const file_type type,
@@ -85,7 +85,7 @@ public:
   void remove_library(const std::string& library);
 
   // output object filenames
-  void generate_object_filenames();
+  void generate_object_filenames();*/
 
   // variables
   configuration configuration; // build configuration, inherited from global target's configuration

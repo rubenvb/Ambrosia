@@ -43,9 +43,9 @@ void print_version_information()
            << lib::version_minor << "."
            << lib::version_bugfix << ".\n"
            << "This version of Ambrosia was built for "
-           << lib::os_map_inverse.at(lib::build_os) << " "
-           << lib::architecture_map_inverse.at(lib::build_architecture)
-           << " with " << lib::toolchain_map_inverse.at(lib::ambrosia_toolchain)
+           << lib::os_map_inverse.at(lib::platform::build_os) << " "
+           << lib::architecture_map_inverse.at(lib::platform::build_architecture)
+           << " with " << lib::toolchain_map_inverse.at(lib::platform::ambrosia_toolchain)
            << ".\n";
 }
 

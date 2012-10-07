@@ -106,7 +106,7 @@ const file_set file_cache::find_source_file(const string& filename,
     std::for_each(std::begin(directories), std::end(directories), [&](const string& directory)
                   {
                     const string full_dir = full_directory_name(source_directory, full_directory_name(directory, preceding_directory));
-                    if(directory_exists(full_dir))
+                    if(platform::directory_exists(full_dir))
                     {
                       debug(debug::files) << "file_cache::find_source_file::Adding deduced directory to search list: " << full_dir << "\n";
                       directories_to_search.insert(full_dir);
@@ -158,7 +158,7 @@ const file_set file_cache::match_source_files(const string& filename,
   for(auto&& directory_it = std::begin(directories); directory_it != std::end(directories); ++directory_it)
   {
     const string directory(full_directory_name(configuration->source_directory, *directory_it + preceding_directory));
-    if(!directory_exists(directory))
+    if(!platform::directory_exists(directory))
     {
       debug(debug::files) << "file_cache::match_source_files::Skipping nonexistent directory: " << directory << ".\n";
       continue;
@@ -188,7 +188,7 @@ const file_set file_cache::match_source_files(const string& filename,
 void file_cache::add_source_directory(const string& directory)
 {
 #ifdef AMBROSIA_DEBUG
-  if(!directory_exists(directory))
+  if(!platform::directory_exists(directory))
     throw logic_error("Directory does not exist: " + directory);
 #endif
 
@@ -199,13 +199,13 @@ void file_cache::add_source_directory(const string& directory)
   else
   {
     file_set& new_files = result.first->second;
-    scan_directory(std::inserter(new_files, std::begin(new_files)), directory);
+    platform::scan_directory(std::inserter(new_files, std::begin(new_files)), directory);
     debug(debug::files) << "file_cache::add_source_directory::Directory scanned.\n";
   }
 }
 void file_cache::add_build_directory(const std::string& directory)
 {
-  if(!directory_exists(directory))
+  if(!platform::directory_exists(directory))
     // TODO: Create directory so scan_directory works OK. Check if creation was possible.
     debug(debug::files) << "file_cache::add_build_direcctory::Creating build directory: " << directory << ".\n";
 
@@ -216,7 +216,7 @@ void file_cache::add_build_directory(const std::string& directory)
   else
   {
     file_set& new_files = result.first->second;
-    scan_directory(std::inserter(new_files, std::begin(new_files)), directory);
+    platform::scan_directory(std::inserter(new_files, std::begin(new_files)), directory);
   }
 }
 

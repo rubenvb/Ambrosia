@@ -22,6 +22,7 @@
 // Ambrosia includes
 #include "help_and_version_output.h"
 #include "output.h"
+#include "program_options.h"
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
@@ -29,6 +30,7 @@
   using libambrosia::configuration;
 #include "Ambrosia/debug.h"
   using libambrosia::debug;
+#include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/commandline_error.h"
   using libambrosia::commandline_error;
 #include "Ambrosia/Error/error.h"
@@ -47,6 +49,8 @@
 
 // C++ includes
 #include <algorithm>
+#include <cstddef>
+  using std::size_t;
 #include <sstream>
   using std::istringstream;
 #include <string>
@@ -55,6 +59,7 @@
 ambrosia_namespace_begin
 
 void apply_commandline_options(const string_vector& arguments,
+                               program_options& options,
                                lib::project& project)
 {
   // Debug output
@@ -113,7 +118,7 @@ void apply_commandline_options(const string_vector& arguments,
         {
           add_target:
           const string target = current;
-          string_set options;
+          string_set config_strings;
           if((it+1) != std::end(arguments) && *(it+1) == ":")
           {
             const string& list_of_options = *(++it);
@@ -123,11 +128,11 @@ void apply_commandline_options(const string_vector& arguments,
               const string::size_type previous_index = index;
               string::size_type index = list_of_options.find(',');
               const string option = list_of_options.substr(previous_index, index);
-              if(!options.insert(option).second)
+              if(!config_strings.insert(option).second)
                 throw commandline_error("Duplicate config option to target " + target + ": " + option, argument_number);
             } while(index != string::npos);
           }
-          add_build_target(project, target, options);
+          add_build_target(options, target, config_strings);
         }
         break;
       case 1:
@@ -135,12 +140,12 @@ void apply_commandline_options(const string_vector& arguments,
         {
           const string::size_type index = current.find("=",1);
           if(index == string::npos || index == current.size()-1)
-            set_internal_option(current.substr(1), argument_number);
+            set_program_option(options, current.substr(1), argument_number);
             //throw commandline_error("Ambrosia internal options must be set by \'-option=value\' type arguments.", argument_number);
 
           const string option(current.substr(1,index-1));
           const string value(current.substr(index+1, string::npos));
-          set_internal_value_option(option, value, argument_number);
+          set_ambrosia_option(project, option, value, argument_number);
         }
         else if(current[0] == ':')
           add_configuration_options(current.substr(1), project.configuration);
@@ -156,62 +161,40 @@ void apply_commandline_options(const string_vector& arguments,
   }
   debug(debug::commandline) << "commandline::apply_commandline_options::Checking if project file was found.\n";
   // Ensure that a valid project file has been found
-  if(!lib::file_exists(project.configuration.project_file))
+  if(!lib::platform::file_exists(project.configuration.project_file))
     throw lib::error("No project file specified on the commandline, nor was one found in the current directory.");
 }
 
-void add_build_target(project& project,
+void add_build_target(program_options& options,
                       const string& target,
-                      const string_set& options)
+                      const string_set& config_strings)
 {
-  // TODO: fixme: this function does wrong things
-  const string::size_type index = target.find(":");
-  if(index == string::npos)
-  {
-    debug(debug::commandline) << "commandline::add_build_target::Target to be built: " << target << ".\n";
-    project.configuration.add_target_config_options(target, options);
-  }
-  else
-  {
-    const string target_name(target.substr(0, index));
-    debug(debug::commandline) << "commandline::add_build_target::Target to be built: " << target_name << ".\n";
-    string_set options;
-    string_set duplicates;
-    // FIXME: stringstream --> string::find
-    istringstream stream( target );
-    stream.seekg( static_cast<istringstream::streamoff>(index) );
-    string temp;
-    while(std::getline(stream, temp, ','))
-    {
-      if(options.insert(temp).second == false)
-        duplicates.insert( temp );
-    }
-    project.configuration.add_target_config_options(target_name, options);
-  }
+  debug(debug::commandline) << "commandline::add_build_target::Target to be built: " << target << ".\n";
+  options.target_options.insert(std::make_pair(target, config_strings));
 }
 
-void set_internal_option(project& project,
-                         const string& option,
-                         const size_t argument_number)
+void set_program_option(program_options& options,
+                        const string& option,
+                        const size_t argument_number)
 {
-  debug(debug::commandline) << "commandline::set_internal_option::" << option << " without value being set.\n";
+  debug(debug::commandline) << "commandline::set_program_option::" << option << " without value being set.\n";
   if("dump-commands" == option)
-    project.configuration.dump_commands = true;
+    options.dump_commands = true;
   else
     throw commandline_error("Unknown option: " + option, argument_number);
 }
 
-void set_internal_value_option(project& project,
-                               const std::string& option,
-                               const std::string& value,
-                               const size_t argument_number )
+void set_ambrosia_option(lib::project& project,
+                         const std::string& option,
+                         const std::string& value,
+                         const size_t argument_number )
 {
   debug(debug::commandline) << "commandline::set_internal_value_option::" << option << " with value \'" << value << "\' being set.\n";
 
   if("cross" == option)
   {
     debug(debug::commandline) << "commandline::set_internal_option::Cross-compiling for " << value << ".\n";
-    project.configuration.set_ambrosia_cross(value, argument_number);
+    set_ambrosia_cross(project.configuration, value, argument_number);
   }
 #ifdef AMBROSIA_DEBUG
   else if("d" == option || "debug" == option)
@@ -246,17 +229,55 @@ void set_internal_value_option(project& project,
     debug(debug::commandline) << "commandline::set_internal_option::Cross-compiling with GNU prefix " << value << ".\n";
     project.configuration.gnu_prefix = value + '-'; // add the prefix dash here so you get for example "x86_64-linux-gnu-gcc"
   }
-  else if("dump-commands" == option)
-  {
-    debug(debug::commandline) << "commandline::set_internal_option::Dumping generated commands.\n";
-    project.configuration.dump_commands = true;
-  }
   else
     throw commandline_error("Unknown option passed to Ambrosia: \n\t-" + option + "=" + value, argument_number);
 }
 
+void set_ambrosia_cross(lib::configuration& configuration,
+                        const std::string& cross,
+                        const size_t argument_number)
+{
+  debug(debug::config) << "configuration::Checking and setting cross-compilation options through Ambrosia specification.\n";
+
+  // verify format
+  if(!lib::wildcard_compare("*-*-*", cross))
+    throw commandline_error("Ambrosia cross-compile specification should be of the form \'OS-Architecture-Toolchain\'.\n", argument_number);
+  else
+    debug(debug::config) << "configuration::cross has correct format.\n";
+
+  // find relevant parts and complain if somethin's wrong
+  const string::size_type architecture_index = cross.find("-") + 1;
+  const string::size_type toolchain_index = cross.find("-", architecture_index) + 1;
+
+  // split up the string
+  const string os_string(cross.substr(0, architecture_index-1));
+  const string architecture_string(cross.substr(architecture_index, toolchain_index-architecture_index-1));
+  const string toolchain_string(cross.substr(toolchain_index, string::npos));
+  debug(debug::config) << "configuration::cross options specified:\n"
+                       << "              os = " << os_string << ".\n"
+                       << "              architecture = " << architecture_string << ".\n"
+                       << "              toolchain = " << toolchain_string << ".\n";
+
+  // set the appropriate internal options
+  os new_os;
+  if(!lib::map_value(lib::os_map, os_string, new_os))
+    throw commandline_error("Specified invalid target OS: " + os_string, argument_number);
+  else
+    configuration.target_os = new_os;
+  architecture new_architecture;
+  if(lib::map_value(lib::architecture_map, architecture_string, new_architecture))
+    throw commandline_error("Specified invalid target bitness: " + architecture_string, argument_number);
+  else
+    configuration.target_architecture = new_architecture;
+  toolchain new_toolchain = toolchain::GNU; // shut up uninitialized warning
+  if(lib::map_value(lib::toolchain_map, toolchain_string, new_toolchain))
+    throw commandline_error("Specified invalid target toolchain: " + toolchain_string, argument_number);
+  else
+    configuration.target_toolchain = new_toolchain;
+}
+
 bool add_configuration_options(const string& options,
-                               configuration& /*config*/)
+                               lib::configuration& /*config*/)
 {
   debug(debug::commandline) << "commandline::add_configuration_options::Target configuration option: " << options << " set.\n";
   // put them in a set
@@ -270,5 +291,7 @@ bool add_configuration_options(const string& options,
   }
   throw error("commandline::add_configuration_options is not finished yet.");
 }
+
+
 
 ambrosia_namespace_end

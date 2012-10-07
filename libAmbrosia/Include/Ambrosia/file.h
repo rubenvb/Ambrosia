@@ -49,7 +49,7 @@ namespace std
   template <>
   struct hash<libambrosia::file>
   {
-    size_t operator()(const libambrosia::file& f) const
+    std::size_t operator()(const libambrosia::file& f) const
     { return hash<string>()(f.name); }
   };
 }

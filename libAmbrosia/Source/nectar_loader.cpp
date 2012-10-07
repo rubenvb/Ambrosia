@@ -146,19 +146,19 @@ void nectar_loader::extract_nectar()
         // Search for sub-project file: sourcedir/token/token.nectar.txt
         // 1. check for subdirectory
         const string full_subproject_directory = full_directory_name(m_project.configuration.source_directory, full_directory_name(m_subdirectory, token));
-        if(!directory_exists(full_subproject_directory))
+        if(!platform::directory_exists(full_subproject_directory))
           throw nectar_error("Directory " + full_subproject_directory + " not found.\n"
                              "Subproject names must be identical to the subproject names.", m_filename, m_line_number );
 
         string subproject_filename = token + ".nectar.txt";
         string full_subproject_filename = full_directory_name(full_subproject_directory, subproject_filename);
-        if(!file_exists(full_subproject_filename))
+        if(!platform::file_exists(full_subproject_filename))
         {
           //TODO: check what happens here...
           debug(debug::nectar) << "nectar_loader::extract_nectar:Subproject filename is same as subdirectory.\n";
         }
         // Opening project file
-        const auto&& stream_ptr = open_ifstream(full_subproject_filename);
+        const auto&& stream_ptr = platform::open_ifstream(full_subproject_filename);
         auto& stream = *stream_ptr;
         if(stream)
         {
@@ -648,7 +648,8 @@ void nectar_loader::process_inner_list_conditional(const configuration& /*config
 }
 
 void nectar_loader::parse_file_list(target& target,
-                                    const file_type type)
+                                    const file_type type,
+                                    file_cache& file_cache)
 {
   debug(debug::parser) << "nectar_loader::parse_file_list::Parsing " << file_type_map_inverse.at(type) << " file list.\n";
   bool empty = true; // a list must not be empty
@@ -658,13 +659,14 @@ void nectar_loader::parse_file_list(target& target,
   {
     debug(debug::parser) << "nectar_loader::parse_file_list::adding matches to file " << token << " to the file list.\n";
     empty = false;
-    target.add_source_file(type, token, m_filename, m_line_number); // errors are assembled in this function
+    target.add_source_file(type, token, file_cache, m_filename, m_line_number); // errors are assembled in this function
   }
   if(empty)
     throw syntax_error("A list must not be empty.", m_filename, m_line_number);
 }
 void nectar_loader::parse_source_directory_list(target& target,
-                                                const file_type type)
+                                                const file_type type,
+                                                file_cache& file_cache)
 {
   debug(debug::parser) << "nectar_loader::parse_source_directory_list::Parsing full list, nonexistent directories are kept in error_list.\n";
   bool empty_list = true; // a list must not be empty
@@ -675,7 +677,7 @@ void nectar_loader::parse_source_directory_list(target& target,
   {
     empty_list = false;
 
-    if(!target.add_source_directory(type, token))
+    if(!target.add_source_directory(type, token, file_cache, m_filename, m_line_number))
       error_list.push_back("line " + to_string(m_line_number) +": " + token); // add the bad directory to error_list
   }
   if(empty_list)
@@ -713,9 +715,9 @@ void nectar_loader::parse_library_list(target& target,
     {
       token = token.substr(2);
       debug(debug::parser) << "nectar_loader::parse_library_list::Found library search directory: " << token << ".\n";
-      if(!directory_exists(token))
+      if(!platform::directory_exists(token))
         error_list.push_back(token);
-      if(is_absolute_path(token))
+      if(platform::is_absolute_path(token))
       {
         debug(debug::parser) << "nectar_loader::parse_library_list::Absolure library path detected.\n";
         syntax_warning("Absolute paths in project files should be avoided.");
@@ -778,7 +780,7 @@ void nectar_loader::parse_target(target& target,
         if(type == file_type::library)
           parse_library_list(target, file_cache);
         else
-          parse_file_list(target, type);
+          parse_file_list(target, type, file_cache);
 
         debug(debug::parser) << "nectar_loader::parse_target::Succesfully parsed list of files or librar(y director)ies.\n";
       } // or a list of directories
@@ -787,7 +789,7 @@ void nectar_loader::parse_target(target& target,
         debug(debug::parser) << "nectar_loader::parse_target::" << file_type_map_inverse.at(type) << " directory list detected.\n";
         const file_type general_type = get_general_type(type);
         if(general_type == file_type::source || type == file_type::header)
-          parse_source_directory_list(target, type);
+          parse_source_directory_list(target, type, file_cache);
         else
           throw nectar_error("Parsing of " + token + " not yet implemented.", m_filename, m_line_number);
       }

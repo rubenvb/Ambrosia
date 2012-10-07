@@ -60,6 +60,9 @@
 
 libambrosia_namespace_begin
 
+namespace platform
+{
+
 // architecture detection - directly from msdn
 typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 BOOL is_wow64()
@@ -388,5 +391,7 @@ unique_ptr<ofstream> open_ofstream(const string& filename)
 }
 # endif
 #endif
+
+} // namespace platform
 
 libambrosia_namespace_end

@@ -38,7 +38,7 @@
 libambrosia_namespace_begin
 
 #ifdef AMBROSIA_DEBUG
-extern size_t s_full_directory_name_calls;
+extern std::size_t s_full_directory_name_calls;
 #endif
 
 /* Freestanding functions (libAmbrosia independent)
@@ -55,7 +55,7 @@ bool wildcard_directory_compare(const std::string& wildcard_string,
 // get filename extension
 inline const std::string get_extension(const std::string& filename)
 {
-  const size_t index = filename.rfind('.');
+  const std::size_t index = filename.rfind('.');
   if(index != std::string::npos)
     return filename.substr(index+1);
   else
@@ -64,8 +64,8 @@ inline const std::string get_extension(const std::string& filename)
 // get filename basename, without preceding directories
 inline const std::string get_basename(const std::string& path)
 {
-  const size_t extension_index = path.rfind('.');
-  const size_t path_seperator_index = path.rfind('/', extension_index);
+  const std::size_t extension_index = path.rfind('.');
+  const std::size_t path_seperator_index = path.rfind('/', extension_index);
 
   if(extension_index == std::string::npos)
     return std::string();

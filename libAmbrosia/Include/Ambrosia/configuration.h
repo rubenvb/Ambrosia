@@ -38,15 +38,8 @@ public:
   configuration();
   configuration(toolchain requested_toolchain);
 
-  // parse Ambrosia cross target string and set options
-  void set_ambrosia_cross(const std::string& cross,
-                          const size_t argument_number);
-
   // source directory and file where the object's configuration is attached to
   void set_source_directory(const std::string& source_directory);
-  // add target or add additional config options to one target
-  void add_target_config_options(const std::string& target,
-                                 const string_set& options);
 
   // Environment PATH
   const string_vector environment_PATH;
@@ -77,7 +70,7 @@ private:
   // Platform detection functions
   architecture detect_build_architecture() const;
   environment detect_build_environment() const;
-  toolchain detect_toolchain(toolchain requested_toolchain = ambrosia_toolchain) const;
+  toolchain detect_toolchain(toolchain requested_toolchain = platform::ambrosia_toolchain) const;
   void initialize_config();
 };
 
