@@ -95,7 +95,7 @@ void apply_commandline_options(const string_vector& arguments,
           m_first_dashless_argument = false;
           debug(debug::commandline) << "begin::Possible project file or directory: \'" << current << "\'.\n";
 
-          project.configuration.project_file = lib::find_project_file(current);
+          project.configuration.project_file = lib::find_project_file(current, project.configuration);
 
           // if project_file is still empty, "current" is really a target name
           if(!project.configuration.project_file.empty())
@@ -103,7 +103,7 @@ void apply_commandline_options(const string_vector& arguments,
 
           lib::emit_warning("No source directory specified.");
 
-          project.configuration.project_file = lib::find_project_file(".");
+          project.configuration.project_file = lib::find_project_file(".", project.configuration);
           if(project.configuration.project_file.empty())
           {
             debug(debug::commandline) << "commandline::Project file found in current directory \'.\': " << project.configuration.project_file << ".\n";
@@ -161,7 +161,7 @@ void apply_commandline_options(const string_vector& arguments,
   }
   debug(debug::commandline) << "commandline::apply_commandline_options::Checking if project file was found.\n";
   // Ensure that a valid project file has been found
-  if(!lib::platform::file_exists(project.configuration.project_file))
+  if(!lib::platform::file_exists(lib::full_directory_name(project.configuration.source_directory, project.configuration.project_file)))
     throw lib::error("No project file specified on the commandline, nor was one found in the current directory.");
 }
 

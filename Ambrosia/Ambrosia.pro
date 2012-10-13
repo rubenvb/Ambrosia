@@ -17,8 +17,8 @@ CONFIG += console warn_on
 CONFIG -= qt
 DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
 
-*g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic-errors -Wextra -Wconversion \
-                        -Wmissing-include-dirs -Wstrict-aliasing -Werror
+*g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic-errors -Wextra -Wconversion -Wuninitialized -Winit-self -Wmissing-include-dirs -Wstrict-aliasing -Werror
+
 # Ambrosia Library
 INCLUDEPATH += ../libAmbrosia/Include
 CONFIG( debug, debug|release ) {

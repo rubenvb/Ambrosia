@@ -47,17 +47,30 @@
 
 libambrosia_namespace_begin
 
-const string find_project_file(const string& directory)
+const string find_project_file(const string& directory,
+                               configuration& configuration)
 {
-  debug(debug::files) << "nectar::find_nectar_file called for: " << directory << ".\n";
+  debug(debug::nectar) << "nectar::find_project_file called for: " << directory << ".\n";
   file_set candidates;
   platform::scan_directory(inserter(candidates, candidates.begin()), directory);
 
+  // filter files on "*.nectar.txt"
+  for(auto&& it = std::begin(candidates); it != std::end(candidates);)
+  {
+    debug(debug::nectar) << "nectar::find_project_file::checking " << it->name << ".\n";
+    if(!wildcard_compare("*.nectar.txt", it->name))
+      it = candidates.erase(it);
+    else
+      ++it;
+  }
+  debug(debug::nectar) << "nectar::find_project_file::There are " << candidates.size() << " candidates left.\n";
   switch(candidates.size())
   {
     case 0:
       throw error("No *.nectar.txt file found in " + directory);
     case 1:
+      debug(debug::nectar) << "Project file found: " << std::begin(candidates)->name << ".\n";
+      configuration.source_directory = directory;
       return std::begin(candidates)->name;
     default:
       throw error("Multiple *.nectar.txt files found in directory: " + directory, candidates);
@@ -68,7 +81,7 @@ const string find_project_file(const string& directory)
 void drink_nectar(project& project)
 {
   // open file
-  const string& filename = project.configuration.project_file;
+  const string& filename = full_directory_name(project.configuration.source_directory, project.configuration.project_file);
   const auto&& stream_ptr(platform::open_ifstream(filename));
   auto&& stream = *stream_ptr;
   if(!stream)
