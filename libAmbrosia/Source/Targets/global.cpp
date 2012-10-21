@@ -25,11 +25,8 @@
 
 libambrosia_namespace_begin
 
-global::global(const ::libambrosia::configuration& configuration,
-               const std::string& /*subdirectory*/)
+global::global(const ::libambrosia::configuration& configuration)
 : target(configuration)
-{
-  //this->configuration.source_directory = full_directory_name(configuration.source_directory, subdirectory);
-}
+{   }
 
 libambrosia_namespace_end

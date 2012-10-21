@@ -31,7 +31,6 @@
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/platform.h"
-//#include "Ambrosia/project.h"
 #include "Ambrosia/Targets/app.h"
 #include "Ambrosia/Targets/global.h"
 #include "Ambrosia/Targets/lib.h"
@@ -115,7 +114,7 @@ void nectar_loader::extract_nectar()
   skip_BOM(m_stream, m_filename);
 
   // create global target
-  m_project.targets.emplace_back(new global(m_project.configuration, m_subdirectory));
+  m_project.targets.emplace_back(new global(m_project.configuration));
 
   string token;
   while(next_token(token))
@@ -174,7 +173,7 @@ void nectar_loader::extract_nectar()
 
           m_project.targets.emplace_back(new project(token, subconfiguration, dependencies));
 
-          nectar_loader subloader(*static_cast<project*>(m_project.targets.back().get()), subproject_filename, full_directory_name(m_subdirectory, token), stream, dependencies);
+          nectar_loader subloader(*static_cast<project*>(m_project.targets.back().get()), full_subproject_filename, full_directory_name(m_subdirectory, token), stream, dependencies);
           subloader.extract_nectar();
         }
         else // opening file failed
@@ -233,8 +232,30 @@ void nectar_loader::extract_nectar()
         }
       }
     }
+    else if("dep" == token)
+    {
+      debug(debug::parser)  << "nectar_loader::extract_nectar::dep section found at line " << m_line_number << ".\n";
+      if(!next_token(token))
+        throw syntax_error("Expected dependency type (\'app\' or \'lib\') after \'dep\'.", m_filename, m_line_number);
+      else
+      {
+        if("lib" == token && next_token(token))
+        {
+          const string lib_name = token;
+          debug(debug::parser) << "nectar_loader::extract_nectar::locating library dependency: " << lib_name << ".\n";
+        }
+        else if("app" == token && next_token(token))
+        {
+          const string app_name = token;
+          debug(debug::parser) << "nectar_loader::extract_nectar::locating application dependency: " << app_name << ".\n";
+        }
+        else
+          throw syntax_error("Expected dependency name after dependency type.", m_filename, m_line_number);
+      }
+
+    }
     else
-      throw syntax_error("Unexpected token: " + token + ". Expected global, sub, app, lib, or test.", m_filename, m_line_number);
+      throw syntax_error("Unexpected token: " + token + ". Expected global, sub, app, lib, dep, or test.", m_filename, m_line_number);
   }
   debug(debug::nectar_parser) << "nectar_loader::Finished with file: " << m_filename << ".\n";
 }

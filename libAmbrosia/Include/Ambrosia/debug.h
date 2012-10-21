@@ -30,9 +30,6 @@
 
 libambrosia_namespace_begin
 
-#ifndef AMBROSIA_DEBUG
-#define debug(dummy) //
-#else
 class debug
 {
 public:
@@ -110,7 +107,7 @@ debug& debug::operator<<(const string_set&);
 template<>
 debug& debug::operator<<(const std::set<file_type>&);
 #endif // AMBROSIA_DEBUG
-#endif
+
 libambrosia_namespace_end
 
 #endif // AMBROSIA_DEBUG_H

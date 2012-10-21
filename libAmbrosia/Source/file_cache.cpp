@@ -116,7 +116,7 @@ void file_cache::find_source_files(const std::string& filename,
                                    const string_set& subdirectories,
                                    build_element_set& files)
 {
-  debug(debug::files) << "file_cache::find_source_files::Finding matches for " << filename << " in subdirectories of " << source_directory << ":\n" << subdirectories;
+  debug(debug::files) << "file_cache::find_source_files::Finding matches for " << filename << " in subdirectories of \"" << source_directory << "\":\n" << subdirectories;
   // handle filename with directory prepended
   const string_pair directory_filename(split_preceding_directory(filename));
   const string& preceding_directory = directory_filename.first;
@@ -135,9 +135,9 @@ void file_cache::find_source_files(const std::string& filename,
     {
       const string& current = source_file_it->name;
       debug(debug::files) << "file_cache::find_source_files::Comparing " << true_filename << " to " << current << ".\n";
-      if(!wildcard_compare(true_filename, current))
+      if(wildcard_compare(true_filename, current))
       {
-        debug(debug::files) << "file_cache::find_source_files::Match found: " << current;
+        debug(debug::files) << "file_cache::find_source_files::Match found: " << current << "\n";
         files.insert(*source_file_it);
       }
     }

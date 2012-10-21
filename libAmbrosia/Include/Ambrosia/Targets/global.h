@@ -33,8 +33,7 @@ libambrosia_namespace_begin
 class global : public target
 {
 public:
-  global(const lib::configuration& configuration,
-         const std::string& subdirectory);
+  global(const lib::configuration& configuration);
 };
 
 libambrosia_namespace_end

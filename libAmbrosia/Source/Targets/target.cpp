@@ -48,8 +48,8 @@ void target::add_source_file(const file_type type,
                              const size_t /*line_number*/)
 {
   // search specific file_type directories
-  string_set directories = m_source_directories.at(type);
-  file_cache.find_source_files(filename, configuration.source_directory, directories, m_files[type]);
+  string_set directories = source_directories.at(type);
+  file_cache.find_source_files(filename, configuration.source_directory, directories, files[type]);
   // search general file_type directories
 }
 bool target::add_source_directory(const file_type type,
@@ -59,7 +59,7 @@ bool target::add_source_directory(const file_type type,
   if(!file_cache.add_source_directory(full_directory_name(configuration.source_directory, directory)))
     return false;
 
-  if(!m_source_directories[type].insert(directory).second)
+  if(!source_directories[type].insert(directory).second)
     debug(debug::target) << "target::add_source_directory::Directory " << directory << " already present.\n";
   return true;
 }

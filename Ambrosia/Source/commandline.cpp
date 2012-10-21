@@ -259,21 +259,14 @@ void set_ambrosia_cross(lib::configuration& configuration,
                        << "              toolchain = " << toolchain_string << ".\n";
 
   // set the appropriate internal options
-  os new_os;
-  if(!lib::map_value(lib::os_map, os_string, new_os))
+  if(!lib::map_value(lib::os_map, os_string, configuration.target_os))
     throw commandline_error("Specified invalid target OS: " + os_string, argument_number);
-  else
-    configuration.target_os = new_os;
-  architecture new_architecture;
-  if(lib::map_value(lib::architecture_map, architecture_string, new_architecture))
+
+  if(lib::map_value(lib::architecture_map, architecture_string, configuration.target_architecture))
     throw commandline_error("Specified invalid target bitness: " + architecture_string, argument_number);
-  else
-    configuration.target_architecture = new_architecture;
-  toolchain new_toolchain = toolchain::GNU; // shut up uninitialized warning
-  if(lib::map_value(lib::toolchain_map, toolchain_string, new_toolchain))
+
+  if(lib::map_value(lib::toolchain_map, toolchain_string, configuration.target_toolchain))
     throw commandline_error("Specified invalid target toolchain: " + toolchain_string, argument_number);
-  else
-    configuration.target_toolchain = new_toolchain;
 }
 
 bool add_configuration_options(const string& options,

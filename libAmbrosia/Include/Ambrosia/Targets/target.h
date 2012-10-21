@@ -38,6 +38,7 @@ public:
          const std::string& name = "",
          const dependency_set& dependencies = dependency_set());
 
+  // Target information
   bool add_source_directory(const file_type type,
                             const std::string& directory,
                             file_cache& file_cache);
@@ -46,23 +47,16 @@ public:
                        file_cache& file_cache,
                        const std::string& nectar_file,
                        const std::size_t line_number);
-
   bool add_library(const std::string& library,
                    const std::string& nectar_file,
                    const std::size_t line_number);
-
-  const build_element_set& files(const file_type type) const
-  { return m_files.at(type); }
-  const string_set source_directories(const file_type type) const
-  { return m_source_directories.at(type); }
 
   const std::string name;
   lib::configuration configuration;
   const dependency_set dependencies;
 
-private:
-  std::map<file_type, build_element_set> m_files;
-  std::map<file_type, string_set> m_source_directories;
+  std::map<file_type, build_element_set> files;
+  std::map<file_type, string_set> source_directories;
 };
 
 libambrosia_namespace_end

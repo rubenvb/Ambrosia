@@ -193,8 +193,8 @@ int execute_command(const string &command,
   // Create pipes for redirected output
   int cout_pipe[2];
   int cerr_pipe[2];
-  pipe(cout_pipe);
-  pipe(cerr_pipe);
+  if(pipe(cout_pipe) || pipe(cerr_pipe))
+    throw error("pipe returned an error.");
 
   int exit_code;
   pid_t pid = fork();

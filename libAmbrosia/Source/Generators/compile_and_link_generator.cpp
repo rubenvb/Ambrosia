@@ -50,7 +50,7 @@ void compile_and_link_generator::generate_object_filenames()
 {
   debug(debug::command_gen) << "compile_and_link_generator::Generating object filenames for " << m_target.name << " that will be built in "
                             << "\"" << m_target.configuration.build_directory << "\".\n";
-  const build_element_set& files = m_target.files(m_type);
+  const build_element_set& files = m_target.files.at(m_type);
   for(auto&& it = std::begin(files); it != std::end(files); ++it)
   {
     const build_element& current = *it;
@@ -86,7 +86,7 @@ const string_vector compile_and_link_generator::generate_parallel_commands()
     }
   }
 
-  for(auto&& it = std::begin(m_target.files(m_type)); it != std::end(m_target.files(m_type)); ++it)
+  for(auto&& it = std::begin(m_target.files.at(m_type)); it != std::end(m_target.files.at(m_type)); ++it)
   {
     string_pair split_name = split_preceding_directory(it->object_file.name);
     platform::create_directory_recursive(split_name.first);
@@ -109,7 +109,7 @@ const string_vector compile_and_link_generator::generate_parallel_commands()
     // object filename
     command << " " << it->object_file.name;
     // include directories
-    const string_set& header_dirs = m_target.source_directories(file_type::header);
+    const string_set& header_dirs = m_target.source_directories.at(file_type::header);
     for(auto&& it = std::begin(header_dirs); it != std::end(header_dirs); ++it)
     {
       command << " " << m_toolchain_options.at(toolchain_option::include_option) << "\"" << full_directory_name(m_target.configuration.source_directory, *it) << "\"";

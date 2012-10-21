@@ -92,7 +92,7 @@ try {
   cerr << "Runtimes:\n"
        << "Project loading: " << project_read_time << " seconds,\n"
        << "Command generation: " << command_generation_time << " seconds,\n"
-       << "Actual build time: " << build_time << ".";
+       << "Actual build time: " << build_time << "\n.";
 #endif
 }
 #ifdef AMBROSIA_DEBUG
@@ -110,6 +110,6 @@ catch(libambrosia::error& e)
 }
 catch(std::exception& e)
 {
-    cout << "something bad happened:\n";
-    cout << e.what() << "\n";
+  cout << "something bad happened:\n";
+  cout << e.what() << "\n";
 }
