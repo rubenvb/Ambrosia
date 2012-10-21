@@ -19,18 +19,21 @@
 // Class include
 #include "Ambrosia/Targets/project.h"
 
-// libAmbrosia includes
+// C++ includes
+#include <string>
+  using std::string;
 
 libambrosia_namespace_begin
 
 project::project(const ::libambrosia::configuration& configuration)
-: target(configuration)
+: target(configuration),
+  file_cache()
 {   }
-project::project(const std::string& name,
+project::project(const string& name,
                  const ::libambrosia::configuration& configuration,
                  const dependency_set& dependencies)
 : target(configuration, name, dependencies),
-  file_cache(::libambrosia::file_cache())
+  file_cache()
 {   }
 
 libambrosia_namespace_end

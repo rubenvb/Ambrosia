@@ -43,7 +43,7 @@
 
 libambrosia_namespace_begin
 
-class target : public node
+/*class target : public node
 {
 public:
   target(const target_type type,
@@ -52,10 +52,10 @@ public:
          const std::string& subdirectory = "",
          const dependency_set& dependencies = dependency_set());
   // 'global' target with subproject-wide dependencies
-  /*target(const std::string& subdirectory,
+  target(const std::string& subdirectory,
          const dependency_set& dependencies,
          const configuration& configuration,
-         file_cache& cache)*/
+         file_cache& cache)
   // other targets are based off of global's configuration
   target(const std::string& subdirectory,
          const std::string& name,
@@ -64,7 +64,7 @@ public:
          const configuration& config);
 
   // file modifiers and accessor
-/*  void add_source_file(const file_type type,
+  void add_source_file(const file_type type,
                        const std::string& filename,
                        file_cache& file_cache,
                        const std::string& nectar_file,
@@ -85,7 +85,7 @@ public:
   void remove_library(const std::string& library);
 
   // output object filenames
-  void generate_object_filenames();*/
+  void generate_object_filenames();
 
   // variables
   configuration configuration; // build configuration, inherited from global target's configuration
@@ -98,7 +98,7 @@ private:
   map_file_type_build_element_set m_files; // source and object files per file type with last modified time
   std::string m_output_file;
   string_set m_libraries; // libraries to be linked
-};
+};*/
 
 libambrosia_namespace_end
 

@@ -31,7 +31,7 @@
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/platform.h"
-#include "Ambrosia/project.h"
+//#include "Ambrosia/project.h"
 #include "Ambrosia/Targets/app.h"
 #include "Ambrosia/Targets/global.h"
 #include "Ambrosia/Targets/lib.h"
@@ -148,7 +148,7 @@ void nectar_loader::extract_nectar()
         const string full_subproject_directory = full_directory_name(m_project.configuration.source_directory, full_directory_name(m_subdirectory, token));
         if(!platform::directory_exists(full_subproject_directory))
           throw nectar_error("Directory " + full_subproject_directory + " not found.\n"
-                             "Subproject names must be identical to the subproject names.", m_filename, m_line_number );
+                             "Subproject names must be identical to the subproject directory.", m_filename, m_line_number );
 
         string subproject_filename = token + ".nectar.txt";
         string full_subproject_filename = full_directory_name(full_subproject_directory, subproject_filename);
@@ -157,7 +157,7 @@ void nectar_loader::extract_nectar()
           //TODO: check what happens here...
           debug(debug::nectar) << "nectar_loader::extract_nectar:Subproject filename is same as subdirectory.\n";
         }
-        // Opening project file
+        // 2. Open project file
         const auto&& stream_ptr = platform::open_ifstream(full_subproject_filename);
         auto& stream = *stream_ptr;
         if(stream)
@@ -167,7 +167,14 @@ void nectar_loader::extract_nectar()
           dependency_set dependencies;
           read_dependency_list(dependencies);
 
-          nectar_loader subloader(m_project, subproject_filename, full_directory_name(m_subdirectory, token), stream, dependencies);
+          // copy configuration and set proper subdirectory
+          configuration subconfiguration = m_project.configuration;
+          debug(debug::config) << "nectar_loader::extract_nectar::Setting source directory of subproject \'" << token << "\' to " << full_subproject_directory << ".\n";
+          subconfiguration.source_directory = full_subproject_directory;
+
+          m_project.targets.emplace_back(new project(token, subconfiguration, dependencies));
+
+          nectar_loader subloader(*static_cast<project*>(m_project.targets.back().get()), subproject_filename, full_directory_name(m_subdirectory, token), stream, dependencies);
           subloader.extract_nectar();
         }
         else // opening file failed
@@ -677,13 +684,13 @@ void nectar_loader::parse_source_directory_list(target& target,
   {
     empty_list = false;
 
-    if(!target.add_source_directory(type, token, file_cache, m_filename, m_line_number))
+    if(!target.add_source_directory(type, token, file_cache))
       error_list.push_back("line " + to_string(m_line_number) +": " + token); // add the bad directory to error_list
   }
   if(empty_list)
     throw syntax_error("A source directory list must not be empty", m_filename, m_line_number);
   else if(!error_list.empty())
-    throw nectar_error("Some source directories were not found:\n", m_filename, m_line_number, error_list);
+    throw nectar_error("Some source directories were not found:", m_filename, m_line_number, error_list);
 }
 void nectar_loader::parse_build_directory(const file_type)
 {

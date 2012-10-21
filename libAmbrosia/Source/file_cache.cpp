@@ -41,38 +41,6 @@ file_cache::file_cache()
   m_build_files()
 {   }
 
-/*bool file_cache::find_project_file(const string& path,
-                                   configuration& configuration)
-{
-  debug(debug::files) << "nectar::find_project_file::Called for " << path << ".\n";
-
-  if(lib::file_exists(path))
-  {
-    debug(debug::files) << "nectar::find_project_file::Detected file.\n";
-    // TODO: generalize the directory seperators list
-    // TODO: seperate filename from (relative) path
-    const string::size_type index = path.find_last_of("/\\"); // breaks for Unix paths with spaces (maybe)
-    configuration.project_file = path.substr(index+1, string::npos);
-    configuration.source_directory = path.substr(0, index);
-  }
-  else if(lib::directory_exists(path))
-  {
-    debug(debug::files) << "nectar::find_project_file detected directory.\n";
-    const string project_file = find_nectar_file(path);
-    // if the directory contains a *.nectar.txt file, set source directory as well
-    if(!project_file.empty())
-    {
-      debug(debug::files) << "nectar::Project file found: " << project_file << ".\n";
-      configuration.source_directory = path;
-      configuration.set_project_file = project_file;
-      return true;
-    }
-  }
-  // return failure if some condition failed
-  debug(debug::files) << "nectar::No *.nectar.txt file found in " << path << ".\n";
-  return false;
-}*/
-
 const file_set& file_cache::get_source_file_set(const std::string& directory)
 {
   debug(debug::files) << "file_set::get_source_file_set::Finding directory listing for " << directory << ".\n";
@@ -143,12 +111,44 @@ const file_set file_cache::find_source_file(const string& filename,
   debug(debug::files) << "file_cache::find_source_file::Found " << result.size() << " match(es).\n";
   return result;
 }
+void file_cache::find_source_files(const std::string& filename,
+                                   const std::string& source_directory,
+                                   const string_set& subdirectories,
+                                   build_element_set& files)
+{
+  debug(debug::files) << "file_cache::find_source_files::Finding matches for " << filename << " in subdirectories of " << source_directory << ":\n" << subdirectories;
+  // handle filename with directory prepended
+  const string_pair directory_filename(split_preceding_directory(filename));
+  const string& preceding_directory = directory_filename.first;
+  const string& true_filename = directory_filename.second;
+  for(auto&& subdir_it = std::begin(subdirectories); subdir_it != std::end(subdirectories); ++subdir_it)
+  {
+    const string full_directory = full_directory_name(full_directory_name(source_directory, *subdir_it), preceding_directory);
+    debug(debug::files) << "file_cache::find_source_files::Finding matches in " << full_directory << ".\n";
+    if(!add_source_directory(full_directory))
+    {
+      debug(debug::files) << "file_cache::find_source_files::Skipping nonexistent directory: " << full_directory << ".\n";
+      continue;
+    }
+    const file_set& sources = get_source_file_set(full_directory);
+    for(auto&& source_file_it = std::begin(sources); source_file_it != std::end(sources); ++source_file_it)
+    {
+      const string& current = source_file_it->name;
+      debug(debug::files) << "file_cache::find_source_files::Comparing " << true_filename << " to " << current << ".\n";
+      if(!wildcard_compare(true_filename, current))
+      {
+        debug(debug::files) << "file_cache::find_source_files::Match found: " << current;
+        files.insert(*source_file_it);
+      }
+    }
+  }
+}
+
 const file_set file_cache::match_source_files(const string& filename,
                                               const configuration* configuration,
                                               const string_set& directories)
 {
-  debug(debug::files) << "file_cache::match_source_files::Matching " << filename
-  << " to all files in the source directories.\n";
+  debug(debug::files) << "file_cache::match_source_files::Matching " << filename << " to all files in the source directories.\n";
   file_set result;
   const string_pair directory_filename(split_preceding_directory(filename));
   const string& preceding_directory(directory_filename.first);
@@ -185,13 +185,14 @@ const file_set file_cache::match_source_files(const string& filename,
   return result;
 }
 
-void file_cache::add_source_directory(const string& directory)
+bool file_cache::add_source_directory(const string& directory)
 {
-#ifdef AMBROSIA_DEBUG
+  debug(debug::files) << "file_cache::add_source_directory::Checking if directory " << directory << " exists.\n";
   if(!platform::directory_exists(directory))
-    throw logic_error("Directory does not exist: " + directory);
-#endif
-
+  {
+    debug(debug::files) << "file_cache::add_source_directory::Nonexistent directory: " << directory << ".\n";
+    return false;//throw logic_error("Directory does not exist: " + directory);
+  }
   debug(debug::files) << "file_cache::add_source_directory::Scanning files in source directory: " << directory << ".\n";
   const auto result = m_source_files.insert(std::make_pair(directory, file_set()));
   if(!result.second)
@@ -202,6 +203,7 @@ void file_cache::add_source_directory(const string& directory)
     platform::scan_directory(std::inserter(new_files, std::begin(new_files)), directory);
     debug(debug::files) << "file_cache::add_source_directory::Directory scanned.\n";
   }
+  return true;
 }
 void file_cache::add_build_directory(const std::string& directory)
 {

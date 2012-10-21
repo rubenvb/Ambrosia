@@ -39,6 +39,9 @@ public:
   target_ptr_vector targets;
 
   ::libambrosia::file_cache file_cache;
+
+private:
+  const std::string filename;
 };
 
 libambrosia_namespace_end

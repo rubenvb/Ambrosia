@@ -25,6 +25,9 @@
 // libAmbrosia includes
 #include "Ambrosia/typedefs.h"
 
+// C++ includes
+#include <functional>
+
 libambrosia_namespace_begin
 
 // Forward declarations
@@ -35,10 +38,6 @@ class file_cache
 public:
   file_cache();
 
-  // Finders
-  bool find_project_file(const std::string& path,
-                         configuration& configuration);
-
   // Getters
   const file_set& get_source_file_set(const std::string& directory);
 
@@ -46,18 +45,22 @@ public:
   const file_set find_source_file(const std::string& filename,
                                   const configuration* config,
                                   const string_set& directories = string_set());
+  void find_source_files(const std::string& filename,
+                         const std::string& source_directory,
+                         const string_set& subdirectories,
+                         build_element_set& files);
   // Match filename with all directories and match wildcards
   const file_set match_source_files(const std::string& filename,
                                     const configuration* config,
                                     const string_set& directories = string_set());
   // Find
   // Read directory contents from disk (don't complain if already present).
-  void add_source_directory(const std::string& directory = "");
+  bool add_source_directory(const std::string& directory);
   void add_build_directory(const std::string& directory);
 
 private:
-  map_string_file_set m_source_files; // all files in s_configuration::m_source_directory
-  map_string_file_set m_build_files;  // all files in s_configuration::m_build_directory
+  map_string_file_set m_source_files; // all files in configuration::m_source_directory
+  map_string_file_set m_build_files;  // all files in configuration::m_build_directory
 };
 
 //extern file_cache s_file_cache;

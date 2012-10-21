@@ -40,9 +40,7 @@ public:
 
   bool add_source_directory(const file_type type,
                             const std::string& directory,
-                            file_cache& file_cache,
-                            const std::string& nectar_file,
-                            const std::size_t line_number);
+                            file_cache& file_cache);
   void add_source_file(const file_type type,
                        const std::string& filename,
                        file_cache& file_cache,

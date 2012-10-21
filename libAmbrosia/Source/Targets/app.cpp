@@ -19,9 +19,13 @@
 // Class include
 #include "Ambrosia/Targets/app.h"
 
+// C++ includes
+#include <string>
+  using std::string;
+
 libambrosia_namespace_begin
 
-app::app(const std::string& name,
+app::app(const string& name,
          const ::libambrosia::configuration& configuration,
          const dependency_set& dependencies)
 : target(configuration, name, dependencies)
