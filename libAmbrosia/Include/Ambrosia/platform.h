@@ -60,10 +60,10 @@ const toolchain ambrosia_toolchain =
 struct command
 {
 #if _WIN32
-  std::wstring command;
+  std::wstring program;
   std::vector<std::wstring> arguments;
 #else
-  std::string command;
+  std::string program;
   std::vector<std::string> arguments;
 #endif
 

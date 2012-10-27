@@ -20,6 +20,8 @@
 #include "Ambrosia/Targets/lib.h"
 
 // Ambrosia includes
+#include "Ambrosia/debug.h"
+#include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/error.h"
 
 // C++ includes
@@ -36,7 +38,11 @@ lib::lib(const string& name,
 
 void lib::generate_commands()
 {
-  throw error("lib::generate_commands not implemented yet.");
+  for(auto type_it = std::begin(files); type_it != std::end(files); ++type_it)
+  {
+    debug(debug::command_gen) << "lib::generate_commands::Generating commands for " << file_type_map_inverse.at(type_it->first) << " files.\n";
+  }
+  throw error("lib::generate_commands not completely implemented yet.");
 }
 
 libambrosia_namespace_end

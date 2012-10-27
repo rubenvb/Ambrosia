@@ -40,6 +40,7 @@
 #include "Ambrosia/file_cache.h"
   using libambrosia::file_cache;
 #include "Ambrosia/nectar.h"
+#include "Ambrosia/platform.h"
 #include "Ambrosia/Targets/project.h"
   using libambrosia::project;
 #include "Ambrosia/status.h"
@@ -93,13 +94,20 @@ void apply_commandline_options(const string_vector& arguments,
         if(m_first_dashless_argument)
         {
           m_first_dashless_argument = false;
-          debug(debug::commandline) << "begin::Possible project file or directory: \'" << current << "\'.\n";
+          debug(debug::commandline) << "commandline::apply_commandline_options::Possible project file or directory: \'" << current << "\'.\n";
 
-          project.configuration.project_file = lib::find_project_file(current, project.configuration);
-
-          // if project_file is still empty, "current" is really a target name
-          if(!project.configuration.project_file.empty())
+          if(lib::platform::file_exists(current))
+          {
+            debug(debug::commandline) << "commandline::apply_commandline_options::Project file given on commandline.\n";
+            project.configuration.project_file = current;
             continue;
+          }
+          else if(lib::platform::directory_exists(current))
+          {
+            debug(debug::commandline) << "commandline::apply_commandline_options::Project file given on commandline.\n";
+            project.configuration.project_file = lib::find_project_file(current, project.configuration);
+            continue;
+          }
 
           lib::emit_warning("No source directory specified.");
 

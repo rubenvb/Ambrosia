@@ -48,9 +48,11 @@ void target::add_source_file(const file_type type,
                              const size_t /*line_number*/)
 {
   // search specific file_type directories
-  string_set directories = source_directories.at(type);
+  string_set& directories = source_directories[get_general_type(type)];
   file_cache.find_source_files(filename, configuration.source_directory, directories, files[type]);
   // search general file_type directories
+  directories = source_directories[type];
+  file_cache.find_source_files(filename, configuration.source_directory, directories, files[type]);
 }
 bool target::add_source_directory(const file_type type,
                                   const string& directory,

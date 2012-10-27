@@ -19,18 +19,21 @@ DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
 
 *g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic-errors -Wextra -Wconversion -Wuninitialized -Winit-self -Wmissing-include-dirs -Wstrict-aliasing -Werror
 *g++*:QMAKE_LFLAGS += -static
+*msvc*:INCLUDEPATH += M:\\Development\\x64-msvc\\Boost
 
 # Ambrosia Library
 INCLUDEPATH += ../libAmbrosia/Include
 CONFIG( debug, debug|release ) {
     LIBSUFFIX = d
     win32:LIBS += -L../libAmbrosia/debug
-    win32:PRE_TARGETDEPS += ../libAmbrosia/debug/libAmbrosiad.a
+    win32-g++*:PRE_TARGETDEPS += ../libAmbrosia/debug/libAmbrosiad.a
+    win32-msvc*:PRE_TARGETDEPS += ../libAmbrosia/debug/Ambrosiad.lib
     DEFINES += AMBROSIA_DEBUG
 } else {
     LIBSUFFIX =
     win32:LIBS += -L../libAmbrosia/release
-    win32:PRE_TARGETDEPS += ../libAmbrosia/release/libAmbrosia.a
+    win32-g++*:PRE_TARGETDEPS += ../libAmbrosia/release/libAmbrosia.a
+    win32-msvc*:PRE_TARGETDEPS += ../libAmbrosia/release/Ambrosia.lib
 }
 unix:LIBS += -L ../libAmbrosia
 unix:PRE_TARGETDEPS += ../libAmbrosia/libAmbrosia$${LIBSUFFIX}.a
