@@ -18,6 +18,7 @@ CONFIG -= qt
 DEFINES -= UNICODE QT_LARGEFILE_SUPPORT
 
 *g++*:QMAKE_CXXFLAGS += -std=c++0x -pedantic-errors -Wextra -Wconversion -Wuninitialized -Winit-self -Wmissing-include-dirs -Wstrict-aliasing -Werror
+*g++*:QMAKE_LFLAGS += -static
 
 CONFIG( debug, debug|release ) {
   LIBSUFFIX = d

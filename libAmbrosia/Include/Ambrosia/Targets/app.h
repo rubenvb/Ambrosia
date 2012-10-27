@@ -34,6 +34,8 @@ public:
   app(const std::string& name,
       const lib::configuration& configuration,
       const dependency_set& dependencies);
+
+  void generate_commands();
 };
 
 libambrosia_namespace_end

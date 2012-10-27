@@ -33,6 +33,8 @@ public:
   lib(const std::string& name,
       const ::libambrosia::configuration& configuration,
       const dependency_set& dependencies);
+
+  void generate_commands();
 };
 
 libambrosia_namespace_end

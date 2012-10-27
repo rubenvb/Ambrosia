@@ -71,11 +71,10 @@ try {
   const double project_read_time = difftime(time(0), t);
   t = time(0);
 #endif
+  // TODO: enable config strings from the commandline
   // project.apply_project_configuration();
 
-  //project.sort_targets();
-
-  //project.generate_commands();
+  project.generate_commands();
 
   //if(lib::project::configuration->m_dump_commands)
   //  project.dump_commands();

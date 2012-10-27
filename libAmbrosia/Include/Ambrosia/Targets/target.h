@@ -24,6 +24,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/configuration.h"
+#include "Ambrosia/platform.h"
 #include "Ambrosia/typedefs.h"
 
 // C++ includes
@@ -51,12 +52,17 @@ public:
                    const std::string& nectar_file,
                    const std::size_t line_number);
 
+  // Command generation
+  virtual void generate_commands();
+
   const std::string name;
   lib::configuration configuration;
   const dependency_set dependencies;
 
   std::map<file_type, build_element_set> files;
   std::map<file_type, string_set> source_directories;
+
+  const command_vector commands;
 };
 
 libambrosia_namespace_end

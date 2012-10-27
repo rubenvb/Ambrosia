@@ -19,7 +19,11 @@
 // Class include
 #include "Ambrosia/Targets/project.h"
 
+// Ambrosia includes
+#include "Ambrosia/debug.h"
+
 // C++ includes
+#include <algorithm>
 #include <string>
   using std::string;
 
@@ -35,5 +39,12 @@ project::project(const string& name,
 : target(configuration, name, dependencies),
   file_cache()
 {   }
+
+void project::generate_commands()
+{
+  debug(debug::command_gen) << "project::generate_commands::Generating commands for project " << name << ".\n";
+  std::for_each(std::begin(targets), std::end(targets),[](target_ptr& t) { t->generate_commands(); });
+}
+
 
 libambrosia_namespace_end

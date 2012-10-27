@@ -36,6 +36,8 @@ public:
           const ::libambrosia::configuration& configuration,
           const dependency_set& dependencies = dependency_set());
 
+  void generate_commands();
+
   target_ptr_vector targets;
 
   ::libambrosia::file_cache file_cache;

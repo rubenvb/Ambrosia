@@ -19,6 +19,9 @@
 // Class include
 #include "Ambrosia/Targets/lib.h"
 
+// Ambrosia includes
+#include "Ambrosia/Error/error.h"
+
 // C++ includes
 #include <string>
   using std::string;
@@ -30,5 +33,10 @@ lib::lib(const string& name,
          const dependency_set& dependencies)
 : target(configuration, name, dependencies)
 {   }
+
+void lib::generate_commands()
+{
+  throw error("lib::generate_commands not implemented yet.");
+}
 
 libambrosia_namespace_end

@@ -55,6 +55,21 @@ const toolchain ambrosia_toolchain =
 #endif
 
 /*
+ * Child process command struct
+ *******************************/
+struct command
+{
+#if _WIN32
+  std::wstring command;
+  std::vector<std::wstring> arguments;
+#else
+  std::string command;
+  std::vector<std::string> arguments;
+#endif
+
+};
+
+/*
  * Windows support functions
  ****************************/
 #if _WIN32

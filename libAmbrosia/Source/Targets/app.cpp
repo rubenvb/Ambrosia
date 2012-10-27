@@ -19,6 +19,9 @@
 // Class include
 #include "Ambrosia/Targets/app.h"
 
+// Ambrosia includes
+#include "Ambrosia/Error/error.h"
+
 // C++ includes
 #include <string>
   using std::string;
@@ -30,5 +33,11 @@ app::app(const string& name,
          const dependency_set& dependencies)
 : target(configuration, name, dependencies)
 {   }
+
+void app::generate_commands()
+{
+  throw error("app::generate_commands not implemented yet.");
+}
+
 
 libambrosia_namespace_end
