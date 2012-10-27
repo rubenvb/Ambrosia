@@ -53,7 +53,8 @@ public:
                    const std::size_t line_number);
 
   // Command generation
-  virtual void generate_commands();
+  virtual void generate_commands()
+  {   }
 
   const std::string name;
   lib::configuration configuration;

@@ -42,13 +42,11 @@ HEADERS += \
     Include/Ambrosia/enum_maps.h \
     Include/Ambrosia/status.h \
     Include/Ambrosia/nectar.h \
-    Include/Ambrosia/target.h \
     Include/Ambrosia/algorithm.h \
     Include/Ambrosia/node.h \
     Include/Ambrosia/nectar_loader.h \
     Include/Ambrosia/Configuration/configuration.h \
     Include/Ambrosia/configuration.h \
-    Include/Ambrosia/project.h \
     Include/Ambrosia/Error/syntax_error.h \
     Include/Ambrosia/Error/error.h \
     Include/Ambrosia/Error/nectar_error.h \
@@ -84,9 +82,7 @@ SOURCES += \
     Source/nectar.cpp \
     Source/nectar_loader.cpp \
     Source/node.cpp \
-    Source/project.cpp \
     Source/status.cpp \
-    Source/target.cpp \
     Source/Generators/generator.cpp \
     Source/Generators/generator_maps.cpp \
     Source/Generators/compile_and_link_generator.cpp \
