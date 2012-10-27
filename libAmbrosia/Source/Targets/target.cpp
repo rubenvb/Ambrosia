@@ -22,6 +22,7 @@
 // Ambrosia includes
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/debug.h"
+#include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/nectar_error.h"
 #include "Ambrosia/file_cache.h"
 
@@ -41,36 +42,49 @@ target::target(const ::libambrosia::configuration& configuration,
   dependencies(dependencies)
 {   }
 
-void target::add_source_file(const file_type type,
+void target::add_source_file(const file_type general_type,
                              const string& filename,
                              file_cache& file_cache,
                              const string& /*nectar_file*/,
                              const size_t /*line_number*/)
 {
   // search specific file_type directories
-  string_set& directories = source_directories[get_general_type(type)];
-  file_cache.find_source_files(filename, configuration.source_directory, directories, files[type]);
-  // search general file_type directories
-  directories = source_directories[type];
-  file_cache.find_source_files(filename, configuration.source_directory, directories, files[type]);
+  const file_type specific_type = detect_type(general_type, filename);
+  string_set& directories = source_directories[specific_type];
+  string_set& general_directories = source_directories[general_type];
+  directories.insert(std::begin(general_directories), std::end(general_directories));
+  debug(debug::files) << "target::add_source_file::Finding " << file_type_map_inverse.at(specific_type) << " files matching " << filename << " in:\n"
+                      << directories << "\n";
+  file_cache.find_source_files(filename, configuration.source_directory, directories, files[specific_type]);
+  //if(general_type != specific_type)
+  //  file_cache.find_source_files(filename, configuration.source_directory, general_directories, files[general_type]);
 }
 bool target::add_source_directory(const file_type type,
                                   const string& directory,
                                   file_cache& file_cache)
 {
+  debug(debug::target) << "target::add_source_directory::Adding directory " << directory << " of type " << file_type_map_inverse.at(type) << ".\n";
   if(!file_cache.add_source_directory(full_directory_name(configuration.source_directory, directory)))
     return false;
-
   if(!source_directories[type].insert(directory).second)
     debug(debug::target) << "target::add_source_directory::Directory " << directory << " already present.\n";
+
+  const file_type general_type = get_general_type(type);
+  if(type != general_type)
+  {
+    debug(debug::target) << "target::add_source_directory::Adding directory " << directory << " of general type " << file_type_map_inverse.at(type) << ".\n";
+    if(!source_directories[general_type].insert(directory).second)
+      debug(debug::target) << "target::add_source_directory::Directory " << directory << " already present.\n";
+  }
+
   return true;
 }
+
 bool target::add_library(const string& /*library*/,
                          const string& /*nectar_file*/,
                          const size_t /*line_number*/)
 {
   return false;
 }
-
 
 libambrosia_namespace_end

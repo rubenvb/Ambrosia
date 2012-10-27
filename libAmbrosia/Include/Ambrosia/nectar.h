@@ -39,7 +39,7 @@ class target;
 
 // locates a unique *.nectar.txt file in directory. More than one emits an error.
 const std::string find_project_file(const std::string& directory,
-                                    configuration& configuration);
+                                    project& project);
 
 // converts all project file content to internal representation, adding to the container where "it" outputs to
 void drink_nectar(project& project);

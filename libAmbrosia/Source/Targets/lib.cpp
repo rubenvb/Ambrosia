@@ -23,6 +23,7 @@
 #include "Ambrosia/debug.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/error.h"
+#include "Ambrosia/Generators/generator.h"
 
 // C++ includes
 #include <string>
@@ -40,7 +41,8 @@ void lib::generate_commands()
 {
   for(auto type_it = std::begin(files); type_it != std::end(files); ++type_it)
   {
-    debug(debug::command_gen) << "lib::generate_commands::Generating commands for " << file_type_map_inverse.at(type_it->first) << " files.\n";
+    debug(debug::command_gen) << "lib::generate_commands::Generating commands for " << type_it->second.size() << " " << file_type_map_inverse.at(type_it->first) << " files.\n";
+    generator command_generator(type_it->first, type_it->second, source_directories.at(file_type::header), configuration);
   }
   throw error("lib::generate_commands not completely implemented yet.");
 }

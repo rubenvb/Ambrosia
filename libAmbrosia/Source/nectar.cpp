@@ -48,7 +48,7 @@
 libambrosia_namespace_begin
 
 const string find_project_file(const string& directory,
-                               configuration& configuration)
+                               project& project)
 {
   debug(debug::nectar) << "nectar::find_project_file called for: " << directory << ".\n";
   file_set candidates;
@@ -69,9 +69,13 @@ const string find_project_file(const string& directory,
     case 0:
       throw error("No *.nectar.txt file found in " + directory);
     case 1:
-      debug(debug::nectar) << "Project file found: " << std::begin(candidates)->name << ".\n";
-      configuration.source_directory = directory;
-      return std::begin(candidates)->name;
+    {
+      const string filename = std::begin(candidates)->name;
+      debug(debug::nectar) << "Project file found: " << filename << ".\n";
+      project.configuration.source_directory = directory;
+      project.name = filename.substr(0,filename.size()-11); // Filename without ".nectar.txt" extension
+      return filename;
+    }
     default:
       throw error("Multiple *.nectar.txt files found in directory: " + directory, candidates);
   }

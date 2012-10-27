@@ -23,6 +23,7 @@
 #include "Ambrosia/global.h"
 
 // libAmbrosia includes
+#include "Ambrosia/configuration.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/Generators/generator_maps.h"
 
@@ -39,25 +40,31 @@ class generator
 {
 public:
   generator(const file_type type,
-            const target& target);
+            build_element_set& files,
+            const string_set& header_directories,
+            const ::libambrosia::configuration& configuration);
   virtual ~generator();
 
   // Zeroth, output object filenames
-  virtual void generate_object_filenames() = 0;
+  virtual void generate_object_filenames();
   // First, parallel executable commands, that are not influenced by eg missing link libraries from other targets
   // Example: the C/C++ compile commands that produce object files that will be linked together in the final step
   //TODO: what about generated headers? --> First make it possible to "generate headers"!!
-  virtual const string_vector generate_parallel_commands() = 0;
+  virtual const string_vector generate_parallel_commands();
   // Final (link) command that produces the target's output file(s). Cannot be called before the parallel commands have all  finished
-  virtual const string_vector generate_final_commands() = 0;
+  virtual const string_vector generate_final_commands();
 
 protected:
-  const file_type m_type;
-  const target& m_target;
-  const toolchain_option_map m_toolchain_options;
-  const language_option_map m_language_options;
-  const os_option_map m_os_options;
+  const file_type type;
+  build_element_set& files;
+  const string_set& header_directories;
+  const configuration& configuration;
+  const toolchain_option_map toolchain_options;
+  const language_option_map language_options;
+  const os_option_map os_options;
 };
+
+std::unique_ptr<generator> get_generator(const file_type type, const configuration& configuration);
 
 libambrosia_namespace_end
 

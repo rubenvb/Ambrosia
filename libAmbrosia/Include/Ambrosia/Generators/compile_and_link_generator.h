@@ -25,6 +25,7 @@
 #include "Ambrosia/global.h"
 
 // libAmbrosia includes
+#include "Ambrosia/configuration.h"
 #include "Ambrosia/Generators/generator.h"
 #include "Ambrosia/typedefs.h"
 
@@ -33,11 +34,11 @@ libambrosia_namespace_begin
 // Forward declarations
 class target;
 
-class compile_and_link_generator : public generator
+/*class compile_and_link_generator : public generator
 {
 public:
   compile_and_link_generator(const file_type type,
-             const target& target);
+                             const lib::configuration& configuration);
   virtual ~compile_and_link_generator();
 
   virtual void generate_object_filenames();
@@ -45,7 +46,7 @@ public:
   virtual const string_vector generate_parallel_commands();
 
   virtual const string_vector generate_final_commands();
-};
+};*/
 
 libambrosia_namespace_end
 

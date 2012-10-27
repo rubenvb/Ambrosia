@@ -43,7 +43,7 @@ public:
   bool add_source_directory(const file_type type,
                             const std::string& directory,
                             file_cache& file_cache);
-  void add_source_file(const file_type type,
+  void add_source_file(const file_type general_type,
                        const std::string& filename,
                        file_cache& file_cache,
                        const std::string& nectar_file,
@@ -56,7 +56,7 @@ public:
   virtual void generate_commands()
   {   }
 
-  const std::string name;
+  std::string name;
   lib::configuration configuration;
   const dependency_set dependencies;
 

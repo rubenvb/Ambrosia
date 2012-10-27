@@ -105,13 +105,13 @@ void apply_commandline_options(const string_vector& arguments,
           else if(lib::platform::directory_exists(current))
           {
             debug(debug::commandline) << "commandline::apply_commandline_options::Project file given on commandline.\n";
-            project.configuration.project_file = lib::find_project_file(current, project.configuration);
+            project.configuration.project_file = lib::find_project_file(current, project);
             continue;
           }
 
           lib::emit_warning("No source directory specified.");
 
-          project.configuration.project_file = lib::find_project_file(".", project.configuration);
+          project.configuration.project_file = lib::find_project_file(".", project);
           if(project.configuration.project_file.empty())
           {
             debug(debug::commandline) << "commandline::Project file found in current directory \'.\': " << project.configuration.project_file << ".\n";
