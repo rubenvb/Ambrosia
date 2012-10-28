@@ -24,7 +24,6 @@
 #include "Ambrosia/boost_wrapper.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/internal_error.h"
-#include "Ambrosia/generator_maps.h"
 #include "Ambrosia/status.h"
 
 // C++ includes
@@ -46,7 +45,7 @@ generator::generator(const file_type type,
   header_directories(header_directories),
   configuration(configuration),
   toolchain_options(::libambrosia::toolchain_options.at(configuration.target_toolchain)),
-  language_options(::libambrosia::language_options.at(type)),
+  language_options(::libambrosia::language_options.at(configuration.target_toolchain).at(type)),
   os_options(::libambrosia::os_options.at(configuration.target_os))
 {  }
 
@@ -56,7 +55,7 @@ generator::~generator()
 void generator::generate_object_filenames()
 {
 
-  debug(debug::command_gen) << "compile_and_link_generator::Generating object filenames for " << file_type_map_inverse.at(type) << " files that will be built in "
+  debug(debug::command_gen) << "generator::Generating object filenames for " << file_type_map_inverse.at(type) << " files that will be built in "
                             << "\"" << configuration.build_directory << "\".\n";
 
   for(auto&& it = std::begin(files); it != std::end(files); ++it)
@@ -64,7 +63,7 @@ void generator::generate_object_filenames()
     const build_element& current = *it;
     current.object_file.name = full_directory_name(configuration.build_directory, get_basename(current.source_file.name))
                                + toolchain_options.at(toolchain_option::object_extension);
-    debug(debug::command_gen) << "compile_and_link_generator::generate_object_filenames::object file: " << current.object_file.name << "\n";
+    debug(debug::command_gen) << "generator::generate_object_filenames::object file: " << current.object_file.name << "\n";
   }
 }
 
@@ -72,28 +71,48 @@ const string_vector generator::generate_parallel_commands()
 {
   string_vector commands;
   ostringstream command;
+
+  // Set languagestd option
   string languagestd;
-  if(!contains(configuration.config_strings, "msvc"))
+  switch(type)
   {
-    switch(type)
-    {
-      case file_type::source_c:
-        emit_warning("C language standard defaults to c99");
-        languagestd = "-std=c99";
-        break;
-      case file_type::source_cxx:
-        emit_warning("C++ language standard defaults to C++11");
-        languagestd = "-std=c++0x";
-        break;
-      case file_type::source_fortran:
-        emit_warning("Fortran language standard defaults to f2008");
-        languagestd = "-std=f2008";
-        break;
-      default:
-        break;
-    }
+    case file_type::source_c:
+      if(contains(configuration.config_strings, "C89"))
+        languagestd = language_options.at(language_option::std_c89);
+      else if(contains(configuration.config_strings, "C90"))
+        languagestd = language_options.at(language_option::std_c90);
+      else if(contains(configuration.config_strings, "C99"))
+        languagestd = language_options.at(language_option::std_c99);
+      else if(contains(configuration.config_strings, "C11"))
+        languagestd = language_options.at(language_option::std_c11);
+      else if(contains(configuration.config_strings, "GNU89"))
+        languagestd = language_options.at(language_option::std_gnu89);
+      else if(contains(configuration.config_strings, "GNU90"))
+        languagestd = language_options.at(language_option::std_gnu90);
+      else if(contains(configuration.config_strings, "GNU99"))
+        languagestd = language_options.at(language_option::std_gnu99);
+      else if(contains(configuration.config_strings, "GNU11"))
+        languagestd = language_options.at(language_option::std_gnu11);
+      break;
+    case file_type::source_cxx:
+      if(contains(configuration.config_strings, "C++98"))
+        languagestd = language_options.at(language_option::std_cxx98);
+      else if(contains(configuration.config_strings, "C++03"))
+        languagestd = language_options.at(language_option::std_cxx03);
+      else if(contains(configuration.config_strings, "C++11"))
+        languagestd = language_options.at(language_option::std_cxx11);
+      else if(contains(configuration.config_strings, "GNU++98"))
+        languagestd = language_options.at(language_option::std_gnuxx98);
+      else if(contains(configuration.config_strings, "GNU++03"))
+        languagestd = language_options.at(language_option::std_gnuxx03);
+      else if(contains(configuration.config_strings, "GNU++11"))
+        languagestd = language_options.at(language_option::std_gnuxx11);
+      break;
+    default:
+      throw internal_error("language std options not fully implemented yet.");
   }
 
+  //TODO: move common strings outside of loop like languagestd
   for(auto&& it = std::begin(files); it != std::end(files); ++it)
   {
     string_pair split_name = split_preceding_directory(it->object_file.name);
@@ -101,6 +120,10 @@ const string_vector generator::generate_parallel_commands()
 
     // compiler (e.g. 'gcc')
     command << toolchain_options.at(toolchain_option::compiler);
+    // force language
+    const string& language = language_options.at(language_option::compile_language);
+    if(!language.empty())
+      command << " " << language;
     // language standard
     if(!languagestd.empty())
       command << " " << languagestd;
@@ -123,10 +146,9 @@ const string_vector generator::generate_parallel_commands()
     }
 
     commands.push_back(command.str());
-    debug(debug::command_gen) << "compile_and_link_generator::generate_parallel_commands::command: " << command.str() << "\n";
+    debug(debug::command_gen) << "generator::generate_parallel_commands::command: " << command.str() << "\n";
     command.str("");
   }
-
   return commands;
 }
 

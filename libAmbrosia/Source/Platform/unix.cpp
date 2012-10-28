@@ -108,7 +108,7 @@ void scan_directory(output_iterator it,
 
   closedir(dir);
 }
-template void scan_directory<insert_iterator<file_set> >(insert_iterator<file_set>, const string&);
+template void scan_directory<insert_iterator<file_set>>(insert_iterator<file_set>, const string&);
 
 template<class output_iterator>
 void recursive_scan_directory(output_iterator it,
@@ -155,7 +155,7 @@ void recursive_scan_directory(output_iterator it,
   closedir(dir);
 }
 // explicit instantiation
-template void recursive_scan_directory<insert_iterator<file_set> >(insert_iterator<file_set>, const string&, const string&);
+template void recursive_scan_directory<insert_iterator<file_set>>(insert_iterator<file_set>, const string&, const string&);
 
 bool create_directory(const string& name)
 {

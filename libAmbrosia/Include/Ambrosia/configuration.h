@@ -58,10 +58,11 @@ public:
 
   std::string name; // specified by NAME in target
   std::set<file_type> source_types; // source files present to decide which build commands to run
-  string_map user_variables; // user string --> value
-  string_set config_strings;
   std::string project_file;
   std::string build_directory; // if source and build dir are equal, this is ./build
+
+  string_map user_variables; // user string --> value
+  string_set config_strings;
 
   bool dump_commands; // TODO: find better place for this
   std::string gnu_prefix;

@@ -70,7 +70,7 @@ inline const std::string get_basename(const std::string& path)
   if(extension_index == std::string::npos)
     return std::string();
   else if(path_seperator_index == std::string::npos)
-    return path.substr(0, std::min(extension_index-1, extension_index)); // handle extension_index==0
+    return path.substr(0, extension_index);
   else
     return path.substr(path_seperator_index+1, extension_index-path_seperator_index-1);
 }

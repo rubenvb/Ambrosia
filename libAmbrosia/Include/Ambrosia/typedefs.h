@@ -82,6 +82,10 @@ typedef std::map<file_type, build_element_set> map_file_type_build_element_set;
 typedef std::map<file_type, string_set> map_file_type_string_set;
 typedef std::map<std::string, file_set> map_string_file_set;
 
+typedef std::map<toolchain_option, std::string> toolchain_option_map;
+typedef std::map<language_option, std::string> language_option_map;
+typedef std::map<os_option, std::string> os_option_map;
+
 libambrosia_namespace_end
 
 #endif // AMBROSIA_TYPEDEFS_H

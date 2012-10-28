@@ -49,8 +49,8 @@ DEPENDPATH += . Include Source
 SOURCES += \
     Source/main.cpp \
     Source/help_and_version_output.cpp \
-    Source/output.cpp \
-    Source/commandline.cpp
+    Source/commandline.cpp \
+    Source/output.cpp
 
 HEADERS += \
     Include/output.h \

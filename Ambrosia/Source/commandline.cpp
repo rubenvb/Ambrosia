@@ -109,7 +109,7 @@ void apply_commandline_options(const string_vector& arguments,
             continue;
           }
 
-          lib::emit_warning("No source directory specified.");
+          output() << "No source directory specified.";
 
           project.configuration.project_file = lib::find_project_file(".", project);
           if(project.configuration.project_file.empty())

@@ -64,7 +64,6 @@ HEADERS += \
     Include/Ambrosia/Targets/global.h \
     Include/Ambrosia/Targets/binary.h \
     Include/Ambrosia/generator.h \
-    Include/Ambrosia/generator_maps.h \
     Include/Ambrosia/compile_and_link_generator.h
 
 SOURCES += \
@@ -88,8 +87,7 @@ SOURCES += \
     Source/Targets/project.cpp \
     Source/Targets/global.cpp \
     Source/Targets/binary.cpp \
-    Source/generator.cpp \
-    Source/generator_maps.cpp
+    Source/generator.cpp
 
 *win32*:SOURCES += Source/Platform/windows.cpp
 *linux*:SOURCES += Source/Platform/unix.cpp

@@ -33,18 +33,18 @@ public:
   template<typename T>
   output& operator<<(const T& output)
   {
-    s_output_stream << output;
+    output_stream << output;
     return *this;
   }
   // for std::endl and other manipulators
   typedef std::ostream& (*STRFUNC)(std::ostream&);
   output& operator<<(STRFUNC func)
   {
-    func(s_output_stream);
+    func(output_stream);
     return *this;
   }
 private:
-  static std::ostream& s_output_stream;
+  static std::ostream& output_stream;
 };
 
 ambrosia_namespace_end

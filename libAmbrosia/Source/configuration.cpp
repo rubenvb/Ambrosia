@@ -45,9 +45,10 @@ configuration::configuration()
   target_os(build_os),
   target_toolchain(detect_toolchain()),
   source_directory(),
-  config_strings(),
   project_file(),
-  build_directory(".")
+  build_directory("."),
+  user_variables(),
+  config_strings()
 {
   initialize_config();
   debug(debug::config) << "\nconfiguration::config contains:\n" << config_strings << "\n";
@@ -62,9 +63,10 @@ configuration::configuration(toolchain requested_toolchain)
   target_os(build_os),
   target_toolchain(detect_toolchain(requested_toolchain)),
   source_directory(),
-  config_strings(),
   project_file(),
-  build_directory()
+  build_directory(),
+  user_variables(),
+  config_strings()
 {
   initialize_config();
 }
@@ -78,19 +80,6 @@ void configuration::set_source_directory(const string& source_directory)
   this->source_directory = source_directory;
   debug(debug::config) << "configuration::set_source_directory::Adding " << source_directory << " to s_file_store.\n";
 }
-/*void configuration::set_project_file(const string& project_file)
-{
-  this->project_file = project_file;
-}*/
-/*bool configuration::add_config(const string& config_string)
-{
-  return config_strings.insert(config_string).second;
-}
-bool configuration::remove_config(const string& config_string)
-{
-  // MSVC C4800 without the "0 !="
-  return 0 != config_strings.erase(config_string);
-}*/
 
 // Platform detection functions
 environment configuration::detect_build_environment() const
@@ -125,6 +114,10 @@ void configuration::initialize_config()
     config_strings.insert("mingw");
   if(target_os == os::Linux || target_os == os::MacOSX)
     config_strings.insert("unix");
+
+  //TODO properly set these only when needed
+  config_strings.insert("C99");
+  config_strings.insert("C++11");
 }
 
 libambrosia_namespace_end

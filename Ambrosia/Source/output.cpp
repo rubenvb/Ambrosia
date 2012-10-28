@@ -11,8 +11,8 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * output.h
- * Class implementation.
+ * output.cpp
+ * Class implementation
  *
  **/
 
@@ -27,6 +27,6 @@
 ambrosia_namespace_begin
 
 // static member initialization
-ostream& output::s_output_stream = cout;
+std::ostream& output::output_stream = std::cout;
 
 ambrosia_namespace_end

@@ -25,7 +25,6 @@
 // libAmbrosia includes
 #include "Ambrosia/configuration.h"
 #include "Ambrosia/enums.h"
-#include "Ambrosia/generator_maps.h"
 
 // C++ includes
 #include <memory>
