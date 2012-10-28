@@ -31,9 +31,8 @@
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/platform.h"
-#include "Ambrosia/Targets/app.h"
+#include "Ambrosia/Targets/binary.h"
 #include "Ambrosia/Targets/global.h"
-#include "Ambrosia/Targets/lib.h"
 #include "Ambrosia/Targets/project.h"
 
 // C++ includes
@@ -88,18 +87,18 @@ const set<char> s_special_characters_newline =
     entry_begin '\n' entry_end
   entries_end;
 
-nectar_loader::nectar_loader(project& project,
+nectar_loader::nectar_loader(::libambrosia::project& project,
                              const string& full_filename,
                              const string& sub_directory,
                              istream& stream,
                              const dependency_set& list)
-: m_project(project),
-  m_filename(full_filename),
-  m_subdirectory(sub_directory),
-  m_stream(stream),
-  m_line_number(1),
-  m_dependency_list(list),
-  m_global_processed(false)
+: project(project),
+  filename(full_filename),
+  subdirectory(sub_directory),
+  stream(stream),
+  line_number(1),
+  dependency_list(list),
+  global_processed(false)
 {
   debug(debug::nectar) << "nectar_loader::nectar_loader::filename is " << full_filename << "\n";
 }
@@ -108,46 +107,50 @@ nectar_loader::~nectar_loader()
 
 void nectar_loader::extract_nectar()
 {
-  debug(debug::nectar_parser) << "nectar_loader::extract_nectar::Processing file: " << m_filename << ".\n";
+  debug(debug::nectar_parser) << "nectar_loader::extract_nectar::Processing file: " << filename << ".\n";
 
   // Remove leading BOM
-  skip_BOM(m_stream, m_filename);
+  skip_BOM(stream, filename);
+
+  // Set build directory
+  if(project.configuration.source_directory == ".")
+    project.configuration.build_directory = "./build";
 
   // create global target
-  m_project.targets.emplace_back(new global(m_project.configuration));
+  project.targets.emplace_back(new global(project.configuration));
 
   string token;
   while(next_token(token))
   {
     debug(debug::parser) << "nectar_loader::extract_nectar::processing token: \'" << token << "\'.\n";
     if("(" == token)
-      process_outer_conditional(m_project.configuration);
+      process_outer_conditional(project.configuration);
     else if("global" == token)
     {
-      debug(debug::parser) << "nectar_loader::extract_nectar::global section found at line " << m_line_number << ".\n";
-      if(m_global_processed)
-        throw syntax_error("Second global section found in nectar file. Only one global section per *.nectar.txt file is allowed.", m_filename, m_line_number);
+      debug(debug::parser) << "nectar_loader::extract_nectar::global section found at line " << line_number << ".\n";
+      if(global_processed)
+        throw syntax_error("Second global section found in nectar file. Only one global section per *.nectar.txt file is allowed.", filename, line_number);
 
-      m_global_processed = true;
+      global_processed = true;
       if(next_token(token) && "{" == token)
       {
-        parse_target(*m_project.targets[0], m_project.file_cache);
+        parse_target(*project.targets[0], project.file_cache);
       }
       else
-        throw syntax_error("\'global\' must be followed by \'{\'.", m_filename, m_line_number);
+        throw syntax_error("\'global\' must be followed by \'{\'.", filename, line_number);
     }
     else if("sub" == token)
     {
-      debug(debug::parser) << "nectar_loader::extract_nectar::sub section found at line " << m_line_number << ".\n";
+      debug(debug::parser) << "nectar_loader::extract_nectar::sub section found at line " << line_number << ".\n";
       // get name and dependencies of sub target
       if(next_token(token))
       {
         // Search for sub-project file: sourcedir/token/token.nectar.txt
         // 1. check for subdirectory
-        const string full_subproject_directory = full_directory_name(m_project.configuration.source_directory, full_directory_name(m_subdirectory, token));
+        const string full_subproject_directory = full_directory_name(project.configuration.source_directory, full_directory_name(subdirectory, token));
         if(!platform::directory_exists(full_subproject_directory))
           throw nectar_error("Directory " + full_subproject_directory + " not found.\n"
-                             "Subproject names must be identical to the subproject directory.", m_filename, m_line_number );
+                             "Subproject names must be identical to the subproject directory.", filename, line_number );
 
         string subproject_filename = token + ".nectar.txt";
         string full_subproject_filename = full_directory_name(full_subproject_directory, subproject_filename);
@@ -158,8 +161,8 @@ void nectar_loader::extract_nectar()
         }
         // 2. Open project file
         const auto&& stream_ptr = platform::open_ifstream(full_subproject_filename);
-        auto& stream = *stream_ptr;
-        if(stream)
+        auto& sub_stream = *stream_ptr;
+        if(sub_stream)
         {
           debug(debug::nectar) << "nectar_loader::extract_nectar:Opening file " << full_subproject_filename << " succeeded.\n";
           // Get sub target dependencies
@@ -167,76 +170,57 @@ void nectar_loader::extract_nectar()
           read_dependency_list(dependencies);
 
           // copy configuration and set proper subdirectory
-          configuration subconfiguration = m_project.configuration;
+          configuration subconfiguration = project.configuration;
           debug(debug::config) << "nectar_loader::extract_nectar::Setting source directory of subproject \'" << token << "\' to " << full_subproject_directory << ".\n";
           subconfiguration.source_directory = full_subproject_directory;
+          debug(debug::config) << "nectar_loader::extract_nectar::Setting build directory of subproject \'" << token << "\' to " << full_directory_name(project.configuration.build_directory,token) << ".\n";
+          subconfiguration.build_directory = full_directory_name(project.configuration.build_directory, token);
 
-          m_project.targets.emplace_back(new project(token, subconfiguration, dependencies));
+          project.targets.emplace_back(new ::libambrosia::project(project.name + "::" + token, subconfiguration, dependencies));
 
-          nectar_loader subloader(*static_cast<project*>(m_project.targets.back().get()), full_subproject_filename, full_directory_name(m_subdirectory, token), stream, dependencies);
+          nectar_loader subloader(*static_cast<libambrosia::project*>(project.targets.back().get()), full_subproject_filename, full_directory_name(subdirectory, token), sub_stream, dependencies);
           subloader.extract_nectar();
         }
         else // opening file failed
-          throw nectar_error("Error opening subproject file: " + full_subproject_filename + ".",  m_filename, m_line_number);
+          throw nectar_error("Error opening subproject file: " + full_subproject_filename + ".",  filename, line_number);
       }
       else
-        throw syntax_error("\'sub\' must be followed by the name of the subproject.", m_filename, m_line_number);
+        throw syntax_error("\'sub\' must be followed by the name of the subproject.", filename, line_number);
     }
-    else if("app" == token)
+    else if("app" == token || "lib" == token)
     {
-      debug(debug::parser) << "nectar_loader::extract_nectar::app section found at line " << m_line_number << ".\n";
+      debug(debug::parser) << "nectar_loader::extract_nectar:: " << token << " section found at line " << line_number << ".\n";
       if(next_token(token))
       {
         if("{" == token)
-          throw syntax_error("Expected " + token + " name after " + token + ".", m_filename, m_line_number);
+          throw syntax_error("Expected " + token + " name after \"" + token + "\".", filename, line_number);
         else
         {
           // Store target name
           const string target_name = token;
           // Take parent dependencies
-          dependency_set dependencies = m_dependency_list;
+          dependency_set dependencies = dependency_list;
           // Add target's dependencies
           read_dependency_list(dependencies);
 
           if(!next_token(token) && "{" == token) // TODO: check condition
-            throw syntax_error("Expected \'{\' after app target name.", m_filename, m_line_number);
+            throw syntax_error("Expected \'{\' after app target name.", filename, line_number);
 
-          m_project.targets.emplace_back(new app(target_name, m_project.targets[0]->configuration, dependencies));
+          configuration target_configuration = project.configuration;
+          debug(debug::config) << "nectar_loader::extract_nectar::Setting build directory for binary \'" << target_name << ".\n";
+          target_configuration.build_directory = full_directory_name(target_configuration.build_directory, target_name);
 
-          parse_target(*m_project.targets.back(), m_project.file_cache);
-        }
-      }
-    }
-    else if("lib" == token)
-    {
-      debug(debug::parser) << "nectar_loader::extract_nectar::lib section found at line " << m_line_number << ".\n";
-      if(next_token(token))
-      {
-        if("{" == token)
-          throw syntax_error("Expected " + token + " name after " + token + ".", m_filename, m_line_number);
-        else
-        {
-          // Store target name
-          const string target_name = token;
-          // Take parent dependencies
-          dependency_set dependencies = m_dependency_list;
-          // Add target's dependencies
-          read_dependency_list(dependencies);
+          project.targets.emplace_back(new binary(target_name,target_configuration, dependencies));
 
-          if(!next_token(token) && "{" == token)
-            throw syntax_error("Expected \'{\' after lib target name.", m_filename, m_line_number);
-
-          m_project.targets.emplace_back(new lib(target_name, m_project.targets[0]->configuration, dependencies));
-
-          parse_target(*m_project.targets.back(), m_project.file_cache);
+          parse_target(*project.targets.back(), project.file_cache);
         }
       }
     }
     else if("dep" == token)
     {
-      debug(debug::parser)  << "nectar_loader::extract_nectar::dep section found at line " << m_line_number << ".\n";
+      debug(debug::parser)  << "nectar_loader::extract_nectar::dep section found at line " << line_number << ".\n";
       if(!next_token(token))
-        throw syntax_error("Expected dependency type (\'app\' or \'lib\') after \'dep\'.", m_filename, m_line_number);
+        throw syntax_error("Expected dependency type (\'app\' or \'lib\') after \'dep\'.", filename, line_number);
       else
       {
         if("lib" == token && next_token(token))
@@ -250,14 +234,14 @@ void nectar_loader::extract_nectar()
           debug(debug::parser) << "nectar_loader::extract_nectar::locating application dependency: " << app_name << ".\n";
         }
         else
-          throw syntax_error("Expected dependency name after dependency type.", m_filename, m_line_number);
+          throw syntax_error("Expected dependency name after dependency type.", filename, line_number);
       }
 
     }
     else
-      throw syntax_error("Unexpected token: " + token + ". Expected global, sub, app, lib, dep, or test.", m_filename, m_line_number);
+      throw syntax_error("Unexpected token: " + token + ". Expected global, sub, app, lib, dep, or test.", filename, line_number);
   }
-  debug(debug::nectar_parser) << "nectar_loader::Finished with file: " << m_filename << ".\n";
+  debug(debug::nectar_parser) << "nectar_loader::Finished with file: " << filename << ".\n";
 }
 
 /*
@@ -267,8 +251,8 @@ void nectar_loader::syntax_warning(const string& message,
                                    const string_vector& warning_list ) const
 {
   debug(debug::status) << "nectar_loader::syntax_warning::Emitting a syntax warning now.\n";
-  cerr << "\nSyntax warning: " + m_filename + "\n" +
-          "       line " + to_string(m_line_number) + "\n" +
+  cerr << "\nSyntax warning: " + filename + "\n" +
+          "       line " + to_string(line_number) + "\n" +
           "       " + message << "\n";
   std::for_each(std::begin(warning_list), std::end(warning_list),
                 [](const string& item) { cerr << "\n\t" << item; });
@@ -283,35 +267,35 @@ bool nectar_loader::next_token(string& token,
   token.clear();
   char c;
   auto addchar = [&] { token.append(1, c); };
-  m_stream.get(c);
+  stream.get(c);
   if (contains(special_characters, c)) {
     addchar();
     return true;
   }
   // Consume but don't do anything with whitespace
-  if (std::isspace(c, m_stream.getloc())) {
+  if (std::isspace(c, stream.getloc())) {
     return next_token(token, special_characters);
   }
   switch(c) {
     case '"': {
       //addchar();
-      while(m_stream.get(c) && c != '"') {
+      while(stream.get(c) && c != '"') {
         // Something about first char being whitespace exception
         if (c == '\n') // exception
         addchar();
       }
-      if (!m_stream) // exception
+      if (!stream) // exception
       //addchar();
       return true;
     }
     case '\n': {
-      ++m_line_number;
+      ++line_number;
       return next_token(token, special_characters);
     }
     case '#': {
-      while(m_stream.get(c) && c != '\n');
-      if (!m_stream) // unterminated comment exception
-      m_stream.putback('\n');
+      while(stream.get(c) && c != '\n');
+      if (!stream) // unterminated comment exception
+      stream.putback('\n');
       return next_token(token, special_characters);
     }
   }
@@ -319,9 +303,9 @@ bool nectar_loader::next_token(string& token,
   // Hard to extract the original logic..
   // So I just went with the traditional [a-zA-Z_] regex.
   addchar();
-  while(m_stream.get(c) && ((c >= 'a' && c <= '\z') || (c >= 'A' && c <= 'Z') || c == '_'))
+  while(stream.get(c) && ((c >= 'a' && c <= '\z') || (c >= 'A' && c <= 'Z') || c == '_'))
     addchar();
-  m_stream.putback(c);
+  stream.putback(c);
     return true;
 }
 */
@@ -334,9 +318,9 @@ bool nectar_loader::next_token(string& token,
   bool inside_quotes = false;
   char c;
 
-  while(m_stream.get(c))
+  while(stream.get(c))
   {
-    debug(debug::lexer) << "nectar_loader::next_token::line number " << m_line_number << ", character: \'" << output_form(c) << "\', token so far: "
+    debug(debug::lexer) << "nectar_loader::next_token::line number " << line_number << ", character: \'" << output_form(c) << "\', token so far: "
                         << output_form(token) << "\n";
     if(inside_quotes)
     {
@@ -344,9 +328,9 @@ bool nectar_loader::next_token(string& token,
       if('\"' == c)
         break; // end of token at end of quotes
       else if('\n' == c)
-        throw syntax_error("Quoted strings cannot span several lines.", m_filename, m_line_number);
-      else if(token.empty() && std::isspace(c, m_stream.getloc()))
-        throw syntax_error("Beginning quote must not be followed by a whitespace.", m_filename, m_line_number);
+        throw syntax_error("Quoted strings cannot span several lines.", filename, line_number);
+      else if(token.empty() && std::isspace(c, stream.getloc()))
+        throw syntax_error("Beginning quote must not be followed by a whitespace.", filename, line_number);
       else
         token.append(1, c);
     }
@@ -355,7 +339,7 @@ bool nectar_loader::next_token(string& token,
       if(token.empty())
       {
         if('\n' == c)
-          ++m_line_number;
+          ++line_number;
 
         if(contains(special_characters, c))
         { // special characters are tokens of their own
@@ -369,32 +353,32 @@ bool nectar_loader::next_token(string& token,
           inside_quotes = true;
           continue;
         }
-        else if(std::isspace(c, m_stream.getloc()))
+        else if(std::isspace(c, stream.getloc()))
           continue;
         else if('#' == c)
         { // skip over comments
           debug(debug::lexer) << "nectar_loader::next_token::Skipping over comments.\n";
           string temp;
-          std::getline(m_stream, temp);
-          m_stream.putback('\n');
+          std::getline(stream, temp);
+          stream.putback('\n');
         }
         else if('\\' == c)
         {
           string temp;
-          std::getline(m_stream, temp);
-          ++m_line_number;
+          std::getline(stream, temp);
+          ++line_number;
         }
         else
           token.append(1, c);
       }
-      else if(std::isspace(c, m_stream.getloc()) || contains(special_characters, c))
+      else if(std::isspace(c, stream.getloc()) || contains(special_characters, c))
       { // special characters or whitespace seperate tokens
         debug(debug::lexer) << "nectar_loader::next_token::Detected special character or space.\n";
-        m_stream.putback(c);
+        stream.putback(c);
         break;
       }
       else if('\"' == c)
-        throw syntax_error("Beginning quotes must be preceded by a whitespace or a special character.", m_filename, m_line_number);
+        throw syntax_error("Beginning quotes must be preceded by a whitespace or a special character.", filename, line_number);
       else
         token.append(1, c);
     }
@@ -425,7 +409,7 @@ bool nectar_loader::next_list_token(const configuration& configuration,
         --curly_braces_count;
       else
       {
-        throw syntax_error("Unexpected closing curly brace.", m_filename, m_line_number);
+        throw syntax_error("Unexpected closing curly brace.", filename, line_number);
         return false;
       }
     }
@@ -433,14 +417,14 @@ bool nectar_loader::next_list_token(const configuration& configuration,
       return true;
   }
   if(curly_braces_count != 0)
-    throw syntax_error("Unclosed curly braces in list.", m_filename, m_line_number);
+    throw syntax_error("Unclosed curly braces in list.", filename, line_number);
   return true;
 }
 
 void nectar_loader::read_dependency_list(dependency_set& dependencies)
 {
   // copy "parent" dependencies
-  //dependencies = m_dependency_list;
+  //dependencies = dependency_list;
   debug(debug::parser) << "nectar_loader::read_dependency_list::Reading dependencies.\n";
   bool in_list = false;
   target_type type;
@@ -469,10 +453,10 @@ void nectar_loader::read_dependency_list(dependency_set& dependencies)
           goto insert_dependency;
         }
         else
-          throw syntax_error("Expected list of target names after \':\'.", m_filename, m_line_number);
+          throw syntax_error("Expected list of target names after \':\'.", filename, line_number);
       }
       else
-        throw syntax_error("Expected target body \'{\' or dependency list \':\'.", m_filename, m_line_number);
+        throw syntax_error("Expected target body \'{\' or dependency list \':\'.", filename, line_number);
     }
     else if("," == token)
     {
@@ -484,8 +468,8 @@ void nectar_loader::read_dependency_list(dependency_set& dependencies)
         std::pair<target_type, string> element = std::make_pair(type, token);
         if(!dependencies.insert(element).second)
         {
-          if(!contains(m_dependency_list, element))
-            throw syntax_error("Double dependency listed: " + target_type_map_inverse.at(type) + " " + token + ".", m_filename, m_line_number);
+          if(!contains(dependency_list, element))
+            throw syntax_error("Double dependency listed: " + target_type_map_inverse.at(type) + " " + token + ".", filename, line_number);
         }
       }
     }
@@ -525,13 +509,13 @@ bool nectar_loader::test_condition(const function<bool(const string&)>& config_c
         {
           case conditional_operator::not_op:
             throw syntax_error( "Not operator not implemented yet.",
-            m_filename, m_line_number );
+            filename, line_number );
           case conditional_operator::or_op:
             result = result || test_condition(config_contains);
             break;
           case conditional_operator::and_op:
             throw syntax_error( "And operator not implemented yet.",
-            m_filename, m_line_number );
+            filename, line_number );
           default:
             throw std::logic_error( "nectar_loader::test_condition:Operator " + conditional_operator_map_inverse.at(op) + " unexpected." );
         }
@@ -552,7 +536,7 @@ bool nectar_loader::test_condition(const function<bool(const string&)>& config_c
       else if(previous_was_operator)
       {
         throw syntax_error("Expected config item after conditional operator " + conditional_operator_map_inverse.at(op) + " unexpected.",
-                           m_filename, m_line_number);
+                           filename, line_number);
       }
       else
         previous_was_operator = true;
@@ -645,11 +629,11 @@ bool nectar_loader::test_condition(const function<bool(const string&)>& config_c
 
 void nectar_loader::process_outer_conditional(const configuration& /*configuration*/)
 {
-  throw nectar_error("Outer conditionals not implemented yet.", m_filename, m_line_number);
+  throw nectar_error("Outer conditionals not implemented yet.", filename, line_number);
 }
 void nectar_loader::process_dependency_list_conditional(const configuration& /*configuration*/)
 {
-  throw nectar_error("Outer list conditionals not implemented yet.", m_filename, m_line_number);
+  throw nectar_error("Outer list conditionals not implemented yet.", filename, line_number);
 }
 
 void nectar_loader::process_inner_conditional(const configuration& configuration)
@@ -672,7 +656,7 @@ void nectar_loader::process_inner_conditional(const configuration& configuration
 }
 void nectar_loader::process_inner_list_conditional(const configuration& /*configuration*/)
 {
-  throw nectar_error("Inner list conditionals not implemented yet.", m_filename, m_line_number);
+  throw nectar_error("Inner list conditionals not implemented yet.", filename, line_number);
 }
 
 void nectar_loader::parse_file_list(target& target,
@@ -687,10 +671,10 @@ void nectar_loader::parse_file_list(target& target,
   {
     debug(debug::parser) << "nectar_loader::parse_file_list::adding matches to file " << token << " to the file list.\n";
     empty = false;
-    target.add_source_file(type, token, file_cache, m_filename, m_line_number); // errors are assembled in this function
+    target.add_source_file(type, token, file_cache, filename, line_number); // errors are assembled in this function
   }
   if(empty)
-    throw syntax_error("A list must not be empty.", m_filename, m_line_number);
+    throw syntax_error("A list must not be empty.", filename, line_number);
 }
 void nectar_loader::parse_source_directory_list(target& target,
                                                 const file_type type,
@@ -706,20 +690,20 @@ void nectar_loader::parse_source_directory_list(target& target,
     empty_list = false;
 
     if(!target.add_source_directory(type, token, file_cache))
-      error_list.push_back("line " + to_string(m_line_number) +": " + token); // add the bad directory to error_list
+      error_list.push_back("line " + to_string(line_number) +": " + token); // add the bad directory to error_list
   }
   if(empty_list)
-    throw syntax_error("A source directory list must not be empty", m_filename, m_line_number);
+    throw syntax_error("A source directory list must not be empty", filename, line_number);
   else if(!error_list.empty())
-    throw nectar_error("Some source directories were not found:", m_filename, m_line_number, error_list);
+    throw nectar_error("Some source directories were not found:", filename, line_number, error_list);
 }
 void nectar_loader::parse_build_directory(const file_type)
 {
-  throw nectar_error("Build directory list parsing isn't done yet.", m_filename, m_line_number);
+  throw nectar_error("Build directory list parsing isn't done yet.", filename, line_number);
 }
 void nectar_loader::parse_variable_list(string_set&)
 {
-  throw nectar_error("Variable list parsing isn't done yet.", m_filename, m_line_number);
+  throw nectar_error("Variable list parsing isn't done yet.", filename, line_number);
 }
 
 void nectar_loader::parse_library_list(target& target,
@@ -731,13 +715,13 @@ void nectar_loader::parse_library_list(target& target,
   {
     // LIBS items must be of the form '-lsomelib' or '-Lsomedirectory'
     if(token.size() <= 2)
-      throw syntax_error("LIBS items must be of the form \'-lsomelib\'' and/or \'-Lsomedirectory\'", m_filename, m_line_number);
+      throw syntax_error("LIBS items must be of the form \'-lsomelib\'' and/or \'-Lsomedirectory\'", filename, line_number);
     else if(!token.compare(0, 2, "-l"))
     {
       token = token.substr(2);
       debug(debug::parser) << "nectar_loader::parse_library_list::Found library name: " << token << ".\n";
-      target.add_library(token, m_filename, m_line_number);
-      //  throw nectar_error("Library is mentioned twice: " + token, m_filename, m_line_number);
+      target.add_library(token, filename, line_number);
+      //  throw nectar_error("Library is mentioned twice: " + token, filename, line_number);
     }
     else if(!token.compare(0, 2, "-L"))
     {
@@ -752,7 +736,7 @@ void nectar_loader::parse_library_list(target& target,
       }
     }
     else
-      throw syntax_error("LIBS items must be of the form \'-lsomelib\'' and/or \'-Lsomedirectory\'", m_filename, m_line_number);
+      throw syntax_error("LIBS items must be of the form \'-lsomelib\'' and/or \'-Lsomedirectory\'", filename, line_number);
   }
 }
 
@@ -782,7 +766,7 @@ void nectar_loader::parse_target(target& target,
     {
       debug(debug::parser) << "nectar_loader::parse_target::NAME detected.\n";
       //if(type == target_type::global)
-      //  throw syntax_error("global target must not have a name", m_filename, m_line_number);
+      //  throw syntax_error("global target must not have a name", filename, line_number);
 
       if(already_modified_NAME)
         syntax_warning("NAME is being modified twice in this target section.");
@@ -796,7 +780,7 @@ void nectar_loader::parse_target(target& target,
           continue;
         }
       }
-      throw syntax_error("NAME must be followed by the target's output name (without prefix/suffix", m_filename, m_line_number );
+      throw syntax_error("NAME must be followed by the target's output name (without prefix/suffix", filename, line_number );
     }
     else
     {
@@ -819,10 +803,10 @@ void nectar_loader::parse_target(target& target,
         if(general_type == file_type::source || type == file_type::header)
           parse_source_directory_list(target, type, file_cache);
         else
-          throw nectar_error("Parsing of " + token + " not yet implemented.", m_filename, m_line_number);
+          throw nectar_error("Parsing of " + token + " not yet implemented.", filename, line_number);
       }
       else
-        throw syntax_error("Unexpected token: " + token, m_filename, m_line_number);
+        throw syntax_error("Unexpected token: " + token, filename, line_number);
     }
   }
 }
@@ -830,7 +814,7 @@ void nectar_loader::parse_target(target& target,
 void nectar_loader::validate_variable(const string& config)
 {
   if(config.find_first_of("*?/$") != string::npos)
-    throw syntax_error("Variable names must not contain the following characters: *?/$", m_filename, m_line_number);
+    throw syntax_error("Variable names must not contain the following characters: *?/$", filename, line_number);
 }
 void nectar_loader::validate_filename(const string& filename)
 {
@@ -838,13 +822,13 @@ void nectar_loader::validate_filename(const string& filename)
   if(index != string::npos && '/' != filename[index])
   { // there might be wildcards before a directory seperator
     if(filename.find('/',index+1) != string::npos)
-      throw syntax_error("Directory seperators '/' are not allowed in directory names.", m_filename, m_line_number);
+      throw syntax_error("Directory seperators '/' are not allowed in directory names.", filename, line_number);
   }
 }
 void nectar_loader::validate_directory(const string& directory)
 {
   if(!(directory.find_first_of("*?") == string::npos))
-    throw syntax_error("Wildcard characters ?* are not allowed in directory names.", m_filename, m_line_number);
+    throw syntax_error("Wildcard characters ?* are not allowed in directory names.", filename, line_number);
 }
 
 libambrosia_namespace_end

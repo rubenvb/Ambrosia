@@ -34,8 +34,8 @@
 
 libambrosia_namespace_begin
 
-target::target(const ::libambrosia::configuration& configuration,
-               const string& name,
+target::target(const string& name,
+               const ::libambrosia::configuration& configuration,
                const dependency_set& dependencies)
 : name(name),
   configuration(configuration),

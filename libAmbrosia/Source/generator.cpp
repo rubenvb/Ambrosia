@@ -17,14 +17,14 @@
  **/
 
 // Class include
-#include "Ambrosia/Generators/generator.h"
+#include "Ambrosia/generator.h"
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
+#include "Ambrosia/boost_wrapper.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/internal_error.h"
-#include "Ambrosia/Generators/compile_and_link_generator.h"
-#include "Ambrosia/Generators/generator_maps.h"
+#include "Ambrosia/generator_maps.h"
 #include "Ambrosia/status.h"
 
 // C++ includes
@@ -40,11 +40,14 @@ libambrosia_namespace_begin
 generator::generator(const file_type type,
                      build_element_set& files,
                      const string_set& header_directories,
-                     const lib::configuration& configuration)
+                     const ::libambrosia::configuration& configuration)
 : type(type),
   files(files),
   header_directories(header_directories),
-  configuration(configuration)
+  configuration(configuration),
+  toolchain_options(::libambrosia::toolchain_options.at(configuration.target_toolchain)),
+  language_options(::libambrosia::language_options.at(type)),
+  os_options(::libambrosia::os_options.at(configuration.target_os))
 {  }
 
 generator::~generator()
@@ -52,6 +55,7 @@ generator::~generator()
 
 void generator::generate_object_filenames()
 {
+
   debug(debug::command_gen) << "compile_and_link_generator::Generating object filenames for " << file_type_map_inverse.at(type) << " files that will be built in "
                             << "\"" << configuration.build_directory << "\".\n";
 
@@ -101,7 +105,7 @@ const string_vector generator::generate_parallel_commands()
     if(!languagestd.empty())
       command << " " << languagestd;
     // compile argument (e.g. '-c')
-    const string& compile_argument = toolchain_options.at(toolchain_option::compile_option);
+    const string& compile_argument = toolchain_options.at(toolchain_option::compile_only);
     if(!compile_argument.empty())
       command << " " << compile_argument;
     // source file
@@ -115,7 +119,7 @@ const string_vector generator::generate_parallel_commands()
     // include directories;
     for(auto&& it = std::begin(header_directories); it != std::end(header_directories); ++it)
     {
-      command << " " << toolchain_options.at(toolchain_option::include_option) << "\"" << full_directory_name(configuration.source_directory, *it) << "\"";
+      command << " " << toolchain_options.at(toolchain_option::include_dir) << "\"" << full_directory_name(configuration.source_directory, *it) << "\"";
     }
 
     commands.push_back(command.str());

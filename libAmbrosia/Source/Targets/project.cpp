@@ -30,13 +30,13 @@
 libambrosia_namespace_begin
 
 project::project(const ::libambrosia::configuration& configuration)
-: target(configuration),
+: target("unknown", configuration),
   file_cache()
 {   }
 project::project(const string& name,
                  const ::libambrosia::configuration& configuration,
                  const dependency_set& dependencies)
-: target(configuration, name, dependencies),
+: target(name, configuration, dependencies),
   file_cache()
 {   }
 

@@ -25,7 +25,7 @@
 // libAmbrosia includes
 #include "Ambrosia/configuration.h"
 #include "Ambrosia/enums.h"
-#include "Ambrosia/Generators/generator_maps.h"
+#include "Ambrosia/generator_maps.h"
 
 // C++ includes
 #include <memory>
@@ -58,13 +58,11 @@ protected:
   const file_type type;
   build_element_set& files;
   const string_set& header_directories;
-  const configuration& configuration;
+  const ::libambrosia::configuration& configuration;
   const toolchain_option_map toolchain_options;
   const language_option_map language_options;
   const os_option_map os_options;
 };
-
-std::unique_ptr<generator> get_generator(const file_type type, const configuration& configuration);
 
 libambrosia_namespace_end
 

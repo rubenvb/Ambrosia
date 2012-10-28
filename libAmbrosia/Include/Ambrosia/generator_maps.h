@@ -60,13 +60,15 @@ enum class toolchain_option
 {
   compiler, // gcc, clang, cl, icc
 
-  include_option, // -I, /I
+  include_dir, // -I, /I
+  include_file, // -include?
+  include_sysfile, // -sys-include?
 
   output_object, // -o, /Fo
   output_pch, // -o, /Fp
   output_debug, //
 
-  compile_option, // -c, /c
+  compile_only, // -c, /c
   compile_debug, // -g, /Zi
 
   object_extension, // .o, .obj
@@ -83,7 +85,9 @@ enum class toolchain_option
   link_optimize, // -flto, /LTCG /NOWIN98
   link_strip, // -s, /OPT:ICF
 
+  static_library_prefix, // lib
   static_library_extension, // .a, .lib
+  shared_library_prefix, // lib
   import_library_extension, // .dll.a .dll.lib
 
 };
@@ -106,6 +110,10 @@ enum class language_option
   std_cxx98,
   std_cxx03,
   std_cxx11,
+
+  std_gnuxx98,
+  std_gnuxx03,
+  std_gnuxx11
 };
 typedef std::map<language_option, std::string> language_option_map;
 extern const std::map<file_type, language_option_map> language_options;
@@ -118,9 +126,6 @@ enum class os_option
 };
 typedef std::map<os_option, std::string> os_option_map;
 extern const std::map<os, os_option_map> os_options;
-
-// map to map the maps according to file_type
-//extern const command_map the_huge_command_map;
 
 libambrosia_namespace_end
 

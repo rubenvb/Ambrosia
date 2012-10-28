@@ -13,15 +13,13 @@
 
 lib Ambrosia
 {
-    HEADER_DIRS Include
-    SOURCE_DIRS Source \
-                Source/Configuration \
-                Source/Error \
-                Source/Generators
+  HEADER_DIRS Include
+  SOURCE_DIRS Source \
+              Source/Error
 
-    SOURCES *.cpp \
-            Platform/common.cpp
-    # Platform files
-    (windows)SOURCES Platform/windows.cpp
-    (unix)   SOURCES Platform/unix.cpp
+  SOURCES *.cpp \
+          Platform/common.cpp
+  # Platform files
+  (windows)SOURCES Platform/windows.cpp
+  (unix)   SOURCES Platform/unix.cpp
 }

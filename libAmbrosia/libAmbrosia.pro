@@ -56,17 +56,16 @@ HEADERS += \
     Include/Ambrosia/Error/soft_error.h \
     Include/Ambrosia/Error/commandline_error.h \
     Include/Ambrosia/Error/internal_error.h \
-    Include/Ambrosia/Generators/generator.h \
-    Include/Ambrosia/Generators/generator_maps.h \
-    Include/Ambrosia/Generators/compile_and_link_generator.h \
     Include/Ambrosia/build_element.h \
     Include/Ambrosia/file.h \
     Include/Ambrosia/ambrosia.h \
     Include/Ambrosia/Targets/target.h \
     Include/Ambrosia/Targets/project.h \
-    Include/Ambrosia/Targets/lib.h \
-    Include/Ambrosia/Targets/app.h \
-    Include/Ambrosia/Targets/global.h
+    Include/Ambrosia/Targets/global.h \
+    Include/Ambrosia/Targets/binary.h \
+    Include/Ambrosia/generator.h \
+    Include/Ambrosia/generator_maps.h \
+    Include/Ambrosia/compile_and_link_generator.h
 
 SOURCES += \
     Source/configuration.cpp \
@@ -85,14 +84,12 @@ SOURCES += \
     Source/nectar_loader.cpp \
     Source/node.cpp \
     Source/status.cpp \
-    Source/Generators/generator.cpp \
-    Source/Generators/generator_maps.cpp \
-    Source/Generators/compile_and_link_generator.cpp \
     Source/Targets/target.cpp \
     Source/Targets/project.cpp \
-    Source/Targets/lib.cpp \
-    Source/Targets/app.cpp \
-    Source/Targets/global.cpp
+    Source/Targets/global.cpp \
+    Source/Targets/binary.cpp \
+    Source/generator.cpp \
+    Source/generator_maps.cpp
 
 *win32*:SOURCES += Source/Platform/windows.cpp
 *linux*:SOURCES += Source/Platform/unix.cpp

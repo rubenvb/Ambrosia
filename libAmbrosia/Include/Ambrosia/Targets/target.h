@@ -35,8 +35,8 @@ libambrosia_namespace_begin
 class target
 {
 public:
-  target(const configuration& configuration,
-         const std::string& name = "",
+  target(const std::string& name,
+         const configuration& configuration,
          const dependency_set& dependencies = dependency_set());
 
   // Target information

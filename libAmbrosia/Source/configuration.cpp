@@ -47,7 +47,7 @@ configuration::configuration()
   source_directory(),
   config_strings(),
   project_file(),
-  build_directory("./build")
+  build_directory(".")
 {
   initialize_config();
   debug(debug::config) << "\nconfiguration::config contains:\n" << config_strings << "\n";

@@ -50,7 +50,7 @@ extern const std::set<char> s_special_characters_newline;
 class nectar_loader
 {
 public:
-  nectar_loader(project& project,
+  nectar_loader(::libambrosia::project& project,
                 const std::string& full_filename,
                 const std::string& sub_directory,
                 std::istream& stream,
@@ -64,13 +64,13 @@ public:
   nectar_loader(const nectar_loader&) DELETED_FUNCTION;
 
 private:
-  project& m_project;
-  const std::string& m_filename; // used for error reporting
-  const std::string m_subdirectory; // used for file searching, without configuration.source_directory() !
-  std::istream& m_stream; // file input stream
-  std::size_t m_line_number; // used for error reporting
-  const dependency_set& m_dependency_list;
-  bool m_global_processed; // only one global section per project file is allowed
+  ::libambrosia::project& project;
+  const std::string& filename; // used for error reporting
+  const std::string subdirectory; // used for file searching, without configuration.source_directory() !
+  std::istream& stream; // file input stream
+  std::size_t line_number; // used for error reporting
+  const dependency_set& dependency_list;
+  bool global_processed; // only one global section per project file is allowed
 /*
  * Warning output
  *****************/

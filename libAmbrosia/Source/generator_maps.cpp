@@ -17,13 +17,69 @@
  **/
 
 // Map declarations
-#include "Ambrosia/Generators/generator_maps.h"
+#include "Ambrosia/generator_maps.h"
 
 // libAmbrosia includes
 #include "Ambrosia/boost_wrapper.h"
 #include "Ambrosia/typedefs.h"
 
 libambrosia_namespace_begin
+
+const std::map<toolchain, toolchain_option_map> toolchain_options =
+  map_entries_begin
+    entry_begin toolchain::GNU,
+      map_entries_begin
+        entry_begin toolchain_option::compiler, "gcc" entry_end
+        entry_begin toolchain_option::include_dir, "-I" entry_end
+        entry_begin toolchain_option::include_file, "-include" entry_end
+        entry_begin toolchain_option::include_sysfile, "-sys-include" entry_end
+        entry_begin toolchain_option::output_object, "-o" entry_end
+        entry_begin toolchain_option::output_pch, "-o" entry_end
+        entry_begin toolchain_option::output_debug, "" entry_end
+        entry_begin toolchain_option::compile_only, "-c" entry_end
+        entry_begin toolchain_option::compile_debug, "-g" entry_end
+        entry_begin toolchain_option::object_extension, ".o" entry_end
+        entry_begin toolchain_option::optimize_none, "-O0" entry_end
+        entry_begin toolchain_option::optimize_normal, "-O2" entry_end
+        entry_begin toolchain_option::optimize_size, "-Os" entry_end
+        entry_begin toolchain_option::optimize_extreme, "-O3" entry_end
+        entry_begin toolchain_option::optimize_link, "-flto" entry_end
+        entry_begin toolchain_option::optimize_extra, "-fomit-frame-pointer -momit-leaf-frame-pointer" entry_end
+        entry_begin toolchain_option::dynamic_linker, "gcc" entry_end
+        entry_begin toolchain_option::link_debug, "" entry_end
+        entry_begin toolchain_option::link_optimize, "-flto" entry_end
+        entry_begin toolchain_option::link_strip, "-s" entry_end
+        entry_begin toolchain_option::static_library_prefix, "lib" entry_end
+        entry_begin toolchain_option::static_library_extension, ".a" entry_end
+        entry_begin toolchain_option::shared_library_prefix, "lib" entry_end
+        entry_begin toolchain_option::import_library_extension, ".dll.a" entry_end
+      entries_end
+    entry_end
+  entries_end;
+
+const std::map<file_type, language_option_map> language_options =
+  map_entries_begin
+    entry_begin file_type::source_cxx,
+      map_entries_begin
+        entry_begin language_option::std_cxx98, "-std=c++98" entry_end
+        entry_begin language_option::std_cxx98, "-std=c++03" entry_end
+        entry_begin language_option::std_cxx98, "-std=c++11" entry_end
+        entry_begin language_option::std_cxx98, "-std=gnu++98" entry_end
+        entry_begin language_option::std_cxx98, "-std=gnu++03" entry_end
+        entry_begin language_option::std_cxx98, "-std=gnu++11" entry_end
+      entries_end
+    entry_end
+  entries_end;
+
+const std::map<os, os_option_map> os_options =
+  map_entries_begin
+    entry_begin os::Windows,
+      map_entries_begin
+        entry_begin os_option::executable_extension, ".exe" entry_end
+        entry_begin os_option::shared_library_extension, ".dll" entry_end
+      entries_end
+    entry_end
+  entries_end;
 
 // C-style languages
 /*const command_map the_huge_command_map =
