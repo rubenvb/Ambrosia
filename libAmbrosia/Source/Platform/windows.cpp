@@ -92,6 +92,32 @@ const os build_os = os::Windows;
   const architecture ambrosia_architecture = architecture::x86;
 #endif // _WIN64
 
+void command::set_program(const std::string& program_path)
+{
+  program = convert_to_utf16(program_path);
+}
+void command::add_argument(const std::string& argument)
+{
+  // append a space if not the first argument
+  if(!argument.empty())
+  {
+    if(!arguments.empty())
+      arguments.append(L" ");
+
+    arguments.append(convert_to_utf16(argument));
+  }
+}
+void command::add_arguments(const command& other_command)
+{
+  if(!other_command.arguments.empty())
+  {
+    if(!arguments.empty())
+      arguments.append(L" ");
+
+    arguments.append(other_command.arguments);
+  }
+}
+
 /*
  * Windows support functions
  ****************************/

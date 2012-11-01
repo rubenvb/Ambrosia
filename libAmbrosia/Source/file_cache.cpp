@@ -21,6 +21,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
+#include "Ambrosia/file.h"
 #include "Ambrosia/configuration.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/Error/error.h"
@@ -55,62 +56,6 @@ const file_set& file_cache::get_source_file_set(const std::string& directory)
   }
 }
 
-const file_set file_cache::find_source_file(const string& filename,
-                                            const configuration* configuration,
-                                            const string_set& directories )
-{
-  debug(debug::files) << "file_cache::find_source_file::Called.\n";
-  const string& source_directory = configuration->source_directory;
-  // handle filename with directory prepended
-  const string_pair directory_filename(split_preceding_directory(filename));
-  const string& preceding_directory = directory_filename.first;
-  const string& true_filename = directory_filename.second;
-  // handle empty "directories" case
-  string_set directories_to_search;
-  if(directories.empty())
-    directories_to_search.insert(source_directory);
-  else
-  {
-    std::for_each(std::begin(directories), std::end(directories), [&](const string& directory)
-                  {
-                    const string full_dir = full_directory_name(source_directory, full_directory_name(directory, preceding_directory));
-                    if(platform::directory_exists(full_dir))
-                    {
-                      debug(debug::files) << "file_cache::find_source_file::Adding deduced directory to search list: " << full_dir << "\n";
-                      directories_to_search.insert(full_dir);
-                    }
-                    else
-                    debug(debug::files) << "file_cache::find_source_file::Not adding non-existing deduced directory to search list: " << full_dir << ".\n";
-                  });
-    if(directories_to_search.empty())
-      directories_to_search.insert(source_directory);
-  }
-  debug(debug::files) << "file_cache::find_source_file::Looking for " << filename << " in the following subdirectories of " << source_directory << ":\n"
-                      << directories_to_search;
-
-  file_set result;
-
-  for(auto&& it = std::begin(directories_to_search); it != std::end(directories_to_search); ++it)
-  {
-    const string& directory = *it;
-
-    debug(debug::files) << "file_cache::find_source_file::Loading directory contents for: " << directory << ".\n";
-    const file_set& files_on_disk = get_source_file_set(directory);
-
-    for(auto&& it = std::begin(files_on_disk); it != std::end(files_on_disk); ++it)
-    {
-      const file& entry = *it;
-      debug(debug::files) << "file_cache::find_source_file::Matching " << entry.name << " vs " << true_filename << ".\n";
-      if(wildcard_compare(true_filename, entry.name))
-      {
-        debug(debug::files) << "file_cache::find_source_file::Match found: " << entry.name << "\n";
-        result.insert(file(directory + "/" + entry.name, entry.time_modified));
-      }
-    }
-  }
-  debug(debug::files) << "file_cache::find_source_file::Found " << result.size() << " match(es).\n";
-  return result;
-}
 void file_cache::find_source_files(const std::string& filename,
                                    const std::string& source_directory,
                                    const string_set& subdirectories,
@@ -138,7 +83,7 @@ void file_cache::find_source_files(const std::string& filename,
       if(wildcard_compare(true_filename, current))
       {
         debug(debug::files) << "file_cache::find_source_files::Match found: " << current << "\n";
-        files.insert(*source_file_it);
+        files.insert(file(full_directory_name(full_directory, current), source_file_it->time_modified));
       }
     }
   }

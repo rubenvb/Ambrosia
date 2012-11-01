@@ -42,9 +42,6 @@ public:
   const file_set& get_source_file_set(const std::string& directory);
 
   // Find the unique relative path to the filename, otherwise return all matching duplicates
-  const file_set find_source_file(const std::string& filename,
-                                  const configuration* config,
-                                  const string_set& directories = string_set());
   void find_source_files(const std::string& filename,
                          const std::string& source_directory,
                          const string_set& subdirectories,

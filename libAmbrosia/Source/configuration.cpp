@@ -114,10 +114,6 @@ void configuration::initialize_config()
     config_strings.insert("mingw");
   if(target_os == os::Linux || target_os == os::MacOSX)
     config_strings.insert("unix");
-
-  //TODO properly set these only when needed
-  config_strings.insert("C99");
-  config_strings.insert("C++11");
 }
 
 libambrosia_namespace_end

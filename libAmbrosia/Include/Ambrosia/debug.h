@@ -23,6 +23,7 @@
 #include "Ambrosia/enums.h"
 #include "Ambrosia/Error/internal_error.h"
 #include "Ambrosia/global.h"
+#include "Ambrosia/platform.h"
 #include "Ambrosia/typedefs.h"
 
 // C++ includes
@@ -106,6 +107,9 @@ template<>
 debug& debug::operator<<(const string_set&);
 template<>
 debug& debug::operator<<(const std::set<file_type>&);
+template<>
+debug& debug::operator<<(const platform::command&);
+
 #endif // AMBROSIA_DEBUG
 
 libambrosia_namespace_end

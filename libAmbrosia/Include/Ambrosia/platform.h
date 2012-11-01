@@ -59,14 +59,16 @@ const toolchain ambrosia_toolchain =
  *******************************/
 struct command
 {
+  void set_program(const std::string& program_name);
+  void add_argument(const std::string& argument);
+  void add_arguments(const command& other_command);
 #if _WIN32
   std::wstring program;
-  std::vector<std::wstring> arguments;
+  std::wstring arguments;
 #else
   std::string program;
   std::vector<std::string> arguments;
 #endif
-
 };
 
 /*

@@ -111,6 +111,20 @@ debug& debug::operator<<(const set<file_type>& type_list)
   }
   return *this;
 }
+template<>
+debug& debug::operator<<(const platform::command& command)
+{
+  if(m_output)
+#if _WIN32
+    std::cerr << platform::convert_to_utf8(command.program) << " " << platform::convert_to_utf8(command.arguments);
+#else
+  {
+    std::cerr << command.program
+    std::for_each(std::begin(command.arguments), std::end(command.arguments),[](const string& s) { std::cerr << " " << s; });
+  }
+#endif
+  return *this;
+}
 
 #endif // AMBROSIA_DEBUG
 
