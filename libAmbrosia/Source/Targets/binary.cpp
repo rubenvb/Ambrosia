@@ -53,6 +53,7 @@ void binary::generate_commands()
     command_generator.generate_parallel_commands(std::back_inserter(parallel_commands));
   }
   // Generate the final "link" command
+  string_vector libraries;
   if(type == target_type::library)
   {
     //TODO: check static vs shared library
@@ -61,10 +62,27 @@ void binary::generate_commands()
   }
   else if(type == target_type::application)
   {
-    link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::dynamic_linker));
+    if(contains(configuration.source_types, file_type::source_cxx))
+    {
+      debug(debug::command_gen) << "binary::generate_commands::Linking with C++ linker driver.\n";
+      link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::dynamic_linker_cxx));
+      if(contains(configuration.source_types, file_type::source_fortran))
+        libraries.push_back(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::runtime_library_fortran));
+    }
+    else if(contains(configuration.source_types, file_type::source_fortran))
+    {
+      debug(debug::command_gen) << "binary::generate_commands::Linking with Fortran linker driver.\n";
+      link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::dynamic_linker_fortran));
+    }
+    else
+    {
+      debug(debug::command_gen) << "binary::generate_commands::Linking with C linker driver.\n";
+      link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::dynamic_linker_c));
+    }
+
     link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::output_object));
     link_command.add_argument(full_directory_name(configuration.build_directory, configuration.name)
-                                                  +os_options.at(configuration.target_os).at(os_option::executable_extension));
+                                                  + os_options.at(configuration.target_os).at(os_option::executable_extension));
   }
   // add all object files with full path (look into "response files" or "object scripts" to circumvent commandline length limits)
   for(auto type_it = std::begin(files); type_it != std::end(files); ++type_it)
@@ -75,7 +93,22 @@ void binary::generate_commands()
       link_command.add_argument(bes_it->object_file.name);
     }
   }
+  // add all libraries to link
+  for(auto lib_it = std::begin(libraries); lib_it != std::end(libraries); ++lib_it)
+  {
+    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_library));
+    link_command.add_argument(*lib_it);
+  }
   debug(debug::command_gen) << "binary::generate_commands::Final command: " << link_command << "\n";
+}
+
+void binary::dump_commands() const
+{
+  for(auto command_it = std::begin(parallel_commands); command_it != std::end(parallel_commands); ++command_it)
+  {
+    debug(debug::command_gen) << "binary::dump_commands::Parallel command: " << *command_it << "\n";
+  }
+  debug(debug::command_gen) << "binary::dump_commands::Final command: " << link_command << "\n";
 }
 
 libambrosia_namespace_end

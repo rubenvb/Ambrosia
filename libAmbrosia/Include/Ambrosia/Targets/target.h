@@ -57,6 +57,8 @@ public:
   // Command generation
   virtual void generate_commands()
   {   }
+  virtual void dump_commands() const
+  {   }
 
   std::string name;
   lib::configuration configuration;

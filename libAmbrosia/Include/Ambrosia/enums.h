@@ -122,7 +122,9 @@ enum class generator_string
 // Toolchain-specific options
 enum class toolchain_option
 {
-  compiler, // gcc, clang, cl, icc
+  compiler_c, // gcc, clang, cl, icc
+  compiler_cxx, // g++ clang++, cl, icc
+  compiler_fortran, // gfortran, ...
 
   include_dir, // -I, /I
   include_file, // -include?
@@ -144,13 +146,23 @@ enum class toolchain_option
   optimize_extreme, // -O3, /Ox
   optimize_link, // -flto, /GL
   optimize_extra, // options that make debugging impossible but added because Ambrosia is awesome
-                  // these include for example: -fomit-frame-pointer, -momit-leaf-frame-pointer, /Gy,
-  dynamic_linker, // executable and shared library linker driver
+                  // these include for example: -fomit-frame-pointer, -momit-leaf-frame-pointer, /Gy
+
+  dynamic_linker_c, // executable and shared library linker for C
+  dynamic_linker_cxx, // executable and shared library linker for C++
+  dynamic_linker_fortran, // executable and shared library linker for Fortran
+
   static_linker, // static library archive linker driver
   static_link_options, // default static linker options
+
   link_debug, // /DEBUG
   link_optimize, // -flto, /LTCG /NOWIN98
   link_strip, // -s, /OPT:ICF
+  link_library, // -l
+  link_search_directory, // -L, /libpath:
+
+  runtime_library_cxx, // libstdc++, libc++
+  runtime_library_fortran, // libgfortran, ...
 
   static_library_prefix, // lib
   static_library_extension, // .a, .lib

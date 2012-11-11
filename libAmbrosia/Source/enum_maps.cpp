@@ -191,7 +191,9 @@ const std::map<toolchain, toolchain_option_map> toolchain_options =
   map_entries_begin
     entry_begin toolchain::GNU,
       map_entries_begin
-        entry_begin toolchain_option::compiler, "gcc" entry_end
+        entry_begin toolchain_option::compiler_c, "gcc" entry_end
+        entry_begin toolchain_option::compiler_cxx, "g++" entry_end
+        entry_begin toolchain_option::compiler_fortran, "gfortran" entry_end
         entry_begin toolchain_option::include_dir, "-I" entry_end
         entry_begin toolchain_option::include_file, "-include" entry_end
         entry_begin toolchain_option::include_sysfile, "-sys-include" entry_end
@@ -207,7 +209,9 @@ const std::map<toolchain, toolchain_option_map> toolchain_options =
         entry_begin toolchain_option::optimize_extreme, "-O3" entry_end
         entry_begin toolchain_option::optimize_link, "-flto" entry_end
         entry_begin toolchain_option::optimize_extra, "-fomit-frame-pointer -momit-leaf-frame-pointer" entry_end
-        entry_begin toolchain_option::dynamic_linker, "gcc" entry_end
+        entry_begin toolchain_option::dynamic_linker_c, "gcc" entry_end
+        entry_begin toolchain_option::dynamic_linker_cxx, "g++" entry_end
+        entry_begin toolchain_option::dynamic_linker_fortran, "gfortran" entry_end
         entry_begin toolchain_option::static_linker, "ar" entry_end
         entry_begin toolchain_option::static_link_options, "rcs" entry_end
         entry_begin toolchain_option::link_debug, "" entry_end

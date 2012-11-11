@@ -76,8 +76,8 @@ try {
 
   project.generate_commands();
 
-  //if(lib::project::configuration->m_dump_commands)
-  //  project.dump_commands();
+  if(options.dump_commands)
+    project.dump_commands();
 
 #ifdef AMBROSIA_DEBUG
   const double command_generation_time = difftime(time(0), t);
@@ -88,7 +88,7 @@ try {
 
 #ifdef AMBROSIA_DEBUG
   const double build_time = difftime(time(0), t);
-  cerr << "Runtimes:\n"
+  cerr << "Ambrosia execution times:\n"
        << "Project loading: " << project_read_time << " seconds,\n"
        << "Command generation: " << command_generation_time << " seconds,\n"
        << "Actual build time: " << build_time << "\n.";

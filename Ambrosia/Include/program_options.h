@@ -29,6 +29,8 @@ ambrosia_namespace_begin
 
 struct program_options
 {
+  program_options() : dump_commands(false), target_options()
+  {   }
   bool dump_commands;
   map_string_set_string target_options;
 };

@@ -50,6 +50,7 @@ void target::add_source_file(const file_type general_type,
                              const string& /*nectar_file*/,
                              const size_t /*line_number*/)
 {
+  // add source file type to list
   // search specific file_type directories
   const file_type specific_type = detect_type(general_type, filename);
   string_set& directories = source_directories[specific_type];
@@ -58,6 +59,7 @@ void target::add_source_file(const file_type general_type,
   debug(debug::files) << "target::add_source_file::Finding " << file_type_map_inverse.at(specific_type) << " files matching " << filename << " in:\n"
                       << directories << "\n";
   file_cache.find_source_files(filename, configuration.source_directory, directories, files[specific_type]);
+  configuration.source_types.insert(specific_type);
   //if(general_type != specific_type)
   //  file_cache.find_source_files(filename, configuration.source_directory, general_directories, files[general_type]);
 }

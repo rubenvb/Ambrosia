@@ -37,6 +37,7 @@ public:
           const dependency_set& dependencies = dependency_set());
 
   void generate_commands();
+  void dump_commands() const;
 
   target_ptr_vector targets;
 

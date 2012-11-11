@@ -64,7 +64,6 @@ public:
   string_map user_variables; // user string --> value
   string_set config_strings;
 
-  bool dump_commands; // TODO: find better place for this
   std::string gnu_prefix;
 
 private:

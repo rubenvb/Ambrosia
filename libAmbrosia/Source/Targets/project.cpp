@@ -46,5 +46,13 @@ void project::generate_commands()
   std::for_each(std::begin(targets), std::end(targets),[](target_ptr& t) { t->generate_commands(); });
 }
 
+void project::dump_commands() const
+{
+  for(auto target_it = std::begin(targets); target_it != std::end(targets); ++target_it)
+  {
+    (*target_it)->dump_commands();
+  }
+}
+
 
 libambrosia_namespace_end
