@@ -28,6 +28,7 @@
 #include "Ambrosia/typedefs.h"
 
 // C++ includes
+#include <iterator>
 #include <string>
 
 libambrosia_namespace_begin
@@ -37,6 +38,7 @@ class target
 public:
   target(const std::string& name,
          const configuration& configuration,
+         const target_type type,
          const dependency_set& dependencies = dependency_set());
 
   // Target information
@@ -58,12 +60,11 @@ public:
 
   std::string name;
   lib::configuration configuration;
+  target_type type;
   const dependency_set dependencies;
 
   std::map<file_type, build_element_set> files;
   std::map<file_type, string_set> source_directories;
-
-  const command_vector commands;
 };
 
 libambrosia_namespace_end

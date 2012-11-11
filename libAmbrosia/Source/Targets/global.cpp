@@ -26,7 +26,7 @@
 libambrosia_namespace_begin
 
 global::global(const ::libambrosia::configuration& configuration)
-: target("global", configuration)
+: target("global", configuration, target_type::global)
 {   }
 
 libambrosia_namespace_end

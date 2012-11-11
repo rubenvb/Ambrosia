@@ -97,7 +97,11 @@ const string current_working_directory()
   const size_t maxChunks=10240; // 2550 KiBs of current path are more than enough
 
   char stackBuffer[chunkSize]; // Stack buffer for the "normal" case
-  if(getcwd(stackBuffer, sizeof(stackBuffer)) != NULL)
+#ifdef _WIN32
+  if(getcwd(stackBuffer, static_cast<int>(sizeof(stackBuffer))) != nullptr)
+#else
+  if(getcwd(stackBuffer, sizeof(stackBuffer)) != nullptr)
+#endif
     return stackBuffer;
   if( errno!=ERANGE )
     throw std::runtime_error("Cannot determine the current path.");
@@ -106,9 +110,9 @@ const string current_working_directory()
   {
     std::unique_ptr<char> cwd(new char[chunkSize*chunks]);
 #if _WIN32
-    if(getcwd(cwd.get(), static_cast<int>(chunkSize*chunks)) != 0)
+    if(getcwd(cwd.get(), static_cast<int>(chunkSize*chunks)) != nullptr)
 #else
-    if(getcwd(cwd.get(), chunkSize*chunks) != 0)
+    if(getcwd(cwd.get(), chunkSize*chunks) != nullptr)
 #endif
       return cwd.get();
 

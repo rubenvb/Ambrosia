@@ -103,8 +103,8 @@ const map<environment, string> environment_map_inverse =
 const map<string, target_type> target_type_map =
   map_entries_begin
     entry_begin "global",  target_type::global entry_end
-    entry_begin "app",     target_type::app entry_end
-    entry_begin "lib",     target_type::lib entry_end
+    entry_begin "app",     target_type::application entry_end
+    entry_begin "lib",     target_type::library entry_end
     entry_begin "sub",     target_type::project entry_end
     entry_begin "install", target_type::install entry_end
     entry_begin "test",    target_type::test entry_end
@@ -112,8 +112,8 @@ const map<string, target_type> target_type_map =
 const map<target_type, string> target_type_map_inverse =
   map_entries_begin
     entry_begin target_type::global,  "global" entry_end
-    entry_begin target_type::app,     "app" entry_end
-    entry_begin target_type::lib,     "lib" entry_end
+    entry_begin target_type::application,     "app" entry_end
+    entry_begin target_type::library,     "lib" entry_end
     entry_begin target_type::project, "sub" entry_end
     entry_begin target_type::install, "install" entry_end
     entry_begin target_type::test,    "test" entry_end
@@ -208,6 +208,8 @@ const std::map<toolchain, toolchain_option_map> toolchain_options =
         entry_begin toolchain_option::optimize_link, "-flto" entry_end
         entry_begin toolchain_option::optimize_extra, "-fomit-frame-pointer -momit-leaf-frame-pointer" entry_end
         entry_begin toolchain_option::dynamic_linker, "gcc" entry_end
+        entry_begin toolchain_option::static_linker, "ar" entry_end
+        entry_begin toolchain_option::static_link_options, "rcs" entry_end
         entry_begin toolchain_option::link_debug, "" entry_end
         entry_begin toolchain_option::link_optimize, "-flto" entry_end
         entry_begin toolchain_option::link_strip, "-s" entry_end

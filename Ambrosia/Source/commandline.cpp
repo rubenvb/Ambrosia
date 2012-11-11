@@ -81,7 +81,7 @@ void apply_commandline_options(const string_vector& arguments,
 
   // Options to be filled in, with default values, if any
   size_t argument_number = 0;
-  bool m_first_dashless_argument = true;
+  bool first_dashless_argument = true;
   for(auto&& it = std::begin(arguments); it != std::end(arguments); ++it)
   {
     argument_number++;
@@ -91,9 +91,9 @@ void apply_commandline_options(const string_vector& arguments,
     {
       case 0:
         // only allow the first dashless argument as source dir or file path
-        if(m_first_dashless_argument)
+        if(first_dashless_argument)
         {
-          m_first_dashless_argument = false;
+          first_dashless_argument = false;
           debug(debug::commandline) << "commandline::apply_commandline_options::Possible project file or directory: \'" << current << "\'.\n";
 
           if(lib::platform::file_exists(current))

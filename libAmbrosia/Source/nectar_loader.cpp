@@ -189,6 +189,8 @@ void nectar_loader::extract_nectar()
     }
     else if("app" == token || "lib" == token)
     {
+      const target_type type = target_type_map.at(token);
+
       debug(debug::parser) << "nectar_loader::extract_nectar:: " << token << " section found at line " << line_number << ".\n";
       if(next_token(token))
       {
@@ -210,7 +212,7 @@ void nectar_loader::extract_nectar()
           debug(debug::config) << "nectar_loader::extract_nectar::Setting build directory for binary \'" << target_name << ".\n";
           target_configuration.build_directory = full_directory_name(target_configuration.build_directory, target_name);
 
-          project.targets.emplace_back(new binary(target_name,target_configuration, dependencies));
+          project.targets.emplace_back(new binary(target_name, target_configuration, type, dependencies));
 
           parse_target(*project.targets.back(), project.file_cache);
         }
@@ -236,7 +238,6 @@ void nectar_loader::extract_nectar()
         else
           throw syntax_error("Expected dependency name after dependency type.", filename, line_number);
       }
-
     }
     else
       throw syntax_error("Unexpected token: " + token + ". Expected global, sub, app, lib, dep, or test.", filename, line_number);
@@ -443,10 +444,7 @@ void nectar_loader::read_dependency_list(dependency_set& dependencies)
       {
         if(next_token(token))
         {
-          if("lib"==token)
-            type = target_type::lib;
-          else if("app" == token)
-            type = target_type::app;
+          type = target_type_map.at(token);
 
           debug(debug::parser) << "nectar_loader::read_dependency_list::Detected " << token << " dependencies.\n";
           in_list = true;

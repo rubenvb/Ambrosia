@@ -22,7 +22,7 @@
 // Global include
 #include "Ambrosia/global.h"
 
-ambrosia_namespace_begin
+libambrosia_namespace_begin
 
 // Operating system
 enum class os
@@ -67,8 +67,8 @@ enum class conditional_operator
 enum class target_type
 {
   global,
-  app,
-  lib,
+  application,
+  library,
   project,
   install,
   test
@@ -131,6 +131,7 @@ enum class toolchain_option
   output_object, // -o, /Fo
   output_pch, // -o, /Fp
   output_debug, //
+  output_import_library,
 
   compile_only, // -c, /c
   compile_debug, // -g, /Zi
@@ -145,6 +146,8 @@ enum class toolchain_option
   optimize_extra, // options that make debugging impossible but added because Ambrosia is awesome
                   // these include for example: -fomit-frame-pointer, -momit-leaf-frame-pointer, /Gy,
   dynamic_linker, // executable and shared library linker driver
+  static_linker, // static library archive linker driver
+  static_link_options, // default static linker options
   link_debug, // /DEBUG
   link_optimize, // -flto, /LTCG /NOWIN98
   link_strip, // -s, /OPT:ICF
@@ -152,8 +155,7 @@ enum class toolchain_option
   static_library_prefix, // lib
   static_library_extension, // .a, .lib
   shared_library_prefix, // lib
-  import_library_extension, // .dll.a .dll.lib
-
+  import_library_extension // .dll.a .dll.lib
 };
 // Language-specific options
 enum class language_option
@@ -185,6 +187,6 @@ enum class os_option
   shared_library_extension
 };
 
-ambrosia_namespace_end
+libambrosia_namespace_end
 
 #endif // ENUMS_H

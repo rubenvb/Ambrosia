@@ -2,46 +2,19 @@ This is a description of the Ambrosia codestyle adopted in all source files
 in the project.
 
 0. Don't abbreviate. Use full words.
-1. identifier names: use STL-style naming, meaning lower-case and underscores
-    between words.
+1. identifier names: snake_case
 2. Function arguments:
     built-in types (maximum size: ~8 bytes): by value
     anything else: (const) reference
-3. Define all functions/code in a source file, no inline definitions.
-4. Variable prefixes:
-    ALL (smart) pointers: p_*
-    static (member) variables: s_*
-    member variables: m_*
-    local variables: no prefix
-5. Getters and setters: setters use a name beginning with 'set_' or 'add_' or
-    something relevant. Getters use the variable name, without the 'm_' prefix.
-    The argument name in  the setter is also the name of the getter. Getters
-    return a const reference to the member where applicable.
-    Example:
-    class B;
-    class A
-    {
-    public:
-        A( const int member, const B& b ) : m_member(member), m_b(b) {}
-
-        const B& b() const;
-        const int& member() const;
-        void set_member( const int member );
-        void set_b( const B& b );
-
-    private:
-        int m_member
-        B m_b;
-    }
 6. Includes and namespaces:
     - never use a using statement in a header.
     - always use using <namespace>::typename statements under the relevant header include line.
     - include only the necessary headers.
        Example:
-       class.h
+       /* class.h */
        #include <string>
        #include <vector>
-       class.cpp
+       /* class.cpp */
        #include <string>
          using std::string;
        #include <vector>

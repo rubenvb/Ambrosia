@@ -63,8 +63,7 @@ HEADERS += \
     Include/Ambrosia/Targets/project.h \
     Include/Ambrosia/Targets/global.h \
     Include/Ambrosia/Targets/binary.h \
-    Include/Ambrosia/generator.h \
-    Include/Ambrosia/compile_and_link_generator.h
+    Include/Ambrosia/generator.h
 
 SOURCES += \
     Source/configuration.cpp \

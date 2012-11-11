@@ -32,9 +32,14 @@ class binary : public target
 public:
   binary(const std::string& name,
          const ::libambrosia::configuration& configuration,
-         const dependency_set& dependencies);
+         const target_type type,
+         const dependency_set& dependencies = dependency_set());
 
   void generate_commands();
+
+private:
+  command_vector parallel_commands;
+  platform::command link_command;
 };
 
 libambrosia_namespace_end

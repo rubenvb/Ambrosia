@@ -286,7 +286,7 @@ int execute_command(const string &command,
   // adapted from http://msdn.microsoft.com/en-us/library/ms682499%28VS.110%29.aspx
   SECURITY_ATTRIBUTES attributes;
 
-  attributes.nLength = sizeof(SECURITY_ATTRIBUTES); // Set the bInheritHandle flag so pipe handles are inherited.
+  attributes.nLength = static_cast<DWORD>(sizeof(SECURITY_ATTRIBUTES)); // Set the bInheritHandle flag so pipe handles are inherited.
   attributes.bInheritHandle = TRUE;
   attributes.lpSecurityDescriptor = NULL;
 
@@ -307,7 +307,7 @@ int execute_command(const string &command,
   PROCESS_INFORMATION process_info = {0,0,0,0};
   STARTUPINFOW startup_info = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-  startup_info.cb = sizeof(STARTUPINFOW);
+  startup_info.cb = static_cast<int>(sizeof(STARTUPINFOW));
   startup_info.hStdError = stderr_write_handle;
   startup_info.hStdOutput =stdout_write_handle;
   startup_info.dwFlags |= STARTF_USESTDHANDLES;

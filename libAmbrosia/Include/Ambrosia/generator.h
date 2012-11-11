@@ -49,9 +49,7 @@ public:
   // First, parallel executable commands, that are not influenced by eg missing link libraries from other targets
   // Example: the C/C++ compile commands that produce object files that will be linked together in the final step
   //TODO: what about generated headers? --> First make it possible to "generate headers"!!
-  virtual const command_vector generate_parallel_commands();
-  // Final (link) command that produces the target's output file(s). Cannot be called before the parallel commands have all  finished
-  virtual const string_vector generate_final_commands();
+  virtual void generate_parallel_commands(std::back_insert_iterator<command_vector>);
 
 protected:
   const file_type type;

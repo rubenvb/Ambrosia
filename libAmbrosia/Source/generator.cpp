@@ -37,7 +37,7 @@
 
 libambrosia_namespace_begin
 
-generator::generator(const file_type type,
+generator::generator(const ::libambrosia::file_type type,
                      build_element_set& files,
                      const string_set& header_directories,
                      const ::libambrosia::configuration& configuration)
@@ -55,11 +55,10 @@ generator::~generator()
 
 void generator::generate_object_filenames()
 {
-
   debug(debug::command_gen) << "generator::Generating object filenames for " << file_type_map_inverse.at(type) << " files that will be built in "
                             << "\"" << configuration.build_directory << "\".\n";
 
-  for(auto&& it = std::begin(files); it != std::end(files); ++it)
+  for(auto it = std::begin(files); it != std::end(files); ++it)
   {
     const build_element& current = *it;
     //TODO: handle source files with the same name which would cause object files overwriting each other
@@ -69,9 +68,8 @@ void generator::generate_object_filenames()
   }
 }
 
-const command_vector generator::generate_parallel_commands()
+void generator::generate_parallel_commands(std::back_insert_iterator<command_vector> inserter)
 {
-  command_vector commands;
   platform::command first_part;
   platform::command second_part;
   platform::command third_part;
@@ -94,7 +92,6 @@ const command_vector generator::generate_parallel_commands()
 
   debug(debug::command_gen) << "generator::generate_parallel_commands::Command template: " << first_part << " <source file> " << second_part << " <object_file> " << third_part << ".\n";
 
-  //TODO: move common strings outside of loop like languagestd
   for(auto&& it = std::begin(files); it != std::end(files); ++it)
   {
     platform::command command = first_part;
@@ -103,15 +100,10 @@ const command_vector generator::generate_parallel_commands()
     command.add_argument(it->object_file.name);
     command.add_arguments(third_part);
 
-    commands.push_back(command);
+    // insert command string
+    inserter = command;
     debug(debug::command_gen) << "generator::generate_parallel_commands::command: " << command << "\n";
   }
-  return commands;
-}
-
-const string_vector generator::generate_final_commands()
-{
-  return string_vector();
 }
 
 const string& generator::languagestd_option() const
