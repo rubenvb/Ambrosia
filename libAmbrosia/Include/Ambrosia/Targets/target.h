@@ -54,10 +54,12 @@ public:
                    const std::string& nectar_file,
                    const std::size_t line_number);
 
-  // Command generation
+  // Build commands
   virtual void generate_commands()
   {   }
   virtual void dump_commands() const
+  {   }
+  virtual void execute_build_commands() const
   {   }
 
   std::string name;
@@ -67,6 +69,9 @@ public:
 
   std::map<file_type, build_element_set> files;
   std::map<file_type, string_set> source_directories;
+
+  command_vector parallel_commands;
+  platform::command link_command;
 };
 
 libambrosia_namespace_end

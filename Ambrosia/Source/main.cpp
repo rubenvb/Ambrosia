@@ -51,7 +51,7 @@ using namespace std;
 int main(int argc, char* argv[])
 try {
 #ifdef AMBROSIA_DEBUG
-  time_t t = time(0);
+  time_t begin_time = time(0);
 #endif
   // improve iostream performance
   std::ios_base::sync_with_stdio(false);
@@ -68,8 +68,8 @@ try {
   //project.read_project_files();
   lib::drink_nectar(project);
 #ifdef AMBROSIA_DEBUG
-  const double project_read_time = difftime(time(0), t);
-  t = time(0);
+  const double project_read_time = difftime(time(0), begin_time);
+  time_t t = time(0);
 #endif
   // TODO: enable config strings from the commandline
   // project.apply_project_configuration();
@@ -84,14 +84,19 @@ try {
   t = time(0);
 #endif
 
-  //project.execute_build_commands();
+  project.execute_build_commands();
+#ifdef AMBROSIA_DEBUG
+  const double command_execution_time = difftime(time(0), t);
+  t = time(0);
+#endif
 
 #ifdef AMBROSIA_DEBUG
-  const double build_time = difftime(time(0), t);
+  const double total_time = difftime(time(0), begin_time);
   cerr << "Ambrosia execution times:\n"
        << "Project loading: " << project_read_time << " seconds,\n"
        << "Command generation: " << command_generation_time << " seconds,\n"
-       << "Actual build time: " << build_time << "\n.";
+       << "Command execution: " << command_execution_time << " seconds,\n"
+       << "Total build time: " << total_time << " seconds.\n";
 #endif
 }
 #ifdef AMBROSIA_DEBUG

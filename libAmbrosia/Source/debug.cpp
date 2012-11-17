@@ -30,6 +30,8 @@
   using std::map;
 #include <set>
   using std::set;
+#include <string>
+  using std::wstring;
 
 libambrosia_namespace_begin
 
@@ -116,7 +118,7 @@ debug& debug::operator<<(const platform::command& command)
 {
   if(m_output)
 #if _WIN32
-    std::cerr << platform::convert_to_utf8(command.program) << " " << platform::convert_to_utf8(command.arguments);
+    std::cerr << platform::convert_to_utf8(command.arguments);
 #else
   {
     std::cerr << command.program

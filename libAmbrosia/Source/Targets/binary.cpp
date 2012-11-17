@@ -35,9 +35,7 @@ binary::binary(const string& name,
                const ::libambrosia::configuration& configuration,
                const target_type type,
                const dependency_set& dependencies)
-: target(name, configuration, type, dependencies),
-  parallel_commands(),
-  link_command()
+: target(name, configuration, type, dependencies)
 {   }
 
 void binary::generate_commands()
@@ -109,6 +107,24 @@ void binary::dump_commands() const
     debug(debug::command_gen) << "binary::dump_commands::Parallel command: " << *command_it << "\n";
   }
   debug(debug::command_gen) << "binary::dump_commands::Final command: " << link_command << "\n";
+}
+
+void binary::execute_build_commands() const
+{
+  debug(debug::command_exec) << "binary::execute_build_commands::Building binary: " << configuration.name << ".\n";
+  debug(debug::command_exec) << "binary::execute_build_commands::Creating build directory: " << configuration.build_directory << "\n";
+  platform::create_directory_recursive(configuration.build_directory);
+
+  for(auto&& it = std::begin(parallel_commands); it != std::end(parallel_commands); ++it)
+  {
+    string stdout_output;
+    string stderr_output;
+    execute_command(*it, stdout_output, stderr_output);
+    debug(debug::command_exec) << "project::execute_build_commands::Command execution succesful:\n"
+                                  "\tcommand was: " << *it << "\n"
+                                  "\tstdout: " << stdout_output << "\n"
+                                  "\tstderr: " << stderr_output << "\n";
+  }
 }
 
 libambrosia_namespace_end

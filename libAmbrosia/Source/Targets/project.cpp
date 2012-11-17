@@ -54,5 +54,16 @@ void project::dump_commands() const
   }
 }
 
+void project::execute_build_commands() const
+{
+  //TODO build multiple targets in parallel; requires some form of thread pooling
+  for(auto target_it = std::begin(targets); target_it != std::end(targets); ++target_it)
+  {
+    const string& target_name = (*target_it)->name;
+    debug(debug::command_exec) << "project::execute_build_commands::Building target " << target_name << "\n";
+    (*target_it)->execute_build_commands();
+  }
+  //throw error("execute_build_commands is not implemented yet.");
+}
 
 libambrosia_namespace_end

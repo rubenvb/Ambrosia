@@ -94,7 +94,7 @@ const os build_os = os::Windows;
 
 void command::set_program(const std::string& program_path)
 {
-  program = convert_to_utf16(program_path);
+  arguments = convert_to_utf16(program_path);
 }
 void command::add_argument(const std::string& argument)
 {
@@ -253,6 +253,15 @@ void recursive_scan_directory(output_iterator it,
 // explicit instantiation
 template void recursive_scan_directory<insert_iterator<file_set>>(insert_iterator<file_set>, const string&, const string&);
 
+time_t last_modified(const std::string filename)
+{
+  WIN32_FILE_ATTRIBUTE_DATA file_attribute_data;
+  if(GetFileAttributesExW(convert_to_utf16(filename).c_str(), GET_FILEEX_INFO_LEVELS::GetFileExInfoStandard, &file_attribute_data))
+    throw error("GetFileAttributesExW call failed for " + filename);
+
+  return get_time(file_attribute_data.ftLastWriteTime);
+}
+
 bool create_directory(const string& name)
 {
   // MSVC C4800 without the "0 !="
@@ -279,11 +288,11 @@ void create_directory_recursive(const string& name)
   }
 }
 
-int execute_command(const string &command,
+int execute_command(const platform::command& command,
                     string &string_cout,
                     string &string_cerr)
 {
-  // adapted from http://msdn.microsoft.com/en-us/library/ms682499%28VS.110%29.aspx
+  // adapted from http://msdn.microsoft.com/en-us/library/ms682499(VS.110).aspx
   SECURITY_ATTRIBUTES attributes;
 
   attributes.nLength = static_cast<DWORD>(sizeof(SECURITY_ATTRIBUTES)); // Set the bInheritHandle flag so pipe handles are inherited.
@@ -312,10 +321,12 @@ int execute_command(const string &command,
   startup_info.hStdOutput =stdout_write_handle;
   startup_info.dwFlags |= STARTF_USESTDHANDLES;
 
-  std::wstring commandW = convert_to_utf16(command);
+  //TODO: remove this stupid copy
+  //wstring arguments(command.program + L" " + command.arguments);
+  //debug(debug::always) << current_working_directory();
 
-  if(!CreateProcessW(NULL, // app
-                     &commandW[0], // command line
+  if(!CreateProcessW(NULL,//command.program.c_str(), // app
+                     &command.arguments[0], // commandline arguments
                      NULL, // process security attributes
                      NULL, // primary thread security attributes
                      TRUE, // handles are inherited
@@ -324,7 +335,7 @@ int execute_command(const string &command,
                      NULL, // use parent's current directory
                      &startup_info, // STARTUPINFOW pointer
                      &process_info)) // receives PROCESS_INFORMATION
-    throw error("Win32 error: failed to call CreateProcess for command \'" + command + "\'\n"
+    throw error("Win32 error: failed to call CreateProcess for command \'" + convert_to_utf8(command.arguments) + "\'\n"
                 "\t with error: " + to_string(GetLastError()));
 
   debug(debug::platform) << "platform::execute_command::CreateProcess call successful.\n";
@@ -337,6 +348,8 @@ int execute_command(const string &command,
   {
     if(!GetExitCodeProcess(process_info.hProcess, &exit_code))
       throw error("Win32 error: failed to call GetExitCodeProcess with error: " + to_string(GetLastError()));
+
+    Sleep(100);
   }
   debug(debug::platform) << "platform::execute_command::Process exit code: " << exit_code << "\n";
 

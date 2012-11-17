@@ -11,35 +11,29 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Targets/binary.h
- * Binary targets, with a library or app as output.
+ * Ambrosia/Targets/dependency.cpp
+ * Class implementation.
  *
  **/
 
-#ifndef BINARY_H
-#define BINARY_H
+#ifndef AMRBOSIA_DEPENDENCY_H
+#define AMBROSIA_DEPENDENCY_H
 
 // Global include
 #include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Targets/target.h"
+#include "Ambrosia/Targets/binary.h"
 
 libambrosia_namespace_begin
 
-class binary : public target
+class dependency : public binary
 {
 public:
-  binary(const std::string& name,
-         const ::libambrosia::configuration& configuration,
-         const target_type type,
-         const dependency_set& dependencies = dependency_set());
-
-  void generate_commands();
-  void dump_commands() const;
-  void execute_build_commands() const;
+  dependency(const std::string& name,
+             const target_type type);
 };
 
 libambrosia_namespace_end
 
-#endif // BINARY_H
+#endif // AMBROSIA_DEPENDENCY_H

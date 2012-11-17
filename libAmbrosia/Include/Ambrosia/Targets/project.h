@@ -36,8 +36,9 @@ public:
           const ::libambrosia::configuration& configuration,
           const dependency_set& dependencies = dependency_set());
 
-  void generate_commands();
-  void dump_commands() const;
+  void generate_commands(); // generate build commands for all targets
+  void dump_commands() const; // dump commands of all targets
+  void execute_build_commands() const; // builds targets in parallel if possible
 
   target_ptr_vector targets;
 

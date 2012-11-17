@@ -57,23 +57,7 @@ inline void generate_commands()
 
 inline void execute_build_commands()
 {
-  for(auto&& target_it = std::begin(m_commands); target_it != std::end(m_commands); ++target_it)
-  {
-    const string& target_name = target_it->first;
-    auto& commands = target_it->second;
-    debug(debug::command_exec) << "project::execute_build_commands::Executing commands for target " << target_name << "\n";
-    for(auto&& it = std::begin(commands); it != std::end(commands); ++it)
-    {
-      string stdout_output;
-      string stderr_output;
-      execute_command(*it, stdout_output, stderr_output);
-      debug(debug::command_exec) << "project::execute_build_commands::Command execution succesful:\n"
-                                    "\tcommand was: " << *it << "\n"
-                                    "\tstdout: " << stdout_output << "\n"
-                                    "\tstderr: " << stderr_output << "\n";
-    }
-  }
-  throw error("execute_build_commands is not implemented yet.");
+
 }
 
 

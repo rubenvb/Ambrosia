@@ -63,8 +63,7 @@ struct command
   void add_argument(const std::string& argument);
   void add_arguments(const command& other_command);
 #if _WIN32
-  std::wstring program;
-  std::wstring arguments;
+  mutable std::wstring arguments; // mutable cause CreateProcessW likes to modify its arguments
 #else
   std::string program;
   std::vector<std::string> arguments;
@@ -102,11 +101,13 @@ template<class output_iterator>
 void recursive_scan_directory(output_iterator it,
                               const std::string& relative_directory,
                               const std::string& directory_name = "" );
+// Get last modified time of file
+time_t last_modified(const std::string filename);
 // Create a directory, with all parent directories
 bool create_directory(const std::string& name);
 void create_directory_recursive(const std::string& name);
 // Execute command, and store stdout and stderr output in respective strings
-int execute_command(const std::string& command,
+int execute_command(const platform::command& command,
                     std::string& std_out,
                     std::string& std_err);
 

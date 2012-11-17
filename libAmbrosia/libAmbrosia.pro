@@ -63,7 +63,8 @@ HEADERS += \
     Include/Ambrosia/Targets/project.h \
     Include/Ambrosia/Targets/global.h \
     Include/Ambrosia/Targets/binary.h \
-    Include/Ambrosia/generator.h
+    Include/Ambrosia/generator.h \
+    Include/Ambrosia/Targets/dependency.h
 
 SOURCES += \
     Source/configuration.cpp \
@@ -86,7 +87,8 @@ SOURCES += \
     Source/Targets/project.cpp \
     Source/Targets/global.cpp \
     Source/Targets/binary.cpp \
-    Source/generator.cpp
+    Source/generator.cpp \
+    Source/Targets/dependency.cpp
 
 *win32*:SOURCES += Source/Platform/windows.cpp
 *linux*:SOURCES += Source/Platform/unix.cpp

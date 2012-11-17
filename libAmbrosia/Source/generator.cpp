@@ -85,7 +85,7 @@ void generator::generate_parallel_commands(std::back_insert_iterator<command_vec
     throw error("Compiling source files other than C, C++, or Fortran is unsupported at this time.");
 
   //first_part.add_argument(language_options.at(language_option::compile_language));
-  //first_part.add_argument(languagestd_option());
+  first_part.add_argument(languagestd_option());
   first_part.add_argument(toolchain_options.at(toolchain_option::compile_only));
   for(auto&& it = std::begin(header_directories); it != std::end(header_directories); ++it)
   {

@@ -117,7 +117,7 @@ void nectar_loader::extract_nectar()
     project.configuration.build_directory = "./build";
 
   // create global target
-  project.targets.emplace_back(new global(project.configuration));
+  //project.targets.emplace_back(new global(project.configuration));
 
   string token;
   while(next_token(token))
@@ -134,7 +134,7 @@ void nectar_loader::extract_nectar()
       global_processed = true;
       if(next_token(token) && "{" == token)
       {
-        parse_target(*project.targets[0], project.file_cache);
+        parse_target(project, project.file_cache);
       }
       else
         throw syntax_error("\'global\' must be followed by \'{\'.", filename, line_number);
