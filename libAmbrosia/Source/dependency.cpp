@@ -16,24 +16,13 @@
  *
  **/
 
-#ifndef AMRBOSIA_DEPENDENCY_H
-#define AMBROSIA_DEPENDENCY_H
+// Class include
+#include "Ambrosia/dependency.h"
 
-// Global include
-#include "Ambrosia/global.h"
-
-// libAmbrosia includes
-#include "Ambrosia/Targets/binary.h"
+// C++ includes
+#include <string>
+  using std::string;
 
 libambrosia_namespace_begin
 
-class dependency : public binary
-{
-public:
-  dependency(const std::string& name,
-             const target_type type);
-};
-
 libambrosia_namespace_end
-
-#endif // AMBROSIA_DEPENDENCY_H

@@ -55,7 +55,7 @@ const string find_project_file(const string& directory,
   platform::scan_directory(inserter(candidates, candidates.begin()), directory);
 
   // filter files on "*.nectar.txt"
-  for(auto&& it = std::begin(candidates); it != std::end(candidates);)
+  for(auto it = std::begin(candidates); it != std::end(candidates);)
   {
     debug(debug::nectar) << "nectar::find_project_file::checking " << it->name << ".\n";
     if(!wildcard_compare("*.nectar.txt", it->name))
@@ -86,8 +86,8 @@ void drink_nectar(project& project)
 {
   // open file
   const string& filename = full_directory_name(project.configuration.source_directory, project.configuration.project_file);
-  const auto&& stream_ptr(platform::open_ifstream(filename));
-  auto&& stream = *stream_ptr;
+  const auto& stream_ptr(platform::open_ifstream(filename));
+  auto& stream = *stream_ptr;
   if(!stream)
     throw error("Unable to open *.nectar.txt file: " + filename);
 

@@ -24,6 +24,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/build_element.h"
+#include "Ambrosia/dependency.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/file.h"
 
@@ -72,12 +73,12 @@ struct command;
 // homogeneous typedefs
 typedef std::unordered_set<file> file_set;
 typedef std::unordered_set<build_element> build_element_set;
+typedef std::set<dependency> dependency_set;
 typedef std::unique_ptr<target> target_ptr;
 typedef std::vector<std::unique_ptr<target>> target_ptr_vector;
 typedef std::vector<platform::command> command_vector;
 
 // heterogeneous typedefs
-typedef std::set<std::pair<target_type, std::string>> dependency_set;
 typedef std::map<file_type, build_element_set> map_file_type_build_element_set;
 typedef std::map<file_type, string_set> map_file_type_string_set;
 typedef std::map<std::string, file_set> map_string_file_set;

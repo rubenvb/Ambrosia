@@ -90,14 +90,12 @@ const set<char> s_special_characters_newline =
 nectar_loader::nectar_loader(::libambrosia::project& project,
                              const string& full_filename,
                              const string& sub_directory,
-                             istream& stream,
-                             const dependency_set& list)
+                             istream& stream)
 : project(project),
   filename(full_filename),
   subdirectory(sub_directory),
   stream(stream),
   line_number(1),
-  dependency_list(list),
   global_processed(false)
 {
   debug(debug::nectar) << "nectar_loader::nectar_loader::filename is " << full_filename << "\n";
@@ -160,14 +158,14 @@ void nectar_loader::extract_nectar()
           debug(debug::nectar) << "nectar_loader::extract_nectar:Subproject filename is same as subdirectory.\n";
         }
         // 2. Open project file
-        const auto&& stream_ptr = platform::open_ifstream(full_subproject_filename);
+        const auto& stream_ptr = platform::open_ifstream(full_subproject_filename);
         auto& sub_stream = *stream_ptr;
         if(sub_stream)
         {
           debug(debug::nectar) << "nectar_loader::extract_nectar:Opening file " << full_subproject_filename << " succeeded.\n";
           // Get sub target dependencies
           dependency_set dependencies;
-          read_dependency_list(dependencies);
+          read_dependency_set(dependencies);
 
           // copy configuration and set proper subdirectory
           configuration subconfiguration = project.configuration;
@@ -176,9 +174,9 @@ void nectar_loader::extract_nectar()
           debug(debug::config) << "nectar_loader::extract_nectar::Setting build directory of subproject \'" << token << "\' to " << full_directory_name(project.configuration.build_directory,token) << ".\n";
           subconfiguration.build_directory = full_directory_name(project.configuration.build_directory, token);
 
-          project.targets.emplace_back(new ::libambrosia::project(project.name + "::" + token, subconfiguration, dependencies));
+          project.targets.emplace_back(new libambrosia::project(project.name + "::" + token, subconfiguration, project.dependencies));
 
-          nectar_loader subloader(*static_cast<libambrosia::project*>(project.targets.back().get()), full_subproject_filename, full_directory_name(subdirectory, token), sub_stream, dependencies);
+          nectar_loader subloader(*static_cast<libambrosia::project*>(project.targets.back().get()), full_subproject_filename, full_directory_name(subdirectory, token), sub_stream);
           subloader.extract_nectar();
         }
         else // opening file failed
@@ -201,9 +199,9 @@ void nectar_loader::extract_nectar()
           // Store target name
           const string target_name = token;
           // Take parent dependencies
-          dependency_set dependencies = dependency_list;
+          dependency_set dependencies = dependencies;
           // Add target's dependencies
-          read_dependency_list(dependencies);
+          read_dependency_set(dependencies);
 
           if(!next_token(token) && "{" == token) // TODO: check condition
             throw syntax_error("Expected \'{\' after app target name.", filename, line_number);
@@ -225,15 +223,23 @@ void nectar_loader::extract_nectar()
         throw syntax_error("Expected dependency type (\'app\' or \'lib\') after \'dep\'.", filename, line_number);
       else
       {
-        if("lib" == token && next_token(token))
+        target_type type = target_type_map.at(token);
+        if(type != target_type::library && type != target_type::application)
+          throw syntax_error("Dependencies other than \"lib\" or \"app\" are not yet supported.", filename, line_number);
+        if(next_token(token))
         {
-          const string lib_name = token;
-          debug(debug::parser) << "nectar_loader::extract_nectar::locating library dependency: " << lib_name << ".\n";
-        }
-        else if("app" == token && next_token(token))
-        {
-          const string app_name = token;
-          debug(debug::parser) << "nectar_loader::extract_nectar::locating application dependency: " << app_name << ".\n";
+          const string name = token;
+          debug(debug::parser) << "nectar_loader::extract_nectar::Linking dependency " << name << ".\n";
+
+          // Search for dependency in project's dependency_set
+          auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies), [&name,&type](const dependency& dep) {return dep.name == name && dep.type == type; });
+          if(result != std::end(project.dependencies))
+          {
+            debug(debug::parser) << "Found project dependency in parent project: " << target_type_map_inverse.at(type) << " " << name << ".\n";
+          }
+          else
+            //TODO: commandline specification of depedencies!!!
+            throw nectar_error("Dependency not specified: " + name, filename, line_number);
         }
         else
           throw syntax_error("Expected dependency name after dependency type.", filename, line_number);
@@ -422,20 +428,18 @@ bool nectar_loader::next_list_token(const configuration& configuration,
   return true;
 }
 
-void nectar_loader::read_dependency_list(dependency_set& dependencies)
+void nectar_loader::read_dependency_set(dependency_set& dependencies)
 {
-  // copy "parent" dependencies
-  //dependencies = dependency_list;
-  debug(debug::parser) << "nectar_loader::read_dependency_list::Reading dependencies.\n";
+  debug(debug::parser) << "nectar_loader::read_dependency_set::Reading dependencies.\n";
   bool in_list = false;
   target_type type;
   string token;
   while(next_token(token, s_special_characters_newline))
   {
-    debug(debug::parser) << "nectar_loader::read_dependency_list::token: " << output_form(token) << ".\n";
+    debug(debug::parser) << "nectar_loader::read_dependency_set::token: " << output_form(token) << ".\n";
     if("{" == token || "\n" == token)
     {
-      debug(debug::parser) << "nectar_loader::read_dependency_list::" << dependencies.size() << " dependencies.\n";
+      debug(debug::parser) << "nectar_loader::read_dependency_set::" << dependencies.size() << " dependencies.\n";
       return;
     }
     else if(!in_list)
@@ -445,8 +449,7 @@ void nectar_loader::read_dependency_list(dependency_set& dependencies)
         if(next_token(token))
         {
           type = target_type_map.at(token);
-
-          debug(debug::parser) << "nectar_loader::read_dependency_list::Detected " << token << " dependencies.\n";
+          debug(debug::parser) << "nectar_loader::read_dependency_set::Detected " << token << " dependencies.\n";
           in_list = true;
           goto insert_dependency;
         }
@@ -461,14 +464,9 @@ void nectar_loader::read_dependency_list(dependency_set& dependencies)
       insert_dependency:
       if(next_token(token))
       {
-        //target* dependency = nullptr;
-        debug(debug::parser) << "nectar_loader::read_dependency_list::Inserting " << target_type_map_inverse.at(type) << " dependency: " << token << ".\n";
-        std::pair<target_type, string> element = std::make_pair(type, token);
-        if(!dependencies.insert(element).second)
-        {
-          if(!contains(dependency_list, element))
-            throw syntax_error("Double dependency listed: " + target_type_map_inverse.at(type) + " " + token + ".", filename, line_number);
-        }
+        const string& name = token;
+        debug(debug::parser) << "nectar_loader::read_dependency_set::Locating " << target_type_map_inverse.at(type) << " dependency: " << token << ".\n";
+        find_dependencies(project, type, name, std::inserter(dependencies, dependencies.begin()));
       }
     }
     else
@@ -629,7 +627,7 @@ void nectar_loader::process_outer_conditional(const configuration& /*configurati
 {
   throw nectar_error("Outer conditionals not implemented yet.", filename, line_number);
 }
-void nectar_loader::process_dependency_list_conditional(const configuration& /*configuration*/)
+void nectar_loader::process_dependency_set_conditional(const configuration& /*configuration*/)
 {
   throw nectar_error("Outer list conditionals not implemented yet.", filename, line_number);
 }

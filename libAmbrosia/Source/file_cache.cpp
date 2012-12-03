@@ -66,7 +66,7 @@ void file_cache::find_source_files(const std::string& filename,
   const string_pair directory_filename(split_preceding_directory(filename));
   const string& preceding_directory = directory_filename.first;
   const string& true_filename = directory_filename.second;
-  for(auto&& subdir_it = std::begin(subdirectories); subdir_it != std::end(subdirectories); ++subdir_it)
+  for(auto subdir_it = std::begin(subdirectories); subdir_it != std::end(subdirectories); ++subdir_it)
   {
     const string full_directory = full_directory_name(full_directory_name(source_directory, *subdir_it), preceding_directory);
     debug(debug::files) << "file_cache::find_source_files::Finding matches in " << full_directory << ".\n";
@@ -76,7 +76,7 @@ void file_cache::find_source_files(const std::string& filename,
       continue;
     }
     const file_set& sources = get_source_file_set(full_directory);
-    for(auto&& source_file_it = std::begin(sources); source_file_it != std::end(sources); ++source_file_it)
+    for(auto source_file_it = std::begin(sources); source_file_it != std::end(sources); ++source_file_it)
     {
       const string& current = source_file_it->name;
       debug(debug::files) << "file_cache::find_source_files::Comparing " << true_filename << " to " << current << ".\n";
@@ -100,7 +100,7 @@ const file_set file_cache::match_source_files(const string& filename,
   const string& true_filename(directory_filename.second);
 
   // search all directories, appended with preceding_directory
-  for(auto&& directory_it = std::begin(directories); directory_it != std::end(directories); ++directory_it)
+  for(auto directory_it = std::begin(directories); directory_it != std::end(directories); ++directory_it)
   {
     const string directory(full_directory_name(configuration->source_directory, *directory_it + preceding_directory));
     if(!platform::directory_exists(directory))
@@ -115,7 +115,7 @@ const file_set file_cache::match_source_files(const string& filename,
     debug(debug::files) << "file_cache::match_source_files::Searching for match with " << files_on_disk.size() << " files.\n";
 
     // match all files that were scanned from disk to the wildcard filename
-    for(auto&& files_it = std::begin(files_on_disk); files_it != std::end(files_on_disk); ++files_it)
+    for(auto files_it = std::begin(files_on_disk); files_it != std::end(files_on_disk); ++files_it)
     {
       const file& entry = *files_it; // filename and last modified time
       debug(debug::files) << "file_cache::match_source_files::Matching " << entry.name << " with " << true_filename << ".\n";

@@ -53,8 +53,7 @@ public:
   nectar_loader(::libambrosia::project& project,
                 const std::string& full_filename,
                 const std::string& sub_directory,
-                std::istream& stream,
-                const dependency_set& list = dependency_set());
+                std::istream& stream);
   ~nectar_loader();
 
   void extract_nectar();
@@ -69,7 +68,6 @@ private:
   const std::string subdirectory; // used for file searching, without configuration.source_directory() !
   std::istream& stream; // file input stream
   std::size_t line_number; // used for error reporting
-  const dependency_set& dependency_list;
   bool global_processed; // only one global section per project file is allowed
 /*
  * Warning output
@@ -85,14 +83,14 @@ private:
                        std::string& token);
   bool process_conditional();
   // reads colon-lists of dependencies, ends at first '{'
-  void read_dependency_list(dependency_set& dependencies);
+  void read_dependency_set(dependency_set& dependencies);
 /*
  * Parsing
  **********/
   // conditionals
   bool test_condition(const std::function<bool(const std::string&)>& config_contains);
   void process_outer_conditional(const configuration& configuration);      // evaluated against s_configuration, skips full target
-  void process_dependency_list_conditional(const configuration& configuration); // evaluated against s_configuration, skips dependenc(y/ies)
+  void process_dependency_set_conditional(const configuration& configuration); // evaluated against s_configuration, skips dependenc(y/ies)
   void process_inner_conditional(const configuration& configuration);      // evaluated against m_configuration, skips whole list
   void process_inner_list_conditional(const configuration& configuration); // evaluated against m_configuration, skips item in list
   // item lists

@@ -152,7 +152,7 @@ bool map_value(const std::map<Y,T>& map,
                const Y& key,
                T& value)
 {
-  const auto&& it = map.find(key);
+  const auto& it = map.find(key);
   if(it != std::end(map))
   {
     value = (*it).second;
@@ -171,6 +171,14 @@ const string_pair split_preceding_directory(const std::string& path);
 // remove Byte Order Mark from stream
 void skip_BOM(std::istream& stream,
               const std::string& filename = "");
+// recursively find all dependencies starting from a type and a name
+void find_dependencies(const project& project,
+                       const target_type type,
+                       const std::string& name,
+                       std::insert_iterator<dependency_set> inserter);
+void find_dependencies(const project& project,
+                       const target_type type,
+                       std::insert_iterator<dependency_set> inserter);
 
 // file_type conversions
 inline file_type get_general_type(const file_type type)

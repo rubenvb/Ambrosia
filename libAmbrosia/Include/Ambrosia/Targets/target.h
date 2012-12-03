@@ -37,7 +37,7 @@ class target
 {
 public:
   target(const std::string& name,
-         const configuration& configuration,
+         const libambrosia::configuration& configuration,
          const target_type type,
          const dependency_set& dependencies = dependency_set());
 
@@ -65,7 +65,7 @@ public:
   std::string name;
   lib::configuration configuration;
   target_type type;
-  const dependency_set dependencies;
+  dependency_set dependencies;
 
   std::map<file_type, build_element_set> files;
   std::map<file_type, string_set> source_directories;

@@ -23,11 +23,11 @@
 #include "Ambrosia/build_element.h"
 #include "Ambrosia/configuration.h"
 #include "Ambrosia/debug.h"
+#include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/internal_error.h"
 #include "Ambrosia/Error/nectar_error.h"
 #include "Ambrosia/platform.h"
-//#include "Ambrosia/project.h"
-//#include "Ambrosia/target.h"
+#include "Ambrosia/Targets/project.h"
 
 // C++ includes
 #include <istream>
@@ -79,10 +79,10 @@ bool wildcard_compare(const string& wild_string,
   // Taken from http://www.codeproject.com/KB/string/wildcmp.aspx
   // Adapted by Ruben Van Boxem for Ambrosia
 
-  auto&& wild = std::begin(wild_string);
-  auto&& str = std::begin(full_string);
-  const auto&& wild_end = std::end(wild_string);
-  const auto&& string_end = std::end(full_string);
+  auto wild = std::begin(wild_string);
+  auto str = std::begin(full_string);
+  const auto wild_end = std::end(wild_string);
+  const auto string_end = std::end(full_string);
 
   auto cp = string_end;
   auto mp = wild_end;
@@ -135,8 +135,8 @@ bool wildcard_directory_compare(const string& wild_string,
   // Taken from http://www.codeproject.com/KB/string/wildcmp.aspx
   // Adapted by Ruben Van Boxem for Ambrosia
 
-  auto&& wild = std::begin(wild_string);
-  auto&& str = std::begin(full_string);
+  auto wild = std::begin(wild_string);
+  auto str = std::begin(full_string);
 
   auto cp = std::end(full_string);
   auto mp = std::end(wild_string);
@@ -274,6 +274,56 @@ void skip_BOM(istream& stream,
 
   if(memcmp(reinterpret_cast<const char*>(BOM), first_3_chars, 3))
     stream.seekg( 0, std::ios::beg ); // reset to beginning of file
+}
+void find_dependencies(const project& project,
+                       const target_type type,
+                       const string& name,
+                       insert_iterator<dependency_set> inserter)
+{
+  //TODO: what with circular dependencies?
+  debug(debug::algorithm) << "algorithm::find_dependencies::Locating dependency of type " << target_type_map_inverse.at(type) << ": " << name << ".\n";
+  //DO NOT find parent dependencies that match
+  // parent dependencies are named as "dep" targets
+  //auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies),[&type,&name](const dependency& dep) { return dep.name == name && dep.type == type; });
+  //if(result != std::end(project.dependencies))
+  //{
+  //  debug(debug::algorithm) << "algorithm::find_dependencies::Found parent dependency: " << result->name << ".\n";
+  //  inserter = dependency(name, type, result->target);
+  //}
+  // find other project targets that match, including searching subprojects recursively.
+  for(auto target_it = std::begin(project.targets); target_it != std::end(project.targets); ++target_it)
+  {
+    const auto& current = *target_it;
+    if(current->name != name)
+      continue; // no match, ever
+    else if(current->type == type)
+    {
+      debug(debug::algorithm) << "algorithm::find_dependencies::Located exact match: " << current->name <<".\n";
+      inserter = dependency(name, type, current.get());
+    }
+    else if(current->type == target_type::project)
+    {
+      debug(debug::algorithm) << "algorithm::find_dependencies::Located subproject: " << current->name << " with possible matches.\n";
+      find_dependencies(project, type, name, inserter);
+    }
+    else
+      debug(debug::algorithm) << "algorithm::find_dependencies::Not a match: " << name << ".\n";
+  }
+}
+void find_dependencies(const project& project,
+                       const target_type type,
+                       insert_iterator<dependency_set> inserter)
+{
+  debug(debug::algorithm) << "algorithm::find_dependencies::Finding " << target_type_map_inverse.at(type) << " targets in subproject " << project.name << ".\n";
+  for(auto target_it = std::begin(project.targets); target_it != std::end(project.targets); ++target_it)
+  {
+    const auto& current = *target_it;
+    if(current->type == type)
+    {
+      debug(debug::algorithm) << "algorithm::find_dependencies::Found dependency match in subproject " << project.name << ".\n";
+      inserter = dependency(current->name, type, current.get());
+    }
+  }
 }
 
 /*

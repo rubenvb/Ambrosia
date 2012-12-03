@@ -87,7 +87,7 @@ void generator::generate_parallel_commands(std::back_insert_iterator<command_vec
   //first_part.add_argument(language_options.at(language_option::compile_language));
   first_part.add_argument(languagestd_option());
   first_part.add_argument(toolchain_options.at(toolchain_option::compile_only));
-  for(auto&& it = std::begin(header_directories); it != std::end(header_directories); ++it)
+  for(auto it = std::begin(header_directories); it != std::end(header_directories); ++it)
   {
     first_part.add_argument(toolchain_options.at(toolchain_option::include_dir) + "\"" + full_directory_name(configuration.source_directory, *it) + "\"");
   }
@@ -100,7 +100,7 @@ void generator::generate_parallel_commands(std::back_insert_iterator<command_vec
 
   debug(debug::command_gen) << "generator::generate_parallel_commands::Command template: " << first_part << " <source file> " << second_part << " <object_file> " << third_part << ".\n";
 
-  for(auto&& it = std::begin(files); it != std::end(files); ++it)
+  for(auto it = std::begin(files); it != std::end(files); ++it)
   {
     platform::command command = first_part;
     command.add_argument(it->source_file.name);

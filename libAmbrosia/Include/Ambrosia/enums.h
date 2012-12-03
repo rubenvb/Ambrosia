@@ -71,7 +71,8 @@ enum class target_type
   library,
   project,
   install,
-  test
+  test,
+  all
 };
 enum class file_type
 {

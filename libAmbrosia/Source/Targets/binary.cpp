@@ -115,7 +115,7 @@ void binary::execute_build_commands() const
   debug(debug::command_exec) << "binary::execute_build_commands::Creating build directory: " << configuration.build_directory << "\n";
   platform::create_directory_recursive(configuration.build_directory);
 
-  for(auto&& it = std::begin(parallel_commands); it != std::end(parallel_commands); ++it)
+  for(auto it = std::begin(parallel_commands); it != std::end(parallel_commands); ++it)
   {
     string stdout_output;
     string stderr_output;

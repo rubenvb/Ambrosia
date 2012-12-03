@@ -82,7 +82,7 @@ void apply_commandline_options(const string_vector& arguments,
   // Options to be filled in, with default values, if any
   size_t argument_number = 0;
   bool first_dashless_argument = true;
-  for(auto&& it = std::begin(arguments); it != std::end(arguments); ++it)
+  for(auto it = std::begin(arguments); it != std::end(arguments); ++it)
   {
     argument_number++;
     const string& current = *it;

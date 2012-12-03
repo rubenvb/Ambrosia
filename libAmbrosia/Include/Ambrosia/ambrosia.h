@@ -23,7 +23,7 @@
 inline void generate_commands()
 {
   // assume targets are in the correct dependent order
-  for(auto&& target_it = std::begin(m_targets); target_it != std::end(m_targets); ++target_it)
+  for(auto& target_it = std::begin(m_targets); target_it != std::end(m_targets); ++target_it)
   {
     target& current = **target_it;
     if(current.m_type == target_type::global)
@@ -36,7 +36,7 @@ inline void generate_commands()
                               << "\tfor the following types of source files:\n"
                               << "\t" << current.m_configuration.m_source_types << "\n";
 
-    for(auto&& type_it = std::begin(current.m_configuration.m_source_types); type_it != std::end(current.m_configuration.m_source_types); ++type_it)
+    for(auto& type_it = std::begin(current.m_configuration.m_source_types); type_it != std::end(current.m_configuration.m_source_types); ++type_it)
     {
       const auto& type = *type_it;
       debug(debug::command_gen) << "project::generate_commands::Generating commands for " << current.files(type).size() << " "
