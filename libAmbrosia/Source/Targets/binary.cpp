@@ -73,6 +73,8 @@ void binary::generate_commands()
     //TODO: check static vs shared library
     link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_linker));
     link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_link_options));
+    link_command.add_argument("\"" + full_directory_name(configuration.build_directory,
+    toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension))+"\"");
   }
   else if(type == target_type::application)
   {
@@ -113,8 +115,10 @@ void binary::generate_commands()
     if(dep_it->type == target_type::library)
     {
       debug(debug::command_gen) << "binary::generate_commands::linking library: " << dep_it->name << ".\n";
+      link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_search_directory));
+      link_command.add_argument("\"" + dep_it->target->configuration.build_directory + "\"");
       link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_library));
-      link_command.add_argument(full_directory_name(dep_it->target->configuration.build_directory, dep_it->target->configuration.name));
+      link_command.add_argument(dep_it->target->name);
     }
   }
   debug(debug::command_gen) << "binary::generate_commands::Final command: " << link_command << "\n";

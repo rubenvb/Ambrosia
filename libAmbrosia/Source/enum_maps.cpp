@@ -218,6 +218,7 @@ const std::map<toolchain, toolchain_option_map> toolchain_options =
         entry_begin toolchain_option::link_optimize, "-flto" entry_end
         entry_begin toolchain_option::link_strip, "-s" entry_end
         entry_begin toolchain_option::link_library, "-l" entry_end
+        entry_begin toolchain_option::link_search_directory, "-L" entry_end
         entry_begin toolchain_option::static_library_prefix, "lib" entry_end
         entry_begin toolchain_option::static_library_extension, ".a" entry_end
         entry_begin toolchain_option::shared_library_prefix, "lib" entry_end
