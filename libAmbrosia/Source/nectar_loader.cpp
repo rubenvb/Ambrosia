@@ -139,7 +139,7 @@ void nectar_loader::extract_nectar()
     }
     else if("sub" == token)
     {
-      debug(debug::parser) << "nectar_loader::extract_nectar::sub section found at line " << line_number << ".\n";
+      debug(debug::parser) << "nectar_loader::extract_nectar::\"sub\" section found at line " << line_number << ".\n";
       // get name and dependencies of sub target
       if(next_token(token))
       {
@@ -166,6 +166,7 @@ void nectar_loader::extract_nectar()
           // Get sub target dependencies
           dependency_set dependencies;
           read_dependency_set(dependencies);
+          std::for_each(std::begin(dependencies), std::end(dependencies), [](const dependency& dep){ debug(debug::parser) << "nectar_loader::extract_nectar::Dependency: " << dep.name << "\n"; });
 
           // copy configuration and set proper subdirectory
           configuration subconfiguration = project.configuration;
@@ -174,7 +175,7 @@ void nectar_loader::extract_nectar()
           debug(debug::config) << "nectar_loader::extract_nectar::Setting build directory of subproject \'" << token << "\' to " << full_directory_name(project.configuration.build_directory,token) << ".\n";
           subconfiguration.build_directory = full_directory_name(project.configuration.build_directory, token);
 
-          project.targets.emplace_back(new libambrosia::project(project.name + "::" + token, subconfiguration, project.dependencies));
+          project.targets.emplace_back(new libambrosia::project(project.name + "::" + token, subconfiguration, dependencies));
 
           nectar_loader subloader(*static_cast<libambrosia::project*>(project.targets.back().get()), full_subproject_filename, full_directory_name(subdirectory, token), sub_stream);
           subloader.extract_nectar();
@@ -232,10 +233,11 @@ void nectar_loader::extract_nectar()
           debug(debug::parser) << "nectar_loader::extract_nectar::Linking dependency " << name << ".\n";
 
           // Search for dependency in project's dependency_set
+          std::for_each(std::begin(project.dependencies), std::end(project.dependencies), [](const dependency& dep) { debug(debug::parser) << "nectar_loader::extract_nectar::Project dependency: " << dep.name << "\n"; });
           auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies), [&name,&type](const dependency& dep) {return dep.name == name && dep.type == type; });
           if(result != std::end(project.dependencies))
           {
-            debug(debug::parser) << "Found project dependency in parent project: " << target_type_map_inverse.at(type) << " " << name << ".\n";
+            debug(debug::parser) << "nectar_loader::extract_nectar::Found project dependency in parent project: " << target_type_map_inverse.at(type) << " " << name << ".\n";
           }
           else
             //TODO: commandline specification of depedencies!!!
@@ -466,7 +468,10 @@ void nectar_loader::read_dependency_set(dependency_set& dependencies)
       {
         const string& name = token;
         debug(debug::parser) << "nectar_loader::read_dependency_set::Locating " << target_type_map_inverse.at(type) << " dependency: " << token << ".\n";
+        const size_t number_of_dependencies = dependencies.size();
         find_dependencies(project, type, name, std::inserter(dependencies, dependencies.begin()));
+        if(number_of_dependencies == dependencies.size())
+          throw nectar_error("Dependency not found: " + name, filename, line_number);
       }
     }
     else

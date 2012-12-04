@@ -46,7 +46,23 @@ void binary::generate_commands()
   for(auto type_it = std::begin(files); type_it != std::end(files); ++type_it)
   {
     debug(debug::command_gen) << "binary::generate_commands::Generating commands for " << type_it->second.size() << " " << file_type_map_inverse.at(type_it->first) << " files.\n";
-    generator command_generator(type_it->first, type_it->second, source_directories.at(file_type::header), configuration);
+    string_set header_directories;
+    // add the project's header dirs
+    std::for_each(std::begin(source_directories.at(file_type::header)), std::end(source_directories.at(file_type::header)),
+                  [&header_directories,this](const string& dir) { header_directories.insert(full_directory_name(configuration.source_directory, dir)); });
+    // add all dependencies' header directories
+    debug(debug::command_gen) << "binary::generate_commands::Current target dependencies: " << dependencies.size() << "\n";
+    for(auto dep_it = std::begin(dependencies); dep_it != std::end(dependencies); ++dep_it)
+    {
+      debug(debug::command_gen) << "binary::generate_commands::Including dependency \"" << dep_it->name << "\"\'s header directories.\n";
+      const string& source_directory = dep_it->target->configuration.source_directory;
+      const string_set& the_source_directories = dep_it->target->source_directories.at(file_type::header);
+      std::for_each(std::begin(the_source_directories), std::end(the_source_directories),
+      [&header_directories,source_directory](const string& dir)
+      { debug(debug::command_gen) << "binary::generate_commands::Including directory: \"" << dir << "\" with source directory " << source_directory << "\n";
+        header_directories.insert(full_directory_name(source_directory, dir)); });
+    }
+    generator command_generator(type_it->first, type_it->second, header_directories, configuration);
     command_generator.generate_object_filenames();
     command_generator.generate_parallel_commands(std::back_inserter(parallel_commands));
   }
@@ -92,10 +108,14 @@ void binary::generate_commands()
     }
   }
   // add all libraries to link
-  for(auto lib_it = std::begin(libraries); lib_it != std::end(libraries); ++lib_it)
+  for(auto dep_it = std::begin(dependencies); dep_it != std::end(dependencies); ++dep_it)
   {
-    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_library));
-    link_command.add_argument(*lib_it);
+    if(dep_it->type == target_type::library)
+    {
+      debug(debug::command_gen) << "binary::generate_commands::linking library: " << dep_it->name << ".\n";
+      link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_library));
+      link_command.add_argument(full_directory_name(dep_it->target->configuration.build_directory, dep_it->target->configuration.name));
+    }
   }
   debug(debug::command_gen) << "binary::generate_commands::Final command: " << link_command << "\n";
 }
@@ -120,11 +140,18 @@ void binary::execute_build_commands() const
     string stdout_output;
     string stderr_output;
     execute_command(*it, stdout_output, stderr_output);
-    debug(debug::command_exec) << "project::execute_build_commands::Command execution succesful:\n"
+    debug(debug::command_exec) << "binary::execute_build_commands::Command execution succesful:\n"
                                   "\tcommand was: " << *it << "\n"
                                   "\tstdout: " << stdout_output << "\n"
                                   "\tstderr: " << stderr_output << "\n";
   }
+  string stdout_output;
+  string stderr_output;
+  execute_command(link_command, stdout_output, stderr_output);
+  debug(debug::command_exec) << "binary::execute_build_commands::Link command execution succesful!\n"
+                                "\tcommand was: " << link_command << "\n"
+                                "\tstdout: " << stdout_output << "\n"
+                                "\tstderr: " << stderr_output << "\n";
 }
 
 libambrosia_namespace_end

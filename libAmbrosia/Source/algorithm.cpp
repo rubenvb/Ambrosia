@@ -282,20 +282,22 @@ void find_dependencies(const project& project,
 {
   //TODO: what with circular dependencies?
   debug(debug::algorithm) << "algorithm::find_dependencies::Locating dependency of type " << target_type_map_inverse.at(type) << ": " << name << ".\n";
-  //DO NOT find parent dependencies that match
-  // parent dependencies are named as "dep" targets
-  //auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies),[&type,&name](const dependency& dep) { return dep.name == name && dep.type == type; });
-  //if(result != std::end(project.dependencies))
-  //{
-  //  debug(debug::algorithm) << "algorithm::find_dependencies::Found parent dependency: " << result->name << ".\n";
-  //  inserter = dependency(name, type, result->target);
-  //}
+  auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies),[&type,&name](const dependency& dep) { return dep.name == name && dep.type == type; });
+  if(result != std::end(project.dependencies))
+  {
+    debug(debug::algorithm) << "algorithm::find_dependencies::Found parent dependency: " << result->name << ".\n";
+    inserter = dependency(name, type, result->target);
+  }
   // find other project targets that match, including searching subprojects recursively.
   for(auto target_it = std::begin(project.targets); target_it != std::end(project.targets); ++target_it)
   {
+    debug(debug::algorithm) << "algorithm::find_dependencies::Checking target " << (*target_it)->name << " as a possible match.\n";
     const auto& current = *target_it;
-    if(current->name != name)
+    if(current->name != name && wildcard_compare("*::"+current->name, name)) // check for name and qualified name
+    {
+      debug(debug::algorithm) << "algorithm::find_dependencies::Apparently, \"" << "*"+current->name << "\" != \"" << name << "\"\n";
       continue; // no match, ever
+    }
     else if(current->type == type)
     {
       debug(debug::algorithm) << "algorithm::find_dependencies::Located exact match: " << current->name <<".\n";
@@ -304,15 +306,16 @@ void find_dependencies(const project& project,
     else if(current->type == target_type::project)
     {
       debug(debug::algorithm) << "algorithm::find_dependencies::Located subproject: " << current->name << " with possible matches.\n";
-      find_dependencies(project, type, name, inserter);
+      find_dependencies_in_subproject(*static_cast<libambrosia::project*>(current.get()), type, name, inserter);
     }
     else
       debug(debug::algorithm) << "algorithm::find_dependencies::Not a match: " << name << ".\n";
   }
 }
-void find_dependencies(const project& project,
-                       const target_type type,
-                       insert_iterator<dependency_set> inserter)
+void find_dependencies_in_subproject(const project& project,
+                                     const target_type type,
+                                     const string& name,
+                                     insert_iterator<dependency_set> inserter)
 {
   debug(debug::algorithm) << "algorithm::find_dependencies::Finding " << target_type_map_inverse.at(type) << " targets in subproject " << project.name << ".\n";
   for(auto target_it = std::begin(project.targets); target_it != std::end(project.targets); ++target_it)
@@ -321,7 +324,7 @@ void find_dependencies(const project& project,
     if(current->type == type)
     {
       debug(debug::algorithm) << "algorithm::find_dependencies::Found dependency match in subproject " << project.name << ".\n";
-      inserter = dependency(current->name, type, current.get());
+      inserter = dependency(name, type, current.get());
     }
   }
 }

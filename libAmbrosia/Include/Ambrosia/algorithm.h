@@ -176,9 +176,10 @@ void find_dependencies(const project& project,
                        const target_type type,
                        const std::string& name,
                        std::insert_iterator<dependency_set> inserter);
-void find_dependencies(const project& project,
-                       const target_type type,
-                       std::insert_iterator<dependency_set> inserter);
+void find_dependencies_in_subproject(const project& project,
+                                     const target_type type,
+                                     const std::string& name,
+                                     std::insert_iterator<dependency_set> inserter);
 
 // file_type conversions
 inline file_type get_general_type(const file_type type)

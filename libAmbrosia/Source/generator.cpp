@@ -70,9 +70,9 @@ void generator::generate_object_filenames()
 
 void generator::generate_parallel_commands(std::back_insert_iterator<command_vector> inserter)
 {
-  platform::command first_part;
-  platform::command second_part;
-  platform::command third_part;
+  platform::command first_part; // before source file name
+  platform::command second_part; // between source file name and object file name
+  platform::command third_part; // after object file name
 
   // generate the part of the command that comes before the source file name
   if(type == file_type::source_c)
@@ -89,7 +89,7 @@ void generator::generate_parallel_commands(std::back_insert_iterator<command_vec
   first_part.add_argument(toolchain_options.at(toolchain_option::compile_only));
   for(auto it = std::begin(header_directories); it != std::end(header_directories); ++it)
   {
-    first_part.add_argument(toolchain_options.at(toolchain_option::include_dir) + "\"" + full_directory_name(configuration.source_directory, *it) + "\"");
+    first_part.add_argument(toolchain_options.at(toolchain_option::include_dir) + "\"" + *it + "\"");
   }
 
   // generate the part of the command that comes between the source file name and object file name
