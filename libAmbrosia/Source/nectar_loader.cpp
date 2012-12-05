@@ -200,7 +200,7 @@ void nectar_loader::extract_nectar()
           // Store target name
           const string target_name = token;
           // Take parent dependencies
-          dependency_set dependencies = dependencies;
+          dependency_set dependencies;// = project.dependencies;
           // Add target's dependencies
           read_dependency_set(dependencies);
 
@@ -434,7 +434,7 @@ void nectar_loader::read_dependency_set(dependency_set& dependencies)
 {
   debug(debug::parser) << "nectar_loader::read_dependency_set::Reading dependencies.\n";
   bool in_list = false;
-  target_type type;
+  target_type type = target_type::library; // dummy to shut up GCC warning
   string token;
   while(next_token(token, s_special_characters_newline))
   {
@@ -722,7 +722,6 @@ void nectar_loader::parse_library_list(target& target,
       token = token.substr(2);
       debug(debug::parser) << "nectar_loader::parse_library_list::Found library name: " << token << ".\n";
       target.add_library(token, filename, line_number);
-      //  throw nectar_error("Library is mentioned twice: " + token, filename, line_number);
     }
     else if(!token.compare(0, 2, "-L"))
     {

@@ -42,6 +42,9 @@ void binary::generate_commands()
 {
   debug(debug::command_gen) << "binary::generate_commands::Generating commands for binary: " << name << ".\n";
 
+  string_set library_directories;
+  string_vector libraries; // libraries to link to the final object file
+
   // Generate compilation commands per source file
   for(auto type_it = std::begin(files); type_it != std::end(files); ++type_it)
   {
@@ -61,13 +64,20 @@ void binary::generate_commands()
       [&header_directories,source_directory](const string& dir)
       { debug(debug::command_gen) << "binary::generate_commands::Including directory: \"" << dir << "\" with source directory " << source_directory << "\n";
         header_directories.insert(full_directory_name(source_directory, dir)); });
+      if(dep_it->type == target_type::library)
+      {
+        debug(debug::command_gen) << "binary::generate_commands::Including library " << dep_it->name << " in (dynamic) linker command.\n"
+                                      "\twith library search directory: " << dep_it->target->configuration.build_directory << " and library name " << dep_it->target->configuration.build_directory << ".\n";
+        library_directories.insert("\"" + dep_it->target->configuration.build_directory + "\"");
+        libraries.push_back(dep_it->target->name);
+        std::for_each(std::begin(dep_it->target->libraries), std::end(dep_it->target->libraries), [&libraries](const string& lib) { libraries.push_back(lib); });
+      }
     }
     generator command_generator(type_it->first, type_it->second, header_directories, configuration);
     command_generator.generate_object_filenames();
     command_generator.generate_parallel_commands(std::back_inserter(parallel_commands));
   }
   // Generate the final "link" command
-  string_vector libraries;
   if(type == target_type::library)
   {
     //TODO: check static vs shared library
@@ -109,17 +119,17 @@ void binary::generate_commands()
       link_command.add_argument(bes_it->object_file.name);
     }
   }
-  // add all libraries to link
-  for(auto dep_it = std::begin(dependencies); dep_it != std::end(dependencies); ++dep_it)
+  // add all library search directories
+  for(auto libdir_it = std::begin(library_directories); libdir_it != std::end(library_directories); ++ libdir_it)
   {
-    if(dep_it->type == target_type::library)
-    {
-      debug(debug::command_gen) << "binary::generate_commands::linking library: " << dep_it->name << ".\n";
-      link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_search_directory));
-      link_command.add_argument("\"" + dep_it->target->configuration.build_directory + "\"");
-      link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_library));
-      link_command.add_argument(dep_it->target->name);
-    }
+    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_search_directory));
+    link_command.add_argument(*libdir_it);
+  }
+  // add all libraries to link
+  for(auto lib_it = std::begin(libraries); lib_it != std::end(libraries); ++lib_it)
+  {
+    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_library));
+    link_command.add_argument(*lib_it);
   }
   debug(debug::command_gen) << "binary::generate_commands::Final command: " << link_command << "\n";
 }

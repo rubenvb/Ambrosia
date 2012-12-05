@@ -41,7 +41,11 @@ target::target(const string& name,
 : name(name),
   configuration(configuration),
   type(type),
-  dependencies(dependencies)
+  dependencies(dependencies),
+  files(),
+  source_directories(),
+  parallel_commands(),
+  link_command()
 {   }
 
 void target::add_source_file(const file_type general_type,
@@ -84,11 +88,12 @@ bool target::add_source_directory(const file_type type,
   return true;
 }
 
-bool target::add_library(const string& /*library*/,
+void target::add_library(const string& library,
                          const string& /*nectar_file*/,
                          const size_t /*line_number*/)
 {
-  return false;
+  libraries.insert(library);
+  //  emit_warning("Library " + library + " is mentioned twice. Check your dependencies.");
 }
 
 libambrosia_namespace_end

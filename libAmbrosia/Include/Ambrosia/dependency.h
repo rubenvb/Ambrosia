@@ -36,7 +36,7 @@
 libambrosia_namespace_begin
 
 // Forward declarations
-struct target;
+class target;
 
 struct dependency
 {

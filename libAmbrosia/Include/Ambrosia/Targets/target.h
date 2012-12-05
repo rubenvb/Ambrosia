@@ -50,7 +50,7 @@ public:
                        file_cache& file_cache,
                        const std::string& nectar_file,
                        const std::size_t line_number);
-  bool add_library(const std::string& library,
+  void add_library(const std::string& library,
                    const std::string& nectar_file,
                    const std::size_t line_number);
 
@@ -69,6 +69,7 @@ public:
 
   std::map<file_type, build_element_set> files;
   std::map<file_type, string_set> source_directories;
+  string_set libraries;
 
   command_vector parallel_commands;
   platform::command link_command;
