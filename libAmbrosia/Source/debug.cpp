@@ -37,8 +37,7 @@ libambrosia_namespace_begin
 
 #ifdef AMBROSIA_DEBUG
 // static member initialization
-debug::type debug::s_level = // debug::initial
-        static_cast<debug::type>(debug::commandline ^ debug::platform ^ debug::initial ^ debug::command_gen);
+debug::type debug::s_level = debug::initial;
 
 const map<std::string, debug::type> debug_map =
   map_entries_begin

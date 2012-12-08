@@ -92,7 +92,7 @@ enum class file_type
   // ...
 };
 
-enum class generator_string
+/*enum class generator_string
 {
   compiler, // compiler program name (without target prefixes)
   dynamic_linker, // linker program name (for executables and shared libraries)
@@ -118,7 +118,7 @@ enum class generator_string
   optimize_size, // optimize for size
   optimize_extreme, // full optimization, not guaranteed to be better than 'optimize_release'
   optimize_lto // Link-time-optimization or link time code generation: -flto or /GL and /LTCG
-};
+};*/
 
 // Toolchain-specific options
 enum class toolchain_option
@@ -128,13 +128,14 @@ enum class toolchain_option
   compiler_fortran, // gfortran, ...
 
   include_dir, // -I, /I
-  include_file, // -include?
-  include_sysfile, // -sys-include?
+  include_file, // -include, /FI
+  include_pch, // -include, -Fp
+  include_sysfile, // -sys-include
 
   output_object, // -o, /Fo
   output_pch, // -o, /Fp
   output_debug, //
-  output_import_library,
+  output_import_library, // /implib,
 
   compile_only, // -c, /c
   compile_debug, // -g, /Zi
@@ -148,6 +149,9 @@ enum class toolchain_option
   optimize_link, // -flto, /GL
   optimize_extra, // options that make debugging impossible but added because Ambrosia is awesome
                   // these include for example: -fomit-frame-pointer, -momit-leaf-frame-pointer, /Gy
+
+  enable_sse, // -msse, /arch:SSE
+  enable_sse2, // -msse2, /arch:SSE2
 
   dynamic_linker_c, // executable and shared library linker for C
   dynamic_linker_cxx, // executable and shared library linker for C++

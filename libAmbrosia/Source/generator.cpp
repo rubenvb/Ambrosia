@@ -45,10 +45,10 @@ generator::generator(const ::libambrosia::file_type type,
   files(files),
   header_directories(header_directories),
   configuration(configuration),
-  toolchain_options(::libambrosia::toolchain_options.at(configuration.target_toolchain)),
-  language_options(::libambrosia::language_options.at(configuration.target_toolchain).at(type)),
-  os_options(::libambrosia::os_options.at(configuration.target_os))
-{  }
+  toolchain_options(::libambrosia::toolchain_options.at(configuration.target_toolchain))
+  //language_options(::libambrosia::language_options.at(configuration.target_toolchain).at(type)),
+  //os_options(::libambrosia::os_options.at(configuration.target_os))
+{   }
 
 generator::~generator()
 {   }
@@ -75,6 +75,8 @@ void generator::generate_parallel_commands(std::back_insert_iterator<command_vec
   platform::command third_part; // after object file name
 
   // generate the part of the command that comes before the source file name
+  debug(debug::command_gen) << "generator::generate_parallel_commands::Generating first part of command.\n";
+
   if(type == file_type::source_c)
     first_part.set_program(toolchain_options.at(toolchain_option::compiler_c));
   else if(type == file_type::source_cxx)
@@ -84,8 +86,10 @@ void generator::generate_parallel_commands(std::back_insert_iterator<command_vec
   else
     throw error("Compiling source files other than C, C++, or Fortran is unsupported at this time.");
 
+  debug(debug::command_gen) << "generator::generate_parallel_commands::getting language standard option.\n";
   //first_part.add_argument(language_options.at(language_option::compile_language));
-  first_part.add_argument(languagestd_option());
+  if(!contains(configuration.config_strings, "msvc"))
+    first_part.add_argument(languagestd_option());
   first_part.add_argument(toolchain_options.at(toolchain_option::compile_only));
   for(auto it = std::begin(header_directories); it != std::end(header_directories); ++it)
   {
@@ -93,6 +97,7 @@ void generator::generate_parallel_commands(std::back_insert_iterator<command_vec
   }
 
   // generate the part of the command that comes between the source file name and object file name
+  debug(debug::command_gen) << "generator::generate_parallel_commands::Generating first part of command.\n";
   second_part.add_argument(toolchain_options.at(toolchain_option::output_object));
 
   // generate part of the command that comes after the object file name

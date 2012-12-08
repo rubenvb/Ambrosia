@@ -73,6 +73,7 @@ void binary::generate_commands()
         std::for_each(std::begin(dep_it->target->libraries), std::end(dep_it->target->libraries), [&libraries](const string& lib) { libraries.push_back(lib); });
       }
     }
+    debug(debug::command_gen) << "binary::generate_commands::Creating command generator for the " << vendor_map_inverse.at(configuration.target_toolchain) << " toolchain for " << os_map_inverse.at(configuration.target_os) << ".\n";
     generator command_generator(type_it->first, type_it->second, header_directories, configuration);
     command_generator.generate_object_filenames();
     command_generator.generate_parallel_commands(std::back_inserter(parallel_commands));
