@@ -65,14 +65,18 @@ struct command
 #if _WIN32
   mutable std::wstring arguments; // mutable cause CreateProcessW likes to modify its arguments
 #else
+  command() : program(), arguments{nullptr}, argument_storage()
+  {   }
   std::string program;
-  std::vector<std::string> arguments;
+  std::vector<char*> arguments; // &arguments[0] is convertible to char*[] for the call to execvp
+  std::vector<std::string> argument_storage;
+  std::string std_input; // input to be piped to the stdin of the child process
 #endif
 };
 
 /*
- * Windows support functions
- ****************************/
+ * Platform support functions
+ *****************************/
 #if _WIN32
 const std::string convert_to_utf8(const std::wstring& utf16_string);
 const std::wstring convert_to_utf16(const std::string& utf8_string);

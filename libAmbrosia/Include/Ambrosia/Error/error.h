@@ -33,15 +33,17 @@ libambrosia_namespace_begin
 class error
 {
 public:
-    error( const std::string& message, const string_vector& list = string_vector() );
-    error( const std::string& message, const file_set& list );
+    error(const std::string& message,
+          const string_vector& list = string_vector());
+    error(const std::string& message,
+          const file_set& list);
     virtual ~error();
 
     virtual void output_message() const;
 
 protected:
-    const std::string m_message;
-    string_vector m_list;
+    const std::string message;
+    string_vector list;
 };
 
 libambrosia_namespace_end

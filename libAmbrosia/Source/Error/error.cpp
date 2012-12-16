@@ -33,15 +33,15 @@ libambrosia_namespace_begin
 
 error::error(const string& message,
              const string_vector& list)
-: m_message(message),
-  m_list(list)
+: message(message),
+  list(list)
 {   }
 error::error(const std::string& message,
              const file_set& list)
-: m_message(message),
-  m_list(list.size())
+: message(message),
+  list(list.size())
 {
-  auto dest = std::begin(m_list);
+  auto dest = std::begin(this->list);
   std::for_each(std::begin(list), std::end(list),
                 [=](const file& item) mutable
                 { *dest++ = item.name; });
@@ -52,10 +52,10 @@ error::~error()
 void error::output_message() const
 {
   cerr << "Error:\n"
-          "\t" << m_message << "\n";
-  if(!m_list.empty())
+          "\t" << message << "\n";
+  if(!list.empty())
   {
-    std::for_each(std::begin(m_list), std::end(m_list),
+    std::for_each(std::begin(list), std::end(list),
                   [](const string& item)
                   { cerr << "\t" << item << "\n";});
   }

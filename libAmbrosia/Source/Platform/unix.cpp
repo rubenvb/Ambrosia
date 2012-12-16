@@ -20,18 +20,21 @@
 #include "Ambrosia/platform.h"
 
 // libAmbrosia includes
+#include "Ambrosia/algorithm.h"
 #include "Ambrosia/Error/error.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/typedefs.h"
 
 // Platform includes
 #include <dirent.h>
+#include <spawn.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
 // C++ includes
+#include <algorithm>
 #include <fstream>
   using std::ifstream;
   using std::ofstream;
@@ -66,6 +69,29 @@ const os build_os = os::Linux;
 #elif __x86_64__
   const architecture build_architecture = architecture::amd64;
 #endif // i386 || __x86_64__
+
+void command::set_program(const std::string& program_name)
+{
+  program = program_name;
+}
+void command::add_argument(const std::string& argument)
+{
+  if(!argument.empty())
+  {
+    argument_storage.push_back(argument);
+    arguments.pop_back();
+    arguments.push_back(&argument_storage.back()[0]);
+    arguments.push_back(nullptr);
+  }
+}
+void command::add_arguments(const command& other_command)
+{
+  // remove the last nullptr element
+  arguments.pop_back();
+  std::for_each(std::begin(other_command.argument_storage), std::end(other_command.argument_storage),
+  [this](const string& s) { argument_storage.push_back(s); arguments.push_back(&argument_storage.back()[0]); } );
+  arguments.push_back(nullptr);
+}
 
 /*
  * Mostly platform dependently implemented functions
@@ -186,10 +212,62 @@ void create_directory_recursive(const string& name)
   }
 }
 
-int execute_command(const string &command,
+int execute_command(const command &command,
                     string &string_cout,
-                    string &/*string_cerr*/)
+                    string &string_cerr)
 {
+  /*int exit_code;
+  int cout_pipe[2];
+  int cerr_pipe[2];
+  posix_spawn_file_actions_t action;
+
+  if(pipe(cout_pipe) || pipe(cerr_pipe))
+    throw error("pipe returned an error.");
+
+  posix_spawn_file_actions_init(&action);
+  posix_spawn_file_actions_addclose(&action, cout_pipe[0]);
+  posix_spawn_file_actions_addclose(&action, cerr_pipe[0]);
+  posix_spawn_file_actions_adddup2(&action, cout_pipe[1], 1);
+  posix_spawn_file_actions_adddup2(&action, cerr_pipe[1], 2);
+
+  posix_spawn_file_actions_addclose(&action, cout_pipe[1]);
+  posix_spawn_file_actions_addclose(&action, cerr_pipe[1]);
+
+  pid_t pid;
+  if(posix_spawnp(&pid, command.program.c_str(), &action, NULL, &command.arguments[1], NULL))
+    throw error("posix_spawnp failed with error: " + to_string(strerror(errno)));
+  //close(cout_pipe[0]);
+  //close(cerr_pipe[0]);
+  close(cout_pipe[1]);
+  close(cerr_pipe[1]);
+
+  waitpid(pid,&exit_code,0);
+
+  // Read from pipes
+  const size_t buffer_size = 1024;
+  string buffer;
+  buffer.reserve(buffer_size);
+  ssize_t bytes_read = read(cout_pipe[0], &buffer[0], buffer_size);
+  while ((bytes_read = read(cout_pipe[0], &buffer[0], buffer_size)) > 0)
+  {
+    string_cout.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
+    bytes_read = read(cout_pipe[0], &buffer[0], buffer_size);
+  }
+  if(bytes_read == -1)
+    throw error("Failure reading from stdout pipe.");
+  while ((bytes_read = read(cerr_pipe[0], &buffer[0], buffer_size)) > 0)
+  {
+    string_cerr.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
+    bytes_read = read(cout_pipe[0], &buffer[0], buffer_size);
+  }
+  if(bytes_read == -1)
+    throw error("Failure reading from stdout pipe.");
+  debug(debug::command_exec) << "unix::execute_command::Command execution succesful: " << command << "\n"
+                             << "\twith exit code " << exit_code << ".\n";
+
+  posix_spawn_file_actions_destroy(&action);
+
+  return exit_code;*/
   // Create pipes for redirected output
   int cout_pipe[2];
   int cerr_pipe[2];
@@ -203,6 +281,7 @@ int execute_command(const string &command,
     case -1:
       throw error("fork failed.");
     case 0:
+      debug(debug::command_exec) << "unix::execute_command::Doing pipe stuff.\n";
       // Close read end in the child
       close(cout_pipe[0]);
       close(cout_pipe[0]);
@@ -213,12 +292,11 @@ int execute_command(const string &command,
       close(cout_pipe[1]);
       close(cerr_pipe[1]);
       // execute child program
-      execlp("sh -c", command.c_str());
-      throw error("execlp failed to execute command: " + command + ".");
-      break;
+      if(execvp(command.program.c_str(), &command.arguments[0]) == -1)
+        throw error("execvp failed to execute command: " + command.program + ". errno is " + strerror(errno));
     default:
       if(waitpid(pid, &exit_code, 0) != -1)
-        debug(debug::command_exec) << "Child exited with status " << exit_code << ".\n";
+        debug(debug::command_exec) << "unix::execute_command::Child exited with status " << exit_code << ".\n";
       else
         throw error("waitpid failed.");
 
@@ -230,13 +308,20 @@ int execute_command(const string &command,
       string buffer;
       buffer.resize(buffer_size);
       ssize_t bytes_read = read(cout_pipe[0], &buffer[0], buffer_size);
-      while(bytes_read > 0)
+      while ((bytes_read = read(cout_pipe[0], &buffer[0], buffer_size)) > 0)
       {
         string_cout.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
         bytes_read = read(cout_pipe[0], &buffer[0], buffer_size);
-        if(bytes_read == -1)
-          throw error("Failure reading from stdout pipe.");
       }
+      if(bytes_read == -1)
+        throw error("Failure reading from stdout pipe.");
+      while ((bytes_read = read(cerr_pipe[0], &buffer[0], buffer_size)) > 0)
+      {
+        string_cerr.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
+        bytes_read = read(cout_pipe[0], &buffer[0], buffer_size);
+      }
+      if(bytes_read == -1)
+        throw error("Failure reading from stdout pipe.");
   }
   return exit_code;
 }

@@ -37,7 +37,7 @@ soft_error::~soft_error()
 void soft_error::output_message() const
 {
   cerr << "Soft error:\n"
-       << "\t" << m_message << "\n";
+       << "\t" << message << "\n";
 }
 
 libambrosia_namespace_end

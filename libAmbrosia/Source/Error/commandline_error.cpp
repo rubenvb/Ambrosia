@@ -11,7 +11,7 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Error/commandline_error.h
+ * Ambrosia/Error/commandline_error.cpp
  * Class implementation.
  *
  **/

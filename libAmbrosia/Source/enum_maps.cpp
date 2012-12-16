@@ -222,7 +222,7 @@ const std::map<toolchain, toolchain_option_map> toolchain_options =
         entry_begin toolchain_option::dynamic_linker_fortran, "gfortran" entry_end
 
         entry_begin toolchain_option::static_linker, "ar" entry_end
-        entry_begin toolchain_option::static_link_options, "rcs" entry_end
+        entry_begin toolchain_option::static_link_options, "rcsP" entry_end
 
         entry_begin toolchain_option::link_debug, "" entry_end
         entry_begin toolchain_option::link_optimize, "-flto" entry_end

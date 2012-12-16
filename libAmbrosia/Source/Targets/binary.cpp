@@ -23,6 +23,7 @@
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/enum_maps.h"
+#include "Ambrosia/Error/command_error.h"
 #include "Ambrosia/generator.h"
 
 // C++ includes
@@ -84,8 +85,7 @@ void binary::generate_commands()
     //TODO: check static vs shared library
     link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_linker));
     link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_link_options));
-    link_command.add_argument("\"" + full_directory_name(configuration.build_directory,
-    toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension))+"\"");
+    link_command.add_argument(full_directory_name(configuration.build_directory, toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension)));
   }
   else if(type == target_type::application)
   {
@@ -123,14 +123,12 @@ void binary::generate_commands()
   // add all library search directories
   for(auto libdir_it = std::begin(library_directories); libdir_it != std::end(library_directories); ++ libdir_it)
   {
-    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_search_directory));
-    link_command.add_argument(*libdir_it);
+    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_search_directory) + *libdir_it);
   }
   // add all libraries to link
   for(auto lib_it = std::begin(libraries); lib_it != std::end(libraries); ++lib_it)
   {
-    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_library));
-    link_command.add_argument(*lib_it);
+    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_library) + *lib_it);
   }
   debug(debug::command_gen) << "binary::generate_commands::Final command: " << link_command << "\n";
 }
@@ -146,7 +144,7 @@ void binary::dump_commands() const
 
 void binary::execute_build_commands() const
 {
-  debug(debug::command_exec) << "binary::execute_build_commands::Building binary: " << configuration.name << ".\n";
+  debug(debug::command_exec) << "binary::execute_build_commands::Building binary: " << name << ".\n";
   debug(debug::command_exec) << "binary::execute_build_commands::Creating build directory: " << configuration.build_directory << "\n";
   platform::create_directory_recursive(configuration.build_directory);
 
@@ -154,7 +152,10 @@ void binary::execute_build_commands() const
   {
     string stdout_output;
     string stderr_output;
-    execute_command(*it, stdout_output, stderr_output);
+    int exit_code = execute_command(*it, stdout_output, stderr_output);
+    if(exit_code != 0)
+      throw command_error(stderr_output, *it);
+
     debug(debug::command_exec) << "binary::execute_build_commands::Command execution succesful:\n"
                                   "\tcommand was: " << *it << "\n"
                                   "\tstdout: " << stdout_output << "\n"

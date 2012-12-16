@@ -31,7 +31,7 @@
 #include <set>
   using std::set;
 #include <string>
-  using std::wstring;
+  using std::string;
 
 libambrosia_namespace_begin
 
@@ -120,8 +120,8 @@ debug& debug::operator<<(const platform::command& command)
     std::cerr << platform::convert_to_utf8(command.arguments);
 #else
   {
-    std::cerr << command.program
-    std::for_each(std::begin(command.arguments), std::end(command.arguments),[](const string& s) { std::cerr << " " << s; });
+    std::cerr << command.program;
+    std::for_each(std::begin(command.argument_storage), std::end(command.argument_storage),[](const string& s) { std::cerr << " " << s; });
   }
 #endif
   return *this;

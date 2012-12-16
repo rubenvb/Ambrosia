@@ -45,9 +45,9 @@ generator::generator(const ::libambrosia::file_type type,
   files(files),
   header_directories(header_directories),
   configuration(configuration),
-  toolchain_options(::libambrosia::toolchain_options.at(configuration.target_toolchain))
-  //language_options(::libambrosia::language_options.at(configuration.target_toolchain).at(type)),
-  //os_options(::libambrosia::os_options.at(configuration.target_os))
+  toolchain_options(::libambrosia::toolchain_options.at(configuration.target_toolchain)),
+  language_options(::libambrosia::language_options.at(configuration.target_toolchain).at(type)),
+  os_options(::libambrosia::os_options.at(configuration.target_os))
 {   }
 
 generator::~generator()
@@ -93,7 +93,7 @@ void generator::generate_parallel_commands(std::back_insert_iterator<command_vec
   first_part.add_argument(toolchain_options.at(toolchain_option::compile_only));
   for(auto it = std::begin(header_directories); it != std::end(header_directories); ++it)
   {
-    first_part.add_argument(toolchain_options.at(toolchain_option::include_dir) + "\"" + *it + "\"");
+    first_part.add_argument(toolchain_options.at(toolchain_option::include_dir) + *it);
   }
 
   // generate the part of the command that comes between the source file name and object file name

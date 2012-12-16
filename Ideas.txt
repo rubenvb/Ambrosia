@@ -1,6 +1,7 @@
 TODO marks all sections of code with a known limitation. These are not bugs, just algorithmic oddities
  or incomplete functionality in the wide sense of the word.
 
+- overload std::string operator/(const std::string&) for pathname concatenation
 - Allow project file commandline specification without extension [.nectar].txt so that all these would work:
    Ambrosia ../source/ambrosia.nectar.txt
    Ambrosia ../source/ambrosia.nectar
