@@ -69,7 +69,7 @@ void binary::generate_commands()
       {
         debug(debug::command_gen) << "binary::generate_commands::Including library " << dep_it->name << " in (dynamic) linker command.\n"
                                       "\twith library search directory: " << dep_it->target->configuration.build_directory << " and library name " << dep_it->target->configuration.build_directory << ".\n";
-        library_directories.insert("\"" + dep_it->target->configuration.build_directory + "\"");
+        library_directories.insert(dep_it->target->configuration.build_directory);
         libraries.push_back(dep_it->target->name);
         std::for_each(std::begin(dep_it->target->libraries), std::end(dep_it->target->libraries), [&libraries](const string& lib) { libraries.push_back(lib); });
       }
@@ -108,7 +108,7 @@ void binary::generate_commands()
     }
 
     link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::output_object));
-    link_command.add_argument(full_directory_name(configuration.build_directory, configuration.name)
+    link_command.add_argument(full_directory_name(configuration.build_directory, name)
                                                   + os_options.at(configuration.target_os).at(os_option::executable_extension));
   }
   // add all object files with full path (look into "response files" or "object scripts" to circumvent commandline length limits)
@@ -154,7 +154,10 @@ void binary::execute_build_commands() const
     string stderr_output;
     int exit_code = execute_command(*it, stdout_output, stderr_output);
     if(exit_code != 0)
+    {
+      debug(debug::command_exec) << "binary::execute_commands::Command returned failure.\n";
       throw command_error(stderr_output, *it);
+    }
 
     debug(debug::command_exec) << "binary::execute_build_commands::Command execution succesful:\n"
                                   "\tcommand was: " << *it << "\n"

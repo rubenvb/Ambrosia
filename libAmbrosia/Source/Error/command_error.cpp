@@ -19,6 +19,9 @@
 // Class include
 #include "Ambrosia/Error/command_error.h"
 
+// libAmbrosia includes
+#include "Ambrosia/debug.h"
+
 // C++ includes
 #include <algorithm>
 #include <iostream>
@@ -31,16 +34,19 @@ libambrosia_namespace_begin
 command_error::command_error(const string& error_output,
                              const platform::command& failed_command)
 : error(error_output),
+#ifdef _WIN32
+  command(failed_command.arguments)
+{   }
+#else
   command()
 {
-  command.append(failed_command.program);
-  std::for_each(std::begin(failed_command.arguments), std::end(failed_command.arguments),
-  [this](const char* arg) { command.append(arg); });
+  std::for_each(std::begin(failed_command.storage), std::end(failed_command.storage),
+  [this](const string& arg) { command += " " + arg; });
 }
+#endif
 
 void command_error::output_message() const
 {
-  throw 1;
   cerr << "Error: command returned an error.\n"
        << "Failed command: " << command << "\n"
        << "Error output:\n" << message << "\n";

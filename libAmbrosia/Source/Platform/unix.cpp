@@ -72,25 +72,25 @@ const os build_os = os::Linux;
 
 void command::set_program(const std::string& program_name)
 {
-  program = program_name;
+  storage.clear();
+  storage.push_back(program_name);
+  array.pop_back();
+  array.push_back(const_cast<char*>(storage.back().c_str()));
+  array.push_back(nullptr);
 }
 void command::add_argument(const std::string& argument)
 {
-  if(!argument.empty())
-  {
-    argument_storage.push_back(argument);
-    arguments.pop_back();
-    arguments.push_back(&argument_storage.back()[0]);
-    arguments.push_back(nullptr);
-  }
+  storage.push_back(argument);
+  array.pop_back(); // remove trailing nullptr
+  array.push_back(const_cast<char*>(storage.back().c_str()));
+  array.push_back(nullptr); // add trailing nullptr
 }
 void command::add_arguments(const command& other_command)
 {
-  // remove the last nullptr element
-  arguments.pop_back();
-  std::for_each(std::begin(other_command.argument_storage), std::end(other_command.argument_storage),
-  [this](const string& s) { argument_storage.push_back(s); arguments.push_back(&argument_storage.back()[0]); } );
-  arguments.push_back(nullptr);
+  array.pop_back(); // remove the last nullptr element
+  std::for_each(std::begin(other_command.storage), std::end(other_command.storage),
+  [this](const string& s) { storage.push_back(s); array.push_back(const_cast<char*>(storage.back().c_str())); } );
+  array.push_back(nullptr);
 }
 
 /*
@@ -292,8 +292,8 @@ int execute_command(const command &command,
       close(cout_pipe[1]);
       close(cerr_pipe[1]);
       // execute child program
-      if(execvp(command.program.c_str(), &command.arguments[0]) == -1)
-        throw error("execvp failed to execute command: " + command.program + ". errno is " + strerror(errno));
+      if(execvp(command.array[0], &command.array[0]) == -1)
+        throw error("execvp failed to execute command: " + string(command.array[0]) + ". errno is " + strerror(errno));
     default:
       if(waitpid(pid, &exit_code, 0) != -1)
         debug(debug::command_exec) << "unix::execute_command::Child exited with status " << exit_code << ".\n";
@@ -323,6 +323,7 @@ int execute_command(const command &command,
       if(bytes_read == -1)
         throw error("Failure reading from stdout pipe.");
   }
+  debug(debug::command_exec) << "unix::execute_command::Executed command with return code " << exit_code << ".\n";
   return exit_code;
 }
 
