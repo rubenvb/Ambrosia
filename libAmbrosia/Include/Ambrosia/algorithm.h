@@ -44,8 +44,7 @@ extern std::size_t s_full_directory_name_calls;
 /* Freestanding functions (libAmbrosia independent)
  *************************/
 // merges directory and subdirectory names to one, does the right thing if the second part is empty
-const std::string full_directory_name(const std::string& first_directory,
-                                      const std::string& second_directory);
+const std::string operator /(const std::string& left, const std::string& right);
 // returns true if expanding '?' or '*' produces a match
 bool wildcard_compare(const std::string& wildcard_string,
                       const std::string& full_string);

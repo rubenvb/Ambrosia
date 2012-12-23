@@ -128,9 +128,7 @@ void nectar_loader::extract_nectar()
 
       global_processed = true;
       if(next_token(token) && "{" == token)
-      {
         parse_target(project, project.file_cache);
-      }
       else
         throw syntax_error("\'global\' must be followed by \'{\'.", filename, line_number);
     }
@@ -143,13 +141,13 @@ void nectar_loader::extract_nectar()
         debug(debug::parser) << "nectar_loader::extract_nectar::Processing subproject \'" << token << "\'.\n";
         // Search for sub-project file: sourcedir/token/token.nectar.txt
         // 1. check for subdirectory
-        const string full_subproject_directory = full_directory_name(project.configuration.source_directory, full_directory_name(subdirectory, token));
+        const string full_subproject_directory = project.configuration.source_directory / subdirectory / token;
         if(!platform::directory_exists(full_subproject_directory))
           throw nectar_error("Directory " + full_subproject_directory + " not found.\n"
                              "Subproject names must be identical to the subproject directory.", filename, line_number );
 
         string subproject_filename = token + ".nectar.txt";
-        string full_subproject_filename = full_directory_name(full_subproject_directory, subproject_filename);
+        string full_subproject_filename = full_subproject_directory / subproject_filename;
         if(!platform::file_exists(full_subproject_filename))
         {
           //TODO: check what happens here...
@@ -170,12 +168,12 @@ void nectar_loader::extract_nectar()
           configuration subconfiguration = project.configuration;
           debug(debug::config) << "nectar_loader::extract_nectar::Setting source directory of subproject \'" << token << "\' to " << full_subproject_directory << ".\n";
           subconfiguration.source_directory = full_subproject_directory;
-          debug(debug::config) << "nectar_loader::extract_nectar::Setting build directory of subproject \'" << token << "\' to " << full_directory_name(project.configuration.build_directory,token) << ".\n";
-          subconfiguration.build_directory = full_directory_name(project.configuration.build_directory, token);
+          debug(debug::config) << "nectar_loader::extract_nectar::Setting build directory of subproject \'" << token << "\' to " << project.configuration.build_directory / token << ".\n";
+          subconfiguration.build_directory = project.configuration.build_directory / token;
 
           project.targets.emplace_back(new libambrosia::project(project.name + "::" + token, subconfiguration, dependencies));
 
-          nectar_loader subloader(*static_cast<libambrosia::project*>(project.targets.back().get()), full_subproject_filename, full_directory_name(subdirectory, token), sub_stream);
+          nectar_loader subloader(*static_cast<libambrosia::project*>(project.targets.back().get()), full_subproject_filename, subdirectory / token, sub_stream);
           subloader.extract_nectar();
         }
         else
@@ -204,7 +202,7 @@ void nectar_loader::extract_nectar()
 
           configuration target_configuration = project.configuration;
           debug(debug::config) << "nectar_loader::extract_nectar::Setting build directory for binary \'" << target_name << "\'.\n";
-          target_configuration.build_directory = full_directory_name(target_configuration.build_directory, target_name);
+          target_configuration.build_directory = target_configuration.build_directory / target_name;
 
           project.targets.emplace_back(new binary(target_name, target_configuration, type, dependencies));
 

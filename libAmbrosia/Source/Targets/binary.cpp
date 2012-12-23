@@ -53,7 +53,7 @@ void binary::generate_commands()
     string_set header_directories;
     // add the project's header dirs
     std::for_each(std::begin(source_directories.at(file_type::header)), std::end(source_directories.at(file_type::header)),
-                  [&header_directories,this](const string& dir) { header_directories.insert(full_directory_name(configuration.source_directory, dir)); });
+                  [&header_directories,this](const string& dir) { header_directories.insert(configuration.source_directory / dir); });
     // add all dependencies' header directories
     debug(debug::command_gen) << "binary::generate_commands::Current target dependencies: " << dependencies.size() << "\n";
     for(auto dep_it = std::begin(dependencies); dep_it != std::end(dependencies); ++dep_it)
@@ -64,7 +64,7 @@ void binary::generate_commands()
       std::for_each(std::begin(the_source_directories), std::end(the_source_directories),
       [&header_directories,source_directory](const string& dir)
       { debug(debug::command_gen) << "binary::generate_commands::Including directory: \"" << dir << "\" with source directory " << source_directory << "\n";
-        header_directories.insert(full_directory_name(source_directory, dir)); });
+        header_directories.insert(source_directory / dir); });
       if(dep_it->type == target_type::library)
       {
         debug(debug::command_gen) << "binary::generate_commands::Including library " << dep_it->name << " in (dynamic) linker command.\n"
@@ -85,7 +85,7 @@ void binary::generate_commands()
     //TODO: check static vs shared library
     link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_linker));
     link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_link_options));
-    link_command.add_argument(full_directory_name(configuration.build_directory, toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension)));
+    link_command.add_argument(configuration.build_directory / (toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension)));
   }
   else if(type == target_type::application)
   {
@@ -108,8 +108,7 @@ void binary::generate_commands()
     }
 
     link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::output_object));
-    link_command.add_argument(full_directory_name(configuration.build_directory, name)
-                                                  + os_options.at(configuration.target_os).at(os_option::executable_extension));
+    link_command.add_argument(configuration.build_directory / name  + os_options.at(configuration.target_os).at(os_option::executable_extension));
   }
   // add all object files with full path (look into "response files" or "object scripts" to circumvent commandline length limits)
   for(auto type_it = std::begin(files); type_it != std::end(files); ++type_it)

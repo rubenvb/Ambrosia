@@ -65,6 +65,7 @@ libambrosia_namespace_begin
 // Forward declarations
 class project;
 class target;
+struct external_dependency;
 namespace platform
 {
 struct command;
@@ -82,6 +83,7 @@ typedef std::vector<platform::command> command_vector;
 typedef std::map<file_type, build_element_set> map_file_type_build_element_set;
 typedef std::map<file_type, string_set> map_file_type_string_set;
 typedef std::map<std::string, file_set> map_string_file_set;
+typedef std::map<std::string, external_dependency> map_string_external_dependency;
 
 typedef std::map<toolchain_option, std::string> toolchain_option_map;
 typedef std::map<language_option, std::string> language_option_map;

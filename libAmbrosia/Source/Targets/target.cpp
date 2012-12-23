@@ -72,7 +72,7 @@ bool target::add_source_directory(const file_type type,
                                   file_cache& file_cache)
 {
   debug(debug::target) << "target::add_source_directory::Adding directory " << directory << " of type " << file_type_map_inverse.at(type) << ".\n";
-  if(!file_cache.add_source_directory(full_directory_name(configuration.source_directory, directory)))
+  if(!file_cache.add_source_directory(configuration.source_directory / directory))
     return false;
   if(!source_directories[type].insert(directory).second)
     debug(debug::target) << "target::add_source_directory::Directory " << directory << " already present.\n";

@@ -41,6 +41,7 @@
   using libambrosia::file_cache;
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/platform.h"
+  using libambrosia::operator/;
 #include "Ambrosia/Targets/project.h"
   using libambrosia::project;
 //#include "Ambrosia/status.h"
@@ -169,7 +170,7 @@ void apply_commandline_options(const string_vector& arguments,
   }
   debug(debug::commandline) << "commandline::apply_commandline_options::Checking if project file was found.\n";
   // Ensure that a valid project file has been found
-  if(!lib::platform::file_exists(lib::full_directory_name(project.configuration.source_directory, project.configuration.project_file)))
+  if(!lib::platform::file_exists(project.configuration.source_directory / project.configuration.project_file))
     throw lib::error("No project file specified on the commandline, nor was one found in the current directory.");
 }
 

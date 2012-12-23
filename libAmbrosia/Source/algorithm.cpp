@@ -52,24 +52,18 @@
 
 libambrosia_namespace_begin
 
-#ifdef AMBROSIA_DEBUG
-size_t s_full_directory_name_calls = 0;
-#endif
-
 /* Freestanding functions
  *************************/
-const std::string full_directory_name(const string& first_directory,
-                                      const string& second_directory )
+const string operator /(const string& left, const string& right)
 {
-#ifdef AMBROSIA_DEBUG
-  ++s_full_directory_name_calls;
-#endif
-  if(first_directory.empty())
-    return second_directory;
-  else if(second_directory.empty())
-    return first_directory;
+  if(left.empty())
+    return right;
+  else if(right.empty())
+    return left;
+  else if('/' == left.back())
+    return left.substr(0,left.size()-2) + "/" + right;
   else
-    return first_directory + "/" + second_directory;
+    return left + "/" + right;
 }
 
 bool wildcard_compare(const string& wild_string,

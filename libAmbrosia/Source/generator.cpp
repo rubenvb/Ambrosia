@@ -62,8 +62,7 @@ void generator::generate_object_filenames()
   {
     const build_element& current = *it;
     //TODO: handle source files with the same name which would cause object files overwriting each other
-    current.object_file.name = full_directory_name(configuration.build_directory, get_basename(current.source_file.name))
-                               + toolchain_options.at(toolchain_option::object_extension);
+    current.object_file.name = configuration.build_directory / get_basename(current.source_file.name) + toolchain_options.at(toolchain_option::object_extension);
     current.object_file.time_modified = platform::last_modified(current.object_file.name);
 
     debug(debug::command_gen) << "generator::generate_object_filenames::object file: " << current.object_file.name << "\n";

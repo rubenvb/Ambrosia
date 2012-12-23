@@ -85,7 +85,7 @@ const string find_project_file(const string& directory,
 void drink_nectar(project& project)
 {
   // open file
-  const string& filename = full_directory_name(project.configuration.source_directory, project.configuration.project_file);
+  const string& filename = project.configuration.source_directory / project.configuration.project_file;
   const auto& stream_ptr(platform::open_ifstream(filename));
   auto& stream = *stream_ptr;
   if(!stream)

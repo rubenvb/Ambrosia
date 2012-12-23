@@ -64,7 +64,7 @@ HEADERS += \
     Include/Ambrosia/generator.h \
     Include/Ambrosia/dependency.h \
     Include/Ambrosia/Error/command_error.h \
-    Include/Ambrosia/Targets/dummy.h
+    Include/Ambrosia/external_dependency.h
 
 SOURCES += \
     Source/configuration.cpp \

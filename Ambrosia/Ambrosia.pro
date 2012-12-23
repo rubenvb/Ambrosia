@@ -60,23 +60,3 @@ HEADERS += \
     Include/program_options.h
 
 OTHER_FILES += Ambrosia.nectar.txt
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

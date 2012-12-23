@@ -68,7 +68,7 @@ void file_cache::find_source_files(const std::string& filename,
   const string& true_filename = directory_filename.second;
   for(auto subdir_it = std::begin(subdirectories); subdir_it != std::end(subdirectories); ++subdir_it)
   {
-    const string full_directory = full_directory_name(full_directory_name(source_directory, *subdir_it), preceding_directory);
+    const string full_directory = source_directory / *subdir_it / preceding_directory;
     debug(debug::files) << "file_cache::find_source_files::Finding matches in " << full_directory << ".\n";
     if(!add_source_directory(full_directory))
     {
@@ -83,7 +83,7 @@ void file_cache::find_source_files(const std::string& filename,
       if(wildcard_compare(true_filename, current))
       {
         debug(debug::files) << "file_cache::find_source_files::Match found: " << current << "\n";
-        files.insert(file(full_directory_name(full_directory, current), source_file_it->time_modified));
+        files.insert(file(full_directory / current, source_file_it->time_modified));
       }
     }
   }
@@ -102,7 +102,7 @@ const file_set file_cache::match_source_files(const string& filename,
   // search all directories, appended with preceding_directory
   for(auto directory_it = std::begin(directories); directory_it != std::end(directories); ++directory_it)
   {
-    const string directory(full_directory_name(configuration->source_directory, *directory_it + preceding_directory));
+    const string directory(configuration->source_directory / (*directory_it + preceding_directory));
     if(!platform::directory_exists(directory))
     {
       debug(debug::files) << "file_cache::match_source_files::Skipping nonexistent directory: " << directory << ".\n";
