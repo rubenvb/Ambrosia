@@ -42,7 +42,6 @@ HEADERS += \
     Include/Ambrosia/platform.h \
     Include/Ambrosia/typedefs.h \
     Include/Ambrosia/enum_maps.h \
-    Include/Ambrosia/status.h \
     Include/Ambrosia/nectar.h \
     Include/Ambrosia/algorithm.h \
     Include/Ambrosia/node.h \
@@ -61,11 +60,11 @@ HEADERS += \
     Include/Ambrosia/ambrosia.h \
     Include/Ambrosia/Targets/target.h \
     Include/Ambrosia/Targets/project.h \
-    Include/Ambrosia/Targets/global.h \
     Include/Ambrosia/Targets/binary.h \
     Include/Ambrosia/generator.h \
     Include/Ambrosia/dependency.h \
-    Include/Ambrosia/Error/command_error.h
+    Include/Ambrosia/Error/command_error.h \
+    Include/Ambrosia/Targets/dummy.h
 
 SOURCES += \
     Source/configuration.cpp \
@@ -83,10 +82,8 @@ SOURCES += \
     Source/nectar.cpp \
     Source/nectar_loader.cpp \
     Source/node.cpp \
-    Source/status.cpp \
     Source/Targets/target.cpp \
     Source/Targets/project.cpp \
-    Source/Targets/global.cpp \
     Source/Targets/binary.cpp \
     Source/generator.cpp \
     Source/dependency.cpp \

@@ -2,19 +2,17 @@ TODO marks all sections of code with a known limitation. These are not bugs, jus
  or incomplete functionality in the wide sense of the word.
 
 - overload std::string operator/(const std::string&) for pathname concatenation
+- diversify the generator class for compile, link, and other commands. This should allow for an N-step parallellized compile and link process
+- use hash of source file and build command to determine if a build output file needs rebuilding.
 - Allow project file commandline specification without extension [.nectar].txt so that all these would work:
    Ambrosia ../source/ambrosia.nectar.txt
    Ambrosia ../source/ambrosia.nectar
    Ambrosia ../source/ambrosia
 - Error reporting at syntax errors needs to do it Clang-wise, and point to the exact place where the problem is at
-- Improve next_token to allow it to read tokens surrounded by quotes.
 - make a new "3rd party project" subclass to handle external dependencies so that include and lib dependencies are handled in a uniform way.
-- Explore GCC "specs" files to shorten commandlines considerably.
 - Compiler options:
    GCC/ld can improve final link size in (among others) a static link when they use: -ffunction-sections -fdata-sections and -Wl,--gc-sections.
    MSVC does this using /Gy and link.exe's /OPT:REF
 - Improve target::add_directory to read cached file data from somewhere. Only fix if performance sucks.
    This would make it so that scan_directory is only called once per Ambrosia run, instead of once, per occurence.
    Of course the user should work around that by adding the directory in the global target if possible.
-- allow file_cache to be used to check if a certain directory exists, so it doesn't have to be checked with an OS call when looking for source file matches
-   for *every* source file.

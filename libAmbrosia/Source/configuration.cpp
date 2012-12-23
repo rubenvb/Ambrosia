@@ -28,7 +28,7 @@
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/file_cache.h"
 #include "Ambrosia/platform.h"
-#include "Ambrosia/status.h"
+
 // C++ includes
 #include <string>
   using std::string;
@@ -40,10 +40,10 @@ configuration::configuration()
   build_architecture(platform::build_architecture),
   build_environment(detect_build_environment()),
   build_os(platform::build_os),
-  build_toolchain(detect_toolchain()),
+  build_toolchain(platform::default_toolchain),
   target_architecture(build_architecture),
   target_os(build_os),
-  target_toolchain(detect_toolchain()),
+  target_toolchain(platform::default_toolchain),
   source_directory(),
   project_file(),
   build_directory("."),
@@ -52,23 +52,6 @@ configuration::configuration()
 {
   initialize_config();
   debug(debug::config) << "\nconfiguration::config contains:\n" << config_strings << "\n";
-}
-configuration::configuration(toolchain requested_toolchain)
-: environment_PATH(platform::get_environment_PATH()),
-  build_architecture(platform::build_architecture),
-  build_environment(detect_build_environment()),
-  build_os(platform::build_os),
-  build_toolchain(detect_toolchain()),
-  target_architecture(build_architecture),
-  target_os(build_os),
-  target_toolchain(detect_toolchain(requested_toolchain)),
-  source_directory(),
-  project_file(),
-  build_directory(),
-  user_variables(),
-  config_strings()
-{
-  initialize_config();
 }
 
 void configuration::set_source_directory(const string& source_directory)
@@ -84,18 +67,12 @@ void configuration::set_source_directory(const string& source_directory)
 // Platform detection functions
 environment configuration::detect_build_environment() const
 {
-  emit_warning("configuration::detect_build_environment::not quite implemented completely yet.");
+  // best would be to keep this as unused as possible, as in, stay away from using the shell as little as possible
 #if _WIN32
   return environment::cmd;
 #else
-  return environment::bash;
+  return environment::sh;
 #endif
-}
-toolchain configuration::detect_toolchain(toolchain requested_toolchain) const
-{
-  //TODO check toolchain availability, but not here, as gnu_prefix etc could alter the name of the executables.
-  emit_warning("detect_toolchain needs to validate input.");
-  return requested_toolchain;
 }
 void configuration::initialize_config()
 {

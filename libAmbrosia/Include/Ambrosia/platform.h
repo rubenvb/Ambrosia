@@ -53,6 +53,14 @@ const toolchain ambrosia_toolchain =
 #elif defined(__GNUC__)
   toolchain::GNU;
 #endif
+const toolchain default_toolchain =
+#ifdef _WIN32
+  toolchain::GNU;
+#elif defined(__linux__)
+  toolchain::GNU;
+#elif defined(__APPLE__)
+  toolchain::LLVM;
+#endif
 
 /*
  * Child process command struct
@@ -89,6 +97,8 @@ const std::string current_working_directory();
 // check if a file/directory exists/is accessible
 bool directory_exists(const std::string& directory);
 bool file_exists(const std::string& filename);
+// Get last modified time of file
+time_t last_modified(const std::string filename);
 
 /*
  * Mostly platform dependently implemented functions
@@ -103,8 +113,6 @@ template<class output_iterator>
 void recursive_scan_directory(output_iterator it,
                               const std::string& relative_directory,
                               const std::string& directory_name = "" );
-// Get last modified time of file
-time_t last_modified(const std::string filename);
 // Create a directory, with all parent directories
 bool create_directory(const std::string& name);
 void create_directory_recursive(const std::string& name);

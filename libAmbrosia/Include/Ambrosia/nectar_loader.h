@@ -43,8 +43,8 @@ class target;
 class file_cache;
 
 // characters that are read as seperate tokens in Ambrosia .nectar.txt files.
-extern const std::set<char> s_special_characters;
-extern const std::set<char> s_special_characters_newline;
+extern const std::set<char> special_characters;
+extern const std::set<char> special_characters_newline;
 
 // main nectar_loader class
 class nectar_loader
@@ -78,7 +78,7 @@ private:
  * Lexing
  *********/
   bool next_token(std::string& token,
-                  const std::set<char>& special_characters = s_special_characters);
+                  const std::set<char>& special_characters = special_characters);
   bool next_list_token(const configuration& configuration,
                        std::string& token);
   bool process_conditional();

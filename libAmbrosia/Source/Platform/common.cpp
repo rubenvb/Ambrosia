@@ -157,6 +157,14 @@ bool file_exists(const string& filename)
   debug(debug::platform) << "platform::file_exists::" << filename << " is not a file.\n";
   return false;
 }
+time_t last_modified(const std::string filename)
+{
+  struct stat attributes;
+  if(stat(filename.c_str(), &attributes) == -1)
+    return 0; //TODO: fix if not adequate on some obscure supported platform
+  else
+    return attributes.st_mtime;
+}
 
 } // namespace platform
 

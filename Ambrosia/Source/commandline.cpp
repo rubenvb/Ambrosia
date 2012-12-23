@@ -43,7 +43,7 @@
 #include "Ambrosia/platform.h"
 #include "Ambrosia/Targets/project.h"
   using libambrosia::project;
-#include "Ambrosia/status.h"
+//#include "Ambrosia/status.h"
 
 // C-ish includes
 #include <cassert>
@@ -115,7 +115,7 @@ void apply_commandline_options(const string_vector& arguments,
           if(project.configuration.project_file.empty())
           {
             debug(debug::commandline) << "commandline::Project file found in current directory \'.\': " << project.configuration.project_file << ".\n";
-            lib::emit_warning("Ambrosia does not recommend an in-source build.");
+            output() << ("Ambrosia does not recommend an in-source build.");
           }
           else
             throw error("No project file found in specified path or current directory.");

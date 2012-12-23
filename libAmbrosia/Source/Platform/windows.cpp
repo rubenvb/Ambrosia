@@ -253,14 +253,14 @@ void recursive_scan_directory(output_iterator it,
 // explicit instantiation
 template void recursive_scan_directory<insert_iterator<file_set>>(insert_iterator<file_set>, const string&, const string&);
 
-time_t last_modified(const std::string filename)
+/*time_t last_modified(const std::string filename)
 {
   WIN32_FILE_ATTRIBUTE_DATA file_attribute_data;
   if(GetFileAttributesExW(convert_to_utf16(filename).c_str(), GET_FILEEX_INFO_LEVELS::GetFileExInfoStandard, &file_attribute_data))
-    throw error("GetFileAttributesExW call failed for " + filename);
+    return 0;
 
   return get_time(file_attribute_data.ftLastWriteTime);
-}
+}*/
 
 bool create_directory(const string& name)
 {

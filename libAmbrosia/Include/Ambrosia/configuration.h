@@ -36,7 +36,6 @@ class configuration
 {
 public:
   configuration();
-  configuration(toolchain requested_toolchain);
 
   // source directory and file where the object's configuration is attached to
   void set_source_directory(const std::string& source_directory);
@@ -70,7 +69,6 @@ private:
   // Platform detection functions
   architecture detect_build_architecture() const;
   environment detect_build_environment() const;
-  toolchain detect_toolchain(toolchain requested_toolchain = platform::ambrosia_toolchain) const;
   void initialize_config();
 };
 

@@ -22,7 +22,6 @@
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/Error/internal_error.h"
-#include "Ambrosia/status.h"
 #include "Ambrosia/Targets/target.h"
 
 // C++ includes

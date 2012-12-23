@@ -52,7 +52,7 @@ enum class toolchain
 enum class environment
 {
   cmd, // Windows' cmd.exe
-  bash // GNU Bash or compatible
+  sh // POSIX shell
   // ...
 };
 

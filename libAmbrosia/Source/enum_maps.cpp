@@ -92,12 +92,12 @@ const map<toolchain, string> toolchain_map_inverse =
 const map<string, environment> environment_map =
   map_entries_begin
     entry_begin "cmd",  environment::cmd entry_end
-    entry_begin "Bash", environment::bash entry_end
+    entry_begin "sh", environment::sh entry_end
   entries_end;
 const map<environment, string> environment_map_inverse =
   map_entries_begin
-    entry_begin environment::cmd,  "cmd" entry_end
-    entry_begin environment::bash, "Bash" entry_end
+    entry_begin environment::cmd, "cmd" entry_end
+    entry_begin environment::sh, "sh" entry_end
   entries_end;
 
 const map<string, target_type> target_type_map =

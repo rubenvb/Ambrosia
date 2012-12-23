@@ -35,18 +35,10 @@ void print_help_information()
 void print_version_information()
 {
   // Welcome message
-  output() << "Welcome to Ambrosia, version "
-           << app::version_major << "."
-           << app::version_minor << "."
-           << app::version_bugfix << ", using libAmbrosia version "
-           << lib::version_major << "."
-           << lib::version_minor << "."
-           << lib::version_bugfix << ".\n"
-           << "This version of Ambrosia was built for "
-           << lib::os_map_inverse.at(lib::platform::build_os) << " "
-           << lib::architecture_map_inverse.at(lib::platform::build_architecture)
-           << " with " << lib::toolchain_map_inverse.at(lib::platform::ambrosia_toolchain)
-           << ".\n";
+  output() << "Welcome to Ambrosia, version " << app::version_major << "." << app::version_minor << "." << app::version_bugfix
+           << ", using libAmbrosia version " << lib::version_major << "." << lib::version_minor << "." << lib::version_bugfix << ".\n"
+           << "This version of Ambrosia was built for " << lib::os_map_inverse.at(lib::platform::build_os) << " " << lib::architecture_map_inverse.at(lib::platform::build_architecture)
+           << " with " << lib::toolchain_map_inverse.at(lib::platform::ambrosia_toolchain) << ".\n\n";
 }
 
 ambrosia_namespace_end

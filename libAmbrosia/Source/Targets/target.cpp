@@ -93,7 +93,6 @@ void target::add_library(const string& library,
                          const size_t /*line_number*/)
 {
   libraries.insert(library);
-  //  emit_warning("Library " + library + " is mentioned twice. Check your dependencies.");
 }
 
 libambrosia_namespace_end

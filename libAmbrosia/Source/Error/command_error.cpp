@@ -35,7 +35,7 @@ command_error::command_error(const string& error_output,
                              const platform::command& failed_command)
 : error(error_output),
 #ifdef _WIN32
-  command(failed_command.arguments)
+  command(platform::convert_to_utf8(failed_command.arguments))
 {   }
 #else
   command()
