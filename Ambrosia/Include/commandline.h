@@ -40,6 +40,10 @@ ambrosia_namespace_begin
 void apply_commandline_options(const string_vector& options,
                                program_options& program_options,
                                lib::project& project);
+// trim argument="arg<char>value" to "arg" and return "value". If argument="arg", return empty string.
+const std::string split_argument(std::string& argument,
+                                 const char split_char,
+                                 const size_t argument_number);
 
 void add_build_target(program_options& options,
                       const std::string& target,
@@ -60,6 +64,10 @@ void set_ambrosia_cross(lib::configuration& configuration,
 
 bool add_configuration_options(const std::string& options,
                                lib::configuration& configuration);
+
+void add_external_dependency(const std::string& name,
+                             const std::string& location,
+                             lib::configuration& configuration);
 
 ambrosia_namespace_end
 

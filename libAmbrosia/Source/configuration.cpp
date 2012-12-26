@@ -36,7 +36,8 @@
 libambrosia_namespace_begin
 
 configuration::configuration()
-: environment_PATH(platform::get_environment_PATH()),
+: external_dependencies(),
+  environment_PATH(platform::get_environment_PATH()),
   build_architecture(platform::build_architecture),
   build_environment(detect_build_environment()),
   build_os(platform::build_os),
@@ -87,10 +88,31 @@ void configuration::initialize_config()
       entry_begin "debug" entry_end // debug build is the default
     entries_end;
   // Convenience config strings
-  if(target_os == os::Windows && target_toolchain == toolchain::GNU)
-    config_strings.insert("mingw");
+  // OS related
+  if(target_os == os::Windows)
+    config_strings.insert("windows");
   if(target_os == os::Linux || target_os == os::MacOSX)
     config_strings.insert("unix");
+  if(target_os == os::Linux)
+    config_strings.insert("linux");
+  if(target_os == os::MacOSX)
+    config_strings.insert("mac");
+
+  // Toolchain related
+  if(target_toolchain == toolchain::Microsoft)
+    config_strings.insert("msvc");
+  if(target_toolchain == toolchain::Intel)
+    config_strings.insert("icc");
+
+  // Architecture related
+  if(target_architecture == architecture::x86)
+    config_strings.insert("x86");
+  else if(target_architecture == architecture::amd64)
+    config_strings.insert("amd64");
+
+  // OS and toolchain related
+  if(target_os == os::Windows && target_toolchain == toolchain::GNU)
+      config_strings.insert("mingw");
 }
 
 libambrosia_namespace_end

@@ -44,10 +44,6 @@
   using libambrosia::operator/;
 #include "Ambrosia/Targets/project.h"
   using libambrosia::project;
-//#include "Ambrosia/status.h"
-
-// C-ish includes
-#include <cassert>
 
 // C++ includes
 #include <algorithm>
@@ -99,13 +95,13 @@ void apply_commandline_options(const string_vector& arguments,
 
           if(lib::platform::file_exists(current))
           {
-            debug(debug::commandline) << "commandline::apply_commandline_options::Project file given on commandline.\n";
+            debug(debug::commandline) << "commandline::apply_commandline_options::Project file given on commandline: \'" << current << "\'.\n";
             project.configuration.project_file = current;
             continue;
           }
           else if(lib::platform::directory_exists(current))
           {
-            debug(debug::commandline) << "commandline::apply_commandline_options::Project file given on commandline.\n";
+            debug(debug::commandline) << "commandline::apply_commandline_options::Project file location given on commandline.\n";
             project.configuration.project_file = lib::find_project_file(current, project);
             continue;
           }
@@ -145,25 +141,36 @@ void apply_commandline_options(const string_vector& arguments,
         }
         break;
       case 1:
+      {
+        string argument = current.substr(1);
         if(current[0] == '-')
         {
-          const string::size_type index = current.find("=",1);
-          if(index == string::npos || index == current.size()-1)
-            set_program_option(options, current.substr(1), argument_number);
-            //throw commandline_error("Ambrosia internal options must be set by \'-option=value\' type arguments.", argument_number);
-
-          const string option(current.substr(1,index-1));
-          const string value(current.substr(index+1, string::npos));
-          set_ambrosia_option(project, option, value, argument_number);
+          const string value = split_argument(argument, '=', argument_number);
+          if(value.empty())
+            set_program_option(options, argument, argument_number);
+          else
+            set_ambrosia_option(project, argument, value, argument_number);
         }
         else if(current[0] == ':')
-          add_configuration_options(current.substr(1), project.configuration);
+          add_configuration_options(argument, project.configuration);
+        else
+          throw commandline_error("Unknown Ambrosia option: \'" + current + "\'.", argument_number);
         break;
+      }
       case 2:
-        // TODO: user arguments defined in project file:
-        //  --<argument>=<value>
-        //  store in a string_map?
+      {
+        string argument = current.substr(2);
+        const string value = split_argument(argument, '=', argument_number);
+        debug(debug::commandline) << "commandline::apply_commandline_options::Option: \'" << argument << "\' with value \'" << value << "\'.\n";
+        if(argument.size() > 4 && !argument.compare(0,4, "with"))
+        {
+          add_external_dependency(argument.substr(5), value, project.configuration);
+        }
+        else
+          throw commandline_error("Double-dashed argument can only be of the form \'--with-*=*\' for now." + argument +"\n" + value, argument_number);
+
         break;
+      }
       default:
         throw commandline_error("Invalid commandline argument: " + current, argument_number);
     }
@@ -172,6 +179,21 @@ void apply_commandline_options(const string_vector& arguments,
   // Ensure that a valid project file has been found
   if(!lib::platform::file_exists(project.configuration.source_directory / project.configuration.project_file))
     throw lib::error("No project file specified on the commandline, nor was one found in the current directory.");
+}
+
+const string split_argument(string& argument,
+                            const char split_char,
+                            const size_t argument_number)
+{
+  const string::size_type index = argument.find(split_char);
+  if(index == string::npos)
+    return string();
+  if(index == argument.size()-1)
+    throw commandline_error("Argument must be of the form \'arg=value\'", argument_number);
+
+  const string value = argument.substr(index+1);
+  argument.resize(index);
+  return value;
 }
 
 void add_build_target(program_options& options,
@@ -294,6 +316,28 @@ bool add_configuration_options(const string& options,
   throw error("commandline::add_configuration_options is not finished yet.");
 }
 
+void add_external_dependency(const string& name,
+                             const string& location,
+                             lib::configuration& /*configuration*/)
+{
+  if(location.empty())
+    debug(debug::commandline) << "commandline::add_external_dependency::Adding external dependency \'" << name << "\' without location.\n";
+  else
+    debug(debug::commandline) << "commandline::add_external_dependency::Adding external dependency \'" << name << "\' located in \'" << location << "\'.\n";
 
+  // check if given argument includes '-lib', '-include' or '-bin' suffix
+  const string::size_type index = name.rfind('-');
+  if(index != string::npos)
+  {
+    string suffix = name.substr(index);
+    string real_name = name.substr(0,name.size()-index-1);
+    debug(debug::commandline) << "commandline::add_external_dependency::Found suffix: \'" << suffix << "\' and real name\'" << real_name << "\'.\n";
+  }
+  else
+  {
+    debug(debug::commandline) << "commandline::add_external_dependency::Found no suffix, assuming conventional subdirectories.\n";
+  }
+
+}
 
 ambrosia_namespace_end

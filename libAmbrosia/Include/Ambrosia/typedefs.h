@@ -26,6 +26,7 @@
 #include "Ambrosia/build_element.h"
 #include "Ambrosia/dependency.h"
 #include "Ambrosia/enums.h"
+#include "Ambrosia/external_dependency.h"
 #include "Ambrosia/file.h"
 
 // C++ includes
@@ -65,7 +66,6 @@ libambrosia_namespace_begin
 // Forward declarations
 class project;
 class target;
-struct external_dependency;
 namespace platform
 {
 struct command;

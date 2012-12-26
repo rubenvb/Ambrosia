@@ -36,15 +36,16 @@ enum class os
 enum class architecture
 {
   x86,
-  amd64
-  //...
+  amd64,
+  ARM
+  // ...
 };
 // Toolchain comprising of compiler, linker, and general tools
 enum class toolchain
 {
-  GNU, // GCC+GNU binutils
+  GNU, // GCC+binutils
   Microsoft, // cl.exe and link.exe
-  LLVM, // Clang+GNU binutils (may change later)
+  LLVM, // Clang+binutils
   Intel // ICC+platform linker
   // ...
 };
@@ -91,34 +92,6 @@ enum class file_type
   Qt_rc
   // ...
 };
-
-/*enum class generator_string
-{
-  compiler, // compiler program name (without target prefixes)
-  dynamic_linker, // linker program name (for executables and shared libraries)
-  static_linker, // linker program name (for static library archives)
-  output_object, // precedes object filename
-  output_executable, // precedes executable filename
-  output_static_lib, // precedes static library filename
-  output_shared_lib, // precedes shared library filename
-  output_import_lib, // precedes import library filename
-  output_pch, // precedes precompiled header filename
-  compile_argument, // compile to object filew without linking
-  compile_shared, // compile to be linked dynamically to runtime libraries
-  compile_static, // compile to be linked statically to runtime libraries
-  include_argument, // precedes extra include directory
-  object_suffix, // suffix for intermediate object files
-  import_library_suffix, // .dll.a, .lib
-  static_library_suffix, // .a, .lib
-  shared_library_suffix, // .dll, .so
-  debug_argument, // produce debug info
-  optimize, // standard "release" configuration optimization
-  optimize_none, // explicitely turn off optimizations
-  optimize_common, // options that make debugging impossible but added because Ambrosia is awesome
-  optimize_size, // optimize for size
-  optimize_extreme, // full optimization, not guaranteed to be better than 'optimize_release'
-  optimize_lto // Link-time-optimization or link time code generation: -flto or /GL and /LTCG
-};*/
 
 // Toolchain-specific options
 enum class toolchain_option

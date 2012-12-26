@@ -110,7 +110,6 @@ void binary::generate_commands()
     link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::output_object));
     link_command.add_argument(configuration.build_directory / name  + os_options.at(configuration.target_os).at(os_option::executable_extension));
   }
-  // add all object files with full path (look into "response files" or "object scripts" to circumvent commandline length limits)
   for(auto type_it = std::begin(files); type_it != std::end(files); ++type_it)
   {
     build_element_set& bes = type_it->second;

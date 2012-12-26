@@ -22,23 +22,24 @@
 // Global include
 #include "Ambrosia/global.h"
 
-// libAmbrosia includes
-#include "Ambrosia/algorithm.h"
-
 // C++ includes
 #include <string>
 
 libambrosia_namespace_begin
 
+// Function declaration
+const std::string operator/(const std::string&,const std::string&);
+
 struct external_dependency
 {
+  external_dependency() : install_prefix(), lib(), bin(), include() {};
   external_dependency(const std::string& install_prefix)
-  : install_prefix(install_prefix), lib(install_prefix/"lib")
+  : install_prefix(install_prefix), lib(install_prefix/"lib"), bin(install_prefix/"bin"), include(install_prefix/"include")
   {   }
-  string install_prefix;
-  string lib;
-  string bin;
-  string include;
+  std::string install_prefix;
+  std::string lib;
+  std::string bin;
+  std::string include;
 };
 
 libambrosia_namespace_end

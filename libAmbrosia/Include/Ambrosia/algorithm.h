@@ -26,7 +26,6 @@
 #include "Ambrosia/debug.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/platform.h"
-//#include "Ambrosia/target.h"
 #include "Ambrosia/typedefs.h"
 
 // C++ includes
@@ -36,10 +35,6 @@
 #include <sstream>
 
 libambrosia_namespace_begin
-
-#ifdef AMBROSIA_DEBUG
-extern std::size_t s_full_directory_name_calls;
-#endif
 
 /* Freestanding functions (libAmbrosia independent)
  *************************/

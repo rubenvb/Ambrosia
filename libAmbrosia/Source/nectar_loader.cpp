@@ -769,7 +769,7 @@ void nectar_loader::parse_library_list(target& target,
         error_list.push_back(token);
       if(platform::is_absolute_path(token))
       {
-        debug(debug::parser) << "nectar_loader::parse_library_list::Absolure library path detected.\n";
+        debug(debug::parser) << "nectar_loader::parse_library_list::Absolute library path detected.\n";
         syntax_warning("Absolute paths in project files should be avoided.");
       }
     }
