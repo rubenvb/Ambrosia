@@ -26,7 +26,10 @@
 #if _WIN32
   #define S_IFREG _S_IFREG
   #include <direct.h>
+  #include <stdio.h>
   #define getcwd _getcwd
+  #define mkdir(path,mode) _mkdir(path)
+  #define snprintf _snprintf
 #endif
 #if __linux__
   #include <sys/io.h> // For access()
@@ -164,6 +167,35 @@ time_t last_modified(const std::string filename)
     return 0; //TODO: fix if not adequate on some obscure supported platform
   else
     return attributes.st_mtime;
+}
+
+bool create_directory(const string& name)
+{
+  // from simple example from OpenGroup docs
+  bool result = (0!= mkdir(name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)); // MSVC C4800 without "0 !="
+  return result;
+}
+void create_directory_recursive(const string& name)
+{
+  const char* dir = name.c_str();
+  char tmp[256];
+  char *p = NULL;
+  size_t len;
+
+  snprintf(tmp, sizeof(tmp),"%s",dir);
+  len = strlen(tmp);
+  if(tmp[len - 1] == '/')
+    tmp[len - 1] = 0;
+  for(p = tmp + 1; *p; p++)
+  {
+    if(*p == '/')
+    {
+      *p = 0;
+      mkdir(tmp, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+      *p = '/';
+    }
+    mkdir(tmp, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  }
 }
 
 } // namespace platform

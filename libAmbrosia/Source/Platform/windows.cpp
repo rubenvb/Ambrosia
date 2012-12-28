@@ -253,24 +253,16 @@ void recursive_scan_directory(output_iterator it,
 // explicit instantiation
 template void recursive_scan_directory<insert_iterator<file_set>>(insert_iterator<file_set>, const string&, const string&);
 
-/*time_t last_modified(const std::string filename)
-{
-  WIN32_FILE_ATTRIBUTE_DATA file_attribute_data;
-  if(GetFileAttributesExW(convert_to_utf16(filename).c_str(), GET_FILEEX_INFO_LEVELS::GetFileExInfoStandard, &file_attribute_data))
-    return 0;
-
-  return get_time(file_attribute_data.ftLastWriteTime);
-}*/
-
-bool create_directory(const string& name)
+/*bool create_directory(const string& name)
 {
   // MSVC C4800 without the "0 !="
   return 0 != CreateDirectoryW((L"\\\\?\\" + convert_to_utf16(name)).c_str(), NULL);
 }
+//DOESN'T WORK FOR RECURSIVE DIRECTORIES
 void create_directory_recursive(const string& name)
 {
   //TODO: optimize the calls to convert_to_utf16 to only once: make and call create_directory_recursive(const wstring&)
-  if(!CreateDirectoryW((/*L"\\\\?\\" + */convert_to_utf16(name)).c_str(), NULL))
+  if(!CreateDirectoryW((L"\\\\?\\" + convert_to_utf16(name)).c_str(), NULL))
   {
     DWORD win32_error = GetLastError();
     if(win32_error == ERROR_FILE_NOT_FOUND || win32_error == ERROR_PATH_NOT_FOUND)
@@ -286,7 +278,7 @@ void create_directory_recursive(const string& name)
     else
       throw error("Win32 error: CreateDirectoryW call failed for " + name + " with error: " + to_string(win32_error) + ".");
   }
-}
+}*/
 
 int execute_command(const platform::command& command,
                     string &string_cout,
