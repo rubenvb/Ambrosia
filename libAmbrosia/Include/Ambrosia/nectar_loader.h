@@ -78,7 +78,7 @@ private:
  * Lexing
  *********/
   bool next_token(std::string& token,
-                  const std::set<char>& special_characters = special_characters);
+                  const std::set<char>& special_characters = ::libambrosia::special_characters);
   bool next_list_token(const configuration& configuration,
                        std::string& token);
   bool process_conditional();

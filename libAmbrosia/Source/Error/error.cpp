@@ -42,9 +42,10 @@ error::error(const std::string& message,
   list(list.size())
 {
   auto dest = std::begin(this->list);
-  std::for_each(std::begin(list), std::end(list),
-                [=](const file& item) mutable
-                { *dest++ = item.name; });
+  for(auto&& item : list)
+  {
+    *dest++ = item.name;
+  }
 }
 error::~error()
 {   }
@@ -55,9 +56,10 @@ void error::output_message() const
           "\t" << message << "\n";
   if(!list.empty())
   {
-    std::for_each(std::begin(list), std::end(list),
-                  [](const string& item)
-                  { cerr << "\t" << item << "\n";});
+    for(auto&& item : list)
+    {
+      cerr << "\t" << item << "\n";
+    }
   }
 }
 

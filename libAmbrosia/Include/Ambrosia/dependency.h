@@ -11,8 +11,8 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Targets/dependency.h
- * Class representing a "dep" target, which is a (collection of) target(s) that provide information such as:
+ * Ambrosia/dependency.h
+ * Class representing an internal or external dependency target, which is a target that provides information such as:
  *  - search directories
  *  - output files
  *  - ...
@@ -30,6 +30,7 @@
 #include "Ambrosia/enums.h"
 
 // C++ includes
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -43,14 +44,12 @@ struct dependency
 public:
   dependency(const std::string& name,
              const target_type type,
-             const libambrosia::target* target = nullptr,
-             const bool optional = false)
-  : name(name), type(type), target(target), optional(optional)
-  {   }
+             const ::libambrosia::target* = nullptr,
+             const bool optional = false);
 
   const std::string name;
   const target_type type;
-  const libambrosia::target* target;
+  const ::libambrosia::target* target;
   const bool optional;
 };
 

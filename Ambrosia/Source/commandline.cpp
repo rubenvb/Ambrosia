@@ -30,11 +30,14 @@
   using libambrosia::configuration;
 #include "Ambrosia/debug.h"
   using libambrosia::debug;
+#include "Ambrosia/enums.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/commandline_error.h"
   using libambrosia::commandline_error;
 #include "Ambrosia/Error/error.h"
   using libambrosia::error;
+#include "Ambrosia/Error/internal_error.h"
+  using libambrosia::internal_error;
 #include "Ambrosia/Error/soft_error.h"
   using libambrosia::soft_error;
 #include "Ambrosia/file_cache.h"
@@ -44,11 +47,14 @@
   using libambrosia::operator/;
 #include "Ambrosia/Targets/project.h"
   using libambrosia::project;
+#include "Ambrosia/Targets/target.h"
+  using libambrosia::target;
 
 // C++ includes
-#include <algorithm>
 #include <cstddef>
   using std::size_t;
+#include <memory>
+  using std::shared_ptr;
 #include <sstream>
   using std::istringstream;
 #include <string>
@@ -61,10 +67,11 @@ void apply_commandline_options(const string_vector& arguments,
                                lib::project& project)
 {
   // Debug output
-  std::for_each(std::begin(arguments), std::end(arguments),
-                [](const string& option)
-                { static int i=1;
-                  debug(debug::type::commandline) << "commandline::apply_commandline_options::argument: " << i++ << ": " << option << ".\n"; });
+  for(auto&& option : arguments)
+  {
+    static int i=1;
+    debug(debug::type::commandline) << "commandline::apply_commandline_options::argument: " << i++ << ": " << option << ".\n";
+  }
   debug(debug::commandline) << "commandline::apply_commandline_options::Number of commandline arguments: " << arguments.size() << ".\n";
 
   // Execution ending arguments
@@ -164,7 +171,7 @@ void apply_commandline_options(const string_vector& arguments,
         debug(debug::commandline) << "commandline::apply_commandline_options::Option: \'" << argument << "\' with value \'" << value << "\'.\n";
         if(argument.size() > 4 && !argument.compare(0,4, "with"))
         {
-          add_external_dependency(argument.substr(5), value, project.configuration);
+          add_external_dependency(argument.substr(5), value, project);
         }
         else
           throw commandline_error("Double-dashed argument can only be of the form \'--with-*=*\' for now." + argument +"\n" + value, argument_number);
@@ -252,7 +259,7 @@ void set_ambrosia_option(lib::project& project,
       previous_index = index+1;
     } while(index != string::npos);
     // set new debug level
-    debug::s_level = new_debug_level;
+    debug::level = new_debug_level;
   }
 #endif // AMBROSIA_DEBUG
   else if("gnu-prefix" == option)
@@ -318,7 +325,7 @@ bool add_configuration_options(const string& options,
 
 void add_external_dependency(const string& name,
                              const string& location,
-                             lib::configuration& /*configuration*/)
+                             lib::project& project)
 {
   if(location.empty())
     debug(debug::commandline) << "commandline::add_external_dependency::Adding external dependency \'" << name << "\' without location.\n";
@@ -332,12 +339,15 @@ void add_external_dependency(const string& name,
     string suffix = name.substr(index);
     string real_name = name.substr(0,name.size()-index-1);
     debug(debug::commandline) << "commandline::add_external_dependency::Found suffix: \'" << suffix << "\' and real name\'" << real_name << "\'.\n";
+    throw internal_error("--with-<bla>-[lib,include,bin]=<blabla> not implemented yet.");
   }
   else
   {
     debug(debug::commandline) << "commandline::add_external_dependency::Found no suffix, assuming conventional subdirectories.\n";
+    project.targets.emplace_back(new target(name, project.configuration, libambrosia::target_type::external_dependency));
+    project.targets.back()->directories[libambrosia::file_type::header].insert(location / "include");
+    //TODO set the other directories
   }
-
 }
 
 ambrosia_namespace_end

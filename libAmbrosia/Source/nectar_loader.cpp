@@ -162,7 +162,10 @@ void nectar_loader::extract_nectar()
           // Get sub target dependencies
           dependency_set dependencies;
           read_dependency_set(dependencies);
-          std::for_each(std::begin(dependencies), std::end(dependencies), [](const dependency& dep){ debug(debug::parser) << "nectar_loader::extract_nectar::Dependency: " << dep.name << "\n"; });
+          for(auto&& dependency : dependencies)
+          {
+            debug(debug::parser) << "nectar_loader::extract_nectar::Dependency: " << dependency.name << "\n";
+          }
 
           // copy configuration and set proper subdirectory
           configuration subconfiguration = project.configuration;
@@ -213,9 +216,7 @@ void nectar_loader::extract_nectar()
     else if("dep" == token)
     {
       debug(debug::parser)  << "nectar_loader::extract_nectar::dep section found at line " << line_number << ".\n";
-      if(!next_token(token))
-        throw syntax_error("Expected dependency type (\'app\' or \'lib\') after \'dep\'.", filename, line_number);
-      else
+      if(next_token(token))
       {
         target_type type = target_type_map.at(token);
         if(type != target_type::library && type != target_type::application)
@@ -226,19 +227,24 @@ void nectar_loader::extract_nectar()
           debug(debug::parser) << "nectar_loader::extract_nectar::Linking dependency " << name << ".\n";
 
           // Search for dependency in project's dependency_set
-          std::for_each(std::begin(project.dependencies), std::end(project.dependencies), [](const dependency& dep) { debug(debug::parser) << "nectar_loader::extract_nectar::Project dependency: " << dep.name << "\n"; });
-          auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies), [&name,&type](const dependency& dep) {return dep.name == name && dep.type == type; });
+          for(auto dependency : project.dependencies)
+          {
+            debug(debug::parser) << "nectar_loader::extract_nectar::Project dependency: " << dependency.name << "\n";
+          }
+          auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies),
+                                     [&name,&type](const dependency& dep) {return dep.name == name && ((dep.type == type) || (dep.type == target_type::external_dependency)); });
           if(result != std::end(project.dependencies))
           {
             debug(debug::parser) << "nectar_loader::extract_nectar::Found project dependency in parent project: " << target_type_map_inverse.at(type) << " " << name << ".\n";
+            continue;
           }
-          else
-            //TODO: commandline specification of depedencies!!!
-            throw nectar_error("Dependency not specified: " + name, filename, line_number);
+          throw nectar_error("Dependency not found: " + name, filename, line_number);
         }
         else
           throw syntax_error("Expected dependency name after dependency type.", filename, line_number);
       }
+      else
+        throw syntax_error("Expected dependency type (\'app\' or \'lib\') after \'dep\'.", filename, line_number);
     }
     else
       throw syntax_error("Unexpected token: " + token + ". Expected global, sub, app, lib, dep, or test.", filename, line_number);
@@ -256,8 +262,10 @@ void nectar_loader::syntax_warning(const string& message,
   cerr << "\nSyntax warning: " + filename + "\n" +
           "       line " + to_string(line_number) + "\n" +
           "       " + message << "\n";
-  std::for_each(std::begin(warning_list), std::end(warning_list),
-                [](const string& item) { cerr << "\n\t" << item; });
+  for(auto&& item : warning_list)
+  {
+    cerr << "\n\t" << item;
+  }
 }
 /*
  * Lexing

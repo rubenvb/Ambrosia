@@ -268,12 +268,12 @@ void create_directory_recursive(const string& name)
     if(win32_error == ERROR_FILE_NOT_FOUND || win32_error == ERROR_PATH_NOT_FOUND)
     {
       string_pair split_name = split_preceding_directory(name);
-      debug(debug::platform) << "platform::create_directory_recursive::Parent directory doesn't exist, creating \"" << split_name.first << "\".\n";
+      debug(debug::platform) << "windows::create_directory_recursive::Parent directory doesn't exist, creating \'" << split_name.first << "\'.\n";
       create_directory_recursive(split_name.first);
     }
     else if(win32_error == ERROR_ALREADY_EXISTS)
     {
-      debug(debug::platform) << "platform::create_directory_recursive::Directory " << name << " already exists.\n";
+      debug(debug::platform) << "windows::create_directory_recursive::Directory " << name << " already exists.\n";
     }
     else
       throw error("Win32 error: CreateDirectoryW call failed for " + name + " with error: " + to_string(win32_error) + ".");
@@ -330,7 +330,7 @@ int execute_command(const platform::command& command,
     throw error("Win32 error: failed to call CreateProcess for command \'" + convert_to_utf8(command.arguments) + "\'\n"
                 "\t with error: " + to_string(GetLastError()));
 
-  debug(debug::platform) << "platform::execute_command::CreateProcess call successful.\n";
+  debug(debug::platform) << "windows::execute_command::CreateProcess call successful.\n";
 
   // Close thread handle
   CloseHandle(process_info.hThread);
@@ -343,12 +343,12 @@ int execute_command(const platform::command& command,
 
     Sleep(100);
   }
-  debug(debug::platform) << "platform::execute_command::Process exit code: " << exit_code << "\n";
+  debug(debug::platform) << "windows::execute_command::Process exit code: " << exit_code << "\n";
 
   // close process handle
   CloseHandle(process_info.hProcess);
 
-  debug(debug::platform) << "platform::execute_command::Closed process_info handles.\n";
+  debug(debug::platform) << "windows::execute_command::Closed process_info handles.\n";
 
   // close write ends of pipes
   CloseHandle(stdout_write_handle);
@@ -360,18 +360,18 @@ int execute_command(const platform::command& command,
   buffer.resize(buffer_size);
   DWORD bytes_read = 0;
 
-  debug(debug::platform) << "platform::execute_command::reading from stdout pipe.\n";
+  debug(debug::platform) << "windows::execute_command::reading from stdout pipe.\n";
   while(ReadFile(stdout_read_handle, &buffer[0], buffer_size, &bytes_read, NULL) && bytes_read != 0)
   {
     string_cout.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
-    debug(debug::platform) << "platform::execute_command::Read " << bytes_read << " bytes from stdout pipe:\n"
+    debug(debug::platform) << "windows::execute_command::Read " << bytes_read << " bytes from stdout pipe:\n"
                            << string_cout << "\n";
   }
-  debug(debug::platform) << "platform::execute_command::reading from stderr pipe.\n";
+  debug(debug::platform) << "windows::execute_command::reading from stderr pipe.\n";
   while(ReadFile(stderr_read_handle, &buffer[0], buffer_size, &bytes_read, NULL) && bytes_read != 0)
   {
     string_cerr.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
-    debug(debug::platform) << "platform::execute_command::Read " << bytes_read << " bytes from stderr pipe:\n"
+    debug(debug::platform) << "windows::execute_command::Read " << bytes_read << " bytes from stderr pipe:\n"
                            << string_cerr << (string_cerr.empty() ? "" : "\n");
   }
   // Close pipe read handles

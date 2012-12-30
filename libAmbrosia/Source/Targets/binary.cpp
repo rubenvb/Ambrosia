@@ -27,6 +27,8 @@
 #include "Ambrosia/generator.h"
 
 // C++ includes
+#include <iterator>
+  using std::insert_iterator;
 #include <string>
   using std::string;
 
@@ -52,26 +54,31 @@ void binary::generate_commands()
     debug(debug::command_gen) << "binary::generate_commands::Generating commands for " << type_it->second.size() << " " << file_type_map_inverse.at(type_it->first) << " files.\n";
     string_set header_directories;
     // add the project's header dirs
-    std::for_each(std::begin(source_directories.at(file_type::header)), std::end(source_directories.at(file_type::header)),
-                  [&header_directories,this](const string& dir) { header_directories.insert(configuration.source_directory / dir); });
-    // add all dependencies' header directories
-    debug(debug::command_gen) << "binary::generate_commands::Current target dependencies: " << dependencies.size() << "\n";
-    for(auto dep_it = std::begin(dependencies); dep_it != std::end(dependencies); ++dep_it)
+    for(auto&& directory : directories.at(file_type::header))
     {
-      debug(debug::command_gen) << "binary::generate_commands::Including dependency \"" << dep_it->name << "\"\'s header directories.\n";
-      const string& source_directory = dep_it->target->configuration.source_directory;
-      const string_set& the_source_directories = dep_it->target->source_directories.at(file_type::header);
-      std::for_each(std::begin(the_source_directories), std::end(the_source_directories),
-      [&header_directories,source_directory](const string& dir)
-      { debug(debug::command_gen) << "binary::generate_commands::Including directory: \"" << dir << "\" with source directory " << source_directory << "\n";
-        header_directories.insert(source_directory / dir); });
-      if(dep_it->type == target_type::library)
+      header_directories.insert(configuration.source_directory / directory);
+    }
+    debug(debug::command_gen) << "binary::generate_commands::Current target direct dependencies: " << dependencies.size() << "\n";
+    for(auto&& dependency :dependencies)
+    {
+      debug(debug::command_gen) << "binary::generate_commands::Including dependency \'" << dependency.name << "\'\'s header directories.\n";
+      const string& source_directory = dependency.target->configuration.source_directory;
+      const string_set& dependency_header_directories = dependency.target->directories.at(file_type::header);
+      for(auto&& header_directory : dependency_header_directories)
       {
-        debug(debug::command_gen) << "binary::generate_commands::Including library " << dep_it->name << " in (dynamic) linker command.\n"
-                                      "\twith library search directory: " << dep_it->target->configuration.build_directory << " and library name " << dep_it->target->configuration.build_directory << ".\n";
-        library_directories.insert(dep_it->target->configuration.build_directory);
-        libraries.push_back(dep_it->target->name);
-        std::for_each(std::begin(dep_it->target->libraries), std::end(dep_it->target->libraries), [&libraries](const string& lib) { libraries.push_back(lib); });
+        debug(debug::command_gen) << "binary::generate_commands::Including directory: \'" << header_directory << "\'' with source directory " << source_directory << "\n";
+        header_directories.insert(source_directory / header_directory);
+      }
+      if(dependency.type == target_type::library)
+      {
+        debug(debug::command_gen) << "binary::generate_commands::Including library " << dependency.name << " in (dynamic) linker command.\n"
+                                      "\twith library search directory: " << dependency.target->configuration.build_directory << " and library name " << dependency.target->configuration.build_directory << ".\n";
+        library_directories.insert(dependency.target->configuration.build_directory);
+        libraries.push_back(dependency.target->name);
+        for(auto&& library : dependency.target->libraries)
+        {
+          libraries.push_back(library);
+        }
       }
     }
     debug(debug::command_gen) << "binary::generate_commands::Creating command generator for the " << vendor_map_inverse.at(configuration.target_toolchain) << " toolchain for " << os_map_inverse.at(configuration.target_os) << ".\n";
@@ -112,30 +119,29 @@ void binary::generate_commands()
   }
   for(auto type_it = std::begin(files); type_it != std::end(files); ++type_it)
   {
-    build_element_set& bes = type_it->second;
-    for(auto bes_it = std::begin(bes); bes_it != std::end(bes); ++bes_it)
+    for(auto&& build_element : type_it->second)
     {
-      link_command.add_argument(bes_it->object_file.name);
+      link_command.add_argument(build_element.object_file.name);
     }
   }
   // add all library search directories
-  for(auto libdir_it = std::begin(library_directories); libdir_it != std::end(library_directories); ++ libdir_it)
+  for(auto&& library_directory : library_directories)
   {
-    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_search_directory) + *libdir_it);
+    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_search_directory) + library_directory);
   }
   // add all libraries to link
-  for(auto lib_it = std::begin(libraries); lib_it != std::end(libraries); ++lib_it)
+  for(auto&& library : libraries)
   {
-    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_library) + *lib_it);
+    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_library) + library);
   }
   debug(debug::command_gen) << "binary::generate_commands::Final command: " << link_command << "\n";
 }
 
 void binary::dump_commands() const
 {
-  for(auto command_it = std::begin(parallel_commands); command_it != std::end(parallel_commands); ++command_it)
+  for(auto&& command : parallel_commands)
   {
-    debug(debug::command_gen) << "binary::dump_commands::Parallel command: " << *command_it << "\n";
+    debug(debug::command_gen) << "binary::dump_commands::Parallel command: " << command << "\n";
   }
   debug(debug::command_gen) << "binary::dump_commands::Final command: " << link_command << "\n";
 }
@@ -146,19 +152,19 @@ void binary::execute_build_commands() const
   debug(debug::command_exec) << "binary::execute_build_commands::Creating build directory: " << configuration.build_directory << "\n";
   platform::create_directory_recursive(configuration.build_directory);
 
-  for(auto it = std::begin(parallel_commands); it != std::end(parallel_commands); ++it)
+  for(auto&& command : parallel_commands)
   {
     string stdout_output;
     string stderr_output;
-    int exit_code = execute_command(*it, stdout_output, stderr_output);
+    int exit_code = execute_command(command, stdout_output, stderr_output);
     if(exit_code != 0)
     {
       debug(debug::command_exec) << "binary::execute_commands::Command returned failure.\n";
-      throw command_error(stderr_output, *it);
+      throw command_error(stderr_output, command);
     }
 
     debug(debug::command_exec) << "binary::execute_build_commands::Command execution succesful:\n"
-                                  "\tcommand was: " << *it << "\n"
+                                  "\tcommand was: " << command << "\n"
                                   "\tstdout: " << stdout_output << "\n"
                                   "\tstderr: " << stderr_output << "\n";
   }

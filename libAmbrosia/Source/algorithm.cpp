@@ -225,7 +225,7 @@ template const string_set remove_set<string_set>(string_set&, const string_set&)
  **********************************/
 const string replace_directory_seperators(const string& original)
 {
-  //TODO: use std::relace_if
+  //TODO: use std::replace_if
   if('/' == platform::directory_seperator)
   {
     debug(debug::algorithm) << "algorithm::replace_directory_seperators::Forward slash is directory_seperator.\n";
@@ -283,24 +283,23 @@ void find_dependencies(const project& project,
     inserter = dependency(name, type, result->target);
   }
   // find other project targets that match, including searching subprojects recursively.
-  for(auto target_it = std::begin(project.targets); target_it != std::end(project.targets); ++target_it)
+  for(auto&& target : project.targets)
   {
-    debug(debug::algorithm) << "algorithm::find_dependencies::Checking target " << (*target_it)->name << " as a possible match.\n";
-    const auto& current = *target_it;
-    if(current->name != name && wildcard_compare("*::"+current->name, name)) // check for name and qualified name
+    debug(debug::algorithm) << "algorithm::find_dependencies::Checking target " << target->name << " as a possible match.\n";
+    if(target->name != name && wildcard_compare("*::"+target->name, name)) // check for name and qualified name
     {
-      debug(debug::algorithm) << "algorithm::find_dependencies::Apparently, \"" << "*"+current->name << "\" != \"" << name << "\"\n";
+      debug(debug::algorithm) << "algorithm::find_dependencies::Apparently, \'" << "*"+target->name << "\' != \'" << name << "\'\n";
       continue; // no match, ever
     }
-    else if(current->type == type)
+    else if(target->type == type)
     {
-      debug(debug::algorithm) << "algorithm::find_dependencies::Located exact match: " << current->name <<".\n";
-      inserter = dependency(name, type, current.get());
+      debug(debug::algorithm) << "algorithm::find_dependencies::Located exact match: " << target->name <<".\n";
+      inserter = dependency(name, type, target.get());
     }
-    else if(current->type == target_type::project)
+    else if(target->type == target_type::project)
     {
-      debug(debug::algorithm) << "algorithm::find_dependencies::Located subproject: " << current->name << " with possible matches.\n";
-      find_dependencies_in_subproject(*static_cast<libambrosia::project*>(current.get()), type, name, inserter);
+      debug(debug::algorithm) << "algorithm::find_dependencies::Located subproject: " << target->name << " with possible matches.\n";
+      find_dependencies_in_subproject(*static_cast<libambrosia::project*>(target.get()), type, name, inserter);
     }
     else
       debug(debug::algorithm) << "algorithm::find_dependencies::Not a match: " << name << ".\n";
@@ -312,27 +311,14 @@ void find_dependencies_in_subproject(const project& project,
                                      insert_iterator<dependency_set> inserter)
 {
   debug(debug::algorithm) << "algorithm::find_dependencies::Finding " << target_type_map_inverse.at(type) << " targets in subproject " << project.name << ".\n";
-  for(auto target_it = std::begin(project.targets); target_it != std::end(project.targets); ++target_it)
+  for(auto&& target : project.targets)
   {
-    const auto& current = *target_it;
-    if(current->type == type)
+    if(target->type == type)
     {
       debug(debug::algorithm) << "algorithm::find_dependencies::Found dependency match in subproject " << project.name << ".\n";
-      inserter = dependency(name, type, current.get());
+      inserter = dependency(name, type, target.get());
     }
   }
 }
-
-/*
-def dep_resolve(node, resolved, unresolved):
-   unresolved.append(node) # skip this, already present
-   for edge in node.edges:
-      if edge not in resolved:
-         if edge in unresolved:
-            raise Exception('Circular reference detected: %s -> %s' % (node.name, edge.name))
-         dep_resolve(edge, resolved, unresolved)
-   resolved.append(node)
-   unresolved.remove(node) # do this, clear the original target_vector
-*/
 
 libambrosia_namespace_end

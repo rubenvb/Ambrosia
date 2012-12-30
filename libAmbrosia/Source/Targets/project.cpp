@@ -23,7 +23,6 @@
 #include "Ambrosia/debug.h"
 
 // C++ includes
-#include <algorithm>
 #include <string>
   using std::string;
 
@@ -43,27 +42,28 @@ project::project(const string& name,
 void project::generate_commands()
 {
   debug(debug::command_gen) << "project::generate_commands::Generating commands for project " << name << ".\n";
-  std::for_each(std::begin(targets), std::end(targets),[](target_ptr& t) { t->generate_commands(); });
+  for(auto&& target : targets)
+  {
+    target->generate_commands();
+  }
 }
 
 void project::dump_commands() const
 {
-  for(auto target_it = std::begin(targets); target_it != std::end(targets); ++target_it)
+  for(auto&& target : targets)
   {
-    (*target_it)->dump_commands();
+    target->dump_commands();
   }
 }
 
 void project::execute_build_commands() const
 {
   //TODO build multiple targets in parallel; requires some form of thread pooling
-  for(auto target_it = std::begin(targets); target_it != std::end(targets); ++target_it)
+  for(auto&& target : targets)
   {
-    const string& target_name = (*target_it)->name;
-    debug(debug::command_exec) << "project::execute_build_commands::Building target " << target_name << "\n";
-    (*target_it)->execute_build_commands();
+    debug(debug::command_exec) << "project::execute_build_commands::Building target " << target->name << "\n";
+    target->execute_build_commands();
   }
-  //throw error("execute_build_commands is not implemented yet.");
 }
 
 libambrosia_namespace_end

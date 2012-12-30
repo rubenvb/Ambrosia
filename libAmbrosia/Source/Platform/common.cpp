@@ -22,14 +22,14 @@
 // libAmbrosia includes
 #include "Ambrosia/debug.h"
 
-// Common platform includes
+// Platform includes
 #if _WIN32
   #define S_IFREG _S_IFREG
   #include <direct.h>
   #include <stdio.h>
   #define getcwd _getcwd
-  #define mkdir(path,mode) _mkdir(path)
-  #define snprintf _snprintf
+  #define mkdir(path,mode) _wmkdir(path)
+  #define snprintf _snwprintf
 #endif
 #if __linux__
   #include <sys/io.h> // For access()
@@ -44,6 +44,12 @@
 // C++ includes
 #include <cstddef>
   using std::size_t;
+#include <cstring>
+#ifdef _WIN32
+  using std::wcslen;
+#else
+  using std::strlen;
+#endif
 #include <memory>
   using std::unique_ptr;
 #include <stdexcept>
@@ -64,7 +70,7 @@ namespace platform
  **********************************/
 const vector<string>& get_environment_PATH()
 {
-  debug(debug::platform) << "platform::get_environment_PATH::Called.\n";
+  debug(debug::platform) << "common::get_environment_PATH::Called.\n";
   static vector<string> result;
   if(!result.empty())
     return result;
@@ -84,7 +90,7 @@ const vector<string>& get_environment_PATH()
   while(index != string::npos)
   {
     result.push_back(PATH.substr(previous, index-previous));
-    debug(debug::platform) << "platform::get_environment_PATH::part of PATH: " << result.back() << "\n";
+    debug(debug::platform) << "common::get_environment_PATH::part of PATH: " << result.back() << "\n";
     previous=index+1;
     index = PATH.find(delimiter, previous);
   }
@@ -135,11 +141,11 @@ bool directory_exists(const string& directory)
   if(stat(directory.c_str(), &status) == 0)
 #endif //_WIN32
   {
-    debug(debug::platform) << "platform::directory_exists::(_w)stat(64) succeeded for " << directory << ".\n";
+    debug(debug::platform) << "common::directory_exists::(_w)stat(64) succeeded for " << directory << ".\n";
     if (status.st_mode & S_IFDIR)
       return true;
   }
-  debug(debug::platform) << "platform::directory_exists::" << directory << " is not a directory.\n";
+  debug(debug::platform) << "common::directory_exists::" << directory << " is not a directory.\n";
   return false;
 }
 bool file_exists(const string& filename)
@@ -153,11 +159,11 @@ bool file_exists(const string& filename)
   if(stat(filename.c_str(), &status) == 0)
 #endif //_WIN32
   {
-    debug(debug::platform) << "platform::file_exists::(_w)stat(64) succeeded.\n";
+    debug(debug::platform) << "common::file_exists::(_w)stat(64) succeeded.\n";
     if(status.st_mode & S_IFREG)
       return true;
   }
-  debug(debug::platform) << "platform::file_exists::" << filename << " is not a file.\n";
+  debug(debug::platform) << "common::file_exists::" << filename << " is not a file.\n";
   return false;
 }
 time_t last_modified(const std::string filename)
@@ -169,30 +175,39 @@ time_t last_modified(const std::string filename)
     return attributes.st_mtime;
 }
 
-bool create_directory(const string& name)
-{
-  // from simple example from OpenGroup docs
-  bool result = (0!= mkdir(name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)); // MSVC C4800 without "0 !="
-  return result;
-}
 void create_directory_recursive(const string& name)
 {
+#ifdef _WIN32
+  const wstring nameW = convert_to_utf16(name);
+  const wchar_t* dir = nameW.c_str();
+  wchar_t tmp[256];
+  wchar_t *p = nullptr;
+  const wchar_t dir_sep = L'/';
+  const wchar_t* format_string = L"%s";
+#else
   const char* dir = name.c_str();
   char tmp[256];
-  char *p = NULL;
+  char *p = nullptr;
+  const char dir_sep = '/';
+  const char* format_string = "%s";
+#endif
   size_t len;
 
-  snprintf(tmp, sizeof(tmp),"%s",dir);
+  snprintf(tmp, sizeof(tmp), format_string, dir);
+#ifdef _WIN32
+  len = wcslen(tmp);
+#else
   len = strlen(tmp);
-  if(tmp[len - 1] == '/')
+#endif
+  if(tmp[len - 1] == dir_sep)
     tmp[len - 1] = 0;
   for(p = tmp + 1; *p; p++)
   {
-    if(*p == '/')
+    if(*p == dir_sep)
     {
       *p = 0;
       mkdir(tmp, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-      *p = '/';
+      *p = dir_sep;
     }
     mkdir(tmp, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
   }

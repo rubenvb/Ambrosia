@@ -24,6 +24,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/configuration.h"
+#include "Ambrosia/dependency.h"
 #include "Ambrosia/platform.h"
 #include "Ambrosia/typedefs.h"
 
@@ -37,9 +38,9 @@ class target
 {
 public:
   target(const std::string& name,
-         const libambrosia::configuration& configuration,
+         const ::libambrosia::configuration& configuration,
          const target_type type,
-         const dependency_set& dependencies = dependency_set());
+         const std::set<dependency>& dependencies = std::set<dependency>());
 
   // Target information
   bool add_source_directory(const file_type type,
@@ -65,10 +66,10 @@ public:
   std::string name;
   lib::configuration configuration;
   target_type type;
-  dependency_set dependencies;
+  std::set<dependency> dependencies;
 
   std::map<file_type, build_element_set> files;
-  std::map<file_type, string_set> source_directories;
+  std::map<file_type, string_set> directories;
   string_set libraries;
 
   command_vector parallel_commands;

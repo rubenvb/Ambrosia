@@ -40,9 +40,6 @@ public:
   // source directory and file where the object's configuration is attached to
   void set_source_directory(const std::string& source_directory);
 
-  // external dependencies
-  map_string_external_dependency external_dependencies;
-
   // Environment PATH
   const string_vector environment_PATH;
   // build platform identification

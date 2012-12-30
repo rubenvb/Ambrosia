@@ -14,7 +14,6 @@
 (msvc)dep lib boost_assign
 {
   HEADERS boost/assign/list_of.hpp
-  LIBS
 }
 
 lib Ambrosia : lib (msvc)boost_assign

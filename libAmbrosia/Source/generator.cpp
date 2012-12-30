@@ -56,16 +56,15 @@ generator::~generator()
 void generator::generate_object_filenames()
 {
   debug(debug::command_gen) << "generator::Generating object filenames for " << file_type_map_inverse.at(type) << " files that will be built in "
-                            << "\"" << configuration.build_directory << "\".\n";
+                            << "\'" << configuration.build_directory << "\'.\n";
 
-  for(auto it = std::begin(files); it != std::end(files); ++it)
+  for(auto&& build_element : files)
   {
-    const build_element& current = *it;
     //TODO: handle source files with the same name which would cause object files overwriting each other
-    current.object_file.name = configuration.build_directory / get_basename(current.source_file.name) + toolchain_options.at(toolchain_option::object_extension);
-    current.object_file.time_modified = platform::last_modified(current.object_file.name);
+    build_element.object_file.name = configuration.build_directory / get_basename(build_element.source_file.name) + toolchain_options.at(toolchain_option::object_extension);
+    build_element.object_file.time_modified = platform::last_modified(build_element.object_file.name);
 
-    debug(debug::command_gen) << "generator::generate_object_filenames::object file: " << current.object_file.name << "\n";
+    debug(debug::command_gen) << "generator::generate_object_filenames::object file: " << build_element.object_file.name << "\n";
   }
 }
 
@@ -92,9 +91,9 @@ void generator::generate_parallel_commands(std::back_insert_iterator<command_vec
   if(!contains(configuration.config_strings, "msvc"))
     first_part.add_argument(languagestd_option());
   first_part.add_argument(toolchain_options.at(toolchain_option::compile_only));
-  for(auto it = std::begin(header_directories); it != std::end(header_directories); ++it)
+  for(auto&& header_directory : header_directories)
   {
-    first_part.add_argument(toolchain_options.at(toolchain_option::include_dir) + *it);
+    first_part.add_argument(toolchain_options.at(toolchain_option::include_dir) + header_directory);
   }
 
   // generate the part of the command that comes between the source file name and object file name
@@ -106,17 +105,17 @@ void generator::generate_parallel_commands(std::back_insert_iterator<command_vec
 
   debug(debug::command_gen) << "generator::generate_parallel_commands::Command template: " << first_part << " <source file> " << second_part << " <object_file> " << third_part << ".\n";
 
-  for(auto it = std::begin(files); it != std::end(files); ++it)
+  for(auto&& build_element : files)
   {
-    if(std::difftime(it->source_file.time_modified, it->object_file.time_modified) < 0)
+    if(std::difftime(build_element.source_file.time_modified, build_element.object_file.time_modified) < 0)
     {
-      debug(debug::command_gen) << "generator::generate_parallel_commands::Skipping up to date file " << it->source_file.name << ".\n";
+      debug(debug::command_gen) << "generator::generate_parallel_commands::Skipping up to date file " << build_element.source_file.name << ".\n";
       continue;
     }
     platform::command command = first_part;
-    command.add_argument(it->source_file.name);
+    command.add_argument(build_element.source_file.name);
     command.add_arguments(second_part);
-    command.add_argument(it->object_file.name);
+    command.add_argument(build_element.object_file.name);
     command.add_arguments(third_part);
 
     // insert command string

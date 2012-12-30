@@ -23,7 +23,6 @@
 #include "Ambrosia/debug.h"
 
 // C++ includes
-#include <algorithm>
 #include <iostream>
   using std::cerr;
 #include <string>
@@ -40,8 +39,10 @@ command_error::command_error(const string& error_output,
 #else
   command()
 {
-  std::for_each(std::begin(failed_command.storage), std::end(failed_command.storage),
-  [this](const string& arg) { command += " " + arg; });
+  for(auto&& argument : failed_command.storage)
+  {
+    command += " " + argument;
+  }
 }
 #endif
 

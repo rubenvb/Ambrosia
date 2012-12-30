@@ -63,7 +63,7 @@ const string find_project_file(const string& directory,
     else
       ++it;
   }
-  debug(debug::nectar) << "nectar::find_project_file::There are " << candidates.size() << " candidates left.\n";
+  debug(debug::nectar) << "nectar::find_project_file::Candidate matches: " << candidates.size() << ".\n";
   switch(candidates.size())
   {
     case 0:

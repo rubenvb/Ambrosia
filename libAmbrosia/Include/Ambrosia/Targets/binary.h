@@ -30,6 +30,7 @@ libambrosia_namespace_begin
 class binary : public target
 {
 public:
+  // project local target
   binary(const std::string& name,
          const ::libambrosia::configuration& configuration,
          const target_type type,

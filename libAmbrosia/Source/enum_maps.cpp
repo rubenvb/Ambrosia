@@ -102,7 +102,6 @@ const map<environment, string> environment_map_inverse =
 
 const map<string, target_type> target_type_map =
   map_entries_begin
-    entry_begin "global",  target_type::global entry_end
     entry_begin "app",     target_type::application entry_end
     entry_begin "lib",     target_type::library entry_end
     entry_begin "sub",     target_type::project entry_end
@@ -111,12 +110,11 @@ const map<string, target_type> target_type_map =
   entries_end;
 const map<target_type, string> target_type_map_inverse =
   map_entries_begin
-    entry_begin target_type::global,  "global" entry_end
-    entry_begin target_type::application,     "app" entry_end
+    entry_begin target_type::application, "app" entry_end
     entry_begin target_type::library,     "lib" entry_end
-    entry_begin target_type::project, "sub" entry_end
-    entry_begin target_type::install, "install" entry_end
-    entry_begin target_type::test,    "test" entry_end
+    entry_begin target_type::project,     "sub" entry_end
+    entry_begin target_type::install,     "install" entry_end
+    entry_begin target_type::test,        "test" entry_end
   entries_end;
 
 const map<string, file_type> file_type_map =

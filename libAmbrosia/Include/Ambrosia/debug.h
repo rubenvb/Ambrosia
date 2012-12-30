@@ -59,21 +59,21 @@ public:
   typedef std::ostream& (*stream_function)(std::ostream&);
 
 #ifdef AMBROSIA_DEBUG
-  static type s_level;
-  debug(const type debug_level = s_level);
+  static type level;
+  debug(const type debug_level = level);
 #else // AMBROSIA_DEBUG
   debug(const type);
 #endif // AMBROSIA_DEBUG
   template<typename T>
 #ifdef AMBROSIA_DEBUG
-  debug& operator<<(const T& output)
+  debug& operator<<(const T& stuff)
   {
-    if(m_output)
-      std::cerr << output;
+    if(output)
+      std::cerr << stuff;
     if(!std::cerr)
       throw internal_error("std::cerr was left in an invalid state.");
 #else // AMBROSIA_DEBUG
-  debug& operator<<( const T& )
+  debug& operator<<(const T&)
   {
 #endif // AMBROSIA_DEBUG
     return *this;
@@ -82,7 +82,7 @@ public:
 #ifdef AMBROSIA_DEBUG
   debug& operator<<(stream_function func)
   {
-    if(m_output)
+    if(output)
       func(std::cerr);
     if(!std::cerr)
       throw internal_error("std::cerr was left in an invalid state.");
@@ -95,7 +95,7 @@ public:
 
 private:
 #ifdef AMBROSIA_DEBUG
-  const bool m_output;
+  const bool output;
 #endif // AMBROSIA_DEBUG
 };
 

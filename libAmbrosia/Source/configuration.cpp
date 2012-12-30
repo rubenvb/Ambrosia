@@ -36,8 +36,7 @@
 libambrosia_namespace_begin
 
 configuration::configuration()
-: external_dependencies(),
-  environment_PATH(platform::get_environment_PATH()),
+: environment_PATH(platform::get_environment_PATH()),
   build_architecture(platform::build_architecture),
   build_environment(detect_build_environment()),
   build_os(platform::build_os),

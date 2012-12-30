@@ -26,6 +26,8 @@
 
 // C++ includes
 #include <algorithm>
+#include <iostream>
+  using std::cerr;
 #include <map>
   using std::map;
 #include <set>
@@ -37,7 +39,7 @@ libambrosia_namespace_begin
 
 #ifdef AMBROSIA_DEBUG
 // static member initialization
-debug::type debug::s_level = debug::always;
+debug::type debug::level = debug::always;
 
 const map<std::string, debug::type> debug_map =
   map_entries_begin
@@ -81,7 +83,7 @@ const map<debug::type, std::string> debug_map_inverse =
   entries_end;
 
 debug::debug(const type debug_level)
-: m_output(0 != (debug_level & s_level)) // MSVC C4800 without "0 !="
+: output(0 != (debug_level & level)) // MSVC C4800 without "0 !="
 #else // AMBROSIA_DEBUG
 debug::debug(const type)
 #endif // AMRBOSIA_DEBUG
@@ -91,38 +93,45 @@ debug::debug(const type)
 template<>
 debug& debug::operator<<(const string_set& strings)
 {
-  if(m_output)
+  if(output)
   {
     if(strings.empty())
       std::cerr << "\t<empty list>\n";
     else
-      std::for_each(std::begin(strings), std::end(strings), [strings](const std::string& item) { std::cerr << "\t" << item << "\n"; });
+    {
+      for(auto&& item : strings)
+      {
+        cerr << "\t" << item << "\n";
+      }
+    }
   }
   return *this;
 }
 template<>
 debug& debug::operator<<(const set<file_type>& type_list)
 {
-  if(m_output)
+  if(output)
   {
     if(type_list.empty())
       std::cerr << "\t<empty list>\n";
     else
-      std::for_each(std::begin(type_list), std::end(type_list), [type_list](const file_type type){ std::cerr << "\t" << file_type_map_inverse.at(type); });
+    {
+      for(auto&& type : type_list)
+      {
+        cerr << "\t" << file_type_map_inverse.at(type);
+      }
+    }
   }
   return *this;
 }
 template<>
 debug& debug::operator<<(const platform::command& command)
 {
-  if(m_output)
+  if(output)
 #if _WIN32
     std::cerr << platform::convert_to_utf8(command.arguments);
 #else
-  {
-    //std::cerr << command.program;
-    std::for_each(std::begin(command.array), std::end(command.array)-1,[](const string& s) { std::cerr << " " << s; });
-  }
+    std::for_each(std::begin(command.array), std::end(command.array)-1,[](const string& argument) { std::cerr << " " << argument; });
 #endif
   return *this;
 }

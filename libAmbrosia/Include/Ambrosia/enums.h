@@ -67,13 +67,12 @@ enum class conditional_operator
 };
 enum class target_type
 {
-  global,
   application,
   library,
   project,
   install,
   test,
-  all
+  external_dependency
 };
 enum class file_type
 {

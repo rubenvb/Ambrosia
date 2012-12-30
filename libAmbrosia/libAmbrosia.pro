@@ -57,14 +57,12 @@ HEADERS += \
     Include/Ambrosia/Error/internal_error.h \
     Include/Ambrosia/build_element.h \
     Include/Ambrosia/file.h \
-    Include/Ambrosia/ambrosia.h \
     Include/Ambrosia/Targets/target.h \
     Include/Ambrosia/Targets/project.h \
     Include/Ambrosia/Targets/binary.h \
     Include/Ambrosia/generator.h \
     Include/Ambrosia/dependency.h \
-    Include/Ambrosia/Error/command_error.h \
-    Include/Ambrosia/external_dependency.h
+    Include/Ambrosia/Error/command_error.h
 
 SOURCES += \
     Source/configuration.cpp \
@@ -86,8 +84,8 @@ SOURCES += \
     Source/Targets/project.cpp \
     Source/Targets/binary.cpp \
     Source/generator.cpp \
-    Source/dependency.cpp \
-    Source/Error/command_error.cpp
+    Source/Error/command_error.cpp \
+    Source/dependency.cpp
 
 *win32*:SOURCES += Source/Platform/windows.cpp
 *linux*:SOURCES += Source/Platform/unix.cpp

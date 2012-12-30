@@ -26,7 +26,6 @@
 #include "Ambrosia/build_element.h"
 #include "Ambrosia/dependency.h"
 #include "Ambrosia/enums.h"
-#include "Ambrosia/external_dependency.h"
 #include "Ambrosia/file.h"
 
 // C++ includes
@@ -76,14 +75,13 @@ typedef std::unordered_set<file> file_set;
 typedef std::unordered_set<build_element> build_element_set;
 typedef std::set<dependency> dependency_set;
 typedef std::unique_ptr<target> target_ptr;
-typedef std::vector<std::unique_ptr<target>> target_ptr_vector;
+typedef std::vector<target_ptr> target_ptr_vector;
 typedef std::vector<platform::command> command_vector;
 
 // heterogeneous typedefs
 typedef std::map<file_type, build_element_set> map_file_type_build_element_set;
 typedef std::map<file_type, string_set> map_file_type_string_set;
 typedef std::map<std::string, file_set> map_string_file_set;
-typedef std::map<std::string, external_dependency> map_string_external_dependency;
 
 typedef std::map<toolchain_option, std::string> toolchain_option_map;
 typedef std::map<language_option, std::string> language_option_map;

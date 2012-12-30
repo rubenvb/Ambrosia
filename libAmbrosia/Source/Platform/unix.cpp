@@ -34,7 +34,6 @@
 #include <unistd.h>
 
 // C++ includes
-#include <algorithm>
 #include <fstream>
   using std::ifstream;
   using std::ofstream;
@@ -88,8 +87,10 @@ void command::add_argument(const std::string& argument)
 void command::add_arguments(const command& other_command)
 {
   array.pop_back(); // remove the last nullptr element
-  std::for_each(std::begin(other_command.storage), std::end(other_command.storage),
-  [this](const string& s) { storage.push_back(s); array.push_back(const_cast<char*>(storage.back().c_str())); } );
+  for(auto&& command : other_command.storage)
+  {
+    storage.push_back(command); array.push_back(const_cast<char*>(storage.back().c_str()));
+  }
   array.push_back(nullptr);
 }
 
@@ -183,91 +184,10 @@ void recursive_scan_directory(output_iterator it,
 // explicit instantiation
 template void recursive_scan_directory<insert_iterator<file_set>>(insert_iterator<file_set>, const string&, const string&);
 
-bool create_directory(const string& name)
-{
-  // from simple example from OpenGroup docs
-  bool result = mkdir(name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-  return result;
-}
-void create_directory_recursive(const string& name)
-{
-  const char* dir = name.c_str();
-  char tmp[256];
-  char *p = NULL;
-  size_t len;
-
-  snprintf(tmp, sizeof(tmp),"%s",dir);
-  len = strlen(tmp);
-  if(tmp[len - 1] == '/')
-    tmp[len - 1] = 0;
-  for(p = tmp + 1; *p; p++)
-  {
-    if(*p == '/')
-    {
-      *p = 0;
-      mkdir(tmp, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-      *p = '/';
-    }
-    mkdir(tmp, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-  }
-}
-
 int execute_command(const command &command,
                     string &string_cout,
                     string &string_cerr)
 {
-  /*int exit_code;
-  int cout_pipe[2];
-  int cerr_pipe[2];
-  posix_spawn_file_actions_t action;
-
-  if(pipe(cout_pipe) || pipe(cerr_pipe))
-    throw error("pipe returned an error.");
-
-  posix_spawn_file_actions_init(&action);
-  posix_spawn_file_actions_addclose(&action, cout_pipe[0]);
-  posix_spawn_file_actions_addclose(&action, cerr_pipe[0]);
-  posix_spawn_file_actions_adddup2(&action, cout_pipe[1], 1);
-  posix_spawn_file_actions_adddup2(&action, cerr_pipe[1], 2);
-
-  posix_spawn_file_actions_addclose(&action, cout_pipe[1]);
-  posix_spawn_file_actions_addclose(&action, cerr_pipe[1]);
-
-  pid_t pid;
-  if(posix_spawnp(&pid, command.program.c_str(), &action, NULL, &command.arguments[1], NULL))
-    throw error("posix_spawnp failed with error: " + to_string(strerror(errno)));
-  //close(cout_pipe[0]);
-  //close(cerr_pipe[0]);
-  close(cout_pipe[1]);
-  close(cerr_pipe[1]);
-
-  waitpid(pid,&exit_code,0);
-
-  // Read from pipes
-  const size_t buffer_size = 1024;
-  string buffer;
-  buffer.reserve(buffer_size);
-  ssize_t bytes_read = read(cout_pipe[0], &buffer[0], buffer_size);
-  while ((bytes_read = read(cout_pipe[0], &buffer[0], buffer_size)) > 0)
-  {
-    string_cout.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
-    bytes_read = read(cout_pipe[0], &buffer[0], buffer_size);
-  }
-  if(bytes_read == -1)
-    throw error("Failure reading from stdout pipe.");
-  while ((bytes_read = read(cerr_pipe[0], &buffer[0], buffer_size)) > 0)
-  {
-    string_cerr.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
-    bytes_read = read(cout_pipe[0], &buffer[0], buffer_size);
-  }
-  if(bytes_read == -1)
-    throw error("Failure reading from stdout pipe.");
-  debug(debug::command_exec) << "unix::execute_command::Command execution succesful: " << command << "\n"
-                             << "\twith exit code " << exit_code << ".\n";
-
-  posix_spawn_file_actions_destroy(&action);
-
-  return exit_code;*/
   // Create pipes for redirected output
   int cout_pipe[2];
   int cerr_pipe[2];

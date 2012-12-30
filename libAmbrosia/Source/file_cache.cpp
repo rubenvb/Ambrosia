@@ -61,14 +61,14 @@ void file_cache::find_source_files(const std::string& filename,
                                    const string_set& subdirectories,
                                    build_element_set& files)
 {
-  debug(debug::files) << "file_cache::find_source_files::Finding matches for " << filename << " in subdirectories of \"" << source_directory << "\":\n" << subdirectories;
+  debug(debug::files) << "file_cache::find_source_files::Finding matches for " << filename << " in subdirectories of \'" << source_directory << "\':\n" << subdirectories;
   // handle filename with directory prepended
   const string_pair directory_filename(split_preceding_directory(filename));
   const string& preceding_directory = directory_filename.first;
   const string& true_filename = directory_filename.second;
-  for(auto subdir_it = std::begin(subdirectories); subdir_it != std::end(subdirectories); ++subdir_it)
+  for(auto&& subdirectory : subdirectories)
   {
-    const string full_directory = source_directory / *subdir_it / preceding_directory;
+    const string full_directory = source_directory / subdirectory / preceding_directory;
     debug(debug::files) << "file_cache::find_source_files::Finding matches in " << full_directory << ".\n";
     if(!add_source_directory(full_directory))
     {
@@ -76,14 +76,13 @@ void file_cache::find_source_files(const std::string& filename,
       continue;
     }
     const file_set& sources = get_source_file_set(full_directory);
-    for(auto source_file_it = std::begin(sources); source_file_it != std::end(sources); ++source_file_it)
+    for(auto&& source_file : sources)
     {
-      const string& current = source_file_it->name;
-      debug(debug::files) << "file_cache::find_source_files::Comparing " << true_filename << " to " << current << ".\n";
-      if(wildcard_compare(true_filename, current))
+      debug(debug::files) << "file_cache::find_source_files::Comparing " << true_filename << " to " << source_file.name << ".\n";
+      if(wildcard_compare(true_filename, source_file.name))
       {
-        debug(debug::files) << "file_cache::find_source_files::Match found: " << current << "\n";
-        files.insert(file(full_directory / current, source_file_it->time_modified));
+        debug(debug::files) << "file_cache::find_source_files::Match found: " << source_file.name << "\n";
+        files.insert(file(full_directory / source_file.name, source_file.time_modified));
       }
     }
   }
@@ -100,29 +99,28 @@ const file_set file_cache::match_source_files(const string& filename,
   const string& true_filename(directory_filename.second);
 
   // search all directories, appended with preceding_directory
-  for(auto directory_it = std::begin(directories); directory_it != std::end(directories); ++directory_it)
+  for(auto&& directory : directories)
   {
-    const string directory(configuration->source_directory / (*directory_it + preceding_directory));
-    if(!platform::directory_exists(directory))
+    const string full_directory(configuration->source_directory / (directory + preceding_directory));
+    if(!platform::directory_exists(full_directory))
     {
-      debug(debug::files) << "file_cache::match_source_files::Skipping nonexistent directory: " << directory << ".\n";
+      debug(debug::files) << "file_cache::match_source_files::Skipping nonexistent directory: " << full_directory << ".\n";
       continue;
     }
-    debug(debug::files) << "file_cache::match_source_files::Looking in " << directory << " for matches.\n";
+    debug(debug::files) << "file_cache::match_source_files::Looking in " << full_directory << " for matches.\n";
 
-    const file_set& files_on_disk = get_source_file_set(directory);
+    const file_set& files_on_disk = get_source_file_set(full_directory);
 
     debug(debug::files) << "file_cache::match_source_files::Searching for match with " << files_on_disk.size() << " files.\n";
 
     // match all files that were scanned from disk to the wildcard filename
-    for(auto files_it = std::begin(files_on_disk); files_it != std::end(files_on_disk); ++files_it)
+    for(auto&& entry : files_on_disk)
     {
-      const file& entry = *files_it; // filename and last modified time
       debug(debug::files) << "file_cache::match_source_files::Matching " << entry.name << " with " << true_filename << ".\n";
       if(wildcard_compare(true_filename, entry.name))
       {
-        debug(debug::files) << "file_cache::match_source_files::Matched " << true_filename << " to " << directory << "/" << entry.name << ".\n";
-        result.insert(file(directory + "/" + entry.name, entry.time_modified));
+        debug(debug::files) << "file_cache::match_source_files::Matched " << true_filename << " to " << full_directory << "/" << entry.name << ".\n";
+        result.insert(file(full_directory / entry.name, entry.time_modified));
       }
     }
   }

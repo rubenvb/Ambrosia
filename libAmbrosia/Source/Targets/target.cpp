@@ -43,7 +43,7 @@ target::target(const string& name,
   type(type),
   dependencies(dependencies),
   files(),
-  source_directories(),
+  directories(),
   parallel_commands(),
   link_command()
 {   }
@@ -57,12 +57,12 @@ void target::add_source_file(const file_type general_type,
   // add source file type to list
   // search specific file_type directories
   const file_type specific_type = detect_type(general_type, filename);
-  string_set& directories = source_directories[specific_type];
-  string_set& general_directories = source_directories[general_type];
-  directories.insert(std::begin(general_directories), std::end(general_directories));
+  string_set& specific_directories = directories[specific_type];
+  string_set& general_directories = directories[general_type];
+  specific_directories.insert(std::begin(general_directories), std::end(general_directories));
   debug(debug::files) << "target::add_source_file::Finding " << file_type_map_inverse.at(specific_type) << " files matching " << filename << " in:\n"
-                      << directories << "\n";
-  file_cache.find_source_files(filename, configuration.source_directory, directories, files[specific_type]);
+                      << specific_directories << "\n";
+  file_cache.find_source_files(filename, configuration.source_directory, specific_directories, files[specific_type]);
   configuration.source_types.insert(specific_type);
   //if(general_type != specific_type)
   //  file_cache.find_source_files(filename, configuration.source_directory, general_directories, files[general_type]);
@@ -74,14 +74,14 @@ bool target::add_source_directory(const file_type type,
   debug(debug::target) << "target::add_source_directory::Adding directory " << directory << " of type " << file_type_map_inverse.at(type) << ".\n";
   if(!file_cache.add_source_directory(configuration.source_directory / directory))
     return false;
-  if(!source_directories[type].insert(directory).second)
+  if(!directories[type].insert(directory).second)
     debug(debug::target) << "target::add_source_directory::Directory " << directory << " already present.\n";
 
   const file_type general_type = get_general_type(type);
   if(type != general_type)
   {
     debug(debug::target) << "target::add_source_directory::Adding directory " << directory << " of general type " << file_type_map_inverse.at(type) << ".\n";
-    if(!source_directories[general_type].insert(directory).second)
+    if(!directories[general_type].insert(directory).second)
       debug(debug::target) << "target::add_source_directory::Directory " << directory << " already present.\n";
   }
 
