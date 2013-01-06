@@ -11,12 +11,12 @@
 # If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 #
 
-(msvc)dep lib boost_assign
+(msvc)dep lib boost
 {
   HEADERS boost/assign/list_of.hpp
 }
 
-lib Ambrosia : lib (msvc)boost_assign
+lib Ambrosia : lib (msvc)boost
 {
   HEADER_DIRS Include
   SOURCE_DIRS Source \

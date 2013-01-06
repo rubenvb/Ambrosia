@@ -30,6 +30,8 @@
   using libambrosia::configuration;
 #include "Ambrosia/debug.h"
   using libambrosia::debug;
+#include "Ambrosia/dependency.h"
+  using libambrosia::dependency;
 #include "Ambrosia/enums.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/commandline_error.h"
@@ -343,10 +345,14 @@ void add_external_dependency(const string& name,
   }
   else
   {
-    debug(debug::commandline) << "commandline::add_external_dependency::Found no suffix, assuming conventional subdirectories.\n";
+    debug(debug::commandline) << "commandline::add_external_dependency::Adding external dependency target with conventional subdirectories.\n";
     project.targets.emplace_back(new target(name, project.configuration, libambrosia::target_type::external_dependency));
     project.targets.back()->directories[libambrosia::file_type::header].insert(location / "include");
-    //TODO set the other directories
+    project.targets.back()->configuration.build_directory = location / "lib";
+    project.targets.back()->configuration.build_directory = location / "bin";
+
+    debug(debug::commandline) << "commandline::add_external_dependency::Adding the external dependency to the project dependency list.\n";
+    project.dependencies.insert(dependency(name, lib::target_type::external_dependency, project.targets.back().get()));
   }
 }
 

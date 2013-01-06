@@ -135,6 +135,17 @@ debug& debug::operator<<(const platform::command& command)
 #endif
   return *this;
 }
+template<>
+debug& debug::operator<<(const dependency_set& dependencies)
+{
+  if(dependencies.empty())
+    std::cerr << "\t<empty list>\n";
+  for(auto&& dependency : dependencies)
+  {
+    std::cerr << "\t" << dependency.name << "\n";
+  }
+  return *this;
+}
 
 #endif // AMBROSIA_DEBUG
 

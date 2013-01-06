@@ -45,11 +45,13 @@ public:
   dependency(const std::string& name,
              const target_type type,
              const ::libambrosia::target* = nullptr,
+             const bool external = false,
              const bool optional = false);
 
   const std::string name;
   const target_type type;
   const ::libambrosia::target* target;
+  const bool external;
   const bool optional;
 };
 

@@ -109,6 +109,8 @@ template<>
 debug& debug::operator<<(const std::set<file_type>&);
 template<>
 debug& debug::operator<<(const platform::command&);
+template<>
+debug& debug::operator<<(const dependency_set&);
 
 #endif // AMBROSIA_DEBUG
 

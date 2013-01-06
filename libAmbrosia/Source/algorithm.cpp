@@ -276,7 +276,7 @@ void find_dependencies(const project& project,
 {
   //TODO: what with circular dependencies?
   debug(debug::algorithm) << "algorithm::find_dependencies::Locating dependency of type " << target_type_map_inverse.at(type) << ": " << name << ".\n";
-  auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies),[&type,&name](const dependency& dep) { return dep.name == name && dep.type == type; });
+  auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies),[&type,&name](const dependency& dep) { return dep.name == name && (dep.type == type || dep.type == target_type::external_dependency); });
   if(result != std::end(project.dependencies))
   {
     debug(debug::algorithm) << "algorithm::find_dependencies::Found parent dependency: " << result->name << ".\n";

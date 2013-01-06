@@ -67,6 +67,7 @@ private:
   const std::string& filename; // used for error reporting
   const std::string subdirectory; // used for file searching, without configuration.source_directory() !
   std::istream& stream; // file input stream
+  std::istream::pos_type current_position; // current istream position
   std::size_t line_number; // used for error reporting
   bool global_processed; // only one global section per project file is allowed
 /*
@@ -79,6 +80,7 @@ private:
  *********/
   bool next_token(std::string& token,
                   const std::set<char>& special_characters = ::libambrosia::special_characters);
+  void previous_token(); // revert stream position to previous token
   bool next_list_token(const configuration& configuration,
                        std::string& token);
   bool process_conditional();
@@ -106,6 +108,8 @@ private:
                           file_cache& file_cache); // parses -l and -L items, and handle interproject dependencies?
   // main target parser
   void parse_target(target& target, file_cache& file_cache);
+  // Dependency target parser
+  void parse_dependency(const target& target);
   // input validation functions (see Ambrosia wiki for valid input requirements)
   void validate_variable(const std::string& config);
   void validate_filename(const std::string& filename);

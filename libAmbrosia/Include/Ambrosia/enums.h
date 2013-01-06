@@ -104,7 +104,9 @@ enum class toolchain_option
   output_import_library, // /implib,
 
   compile_only, // -c, /c
-  compile_debug, // -g, /Zi
+  compile_debug,
+  syntax_only, // -fsyntax-only, /Zs
+  included_headers, // -M, /showIncludes
 
   object_extension, // .o, .obj
 

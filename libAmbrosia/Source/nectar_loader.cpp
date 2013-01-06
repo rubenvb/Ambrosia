@@ -161,11 +161,17 @@ void nectar_loader::extract_nectar()
           debug(debug::parser) << "nectar_loader::extract_nectar:Opening file " << full_subproject_filename << " succeeded.\n";
           // Get sub target dependencies
           dependency_set dependencies;
-          read_dependency_set(dependencies);
-          for(auto&& dependency : dependencies)
+          // copy external dependencies
+          //TODO: improve this copying process
+          for(auto&& dependency : project.dependencies)
           {
-            debug(debug::parser) << "nectar_loader::extract_nectar::Dependency: " << dependency.name << "\n";
+            if(dependency.type == target_type::external_dependency)
+            {
+              dependencies.insert(dependency);
+              debug(debug::parser) << "nectar_loader::extract_nectar::Adding external dependency: \'" << dependency.name << "\' to subproject \'" << token << "\'\n";
+            }
           }
+          read_dependency_set(dependencies);
 
           // copy configuration and set proper subdirectory
           configuration subconfiguration = project.configuration;
@@ -227,16 +233,27 @@ void nectar_loader::extract_nectar()
           debug(debug::parser) << "nectar_loader::extract_nectar::Linking dependency " << name << ".\n";
 
           // Search for dependency in project's dependency_set
-          for(auto dependency : project.dependencies)
-          {
-            debug(debug::parser) << "nectar_loader::extract_nectar::Project dependency: " << dependency.name << "\n";
-          }
+          debug(debug::parser) << "nectar_loader::extract_nectar::" << project.dependencies.size() << " project dependencies:\n" << project.dependencies;
+
           auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies),
                                      [&name,&type](const dependency& dep) {return dep.name == name && ((dep.type == type) || (dep.type == target_type::external_dependency)); });
           if(result != std::end(project.dependencies))
           {
             debug(debug::parser) << "nectar_loader::extract_nectar::Found project dependency in parent project: " << target_type_map_inverse.at(type) << " " << name << ".\n";
-            continue;
+            if(next_token(token))
+            {
+              if("{" == token)
+                parse_dependency(*result->target);
+              else
+              {
+                if(result->type == target_type::external_dependency)
+                  throw nectar_error("External dependencies must contain information like libraries to be linked or a header file that must be present.", filename, line_number);
+                previous_token(); // no dependency description provided
+              }
+              continue;
+            }
+            else
+              throw syntax_error("Unexpected end of input.", filename, line_number);
           }
           throw nectar_error("Dependency not found: " + name, filename, line_number);
         }
@@ -327,6 +344,7 @@ bool nectar_loader::next_token(string& token,
   token.clear();
   bool inside_quotes = false;
   char c;
+  current_position = stream.tellg(); // backup current position
 
   while(stream.get(c))
   {
@@ -397,6 +415,11 @@ bool nectar_loader::next_token(string& token,
     debug(debug::lexer) << "nectar_loader::next_token:Token extracted: \'" << output_form(token) << "\'\n";
 
   return !token.empty();
+}
+void nectar_loader::previous_token()
+{
+  debug(debug::parser) << "nectar_loader::previous_token::Resetting input stream position.\n";
+  stream.seekg(current_position);
 }
 
 bool nectar_loader::next_list_token(const configuration& configuration,
@@ -476,10 +499,11 @@ void nectar_loader::read_dependency_set(dependency_set& dependencies)
         }
         const string& name = token;
         debug(debug::parser) << "nectar_loader::read_dependency_set::Locating " << target_type_map_inverse.at(type) << " dependency: " << token << ".\n";
-        const size_t number_of_dependencies = dependencies.size();
+        //const size_t number_of_dependencies = dependencies.size();
+        debug(debug::parser) << "nectar_loader::read_dependency_set::Project dependencies: " << project.dependencies.size() << ".\n";
         find_dependencies(project, type, name, std::inserter(dependencies, dependencies.begin()));
-        if(number_of_dependencies == dependencies.size())
-          throw nectar_error("Dependencies must be specified as \'dep\' targets in relavant project files: " + name, filename, line_number);
+        //if(number_of_dependencies == dependencies.size())
+        //  throw nectar_error("Dependencies must be specified as \'dep\' targets in relevant project files: " + name, filename, line_number);
       }
     }
     else
@@ -854,6 +878,34 @@ void nectar_loader::parse_target(target& target,
       else
         throw syntax_error("Unexpected token: " + token, filename, line_number);
     }
+  }
+}
+
+void nectar_loader::parse_dependency(const target& target)
+{
+  debug(debug::parser) << "nectar_loader::parse_dependency::Checking availability of dependency \'" << target.name << "\'.\n";
+  size_t curly_brace_count = 1; // parsing starts inside curly braces block
+  string token;
+
+  while(curly_brace_count > 0 && next_token(token))
+  {
+    if("}" == token)
+      --curly_brace_count;
+    else if("{" == token)
+      ++curly_brace_count;
+    else if("(" == token)
+      process_inner_conditional(project.configuration); // uses local project configuration
+    else if("HEADERS" == token)
+    {
+      debug(debug::parser) << "nectar_loader::parse_dependency::Checking headers required by dependency \'" << target.name << "\'.\n";
+      while(next_list_token(project.configuration, token))
+      {
+        debug(debug::parser) << "nectar_loader::parse_dependency::Checking if header \'" << token << "\' is usable.\n";
+        debug(debug::always) << "\nChecking header usability is unimplemented: assuming header \'" + token + "\' is present and usable.\n";
+      }
+    }
+    else
+      throw syntax_error("Unexpected token: " + token, filename, line_number);
   }
 }
 
