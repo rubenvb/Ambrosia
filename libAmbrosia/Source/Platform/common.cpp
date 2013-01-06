@@ -57,6 +57,8 @@
 #include <string>
   using std::string;
   using std::wstring;
+#include <utility>
+  using std::pair;
 #include <vector>
   using std::vector;
 
@@ -70,7 +72,7 @@ namespace platform
  **********************************/
 const vector<string>& get_environment_PATH()
 {
-  debug(debug::platform) << "common::get_environment_PATH::Called.\n";
+  debug(debug::platform) << "platform::get_environment_PATH::Called.\n";
   static vector<string> result;
   if(!result.empty())
     return result;
@@ -90,7 +92,7 @@ const vector<string>& get_environment_PATH()
   while(index != string::npos)
   {
     result.push_back(PATH.substr(previous, index-previous));
-    debug(debug::platform) << "common::get_environment_PATH::part of PATH: " << result.back() << "\n";
+    debug(debug::platform) << "platform::get_environment_PATH::part of PATH: " << result.back() << "\n";
     previous=index+1;
     index = PATH.find(delimiter, previous);
   }
@@ -141,11 +143,11 @@ bool directory_exists(const string& directory)
   if(stat(directory.c_str(), &status) == 0)
 #endif //_WIN32
   {
-    debug(debug::platform) << "common::directory_exists::(_w)stat(64) succeeded for " << directory << ".\n";
+    debug(debug::platform) << "platform::directory_exists::(_w)stat(64) succeeded for " << directory << ".\n";
     if (status.st_mode & S_IFDIR)
       return true;
   }
-  debug(debug::platform) << "common::directory_exists::" << directory << " is not a directory.\n";
+  debug(debug::platform) << "platform::directory_exists::" << directory << " is not a directory.\n";
   return false;
 }
 bool file_exists(const string& filename)
@@ -159,11 +161,11 @@ bool file_exists(const string& filename)
   if(stat(filename.c_str(), &status) == 0)
 #endif //_WIN32
   {
-    debug(debug::platform) << "common::file_exists::(_w)stat(64) succeeded.\n";
+    debug(debug::platform) << "platform::file_exists::(_w)stat(64) succeeded.\n";
     if(status.st_mode & S_IFREG)
       return true;
   }
-  debug(debug::platform) << "common::file_exists::" << filename << " is not a file.\n";
+  debug(debug::platform) << "platform::file_exists::" << filename << " is not a file.\n";
   return false;
 }
 time_t last_modified(const std::string filename)
@@ -173,6 +175,39 @@ time_t last_modified(const std::string filename)
     return 0; //TODO: fix if not adequate on some obscure supported platform
   else
     return attributes.st_mtime;
+}
+
+// Find best available compiler
+toolchain detect_toolchain()
+{
+  debug(debug::platform) << "platform::detect_toolchain::Detecting which toolchain is in PATH.\n";
+  command toolchain_test;
+  string std_out;
+  string std_err;
+  pair<bool, int> result;
+#ifdef _WIN32
+  // MSVC
+  toolchain_test.set_program("cl");
+  result = execute_command(toolchain_test, std_out, std_err);
+  if(result.first)
+    return toolchain::Microsoft;
+  debug(debug::platform) << "platform::Failed to execute command \'cl\'.\n";
+
+#endif
+  toolchain_test.set_program("clang");
+  toolchain_test.add_argument("--version");
+  result = execute_command(toolchain_test, std_out, std_err);
+  if(result.first)
+    return toolchain::LLVM;
+
+  toolchain_test.set_program("gcc");
+  toolchain_test.add_argument("--version");
+  result = execute_command(toolchain_test, std_out, std_err);
+  if(result.first)
+    return toolchain::GNU;
+  debug(debug::platform) << "platform::Failed to execute \'gcc --version\' returned exit code " << result.second << ".\n";
+
+  throw error("unable to detect a usable supported compiler.");
 }
 
 void create_directory_recursive(const string& name)

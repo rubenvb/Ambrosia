@@ -16,8 +16,8 @@
  *
  **/
 
-#ifndef configurationURATION_H
-#define configurationURATION_H
+#ifndef AMBROSIA_CONFIGURATION_H
+#define AMBROSIA_CONFIGURATION_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -44,7 +44,6 @@ public:
   const string_vector environment_PATH;
   // build platform identification
   architecture build_architecture;
-  environment build_environment;
   os build_os;
   toolchain build_toolchain; // useful for building tools used in the build
 
@@ -67,11 +66,10 @@ public:
 
 private:
   // Platform detection functions
-  architecture detect_build_architecture() const;
-  environment detect_build_environment() const;
+  toolchain detect_toolchain() const;
   void initialize_config();
 };
 
 libambrosia_namespace_end
 
-#endif // configurationURATION_H
+#endif // AMBROSIA_CONFIGURATION_H

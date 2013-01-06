@@ -28,6 +28,7 @@
 // C++ includes
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 libambrosia_namespace_begin
@@ -99,6 +100,8 @@ bool directory_exists(const std::string& directory);
 bool file_exists(const std::string& filename);
 // Get last modified time of file
 time_t last_modified(const std::string filename);
+// Find best available compiler
+toolchain detect_toolchain();
 
 /*
  * Mostly platform dependently implemented functions
@@ -116,9 +119,9 @@ void recursive_scan_directory(output_iterator it,
 // Create a directory, with all parent directories
 void create_directory_recursive(const std::string& name);
 // Execute command, and store stdout and stderr output in respective strings
-int execute_command(const platform::command& command,
-                    std::string& std_out,
-                    std::string& std_err);
+std::pair<bool, int> execute_command(const platform::command& command,
+                                     std::string& std_out,
+                                     std::string& std_err);
 
 /*
  * Ugly workarounds

@@ -45,6 +45,7 @@
 #include <string>
   using std::string;
   using std::wstring;
+#include <utility>
 #include <vector>
   using std::vector;
 
@@ -70,7 +71,7 @@ BOOL is_wow64()
   BOOL bIsWow64 = FALSE;
   LPFN_ISWOW64PROCESS fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
 
-  if(NULL != fnIsWow64Process)
+  if(nullptr != fnIsWow64Process)
   {
     if(!fnIsWow64Process(GetCurrentProcess(),&bIsWow64))
       throw runtime_error("Unable to execute fnIsWow64Process.");
@@ -126,7 +127,7 @@ const string convert_to_utf8(const wstring& utf16_string)
 {
   // get length
   int length = WideCharToMultiByte(CP_UTF8, 0, utf16_string.c_str(), static_cast<int>(utf16_string.size()),
-                                   NULL, 0, NULL, NULL);
+                                   nullptr, 0, nullptr, nullptr);
   if(!(length > 0))
     return string();
   else
@@ -135,7 +136,7 @@ const string convert_to_utf8(const wstring& utf16_string)
     result.resize(static_cast<string::size_type>(length));
 
     if(WideCharToMultiByte(CP_UTF8, 0, utf16_string.c_str(), static_cast<int>(utf16_string.size()),
-                           &result[0], static_cast<int>(result.size()), NULL, NULL) == 0 )
+                           &result[0], static_cast<int>(result.size()), nullptr, nullptr) == 0 )
       throw runtime_error("Failure to execute toUTF8: conversion failed.");
     else
       return result;
@@ -145,7 +146,7 @@ const string convert_to_utf8(const wstring& utf16_string)
 const wstring convert_to_utf16(const string& utf8_string)
 {
   // get length
-  int length = MultiByteToWideChar(CP_UTF8, 0, utf8_string.c_str(), static_cast<int>(utf8_string.size()), NULL, 0);
+  int length = MultiByteToWideChar(CP_UTF8, 0, utf8_string.c_str(), static_cast<int>(utf8_string.size()), nullptr, 0);
   if(!(length > 0))
     return wstring();
   else
@@ -256,13 +257,13 @@ template void recursive_scan_directory<insert_iterator<file_set>>(insert_iterato
 /*bool create_directory(const string& name)
 {
   // MSVC C4800 without the "0 !="
-  return 0 != CreateDirectoryW((L"\\\\?\\" + convert_to_utf16(name)).c_str(), NULL);
+  return 0 != CreateDirectoryW((L"\\\\?\\" + convert_to_utf16(name)).c_str(), nullptr);
 }
 //DOESN'T WORK FOR RECURSIVE DIRECTORIES
 void create_directory_recursive(const string& name)
 {
   //TODO: optimize the calls to convert_to_utf16 to only once: make and call create_directory_recursive(const wstring&)
-  if(!CreateDirectoryW((L"\\\\?\\" + convert_to_utf16(name)).c_str(), NULL))
+  if(!CreateDirectoryW((L"\\\\?\\" + convert_to_utf16(name)).c_str(), nullptr))
   {
     DWORD win32_error = GetLastError();
     if(win32_error == ERROR_FILE_NOT_FOUND || win32_error == ERROR_PATH_NOT_FOUND)
@@ -280,16 +281,16 @@ void create_directory_recursive(const string& name)
   }
 }*/
 
-int execute_command(const platform::command& command,
-                    string &string_cout,
-                    string &string_cerr)
+std::pair<bool, int> execute_command(const platform::command& command,
+                                     string &string_cout,
+                                     string &string_cerr)
 {
   // adapted from http://msdn.microsoft.com/en-us/library/ms682499(VS.110).aspx
   SECURITY_ATTRIBUTES attributes;
 
   attributes.nLength = static_cast<DWORD>(sizeof(SECURITY_ATTRIBUTES)); // Set the bInheritHandle flag so pipe handles are inherited.
   attributes.bInheritHandle = TRUE;
-  attributes.lpSecurityDescriptor = NULL;
+  attributes.lpSecurityDescriptor = nullptr;
 
   // Create a pipe for the child process's STDOUT
   HANDLE stdout_read_handle;
@@ -317,18 +318,17 @@ int execute_command(const platform::command& command,
   //wstring arguments(command.program + L" " + command.arguments);
   //debug(debug::always) << current_working_directory();
 
-  if(!CreateProcessW(NULL,//command.program.c_str(), // app
+  if(!CreateProcessW(nullptr,//command.program.c_str(), // app
                      &command.arguments[0], // commandline arguments
-                     NULL, // process security attributes
-                     NULL, // primary thread security attributes
+                     nullptr, // process security attributes
+                     nullptr, // primary thread security attributes
                      TRUE, // handles are inherited
                      0, // creation flags
-                     NULL, // use parent's environment
-                     NULL, // use parent's current directory
+                     nullptr, // use parent's environment
+                     nullptr, // use parent's current directory
                      &startup_info, // STARTUPINFOW pointer
                      &process_info)) // receives PROCESS_INFORMATION
-    throw error("Win32 error: failed to call CreateProcess for command \'" + convert_to_utf8(command.arguments) + "\'\n"
-                "\t with error: " + to_string(GetLastError()));
+    return std::make_pair(false, -1); // return false to signify process creation error
 
   debug(debug::platform) << "windows::execute_command::CreateProcess call successful.\n";
 
@@ -354,21 +354,21 @@ int execute_command(const platform::command& command,
   CloseHandle(stdout_write_handle);
   CloseHandle(stderr_write_handle);
 
-  // Read from pipes
+  // Read from pipes, a kB at a time
   const size_t buffer_size = 1024;
   string buffer;
   buffer.resize(buffer_size);
   DWORD bytes_read = 0;
 
   debug(debug::platform) << "windows::execute_command::reading from stdout pipe.\n";
-  while(ReadFile(stdout_read_handle, &buffer[0], buffer_size, &bytes_read, NULL) && bytes_read != 0)
+  while(ReadFile(stdout_read_handle, &buffer[0], buffer_size, &bytes_read, nullptr) && bytes_read != 0)
   {
     string_cout.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
     debug(debug::platform) << "windows::execute_command::Read " << bytes_read << " bytes from stdout pipe:\n"
                            << string_cout << "\n";
   }
   debug(debug::platform) << "windows::execute_command::reading from stderr pipe.\n";
-  while(ReadFile(stderr_read_handle, &buffer[0], buffer_size, &bytes_read, NULL) && bytes_read != 0)
+  while(ReadFile(stderr_read_handle, &buffer[0], buffer_size, &bytes_read, nullptr) && bytes_read != 0)
   {
     string_cerr.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
     debug(debug::platform) << "windows::execute_command::Read " << bytes_read << " bytes from stderr pipe:\n"
@@ -378,7 +378,7 @@ int execute_command(const platform::command& command,
   CloseHandle(stdout_read_handle);
   CloseHandle(stderr_read_handle);
 
-  return static_cast<int>(exit_code);
+  return std::make_pair(true, /*static_cast<int>(*/exit_code);
 }
 
 /*

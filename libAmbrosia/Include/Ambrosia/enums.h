@@ -30,7 +30,7 @@ enum class os
   Windows,
   Linux,
   MacOSX
-    // ...
+  // ...
 };
 // CPU architecture
 enum class architecture
@@ -43,17 +43,11 @@ enum class architecture
 // Toolchain comprising of compiler, linker, and general tools
 enum class toolchain
 {
+  Unknown,
   GNU, // GCC+binutils
   Microsoft, // cl.exe and link.exe
   LLVM, // Clang+binutils
   Intel // ICC+platform linker
-  // ...
-};
-// Shell execution environment
-enum class environment
-{
-  cmd, // Windows' cmd.exe
-  sh // POSIX shell
   // ...
 };
 
@@ -178,4 +172,4 @@ enum class os_option
 
 libambrosia_namespace_end
 
-#endif // ENUMS_H
+#endif // AMBROSIA_ENUMS_H

@@ -16,8 +16,8 @@
  *
  **/
 
-#ifndef INTERNAL_ERROR_H
-#define INTERNAL_ERROR_H
+#ifndef AMBROSIA_ERROR_INTERNAL_ERROR_H
+#define AMBROSIA_ERROR_INTERNAL_ERROR_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -40,4 +40,4 @@ public:
 
 libambrosia_namespace_end
 
-#endif // INTERNAL_ERROR_H
+#endif // AMBROSIA_ERROR_INTERNAL_ERROR_H

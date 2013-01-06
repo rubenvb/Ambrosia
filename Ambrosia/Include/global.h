@@ -16,8 +16,8 @@
  *
  **/
 
-#ifndef GLOBAL_APPLICATION_H
-#define GLOBAL_APPLICATION_H
+#ifndef GLOBAL_H
+#define GLOBAL_H
 
 // libAmbrosia global include
 #include "Ambrosia/global.h"
@@ -34,4 +34,4 @@ namespace app
 
 ambrosia_namespace_end
 
-#endif // GLOBAL_APPLICATION_H
+#endif // GLOBAL_H

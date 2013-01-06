@@ -12,6 +12,11 @@
 #
 
 dep lib libAmbrosia
+#the below stuff is optional and required only if you want to build a subproject seperately (in this case with an externally installed libAmbrosia)
+#{
+#  HEADERS Ambrosia/global.h
+#  LIBS Ambrosia
+#}
 
 app Ambrosia : lib libAmbrosia
 {

@@ -11,38 +11,28 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Error/command_error.h
- * Error displaying the failed command
+ * Ambrosia/Error/platform_error.cpp
+ * Error class for platform API specific error handling.
  *
  **/
 
-#ifndef AMBROSIA_ERROR_COMMAND_ERROR_H
-#define AMBROSIA_ERROR_COMMAND_ERROR_H
+#ifndef AMBROSIA_ERROR_PLATFORM_ERROR_H
+#define AMBROSIA_ERROR_PLATFORM_ERROR_H
 
 // Global include
-#include "Ambrosia/global.h"
+#include "Ambrosia/platform.h"
 
 // libAmbrosia includes
 #include "Ambrosia/Error/error.h"
-#include "Ambrosia/platform.h"
-
-// C++ includes
-#include <string>
 
 libambrosia_namespace_begin
 
-class command_error : public error
+class platform_error : public error
 {
 public:
-  command_error(const std::string& message,
-                const platform::command& failed_command);
-
-  void output_message() const;
-
-private:
-  std::string command;
+  platform_error();
 };
 
 libambrosia_namespace_end
 
-#endif // AMBROSIA_ERROR_COMMAND_ERROR_H
+#endif // AMBROSIA_ERROR_PLATFORM_ERROR_H

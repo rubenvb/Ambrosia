@@ -16,8 +16,8 @@
  *
  **/
 
-#ifndef AMBROSIA_GENERATORS_GENERATOR_H
-#define AMBROSIA_GENERATORS_GENERATOR_H
+#ifndef AMBROSIA_GENERATOR_H
+#define AMBROSIA_GENERATOR_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -65,4 +65,4 @@ protected:
 
 libambrosia_namespace_end
 
-#endif // AMBROSIA_GENERATORS_GENERATOR_H
+#endif // AMBROSIA_GENERATOR_H

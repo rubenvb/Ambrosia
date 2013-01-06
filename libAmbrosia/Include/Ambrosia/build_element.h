@@ -16,8 +16,8 @@
  *
  **/
 
-#ifndef BUILD_ELEMENT_H
-#define BUILD_ELEMENT_H
+#ifndef AMBROSIA_BUILD_ELEMENT_H
+#define AMBROSIA_BUILD_ELEMENT_H
 
 // Global include
 #include "global.h"
@@ -56,4 +56,4 @@ namespace std
   };
 }
 
-#endif // BUILD_ELEMENT_H
+#endif // AMBROSIA_BUILD_ELEMENT_H

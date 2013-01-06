@@ -44,7 +44,6 @@ HEADERS += \
     Include/Ambrosia/enum_maps.h \
     Include/Ambrosia/nectar.h \
     Include/Ambrosia/algorithm.h \
-    Include/Ambrosia/node.h \
     Include/Ambrosia/nectar_loader.h \
     Include/Ambrosia/Configuration/configuration.h \
     Include/Ambrosia/configuration.h \
@@ -62,7 +61,8 @@ HEADERS += \
     Include/Ambrosia/Targets/binary.h \
     Include/Ambrosia/generator.h \
     Include/Ambrosia/dependency.h \
-    Include/Ambrosia/Error/command_error.h
+    Include/Ambrosia/Error/command_error.h \
+    Include/Ambrosia/Error/platform_error.h
 
 SOURCES += \
     Source/configuration.cpp \
@@ -79,13 +79,13 @@ SOURCES += \
     Source/file_cache.cpp \
     Source/nectar.cpp \
     Source/nectar_loader.cpp \
-    Source/node.cpp \
     Source/Targets/target.cpp \
     Source/Targets/project.cpp \
     Source/Targets/binary.cpp \
     Source/generator.cpp \
     Source/Error/command_error.cpp \
-    Source/dependency.cpp
+    Source/dependency.cpp \
+    Source/Platform/platform_error.cpp
 
 *win32*:SOURCES += Source/Platform/windows.cpp
 *linux*:SOURCES += Source/Platform/unix.cpp

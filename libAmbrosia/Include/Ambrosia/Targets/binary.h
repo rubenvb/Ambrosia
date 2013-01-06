@@ -16,8 +16,8 @@
  *
  **/
 
-#ifndef BINARY_H
-#define BINARY_H
+#ifndef AMBROSIA_TARGETS_BINARY_H
+#define AMBROSIA_TARGETS_BINARY_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -43,4 +43,4 @@ public:
 
 libambrosia_namespace_end
 
-#endif // BINARY_H
+#endif // AMBROSIA_TARGETS_BINARY_H

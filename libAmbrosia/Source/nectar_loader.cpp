@@ -199,7 +199,7 @@ void nectar_loader::extract_nectar()
           // Store target name
           const string target_name = token;
           // Take parent dependencies
-          dependency_set dependencies;// = project.dependencies;
+          dependency_set dependencies;
           // Add target's dependencies
           read_dependency_set(dependencies);
 
@@ -474,13 +474,12 @@ void nectar_loader::read_dependency_set(dependency_set& dependencies)
           if("{" == token)
             break;
         }
-
         const string& name = token;
         debug(debug::parser) << "nectar_loader::read_dependency_set::Locating " << target_type_map_inverse.at(type) << " dependency: " << token << ".\n";
         const size_t number_of_dependencies = dependencies.size();
         find_dependencies(project, type, name, std::inserter(dependencies, dependencies.begin()));
         if(number_of_dependencies == dependencies.size())
-          throw nectar_error("Dependency not found: " + name, filename, line_number);
+          throw nectar_error("Dependencies must be specified as \'dep\' targets in relavant project files: " + name, filename, line_number);
       }
     }
     else

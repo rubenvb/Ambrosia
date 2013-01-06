@@ -41,8 +41,6 @@ extern const std::map<std::string, toolchain> vendor_map;
 extern const std::map<toolchain, std::string> vendor_map_inverse;
 extern const std::map<std::string, toolchain> toolchain_map;
 extern const std::map<toolchain, std::string> toolchain_map_inverse;
-extern const std::map<std::string, environment> environment_map;
-extern const std::map<environment, std::string> environment_map_inverse;
 
 extern const std::map<std::string, target_type> target_type_map;
 extern const std::map<target_type, std::string> target_type_map_inverse;

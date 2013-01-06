@@ -34,6 +34,7 @@
 #include <unistd.h>
 
 // C++ includes
+#include <cstdlib>
 #include <fstream>
   using std::ifstream;
   using std::ofstream;
@@ -173,7 +174,7 @@ void recursive_scan_directory(output_iterator it,
       if(directory_name.empty())
         it = {name, attributes.st_mtime};
       else
-        it = {directory_name + "/" + name, attributes.st_mtime};
+        it = {directory_name / name, attributes.st_mtime};
     }
   }
   if(chdir(cwd.c_str()))
@@ -184,9 +185,9 @@ void recursive_scan_directory(output_iterator it,
 // explicit instantiation
 template void recursive_scan_directory<insert_iterator<file_set>>(insert_iterator<file_set>, const string&, const string&);
 
-int execute_command(const command &command,
-                    string &string_cout,
-                    string &string_cerr)
+std::pair<bool, int> execute_command(const command &command,
+                                     string &string_cout,
+                                     string &string_cerr)
 {
   // Create pipes for redirected output
   int cout_pipe[2];
@@ -213,7 +214,7 @@ int execute_command(const command &command,
       close(cerr_pipe[1]);
       // execute child program
       if(execvp(command.array[0], &command.array[0]) == -1)
-        throw error("execvp failed to execute command: " + string(command.array[0]) + ". errno is " + strerror(errno));
+        std::_Exit(-1); // Quickly exit leaving the parent's file descriptors untouched.
     default:
       if(waitpid(pid, &exit_code, 0) != -1)
         debug(debug::command_exec) << "unix::execute_command::Child exited with status " << exit_code << ".\n";
@@ -223,7 +224,7 @@ int execute_command(const command &command,
       // Close pipes
       close(cout_pipe[1]);
       close(cerr_pipe[1]);
-      // Read from pipes
+      // Read from pipes, a kB at a time
       const size_t buffer_size = 1024;
       string buffer;
       buffer.resize(buffer_size);
@@ -244,7 +245,11 @@ int execute_command(const command &command,
         throw error("Failure reading from stdout pipe.");
   }
   debug(debug::command_exec) << "unix::execute_command::Executed command with return code " << exit_code << ".\n";
-  return exit_code;
+  // TODO: figure out how to reliably detect if the exec call failed or the exec'ed program returned -1
+  if(exit_code == -1)
+    return std::make_pair(false,exit_code);
+  else
+    return std::make_pair(true,exit_code);
 }
 
 /*

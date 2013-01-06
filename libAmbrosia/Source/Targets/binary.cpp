@@ -156,8 +156,13 @@ void binary::execute_build_commands() const
   {
     string stdout_output;
     string stderr_output;
-    int exit_code = execute_command(command, stdout_output, stderr_output);
-    if(exit_code != 0)
+    auto result = execute_command(command, stdout_output, stderr_output);
+    if(!result.first)
+    {
+      debug(debug::command_exec) << "binary::execute_build_commands::failed to execute command: " << command << "\n";
+      throw internal_error("Failed to execute build command.");
+    }
+    if(result.second != 0)
     {
       debug(debug::command_exec) << "binary::execute_commands::Command returned failure.\n";
       throw command_error(stderr_output, command);

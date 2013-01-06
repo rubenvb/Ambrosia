@@ -99,7 +99,7 @@ private:
                        file_cache& file_cache); // matches wildcards to filenames and checks existence
   void parse_source_directory_list(target& target,
                                    const file_type type,
-                                   file_cache& file_cache); // searches m_source_directory+"/"+m_subdirectory
+                                   file_cache& file_cache); // searches source_directory / subdirectory
   void parse_build_directory(const file_type type);  // will be created on first use
   void parse_variable_list(string_set& items); // only adds or removes strings from variables
   void parse_library_list(target& target,

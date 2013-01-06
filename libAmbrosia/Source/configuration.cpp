@@ -38,12 +38,11 @@ libambrosia_namespace_begin
 configuration::configuration()
 : environment_PATH(platform::get_environment_PATH()),
   build_architecture(platform::build_architecture),
-  build_environment(detect_build_environment()),
   build_os(platform::build_os),
-  build_toolchain(platform::default_toolchain),
+  build_toolchain(platform::detect_toolchain()),
   target_architecture(build_architecture),
   target_os(build_os),
-  target_toolchain(platform::default_toolchain),
+  target_toolchain(build_toolchain),
   source_directory(),
   project_file(),
   build_directory("."),
@@ -51,7 +50,7 @@ configuration::configuration()
   config_strings()
 {
   initialize_config();
-  debug(debug::config) << "\nconfiguration::config contains:\n" << config_strings << "\n";
+  debug(debug::config) << "\nconfiguration::config_strings contains:\n" << config_strings << "\n";
 }
 
 void configuration::set_source_directory(const string& source_directory)
@@ -64,16 +63,6 @@ void configuration::set_source_directory(const string& source_directory)
   debug(debug::config) << "configuration::set_source_directory::Adding " << source_directory << " to s_file_store.\n";
 }
 
-// Platform detection functions
-environment configuration::detect_build_environment() const
-{
-  // best would be to keep this as unused as possible, as in, stay away from using the shell as little as possible
-#if _WIN32
-  return environment::cmd;
-#else
-  return environment::sh;
-#endif
-}
 void configuration::initialize_config()
 {
   config_strings =
@@ -83,7 +72,7 @@ void configuration::initialize_config()
       entry_begin toolchain_map_inverse.at(target_toolchain) entry_end // Toolchain
       entry_begin "build_" + os_map_inverse.at(build_os) entry_end // Build OS
       entry_begin "build_" + architecture_map_inverse.at(build_architecture) entry_end // Build architecture
-      entry_begin environment_map_inverse.at(build_environment) entry_end // Shell environment
+      //entry_begin environment_map_inverse.at(build_environment) entry_end // Shell environment
       entry_begin "debug" entry_end // debug build is the default
     entries_end;
   // Convenience config strings

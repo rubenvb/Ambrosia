@@ -119,7 +119,7 @@ const file_set file_cache::match_source_files(const string& filename,
       debug(debug::files) << "file_cache::match_source_files::Matching " << entry.name << " with " << true_filename << ".\n";
       if(wildcard_compare(true_filename, entry.name))
       {
-        debug(debug::files) << "file_cache::match_source_files::Matched " << true_filename << " to " << full_directory << "/" << entry.name << ".\n";
+        debug(debug::files) << "file_cache::match_source_files::Matched " << true_filename << " to " << full_directory / entry.name << ".\n";
         result.insert(file(full_directory / entry.name, entry.time_modified));
       }
     }

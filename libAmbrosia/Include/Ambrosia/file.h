@@ -54,4 +54,4 @@ namespace std
   };
 }
 
-#endif // FILE_H
+#endif // AMBROSIA_FILE_H
