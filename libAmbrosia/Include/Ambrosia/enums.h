@@ -100,7 +100,7 @@ enum class toolchain_option
 
   output_object, // -o, /Fo
   output_pch, // -o, /Fp
-  output_debug, //
+  output_debug, // ??
   output_import_library, // /implib,
 
   compile_only, // -c, /c
