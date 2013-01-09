@@ -100,11 +100,11 @@ void apply_commandline_options(const string_vector& arguments,
         if(first_dashless_argument)
         {
           first_dashless_argument = false;
-          debug(debug::commandline) << "commandline::apply_commandline_options::Possible project file or directory: \'" << current << "\'.\n";
+          debug(debug::commandline) << "commandline::apply_commandline_options::Possible project file or directory: " << current << ".\n";
 
           if(lib::platform::file_exists(current))
           {
-            debug(debug::commandline) << "commandline::apply_commandline_options::Project file given on commandline: \'" << current << "\'.\n";
+            debug(debug::commandline) << "commandline::apply_commandline_options::Project file given on commandline: " << current << ".\n";
             project.configuration.project_file = current;
             continue;
           }
@@ -163,14 +163,14 @@ void apply_commandline_options(const string_vector& arguments,
         else if(current[0] == ':')
           add_configuration_options(argument, project.configuration);
         else
-          throw commandline_error("Unknown Ambrosia option: \'" + current + "\'.", argument_number);
+          throw commandline_error("Unknown Ambrosia option: " + current + ".", argument_number);
         break;
       }
       case 2:
       {
         string argument = current.substr(2);
         const string value = split_argument(argument, '=', argument_number);
-        debug(debug::commandline) << "commandline::apply_commandline_options::Option: \'" << argument << "\' with value \'" << value << "\'.\n";
+        debug(debug::commandline) << "commandline::apply_commandline_options::Option: " << argument << " with value " << value << ".\n";
         if(argument.size() > 4 && !argument.compare(0,4, "with"))
         {
           add_external_dependency(argument.substr(5), value, project);
@@ -229,7 +229,7 @@ void set_ambrosia_option(lib::project& project,
                          const std::string& value,
                          const size_t argument_number )
 {
-  debug(debug::commandline) << "commandline::set_internal_value_option::" << option << " with value \'" << value << "\' being set.\n";
+  debug(debug::commandline) << "commandline::set_internal_value_option::" << option << " with value " << value << " being set.\n";
 
   if("cross" == option)
   {
@@ -330,29 +330,48 @@ void add_external_dependency(const string& name,
                              lib::project& project)
 {
   if(location.empty())
-    debug(debug::commandline) << "commandline::add_external_dependency::Adding external dependency \'" << name << "\' without location.\n";
+    debug(debug::commandline) << "commandline::add_external_dependency::Adding external dependency " << name << " without location.\n";
   else
-    debug(debug::commandline) << "commandline::add_external_dependency::Adding external dependency \'" << name << "\' located in \'" << location << "\'.\n";
+    debug(debug::commandline) << "commandline::add_external_dependency::Adding external dependency " << name << " located in " << location << ".\n";
 
   // check if given argument includes '-lib', '-include' or '-bin' suffix
   const string::size_type index = name.rfind('-');
   if(index != string::npos)
   {
-    string suffix = name.substr(index);
-    string real_name = name.substr(0,name.size()-index-1);
-    debug(debug::commandline) << "commandline::add_external_dependency::Found suffix: \'" << suffix << "\' and real name\'" << real_name << "\'.\n";
-    throw internal_error("--with-<bla>-[lib,include,bin]=<blabla> not implemented yet.");
+    string suffix = name.substr(index+1);
+    string real_name = name.substr(0,name.size()-index-3);
+    debug(debug::commandline) << "commandline::add_external_dependency::Found suffix: " << suffix << " and real name " << real_name << ".\n";
+    if(suffix == "include")
+    {
+      debug(debug::commandline) << "commandline::add_external_dependency::Include directory specified for " << real_name << ".\n";
+      auto result = project.dependencies.find(dependency(real_name, libambrosia::target_type::external));
+      if(result != std::end(project.dependencies))
+      {
+        debug(debug::commandline) << "commandline::add_external_dependency::Adding header directory " << location << " to existing dependency target of " << real_name << ".\n";
+        result->target->directories[libambrosia::file_type::header].insert(location);
+      }
+      else
+      {
+        debug(debug::commandline) << "commandline::add_external_dependency::Creating new dependency target for " << real_name << " and its include directory " << location << ".\n";
+        project.targets.emplace_back(new target(real_name, project.configuration, libambrosia::target_type::external));
+        project.targets.back()->directories[libambrosia::file_type::header].insert(location);
+        project.dependencies.insert(dependency(real_name, libambrosia::target_type::external, project.targets.back().get()));
+      }
+    }
+    else
+      throw internal_error("--with-<bla>-[lib,bin,config]=<blabla> not implemented yet.");
   }
   else
   {
     debug(debug::commandline) << "commandline::add_external_dependency::Adding external dependency target with conventional subdirectories.\n";
-    project.targets.emplace_back(new target(name, project.configuration, libambrosia::target_type::external_dependency));
+    project.targets.emplace_back(new target(name, project.configuration, libambrosia::target_type::external));
     project.targets.back()->directories[libambrosia::file_type::header].insert(location / "include");
     project.targets.back()->configuration.build_directory = location / "lib";
     project.targets.back()->configuration.build_directory = location / "bin";
 
     debug(debug::commandline) << "commandline::add_external_dependency::Adding the external dependency to the project dependency list.\n";
-    project.dependencies.insert(dependency(name, lib::target_type::external_dependency, project.targets.back().get()));
+    //TODO fix this shit: dependencies shouldn't be there or should be improved
+    project.dependencies.insert(dependency(name, lib::target_type::external, project.targets.back().get()));
   }
 }
 

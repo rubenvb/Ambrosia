@@ -255,7 +255,7 @@ const std::map<toolchain, toolchain_option_map> toolchain_options =
         entry_begin toolchain_option::dynamic_linker_fortran, "" entry_end
 
         entry_begin toolchain_option::static_linker,       "link" entry_end
-        entry_begin toolchain_option::static_link_options, "/lib" entry_end
+        entry_begin toolchain_option::static_link_options, "/LIB x" entry_end
 
         entry_begin toolchain_option::link_debug,            "/DEBUG" entry_end
         entry_begin toolchain_option::link_optimize,         "/LTCG /NOWIN98" entry_end
@@ -272,7 +272,7 @@ const std::map<toolchain, toolchain_option_map> toolchain_options =
     entry_begin toolchain::LLVM,
       map_entries_begin
         entry_begin toolchain_option::compiler_c,   "clang" entry_end
-        entry_begin toolchain_option::compiler_cxx, "clang" entry_end
+        entry_begin toolchain_option::compiler_cxx, "clang++" entry_end
 
         entry_begin toolchain_option::include_dir,     "-I" entry_end
         entry_begin toolchain_option::include_file,    "-include" entry_end

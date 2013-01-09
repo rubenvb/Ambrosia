@@ -61,13 +61,25 @@ void binary::generate_commands()
     debug(debug::command_gen) << "binary::generate_commands::Current target direct dependencies: " << dependencies.size() << "\n";
     for(auto&& dependency :dependencies)
     {
-      debug(debug::command_gen) << "binary::generate_commands::Including dependency \'" << dependency.name << "\'\'s header directories.\n";
+      debug(debug::command_gen) << "binary::generate_commands::Including dependency " << dependency.name << "\'s header directories.\n";
       const string& source_directory = dependency.target->configuration.source_directory;
       const string_set& dependency_header_directories = dependency.target->directories.at(file_type::header);
-      for(auto&& header_directory : dependency_header_directories)
+      if(dependency.target->type == target_type::external)
       {
-        debug(debug::command_gen) << "binary::generate_commands::Including directory: \'" << header_directory << "\'' with source directory " << source_directory << "\n";
-        header_directories.insert(source_directory / header_directory);
+        debug(debug::command_gen) << "binary::generate_commands::Include dependency " << dependency.name << " header directories:\n";
+        for(auto&& header_directory : dependency_header_directories)
+        {
+          debug(debug::command_gen) << "\t" << header_directory << "\n";
+          header_directories.insert(header_directory);
+        }
+      }
+      else
+      {
+        for(auto&& header_directory : dependency_header_directories)
+        {
+          debug(debug::command_gen) << "binary::generate_commands::Including directory: " << header_directory << " with source directory " << source_directory << "\n";
+          header_directories.insert(source_directory / header_directory);
+        }
       }
       if(dependency.type == target_type::library)
       {

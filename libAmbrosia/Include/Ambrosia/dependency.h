@@ -32,6 +32,7 @@
 // C++ includes
 #include <memory>
 #include <string>
+#include <tuple>
 #include <vector>
 
 libambrosia_namespace_begin
@@ -44,22 +45,32 @@ struct dependency
 public:
   dependency(const std::string& name,
              const target_type type,
-             const ::libambrosia::target* = nullptr,
+             ::libambrosia::target* = nullptr,
              const bool external = false,
              const bool optional = false);
 
+  bool operator<(const dependency& rhs) const
+  { return (name < rhs.name)?true:(type<rhs.type); }
+  bool operator==(const dependency& rhs) const
+  { return (name == rhs.name) && (type == rhs.type); }
+
   const std::string name;
-  const target_type type;
-  const ::libambrosia::target* target;
+  const target_type type; // do not use target_type::external here!
+  ::libambrosia::target* target;
   const bool external;
   const bool optional;
 };
 
-inline bool operator<(const dependency& dep1, const dependency& dep2)
-{
-  return dep1.name < dep2.name && dep1.type < dep2.type;
-}
-
 libambrosia_namespace_end
+
+namespace std
+{
+  template <>
+  struct hash<libambrosia::dependency>
+  {
+    std::size_t operator()(const libambrosia::dependency& dep) const
+    { return hash<string>()(dep.name) ^ hash<int>()(static_cast<int>(dep.type)); }
+  };
+}
 
 #endif // AMBROSIA_DEPENDENCY_H

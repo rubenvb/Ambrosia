@@ -26,7 +26,7 @@ libambrosia_namespace_begin
 
 dependency::dependency(const std::string& name,
                        const target_type type,
-                       const ::libambrosia::target* target,
+                       ::libambrosia::target* target,
                        const bool external,
                        const bool optional)
 : name(name),

@@ -269,7 +269,7 @@ void create_directory_recursive(const string& name)
     if(win32_error == ERROR_FILE_NOT_FOUND || win32_error == ERROR_PATH_NOT_FOUND)
     {
       string_pair split_name = split_preceding_directory(name);
-      debug(debug::platform) << "windows::create_directory_recursive::Parent directory doesn't exist, creating \'" << split_name.first << "\'.\n";
+      debug(debug::platform) << "windows::create_directory_recursive::Parent directory doesn't exist, creating " << split_name.first << ".\n";
       create_directory_recursive(split_name.first);
     }
     else if(win32_error == ERROR_ALREADY_EXISTS)

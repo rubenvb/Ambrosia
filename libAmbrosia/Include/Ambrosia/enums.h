@@ -66,7 +66,7 @@ enum class target_type
   project,
   install,
   test,
-  external_dependency
+  external
 };
 enum class file_type
 {

@@ -138,11 +138,14 @@ debug& debug::operator<<(const platform::command& command)
 template<>
 debug& debug::operator<<(const dependency_set& dependencies)
 {
-  if(dependencies.empty())
-    std::cerr << "\t<empty list>\n";
-  for(auto&& dependency : dependencies)
+  if(output)
   {
-    std::cerr << "\t" << dependency.name << "\n";
+    if(dependencies.empty())
+      std::cerr << "\t<empty list>\n";
+    for(auto&& dependency : dependencies)
+    {
+      std::cerr << "\t" << dependency.name << "\n";
+    }
   }
   return *this;
 }

@@ -272,15 +272,16 @@ void skip_BOM(istream& stream,
 void find_dependencies(const project& project,
                        const target_type type,
                        const string& name,
-                       insert_iterator<dependency_set> inserter)
+                       dependency_set& dependencies)
 {
   //TODO: what with circular dependencies?
   debug(debug::algorithm) << "algorithm::find_dependencies::Locating dependency of type " << target_type_map_inverse.at(type) << ": " << name << ".\n";
-  auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies),[&type,&name](const dependency& dep) { return dep.name == name && (dep.type == type || dep.type == target_type::external_dependency); });
+  auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies),[&type,&name](const dependency& dep) { return dep.name == name && (dep.type == type || dep.type == target_type::external); });
   if(result != std::end(project.dependencies))
   {
     debug(debug::algorithm) << "algorithm::find_dependencies::Found parent dependency: " << result->name << ".\n";
-    inserter = dependency(name, type, result->target);
+    if(!dependencies.insert(dependency(name, type, result->target)).second)
+      throw error("Two dependency targets with the same name detected when resolving dependencies. All targets must have distinct names.");
   }
   // find other project targets that match, including searching subprojects recursively.
   for(auto&& target : project.targets)
@@ -288,35 +289,47 @@ void find_dependencies(const project& project,
     debug(debug::algorithm) << "algorithm::find_dependencies::Checking target " << target->name << " as a possible match.\n";
     if(target->name != name && wildcard_compare("*::"+target->name, name)) // check for name and qualified name
     {
-      debug(debug::algorithm) << "algorithm::find_dependencies::Apparently, \'" << "*"+target->name << "\' != \'" << name << "\'\n";
+      debug(debug::algorithm) << "algorithm::find_dependencies::Apparently, " << "*"+target->name << " != " << name << "\n";
       continue; // no match, ever
     }
     else if(target->type == type)
     {
-      debug(debug::algorithm) << "algorithm::find_dependencies::Located exact match: " << target->name <<".\n";
-      inserter = dependency(name, type, target.get());
+      debug(debug::algorithm) << "algorithm::find_dependencies::Located exact match: " << target->name <<" to " << name << ".\n";
+      if(dependencies.insert(dependency(name, type, target.get())).second)
+        throw error("Two dependency targets with the same name detected when resolving dependencies. All targets must have distinct names.");
     }
     else if(target->type == target_type::project)
     {
       debug(debug::algorithm) << "algorithm::find_dependencies::Located subproject: " << target->name << " with possible matches.\n";
-      find_dependencies_in_subproject(*static_cast<libambrosia::project*>(target.get()), type, name, inserter);
+      find_dependencies_in_subproject(*static_cast<libambrosia::project*>(target.get()), type, name, dependencies);
     }
     else
-      debug(debug::algorithm) << "algorithm::find_dependencies::Not a match: " << name << ".\n";
+      debug(debug::algorithm) << "algorithm::find_dependencies::Not a match: " << target->name << ".\n";
   }
 }
 void find_dependencies_in_subproject(const project& project,
                                      const target_type type,
                                      const string& name,
-                                     insert_iterator<dependency_set> inserter)
+                                     dependency_set& dependencies)
 {
-  debug(debug::algorithm) << "algorithm::find_dependencies::Finding " << target_type_map_inverse.at(type) << " targets in subproject " << project.name << ".\n";
+  debug(debug::algorithm) << "algorithm::find_dependencies_in_subproject::Finding " << target_type_map_inverse.at(type) << " targets in subproject " << project.name << " matching " << name << ".\n";
   for(auto&& target : project.targets)
   {
+    debug(debug::algorithm) << "algorithm::find_dependencies_in_subproject::Inspecting possible dependency: " << target->name << ".\n";
     if(target->type == type)
     {
-      debug(debug::algorithm) << "algorithm::find_dependencies::Found dependency match in subproject " << project.name << ".\n";
-      inserter = dependency(name, type, target.get());
+      debug(debug::algorithm) << "algorithm::find_dependencies_in_subproject::Found dependency match in subproject " << project.name << ": " << target->name << " for " << name << ".\n";
+      debug(debug::algorithm) << "algorithm::find_dependencies_in_subproject::Adding found dependency " << target->name << " for " << name << "to the list:\n" << dependencies << "\n";
+      auto result = dependencies.insert(dependency(name, type, target.get()));
+      if(!result.second)
+        debug(debug::algorithm) << "algorithm::find_dependencies_in_subproject::Dependency already in list: " << name << ", duplicate: " << result.first->name << ".\n";
+
+      debug(debug::algorithm) << "algorithm::find_dependencies_in_subproject::Current dependencies:\n" << dependencies << "\n";
+    }
+    else if(target->type == target_type::project)
+    {
+      debug(debug::algorithm) << "algorithm::find_dependencies_in_subproject::Located subsubproject " << target->name << " with possible matches.\n";
+      find_dependencies_in_subproject(project, type, name, dependencies);
     }
   }
 }

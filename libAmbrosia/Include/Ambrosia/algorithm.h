@@ -169,11 +169,11 @@ void skip_BOM(std::istream& stream,
 void find_dependencies(const project& project,
                        const target_type type,
                        const std::string& name,
-                       std::insert_iterator<dependency_set> inserter);
+                       dependency_set& dependencies);
 void find_dependencies_in_subproject(const project& project,
                                      const target_type type,
                                      const std::string& name,
-                                     std::insert_iterator<dependency_set> inserter);
+                                     dependency_set& dependencies);
 
 // file_type conversions
 inline file_type get_general_type(const file_type type)

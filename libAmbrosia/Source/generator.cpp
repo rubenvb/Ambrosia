@@ -55,8 +55,7 @@ generator::~generator()
 
 void generator::generate_object_filenames()
 {
-  debug(debug::command_gen) << "generator::Generating object filenames for " << file_type_map_inverse.at(type) << " files that will be built in "
-                            << "\'" << configuration.build_directory << "\'.\n";
+  debug(debug::command_gen) << "generator::Generating object filenames for " << file_type_map_inverse.at(type) << " files that will be built in " << "" << configuration.build_directory << ".\n";
 
   for(auto&& build_element : files)
   {
@@ -97,10 +96,11 @@ void generator::generate_parallel_commands(std::back_insert_iterator<command_vec
   }
 
   // generate the part of the command that comes between the source file name and object file name
-  debug(debug::command_gen) << "generator::generate_parallel_commands::Generating first part of command.\n";
-  second_part.add_argument(toolchain_options.at(toolchain_option::output_object));
+  debug(debug::command_gen) << "generator::generate_parallel_commands::Generating second part of command.\n";
+  // nada
 
   // generate part of the command that comes after the object file name
+  debug(debug::command_gen) << "generator::generate_parallel_commands::Generating third part of command.\n";
   // nada
 
   debug(debug::command_gen) << "generator::generate_parallel_commands::Command template: " << first_part << " <source file> " << second_part << " <object_file> " << third_part << ".\n";
@@ -115,7 +115,7 @@ void generator::generate_parallel_commands(std::back_insert_iterator<command_vec
     platform::command command = first_part;
     command.add_argument(build_element.source_file.name);
     command.add_arguments(second_part);
-    command.add_argument(build_element.object_file.name);
+    command.add_argument(toolchain_options.at(toolchain_option::output_object)+build_element.object_file.name);
     command.add_arguments(third_part);
 
     // insert command string

@@ -40,7 +40,7 @@ public:
   target(const std::string& name,
          const ::libambrosia::configuration& configuration,
          const target_type type,
-         const std::set<dependency>& dependencies = std::set<dependency>());
+         const dependency_set& dependencies = dependency_set());
 
   // Target information
   bool add_source_directory(const file_type type,
@@ -66,7 +66,7 @@ public:
   std::string name;
   lib::configuration configuration;
   target_type type;
-  std::set<dependency> dependencies;
+  dependency_set dependencies;
 
   std::map<file_type, build_element_set> files;
   std::map<file_type, string_set> directories;
