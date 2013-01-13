@@ -92,6 +92,7 @@ enum class toolchain_option
   compiler_c, // gcc, clang, cl, icc
   compiler_cxx, // g++ clang++, cl, icc
   compiler_fortran, // gfortran, ...
+  compiler_nologo, // /NOLOGO
 
   include_dir, // -I, /I
   include_file, // -include, /FI
@@ -101,7 +102,8 @@ enum class toolchain_option
   output_object, // -o, /Fo
   output_pch, // -o, /Fp
   output_debug, // ??
-  output_import_library, // /implib,
+  output_import_library, // /implib
+  output_static_link, // /OUT:
 
   compile_only, // -c, /c
   compile_debug,

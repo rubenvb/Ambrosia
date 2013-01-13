@@ -327,7 +327,8 @@ bool add_configuration_options(const string& options,
 
 void add_external_dependency(const string& name,
                              const string& location,
-                             lib::project& project)
+                             lib::project& project,
+                             const size_t argument_number)
 {
   if(location.empty())
     debug(debug::commandline) << "commandline::add_external_dependency::Adding external dependency " << name << " without location.\n";
@@ -341,22 +342,29 @@ void add_external_dependency(const string& name,
     string suffix = name.substr(index+1);
     string real_name = name.substr(0,name.size()-index-3);
     debug(debug::commandline) << "commandline::add_external_dependency::Found suffix: " << suffix << " and real name " << real_name << ".\n";
+    dependency& current;
+    auto result = project.dependencies.find(dependency(real_name));
+    if(result != std::end(project.dependencies))
+    {
+      debug(debug::commandline) << "commandline::add_external_dependency::Dependency already present.\n";
+      current = *result;
+    }
+    else
+    {
+      debug(debug::commandline) << "commandline::add_external_dependency::Creating new dependency for " << real_name << ".\n";
+      auto result = project.dependencies.insert(dependency(real_name));
+      current = result.second;
+    }
+
     if(suffix == "include")
     {
       debug(debug::commandline) << "commandline::add_external_dependency::Include directory specified for " << real_name << ".\n";
-      auto result = project.dependencies.find(dependency(real_name, libambrosia::target_type::external));
-      if(result != std::end(project.dependencies))
-      {
-        debug(debug::commandline) << "commandline::add_external_dependency::Adding header directory " << location << " to existing dependency target of " << real_name << ".\n";
-        result->target->directories[libambrosia::file_type::header].insert(location);
-      }
-      else
-      {
-        debug(debug::commandline) << "commandline::add_external_dependency::Creating new dependency target for " << real_name << " and its include directory " << location << ".\n";
-        project.targets.emplace_back(new target(real_name, project.configuration, libambrosia::target_type::external));
-        project.targets.back()->directories[libambrosia::file_type::header].insert(location);
-        project.dependencies.insert(dependency(real_name, libambrosia::target_type::external, project.targets.back().get()));
-      }
+      if(!result->include_directory.empty())
+        throw commandline_error("You can only specify the --with-"+real_name+"-include option once.", argument_number);
+      result->include_directory = location;
+      project.targets.emplace_back(new target(real_name, project.configuration, libambrosia::target_type::external));
+      project.targets.back()->directories[libambrosia::file_type::header].insert(location);
+      project.dependencies.insert(dependency(real_name, libambrosia::target_type::external, project.targets.back().get()));
     }
     else
       throw internal_error("--with-<bla>-[lib,bin,config]=<blabla> not implemented yet.");

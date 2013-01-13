@@ -85,7 +85,7 @@ private:
                        std::string& token);
   bool process_conditional();
   // reads colon-lists of dependencies, ends at first '{'
-  void read_dependency_set(dependency_set& dependencies);
+  dependency_map read_dependency_set();
 /*
  * Parsing
  **********/

@@ -166,14 +166,14 @@ const string_pair split_preceding_directory(const std::string& path);
 void skip_BOM(std::istream& stream,
               const std::string& filename = "");
 // recursively find all dependencies starting from a type and a name
-void find_dependencies(const project& project,
+/*void find_dependencies(const project& project,
                        const target_type type,
                        const std::string& name,
-                       dependency_set& dependencies);
+                       external_dependency_set& dependencies);
 void find_dependencies_in_subproject(const project& project,
                                      const target_type type,
                                      const std::string& name,
-                                     dependency_set& dependencies);
+                                     external_dependency_set& dependencies);*/
 
 // file_type conversions
 inline file_type get_general_type(const file_type type)

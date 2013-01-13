@@ -22,7 +22,9 @@
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/boost_wrapper.h"
+#include "Ambrosia/Targets/external_dependency.h"
 #include "Ambrosia/enum_maps.h"
+#include "Ambrosia/Targets/target.h"
 
 // C++ includes
 #include <algorithm>
@@ -136,7 +138,7 @@ debug& debug::operator<<(const platform::command& command)
   return *this;
 }
 template<>
-debug& debug::operator<<(const dependency_set& dependencies)
+debug& debug::operator<<(const external_dependency_set& dependencies)
 {
   if(output)
   {
@@ -145,6 +147,24 @@ debug& debug::operator<<(const dependency_set& dependencies)
     for(auto&& dependency : dependencies)
     {
       std::cerr << "\t" << dependency.name << "\n";
+    }
+  }
+  return *this;
+}
+template<>
+debug& debug::operator<<(const dependency_map& dependencies)
+{
+  if(output)
+  {
+    if(dependencies.empty())
+      std::cerr << "\t<empty list>\n";
+    for(auto&& target_list : dependencies)
+    {
+      std::cerr << "\t" << target_type_map_inverse.at(target_list.first) << ":\n";
+      for(auto& target : target_list.second)
+      {
+        std::cerr << "\t\t" << target->name << "\n";
+      }
     }
   }
   return *this;

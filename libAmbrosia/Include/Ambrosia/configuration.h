@@ -64,6 +64,8 @@ public:
 
   std::string gnu_prefix;
 
+  dependency_map dependencies;
+
 private:
   // Platform detection functions
   toolchain detect_toolchain() const;

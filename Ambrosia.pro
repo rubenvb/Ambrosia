@@ -1,5 +1,5 @@
 ##
-# Project Ambrosia: main project file
+# Project Ambrosia: main qmake project file
 #
 # Written in 2012 by Ruben Van Boxem <vanboxem.ruben@gmail.com>
 #
@@ -26,4 +26,5 @@ OTHER_FILES += Ambrosia.nectar.txt \
                Codestyle.txt \
                Ideas.txt \
                "Planned unit tests.txt" \
-               Copying.txt
+               Copying.txt \
+               Dependencies.txt

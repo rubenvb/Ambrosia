@@ -11,30 +11,37 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/dependency.cpp
+ * Ambrosia/Targets/target.cpp
  * Class implementation
  *
  **/
 
 // Class include
-#include "Ambrosia/dependency.h"
-
-// libAmbrosia includes
 #include "Ambrosia/Targets/target.h"
+
+// Ambrosia includes
+#include "Ambrosia/algorithm.h"
+#include "Ambrosia/debug.h"
+#include "Ambrosia/enum_maps.h"
+#include "Ambrosia/Error/nectar_error.h"
+#include "Ambrosia/file_cache.h"
+
+// C++ includes
+#include <cstddef>
+  using std::size_t;
+#include <string>
+  using std::string;
 
 libambrosia_namespace_begin
 
-dependency::dependency(const std::string& name,
-                       const target_type type,
-                       ::libambrosia::target* target,
-                       const bool external,
-                       const bool optional)
+target::target(const string& name,
+               const target_type type)
 : name(name),
   type(type),
-  target(target),
-  external(external),
-  optional(optional)
+  files(),
+  directories(),
+  parallel_commands(),
+  link_command()
 {   }
-
 
 libambrosia_namespace_end

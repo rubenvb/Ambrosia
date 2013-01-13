@@ -269,14 +269,14 @@ void skip_BOM(istream& stream,
   if(memcmp(reinterpret_cast<const char*>(BOM), first_3_chars, 3))
     stream.seekg( 0, std::ios::beg ); // reset to beginning of file
 }
-void find_dependencies(const project& project,
+/*void find_dependencies(const project& project,
                        const target_type type,
                        const string& name,
                        dependency_set& dependencies)
 {
   //TODO: what with circular dependencies?
   debug(debug::algorithm) << "algorithm::find_dependencies::Locating dependency of type " << target_type_map_inverse.at(type) << ": " << name << ".\n";
-  auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies),[&type,&name](const dependency& dep) { return dep.name == name && (dep.type == type || dep.type == target_type::external); });
+  auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies),[&name](const dependency& dep) { return dep.name == name; });
   if(result != std::end(project.dependencies))
   {
     debug(debug::algorithm) << "algorithm::find_dependencies::Found parent dependency: " << result->name << ".\n";
@@ -332,6 +332,6 @@ void find_dependencies_in_subproject(const project& project,
       find_dependencies_in_subproject(project, type, name, dependencies);
     }
   }
-}
+}*/
 
 libambrosia_namespace_end

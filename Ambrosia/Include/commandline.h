@@ -67,7 +67,8 @@ bool add_configuration_options(const std::string& options,
 
 void add_external_dependency(const std::string& name,
                              const std::string& location,
-                             lib::project& project);
+                             lib::project& project
+                             const std::size_t argument_number));
 
 ambrosia_namespace_end
 

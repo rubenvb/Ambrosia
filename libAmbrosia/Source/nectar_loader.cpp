@@ -31,8 +31,8 @@
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/platform.h"
-#include "Ambrosia/Targets/binary.h"
-#include "Ambrosia/Targets/project.h"
+#include "Ambrosia/Target/binary.h"
+#include "Ambrosia/Target/project.h"
 
 // C++ includes
 #include <fstream>
@@ -159,22 +159,8 @@ void nectar_loader::extract_nectar()
         if(sub_stream)
         {
           debug(debug::parser) << "nectar_loader::extract_nectar:Opening file " << full_subproject_filename << " succeeded.\n";
-          // Get sub target dependencies
-          dependency_set dependencies = project.dependencies;
-          // copy external dependencies
-          //TODO: improve this copying process
-          debug(debug::parser) << "nectar_loader::extract_nectar::Current project dependencies:\n" << project.dependencies << "\n";
-          for(auto&& dependency : project.dependencies)
-          {
-            if(dependency.target->type == target_type::external)
-            {
-              dependencies.insert(dependency);
-              debug(debug::parser) << "nectar_loader::extract_nectar::Adding external dependency: " << dependency.name << " to subproject " << token << "\n";
-            }
-            else
-              debug(debug::parser) << "nectar_loader::extract_nectar::Not adding internal project dependency: " << dependency.name << ".\n";
-          }
-          read_dependency_set(dependencies);
+
+          dependency_map dependencies = read_dependency_set();
           debug(debug::parser) << "nectar_loader::extract_nectar::Total number of subproject dependencies: " << dependencies.size() << ".\n";
 
           // copy configuration and set proper subdirectory
@@ -210,8 +196,9 @@ void nectar_loader::extract_nectar()
           const string target_name = token;
 
           // Add target's dependencies
-          dependency_set dependencies;
-          read_dependency_set(dependencies);
+          external_dependency_set external_dependencies;
+          dependency_map dependencies;
+          read_dependency_set(external_dependencies, dependencies);
 
           configuration target_configuration = project.configuration;
           debug(debug::config) << "nectar_loader::extract_nectar::Setting build directory for binary " << target_name << ".\n";
@@ -228,9 +215,6 @@ void nectar_loader::extract_nectar()
       debug(debug::parser)  << "nectar_loader::extract_nectar::dep section found at line " << line_number << ".\n";
       if(next_token(token))
       {
-        target_type type = target_type_map.at(token);
-        if(type != target_type::library && type != target_type::application)
-          throw syntax_error("Dependencies other than \'lib\' or \'app\' are not yet supported.", filename, line_number);
         if(next_token(token))
         {
           const string name = token;
@@ -459,9 +443,10 @@ bool nectar_loader::next_list_token(const configuration& configuration,
   return true;
 }
 
-void nectar_loader::read_dependency_set(dependency_set& dependencies)
+dependency_map nectar_loader::read_dependencies()
 {
   debug(debug::parser) << "nectar_loader::read_dependency_set::Reading dependencies.\n";
+  dependency_map dependencies;
   bool in_list = false;
   target_type type = target_type::library; // dummy to shut up GCC warning
   string token;

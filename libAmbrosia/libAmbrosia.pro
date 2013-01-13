@@ -56,13 +56,13 @@ HEADERS += \
     Include/Ambrosia/Error/internal_error.h \
     Include/Ambrosia/build_element.h \
     Include/Ambrosia/file.h \
-    Include/Ambrosia/Targets/target.h \
-    Include/Ambrosia/Targets/project.h \
-    Include/Ambrosia/Targets/binary.h \
+    Include/Ambrosia/Target/target.h \
+    Include/Ambrosia/Target/project.h \
+    Include/Ambrosia/Target/binary.h \
     Include/Ambrosia/generator.h \
-    Include/Ambrosia/dependency.h \
     Include/Ambrosia/Error/command_error.h \
-    Include/Ambrosia/Error/platform_error.h
+    Include/Ambrosia/Error/platform_error.h \
+    Include/Ambrosia/Target/external_dependency.h
 
 SOURCES += \
     Source/configuration.cpp \
@@ -79,13 +79,13 @@ SOURCES += \
     Source/file_cache.cpp \
     Source/nectar.cpp \
     Source/nectar_loader.cpp \
-    Source/Targets/target.cpp \
-    Source/Targets/project.cpp \
-    Source/Targets/binary.cpp \
+    Source/Target/target.cpp \
+    Source/Target/project.cpp \
+    Source/Target/binary.cpp \
     Source/generator.cpp \
     Source/Error/command_error.cpp \
-    Source/dependency.cpp \
-    Source/Platform/platform_error.cpp
+    Source/Platform/platform_error.cpp \
+    Source/Target/external_dependency.cpp
 
 *win32*:SOURCES += Source/Platform/windows.cpp
 *linux*:SOURCES += Source/Platform/unix.cpp
