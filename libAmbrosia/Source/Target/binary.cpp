@@ -37,8 +37,9 @@ libambrosia_namespace_begin
 
 binary::binary(const string& name,
                const ::libambrosia::configuration& configuration,
-               const target_type type)
-: target(name, type),
+               const target_type type,
+               const dependency_map& dependencies)
+: target(name, type, dependencies),
   configuration(configuration)
 {   }
 
@@ -106,15 +107,15 @@ void binary::generate_commands()
     {
       header_directories.insert(configuration.source_directory / directory);
     }
-    debug(debug::command_gen) << "binary::generate_commands::Current target direct library dependencies: " << configuration.dependencies[target_type::library].size() << "\n";
-    for(auto&& dependency : configuration.dependencies.at(target_type::library))
+    debug(debug::command_gen) << "binary::generate_commands::Current target direct library dependencies: " << dependencies[target_type::library].size() << "\n";
+    for(auto&& dependency : dependencies.at(target_type::library))
     {
       debug(debug::command_gen) << "binary::generate_commands::Including dependency " << dependency->name << "\'s header directories.\n";
-      const string& source_directory = dependency->configuration.source_directory;
+      const string& source_directory = dependency->source_directory();
       const string_set& dependency_header_directories = dependency->directories.at(file_type::header);
       if(dependency->type == target_type::external)
       {
-        debug(debug::command_gen) << "binary::generate_commands::Include dependency " << dependency.name << " header directories:\n";
+        debug(debug::command_gen) << "binary::generate_commands::Include dependency " << dependency->name << " header directories:\n";
         for(auto&& header_directory : dependency_header_directories)
         {
           debug(debug::command_gen) << "\t" << header_directory << "\n";
@@ -129,13 +130,13 @@ void binary::generate_commands()
           header_directories.insert(source_directory / header_directory);
         }
       }
-      if(dependency.type == target_type::library)
+      if(dependency->type == target_type::library)
       {
-        debug(debug::command_gen) << "binary::generate_commands::Including library " << dependency.name << " in (dynamic) linker command.\n"
-                                      "\twith library search directory: " << dependency.target->configuration.build_directory << " and library name " << dependency.target->configuration.build_directory << ".\n";
-        library_directories.insert(dependency.target->configuration.build_directory);
-        libraries.push_back(dependency.target->name);
-        for(auto&& library : dependency.target->libraries)
+        debug(debug::command_gen) << "binary::generate_commands::Including library " << dependency->name << " in (dynamic) linker command.\n"
+                                     "\twith library search directory: " << dependency->directories[file_type::library] << " and library names " << dependency->libraries << ".\n";
+        library_directories.insert(std::begin(dependency->directories[file_type::library]), std::end(dependency->directories[file_type::library]));
+        libraries.push_back(dependency->name);
+        for(auto&& library : dependency->libraries)
         {
           libraries.push_back(library);
         }

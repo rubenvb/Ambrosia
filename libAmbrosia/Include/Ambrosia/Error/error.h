@@ -20,7 +20,7 @@
 #define AMBROSIA_ERROR_ERROR_H
 
 // Global include
-#include <Ambrosia/global.h>
+#include "Ambrosia/global.h"
 
 // libAmbrosia includes
 #include "Ambrosia/typedefs.h"

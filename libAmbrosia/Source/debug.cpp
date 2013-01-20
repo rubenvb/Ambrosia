@@ -22,9 +22,8 @@
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/boost_wrapper.h"
-#include "Ambrosia/Targets/external_dependency.h"
+#include "Ambrosia/Target/external.h"
 #include "Ambrosia/enum_maps.h"
-#include "Ambrosia/Targets/target.h"
 
 // C++ includes
 #include <algorithm>

@@ -25,10 +25,12 @@
 #include "Ambrosia/build_element.h"
 #include "Ambrosia/configuration.h"
 #include "Ambrosia/debug.h"
-#include "Ambrosia/Error/syntax_error.h"
-#include "Ambrosia/global.h"
+#include "Ambrosia/dependency_paths.h"
 #include "Ambrosia/enums.h"
 #include "Ambrosia/enum_maps.h"
+#include "Ambrosia/Error/nectar_error.h"
+#include "Ambrosia/Error/syntax_error.h"
+#include "Ambrosia/global.h"
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/platform.h"
 #include "Ambrosia/Target/binary.h"
@@ -87,10 +89,12 @@ const set<char> special_characters_newline =
   entries_end;
 
 nectar_loader::nectar_loader(::libambrosia::project& project,
+                             const dependency_paths_set& external_dependencies,
                              const string& full_filename,
                              const string& sub_directory,
                              istream& stream)
 : project(project),
+  external_dependencies(external_dependencies),
   filename(full_filename),
   subdirectory(sub_directory),
   stream(stream),
@@ -128,7 +132,7 @@ void nectar_loader::extract_nectar()
 
       global_processed = true;
       if(next_token(token) && "{" == token)
-        parse_target(project, project.file_cache);
+        parse_global();
       else
         throw syntax_error("\'global\' must be followed by \'{\'.", filename, line_number);
     }
@@ -160,7 +164,7 @@ void nectar_loader::extract_nectar()
         {
           debug(debug::parser) << "nectar_loader::extract_nectar:Opening file " << full_subproject_filename << " succeeded.\n";
 
-          dependency_map dependencies = read_dependency_set();
+          dependency_map dependencies = read_dependencies();
           debug(debug::parser) << "nectar_loader::extract_nectar::Total number of subproject dependencies: " << dependencies.size() << ".\n";
 
           // copy configuration and set proper subdirectory
@@ -170,10 +174,12 @@ void nectar_loader::extract_nectar()
           debug(debug::config) << "nectar_loader::extract_nectar::Setting build directory of subproject " << token << " to " << project.configuration.build_directory / token << ".\n";
           subconfiguration.build_directory = project.configuration.build_directory / token;
 
-          project.targets.emplace_back(new libambrosia::project(project.name + "::" + token, subconfiguration, dependencies));
+          unique_ptr<libambrosia::project> subproject(new libambrosia::project(project.name + "::" + token, subconfiguration, dependencies));
 
-          nectar_loader subloader(*static_cast<libambrosia::project*>(project.targets.back().get()), full_subproject_filename, subdirectory / token, sub_stream);
+          nectar_loader subloader(*subproject, external_dependencies, full_subproject_filename, subdirectory / token, sub_stream);
           subloader.extract_nectar();
+
+          project.targets.emplace_back(std::move(subproject));
         }
         else
           throw nectar_error("Error opening subproject file: " + full_subproject_filename + ".",  filename, line_number);
@@ -196,17 +202,17 @@ void nectar_loader::extract_nectar()
           const string target_name = token;
 
           // Add target's dependencies
-          external_dependency_set external_dependencies;
-          dependency_map dependencies;
-          read_dependency_set(external_dependencies, dependencies);
+          dependency_map dependencies = read_dependencies();
 
           configuration target_configuration = project.configuration;
           debug(debug::config) << "nectar_loader::extract_nectar::Setting build directory for binary " << target_name << ".\n";
           target_configuration.build_directory = target_configuration.build_directory / target_name;
 
-          project.targets.emplace_back(new binary(target_name, target_configuration, type, dependencies));
+          unique_ptr<binary> binary_target(new binary(target_name, target_configuration, type, dependencies));
 
-          parse_target(*project.targets.back(), project.file_cache);
+          parse_binary(*binary_target, project.file_cache);
+
+          project.targets.emplace_back(std::move(binary_target));
         }
       }
     }
@@ -218,32 +224,14 @@ void nectar_loader::extract_nectar()
         if(next_token(token))
         {
           const string name = token;
-          debug(debug::parser) << "nectar_loader::extract_nectar::Linking dependency " << name << ".\n";
+          debug(debug::parser) << "nectar_loader::extract_nectar::Resolving dependency target: " << name << ".\n";
 
-          // Search for dependency in project's dependency_set
-          debug(debug::parser) << "nectar_loader::extract_nectar::" << project.dependencies.size() << " project dependencies:\n" << project.dependencies;
-
-          auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies),
-                                     [&name,&type](const dependency& dep) {return dep.name == name && ((dep.type == type) || (dep.type == target_type::external)); });
-          if(result != std::end(project.dependencies))
+          if(next_token(token) && (token == "lib" || token == "app"))
           {
-            debug(debug::parser) << "nectar_loader::extract_nectar::Found project dependency in parent project: " << target_type_map_inverse.at(type) << " " << name << ".\n";
-            if(next_token(token))
-            {
-              if("{" == token)
-                parse_dependency(*result->target);
-              else
-              {
-                if(result->type == target_type::external)
-                  throw nectar_error("External dependencies must contain information like libraries to be linked or a header file that must be present.", filename, line_number);
-                previous_token(); // no dependency description provided
-              }
-              continue;
-            }
-            else
-              throw syntax_error("Unexpected end of input.", filename, line_number);
+            parse_dependency(name, target_type_map.at(token), external_dependencies);
           }
-          throw nectar_error("Dependency not found: \'" + name + "\'", filename, line_number);
+          else
+            throw syntax_error("Expected dependency type \'lib\' or \'app\' after dep name.", filename, line_number);
         }
         else
           throw syntax_error("Expected dependency name after dependency type.", filename, line_number);
@@ -445,14 +433,14 @@ bool nectar_loader::next_list_token(const configuration& configuration,
 
 dependency_map nectar_loader::read_dependencies()
 {
-  debug(debug::parser) << "nectar_loader::read_dependency_set::Reading dependencies.\n";
+  debug(debug::parser) << "nectar_loader::read_dependencies::Reading dependencies.\n";
   dependency_map dependencies;
   bool in_list = false;
-  target_type type = target_type::library; // dummy to shut up GCC warning
+  target_type type;// = target_type::library; // dummy to shut up GCC warning
   string token;
   while(next_token(token, special_characters_newline))
   {
-    debug(debug::parser) << "nectar_loader::read_dependency_set::token: \'" << output_form(token) << "\'\n";
+    debug(debug::parser) << "nectar_loader::read_dependencies::token: \'" << output_form(token) << "\'\n";
     if("{" == token || "\n" == token)
       break; // finished
     else if(!in_list)
@@ -462,7 +450,7 @@ dependency_map nectar_loader::read_dependencies()
         if(next_token(token) && (token == "lib" || token == "app"))
         {
           type = target_type_map.at(token);
-          debug(debug::parser) << "nectar_loader::read_dependency_set::Detected " << token << " dependencies.\n";
+          debug(debug::parser) << "nectar_loader::read_dependencies::Detected " << token << " dependencies.\n";
           in_list = true;
           goto insert_dependency;
         }
@@ -478,7 +466,7 @@ dependency_map nectar_loader::read_dependencies()
       if(next_token(token))
       {
         if("(" == token)
-        {
+        { //TODO check curly brace here
           process_dependency_set_conditional(project.configuration);
 
           if(!next_token(token))
@@ -487,18 +475,18 @@ dependency_map nectar_loader::read_dependencies()
             break;
         }
         const string& name = token;
-        debug(debug::parser) << "nectar_loader::read_dependency_set::Locating " << target_type_map_inverse.at(type) << " dependency: " << token << ".\n";
+        debug(debug::parser) << "nectar_loader::read_dependencies::Locating " << target_type_map_inverse.at(type) << " dependency: " << name << ".\n";
         const size_t number_of_dependencies = dependencies.size();
-        debug(debug::parser) << "nectar_loader::read_dependency_set::Current project dependencies:\n" << project.dependencies << "\n";
-        find_dependencies(project, type, name, dependencies);
-        if(number_of_dependencies == dependencies.size())
-          throw nectar_error("Dependencies must be specified as \'dep\' targets in relevant project files: " + name, filename, line_number);
+        find_dependencies(dependencies, project, type, name);
+        if(dependencies.size() == number_of_dependencies)
+          throw nectar_error("Dependency not found: " + name, filename, line_number);
       }
     }
     else
       in_list = false;
   }
-  debug(debug::parser) << "nectar_loader::read_dependency_set::Finished reading " << dependencies.size() << " dependencies.\n";
+  debug(debug::parser) << "nectar_loader::read_dependencies::Finished reading " << dependencies.size() << " dependencies.\n";
+  return dependencies;
 }
 
 /*
@@ -718,25 +706,25 @@ void nectar_loader::process_inner_list_conditional(const configuration& /*config
   throw nectar_error("Inner list conditionals not implemented yet.", filename, line_number);
 }
 
-void nectar_loader::parse_file_list(target& target,
-                                    const file_type type,
+void nectar_loader::parse_file_list(const file_type type,
+                                    binary& binary,
                                     file_cache& file_cache)
 {
   debug(debug::parser) << "nectar_loader::parse_file_list::Parsing " << file_type_map_inverse.at(type) << " file list.\n";
   bool empty = true; // a list must not be empty
   string token;
 
-  while(next_list_token(target.configuration, token))
+  while(next_list_token(binary.configuration, token))
   {
     debug(debug::parser) << "nectar_loader::parse_file_list::adding matches to file " << token << " to the file list.\n";
     empty = false;
-    target.add_source_file(type, token, file_cache, filename, line_number); // errors are assembled in this function
+    binary.add_source_file(type, token, file_cache, filename, line_number); // errors are assembled in this function
   }
   if(empty)
     throw syntax_error("A list must not be empty.", filename, line_number);
 }
-void nectar_loader::parse_source_directory_list(target& target,
-                                                const file_type type,
+void nectar_loader::parse_source_directory_list(const file_type type,
+                                                binary& binary,
                                                 file_cache& file_cache)
 {
   debug(debug::parser) << "nectar_loader::parse_source_directory_list::Parsing full list, nonexistent directories are kept in error_list.\n";
@@ -744,11 +732,11 @@ void nectar_loader::parse_source_directory_list(target& target,
   string token;
   string_vector error_list;
   // gather all list items
-  while(next_list_token(target.configuration, token))
+  while(next_list_token(binary.configuration, token))
   {
     empty_list = false;
 
-    if(!target.add_source_directory(type, token, file_cache))
+    if(!binary.add_source_directory(type, token, file_cache))
       error_list.push_back("line " + to_string(line_number) +": " + token); // add the bad directory to error_list
   }
   if(empty_list)
@@ -765,12 +753,12 @@ void nectar_loader::parse_variable_list(string_set&)
   throw nectar_error("Variable list parsing isn't done yet.", filename, line_number);
 }
 
-void nectar_loader::parse_library_list(target& target,
+void nectar_loader::parse_library_list(binary& binary,
                                        file_cache& /*file_cache*/)
 {
   string token;
   string_vector error_list;
-  while(next_list_token(target.configuration, token))
+  while(next_list_token(binary.configuration, token))
   {
     // LIBS items must be of the form '-lsomelib' or '-Lsomedirectory'
     if(token.size() <= 2)
@@ -779,7 +767,7 @@ void nectar_loader::parse_library_list(target& target,
     {
       token = token.substr(2);
       debug(debug::parser) << "nectar_loader::parse_library_list::Found library name: " << token << ".\n";
-      target.add_library(token, filename, line_number);
+      binary.add_library(token, filename, line_number);
     }
     else if(!token.compare(0, 2, "-L"))
     {
@@ -798,34 +786,36 @@ void nectar_loader::parse_library_list(target& target,
   }
 }
 
-void nectar_loader::parse_target(target& target,
+void nectar_loader::parse_global()
+{
+  throw internal_error("nectar_loader::parse_global::Unimplemented.");
+}
+
+void nectar_loader::parse_binary(binary& binary,
                                  file_cache& file_cache)
 {
-  const std::string target_name(target.name);
-  debug(debug::parser) << "nectar_loader::parse_target::Processing named target section: " << target_name << ".\n";
+  debug(debug::parser) << "nectar_loader::parse_binary::Processing named target section: " << binary.name << ".\n";
   size_t curly_brace_count = 1; // parsing starts inside curly braces block
   string token;
   bool already_modified_NAME = false;
 
   while(curly_brace_count > 0 && next_token(token))
   {
-    debug(debug::parser) << "nectar_loader::parse_target::Token: \'" << token << "\'.\n";
+    debug(debug::parser) << "nectar_loader::parse_binary::Token: \'" << token << "\'.\n";
     if("}" == token)
       --curly_brace_count;
     else if("{" == token)
       ++curly_brace_count;
     else if("(" == token)
-      process_inner_conditional(target.configuration);
+      process_inner_conditional(binary.configuration);
     else if("CONFIG" == token)
     {
-      debug(debug::parser) << "nectar_loader::parse_target::CONFIG detected.\n";
-      parse_variable_list(target.configuration.config_strings);
+      debug(debug::parser) << "nectar_loader::parse_binary::CONFIG detected.\n";
+      parse_variable_list(binary.configuration.config_strings);
     }
     else if ("NAME" == token)
     {
-      debug(debug::parser) << "nectar_loader::parse_target::NAME detected.\n";
-      //if(type == target_type::global)
-      //  throw syntax_error("global target must not have a name", filename, line_number);
+      debug(debug::parser) << "nectar_loader::parse_binary::NAME detected.\n";
 
       if(already_modified_NAME)
         syntax_warning("NAME is being modified twice in this target section.");
@@ -835,7 +825,7 @@ void nectar_loader::parse_target(target& target,
       {
         if("\n" != token)
         {
-          target.configuration.name = token;
+          binary.configuration.name = token;
           continue;
         }
       }
@@ -847,20 +837,20 @@ void nectar_loader::parse_target(target& target,
       // is it a list of files or librar(y director)ies?
       if(map_value(file_type_map, token, type))
       {
-        debug(debug::parser) << "nectar_loader::parse_target::" << token << " list detected.\n";
+        debug(debug::parser) << "nectar_loader::parse_binary::" << token << " list detected.\n";
         if(type == file_type::library)
-          parse_library_list(target, file_cache);
+          parse_library_list(binary, file_cache);
         else
-          parse_file_list(target, type, file_cache);
+          parse_file_list(type, binary, file_cache);
 
-        debug(debug::parser) << "nectar_loader::parse_target::Succesfully parsed list of files or librar(y director)ies.\n";
+        debug(debug::parser) << "nectar_loader::parse_binary::Succesfully parsed list of files or librar(y director)ies.\n";
       } // or a list of directories
       else if(map_value(directory_type_map, token, type))
       {
-        debug(debug::parser) << "nectar_loader::parse_target::" << file_type_map_inverse.at(type) << " directory list detected.\n";
+        debug(debug::parser) << "nectar_loader::parse_binary::" << file_type_map_inverse.at(type) << " directory list detected.\n";
         const file_type general_type = get_general_type(type);
         if(general_type == file_type::source || type == file_type::header)
-          parse_source_directory_list(target, type, file_cache);
+          parse_source_directory_list(type, binary, file_cache);
         else
           throw nectar_error("Parsing of " + token + " not yet implemented.", filename, line_number);
       }
@@ -870,12 +860,52 @@ void nectar_loader::parse_target(target& target,
   }
 }
 
-void nectar_loader::parse_dependency(const target& target)
+void nectar_loader::parse_dependency(const string& name, const target_type type, const dependency_paths_set& external_dependencies)
 {
-  debug(debug::parser) << "nectar_loader::parse_dependency::Checking availability of dependency " << target.name << ".\n";
+  debug(debug::parser) << "nectar_loader::parse_dependency::Checking availability of dependency " << name << ".\n";
+  target* dependency = nullptr;
+  const auto find_target = [&name,&type](const target* t)
+  {
+    debug(debug::parser) << "nectar_loader::parse_dependency::find_target::Checking " << t->name << ".\n";
+    return name == t->name && type == t->type;
+  };
+
+  debug(debug::parser) << "nectar_loader::parse_dependency::Searching in project " << project.name << "\'s dependencies.\n";
+  auto result = std::find_if(std::begin(project.dependencies[type]), std::end(project.dependencies[type]), find_target);
+  if(result != std::end(project.dependencies[type]))
+  {
+    debug(debug::parser) << "nectar_loader::parse_dependency::Found dependency in project " << project.name << ", so it should be OK.\n";
+    dependency = *result;
+  }
+  else
+  {
+    debug(debug::parser) << "nectar_loader::parse_dependency::Didn't find dependency in current project, checking if it's an external dependency.\n";
+    auto result = external_dependencies.find(name);
+    if(result == std::end(external_dependencies))
+      throw nectar_error("Required dependency not found: " + name, filename, line_number);
+
+    debug(debug::parser) << "nectar_loader::parse_dependency::Checking basic dependency contents.\n";
+    if(type == target_type::library && result->include.empty())
+      throw nectar_error("Required library dependency "+name+" must have header directory specified.", filename, line_number);
+    if(type == target_type::application && result->bin.empty())
+      throw nectar_error("Required application dependency "+name+" must have binary directory specified.", filename, line_number);
+
+    debug(debug::parser) << "Copying dependency directories to \'external\' target.\n";
+    project.targets.emplace_back(new external(name, type, result->include, result->lib, result->bin));
+    dependency = project.targets.back().get();
+  }
+
   size_t curly_brace_count = 1; // parsing starts inside curly braces block
   string token;
 
+  if(!next_token(token))
+    throw syntax_error("Unexpected end of file: a \'dep\' target at the end of a nectar.txt file has no effect.", filename, line_number);
+  if(token != "{")
+  {
+    debug(debug::parser) << "nectar_loader::parse_dependency::No \'dep\' body found.\n";
+    previous_token();
+  }
+  debug(debug::parser) << "nectar_loader::parse_dependency::Parsing dependency body.\n";
   while(curly_brace_count > 0 && next_token(token))
   {
     if("}" == token)
@@ -886,16 +916,17 @@ void nectar_loader::parse_dependency(const target& target)
       process_inner_conditional(project.configuration); // uses local project configuration
     else if("HEADERS" == token)
     {
-      debug(debug::parser) << "nectar_loader::parse_dependency::Checking headers required by dependency " << target.name << ".\n";
+      debug(debug::parser) << "nectar_loader::parse_dependency::Checking headers required by dependency " << name << ".\n";
       while(next_list_token(project.configuration, token))
       {
         debug(debug::parser) << "nectar_loader::parse_dependency::Checking if header " << token << " is usable.\n";
-        debug(debug::always) << "\nChecking header usability is unimplemented: assuming header " << token << " is present and usable.\n";
+        syntax_warning("Checking header usability is unimplemented: assuming header " + token + " is present and usable.");
       }
     }
     else
       throw syntax_error("Unexpected token: " + token, filename, line_number);
   }
+  project.dependencies[type].insert(dependency);
 }
 
 void nectar_loader::validate_variable(const string& config)

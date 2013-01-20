@@ -24,7 +24,6 @@
 
 // libAmbrosia includes
 #include "Ambrosia/file_cache.h"
-#include "Ambrosia/Target/external_dependency.h"
 #include "Ambrosia/Target/target.h"
 
 libambrosia_namespace_begin
@@ -32,15 +31,17 @@ libambrosia_namespace_begin
 class project : public target
 {
 public:
- /* project(const ::libambrosia::configuration& configuration);*/
+  project(const ::libambrosia::configuration& configuration);
   project(const std::string& name,
           const ::libambrosia::configuration& configuration,
-          const external_dependency_set& external_dependencies = external_dependency_set(),
           const dependency_map& dependencies = dependency_map());
 
   void generate_commands(); // generate build commands for all targets
   void dump_commands() const; // dump commands of all targets
   void execute_build_commands() const; // builds targets in parallel if possible
+
+  const std::string& source_directory() const
+  { return configuration.source_directory; }
 
   lib::configuration configuration;
 

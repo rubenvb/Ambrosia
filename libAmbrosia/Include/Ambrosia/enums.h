@@ -79,6 +79,7 @@ enum class file_type
   header_c,
   header_cxx,
   library,
+  executable,
   resource,
   Qt_ui,
   Qt_moc,

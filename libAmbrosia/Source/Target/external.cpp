@@ -17,7 +17,7 @@
  **/
 
 // Class include
-#include "Ambrosia/Target/external_dependency.h"
+#include "Ambrosia/Target/external.h"
 
 // libAmbrosia includes
 #include "Ambrosia/enums.h"
@@ -29,27 +29,21 @@
 
 libambrosia_namespace_begin
 
-external_dependency::external_dependency(const std::string& name,
-                                         const std::string& include_directory,
-                                         const std::string& lib_directory,
-                                         const string_set& libraries,
-                                         const bool optional)
-: target(name, target_type::external),
-  name(name),
-  include_directory(include_directory),
-  lib_directory(lib_directory),
-  libraries(libraries),
+external::external(const std::string& name,
+                   const target_type type,
+                   const std::string& include_directory,
+                   const std::string& lib_directory,
+                   const std::string& bin_directory,
+                   const string_set& libraries,
+                   const dependency_map& dependencies,
+                   const bool optional)
+: target(name, type, dependencies),
   optional(optional)
-{   }
-
-external_dependency::external_dependency(const std::string& name,
-                                         const bool optional)
-: target(name, target_type::external),
-  name(name),
-  include_directory(),
-  lib_directory(),
-  libraries(),
-  optional(optional)
-{   }
+{
+  directories[file_type::header].insert(include_directory);
+  directories[file_type::library].insert(lib_directory);
+  directories[file_type::executable].insert(bin_directory);
+  this->libraries = libraries;
+}
 
 libambrosia_namespace_end

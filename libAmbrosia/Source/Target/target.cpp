@@ -17,7 +17,7 @@
  **/
 
 // Class include
-#include "Ambrosia/Targets/target.h"
+#include "Ambrosia/Target/target.h"
 
 // Ambrosia includes
 #include "Ambrosia/algorithm.h"
@@ -35,9 +35,11 @@
 libambrosia_namespace_begin
 
 target::target(const string& name,
-               const target_type type)
+               const target_type type,
+               const dependency_map& dependencies)
 : name(name),
   type(type),
+  dependencies(dependencies),
   files(),
   directories(),
   parallel_commands(),

@@ -23,7 +23,7 @@
 #include "Ambrosia/global.h"
 
 // libAmbrosia includes
-#include "Ambrosia/Target/external_dependency.h"
+#include "Ambrosia/Target/external.h"
 #include "Ambrosia/Target/target.h"
 
 libambrosia_namespace_begin
@@ -34,7 +34,8 @@ public:
   // project local target
   binary(const std::string& name,
          const ::libambrosia::configuration& configuration,
-         const target_type type);
+         const target_type type,
+         const dependency_map& dependencies);
 
   // Target information
   bool add_source_directory(const file_type type,
@@ -53,7 +54,12 @@ public:
   void dump_commands() const;
   void execute_build_commands() const;
 
-  lib::configuration configuration;
+  const std::string& source_directory() const
+  { return configuration.source_directory; }
+
+  libambrosia::configuration configuration;
+
+  dependency_map dependencies;
 };
 
 libambrosia_namespace_end

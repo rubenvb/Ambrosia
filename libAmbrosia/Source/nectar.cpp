@@ -23,8 +23,9 @@
 #include "Ambrosia/algorithm.h"
 #include "Ambrosia/configuration.h"
 #include "Ambrosia/debug.h"
+#include "Ambrosia/dependency_paths.h"
 #include "Ambrosia/platform.h"
-#include "Ambrosia/Targets/project.h"
+#include "Ambrosia/Target/project.h"
 #include "Ambrosia/typedefs.h"
 #include "Ambrosia/nectar_loader.h"
 
@@ -82,7 +83,8 @@ const string find_project_file(const string& directory,
   return string("");
 }
 
-void drink_nectar(project& project)
+void drink_nectar(project& project,
+                  const dependency_paths_set& external_dependencies)
 {
   // open file
   const string& filename = project.configuration.source_directory / project.configuration.project_file;
@@ -93,7 +95,7 @@ void drink_nectar(project& project)
 
   // read targets
   debug(debug::files) << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
-  nectar_loader loader(project, filename, "", stream);
+  nectar_loader loader(project, external_dependencies, filename, "", stream);
 
   loader.extract_nectar();
   debug(debug::nectar) << "nectar::drink_nectar::Finished parsing project files.\n";

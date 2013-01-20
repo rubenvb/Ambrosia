@@ -27,7 +27,7 @@
 #include "Ambrosia/Error/internal_error.h"
 #include "Ambrosia/Error/nectar_error.h"
 #include "Ambrosia/platform.h"
-#include "Ambrosia/Targets/project.h"
+#include "Ambrosia/Target/project.h"
 
 // C++ includes
 #include <istream>
@@ -269,69 +269,52 @@ void skip_BOM(istream& stream,
   if(memcmp(reinterpret_cast<const char*>(BOM), first_3_chars, 3))
     stream.seekg( 0, std::ios::beg ); // reset to beginning of file
 }
-/*void find_dependencies(const project& project,
+void find_dependencies(dependency_map& dependencies,
+                       const project &project,
                        const target_type type,
-                       const string& name,
-                       dependency_set& dependencies)
+                       const string &name,
+                       bool searching_in_subproject)
 {
-  //TODO: what with circular dependencies?
-  debug(debug::algorithm) << "algorithm::find_dependencies::Locating dependency of type " << target_type_map_inverse.at(type) << ": " << name << ".\n";
-  auto result = std::find_if(std::begin(project.dependencies), std::end(project.dependencies),[&name](const dependency& dep) { return dep.name == name; });
-  if(result != std::end(project.dependencies))
-  {
-    debug(debug::algorithm) << "algorithm::find_dependencies::Found parent dependency: " << result->name << ".\n";
-    if(!dependencies.insert(dependency(name, type, result->target)).second)
-      throw error("Two dependency targets with the same name detected when resolving dependencies. All targets must have distinct names.");
-  }
-  // find other project targets that match, including searching subprojects recursively.
+  debug(debug::algorithm) << "algorithm::find_dependencies::Looking for matching targets in project " << project.name << ".\n";
+  std::function<bool(const target& t)> check_match;
+  if(!searching_in_subproject)
+    check_match = [&name,&type](const target& t) { return t.type == type && t.name == name; };
+  else
+    check_match = [&type](const target& t) { return t.type == type; };
+
   for(auto&& target : project.targets)
   {
-    debug(debug::algorithm) << "algorithm::find_dependencies::Checking target " << target->name << " as a possible match.\n";
-    if(target->name != name && wildcard_compare("*::"+target->name, name)) // check for name and qualified name
+    if(check_match(*target))
     {
-      debug(debug::algorithm) << "algorithm::find_dependencies::Apparently, " << "*"+target->name << " != " << name << "\n";
-      continue; // no match, ever
+      debug(debug::algorithm) << "algorithm::read_dependencies::Found match for " << name << " in project " << project.name << ".\n";
+      if(!dependencies[type].insert(target.get()).second)
+        throw internal_error("algorithm::find_dependencies::Failed inserting dependency. An *identical* target is being added twice.");
     }
-    else if(target->type == type)
+    else if(target->type == target_type::project && target->name == name)
     {
-      debug(debug::algorithm) << "algorithm::find_dependencies::Located exact match: " << target->name <<" to " << name << ".\n";
-      if(dependencies.insert(dependency(name, type, target.get())).second)
-        throw error("Two dependency targets with the same name detected when resolving dependencies. All targets must have distinct names.");
+      debug(debug::algorithm) << "algorithm::Found subproject " << target->name << ".\n";
+      find_dependencies(dependencies, *static_cast<class project*>(target.get()), type, name, true); // true means search without name match
     }
-    else if(target->type == target_type::project)
+  }
+  if(!searching_in_subproject)
+  {
+    auto result = project.dependencies.find(type);
+    if(result == std::end(project.dependencies))
     {
-      debug(debug::algorithm) << "algorithm::find_dependencies::Located subproject: " << target->name << " with possible matches.\n";
-      find_dependencies_in_subproject(*static_cast<libambrosia::project*>(target.get()), type, name, dependencies);
+      debug(debug::algorithm) << "algorithm::find_dependencies::Project has no dependencies.\n";
+      return;
     }
-    else
-      debug(debug::algorithm) << "algorithm::find_dependencies::Not a match: " << target->name << ".\n";
+    debug(debug::algorithm) << "algorithm::find_dependencies::Looking for matches in project " << project.name << " dependencies.\n";
+    for(auto&& dependency : project.dependencies.at(type))
+    {
+      if(dependency->type == type && dependency->name == name)
+      {
+        debug(debug::algorithm) << "algorithm::find_dependencies::Found match in project " << project.name << "\'s dependencies.\n";
+        if(!dependencies[type].insert(dependency).second)
+          throw internal_error("algorithm::find_dependencies::Failed inserting dependency. An *identical* target is being added twice.");
+      }
+    }
   }
 }
-void find_dependencies_in_subproject(const project& project,
-                                     const target_type type,
-                                     const string& name,
-                                     dependency_set& dependencies)
-{
-  debug(debug::algorithm) << "algorithm::find_dependencies_in_subproject::Finding " << target_type_map_inverse.at(type) << " targets in subproject " << project.name << " matching " << name << ".\n";
-  for(auto&& target : project.targets)
-  {
-    debug(debug::algorithm) << "algorithm::find_dependencies_in_subproject::Inspecting possible dependency: " << target->name << ".\n";
-    if(target->type == type)
-    {
-      debug(debug::algorithm) << "algorithm::find_dependencies_in_subproject::Found dependency match in subproject " << project.name << ": " << target->name << " for " << name << ".\n";
-      debug(debug::algorithm) << "algorithm::find_dependencies_in_subproject::Adding found dependency " << target->name << " for " << name << "to the list:\n" << dependencies << "\n";
-      auto result = dependencies.insert(dependency(name, type, target.get()));
-      if(!result.second)
-        debug(debug::algorithm) << "algorithm::find_dependencies_in_subproject::Dependency already in list: " << name << ", duplicate: " << result.first->name << ".\n";
-
-      debug(debug::algorithm) << "algorithm::find_dependencies_in_subproject::Current dependencies:\n" << dependencies << "\n";
-    }
-    else if(target->type == target_type::project)
-    {
-      debug(debug::algorithm) << "algorithm::find_dependencies_in_subproject::Located subsubproject " << target->name << " with possible matches.\n";
-      find_dependencies_in_subproject(project, type, name, dependencies);
-    }
-  }
-}*/
 
 libambrosia_namespace_end

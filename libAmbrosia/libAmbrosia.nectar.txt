@@ -21,7 +21,7 @@ lib Ambrosia : lib (msvc)boost
   HEADER_DIRS Include
   SOURCE_DIRS Source \
               Source/Error \
-              Source/Targets
+              Source/Target
 
   SOURCES *.cpp \
           Platform/common.cpp

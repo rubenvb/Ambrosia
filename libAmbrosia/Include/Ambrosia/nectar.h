@@ -42,7 +42,9 @@ const std::string find_project_file(const std::string& directory,
                                     project& project);
 
 // converts all project file content to internal representation, adding to the container where "it" outputs to
-void drink_nectar(project& project);
+void drink_nectar(project& project,
+                  const dependency_paths_set& external_dependencies);
+
 // uses s_configuration to apply the requested build configuration
 void apply_configuration(target_ptr_vector& targets);
 

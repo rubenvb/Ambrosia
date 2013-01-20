@@ -40,7 +40,7 @@ const map<string, architecture> architecture_map =
 const map<architecture, string> architecture_map_inverse =
   map_entries_begin
     entry_begin architecture::x86,   "x86" entry_end
-    entry_begin architecture::amd64, "amd64" entry_end
+    entry_begin architecture::amd64, "AMD64" entry_end
   entries_end;
 
 const map<string, os> os_map =
@@ -51,9 +51,9 @@ const map<string, os> os_map =
   entries_end;
 const map<os, string> os_map_inverse =
   map_entries_begin
-    entry_begin os::Windows, "windows" entry_end
+    entry_begin os::Windows, "Windows" entry_end
     entry_begin os::Linux,   "linux" entry_end
-    entry_begin os::MacOSX,  "mac" entry_end
+    entry_begin os::MacOSX,  "Mac OS X" entry_end
   entries_end;
 
 // libambrosia::toolchain has two maps: one for the ambrosia cross

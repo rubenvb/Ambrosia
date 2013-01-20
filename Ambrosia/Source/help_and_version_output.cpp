@@ -38,7 +38,7 @@ void print_version_information()
   output() << "Welcome to Ambrosia, version " << app::version_major << "." << app::version_minor << "." << app::version_bugfix
            << ", using libAmbrosia version " << lib::version_major << "." << lib::version_minor << "." << lib::version_bugfix << ".\n"
            << "This version of Ambrosia was built for " << lib::os_map_inverse.at(lib::platform::build_os) << " " << lib::architecture_map_inverse.at(lib::platform::build_architecture)
-           << " with " << lib::toolchain_map_inverse.at(lib::platform::ambrosia_toolchain) << ".\n\n";
+           << " with the " << lib::vendor_map_inverse.at(lib::platform::ambrosia_toolchain) << " toolchain.\n\n";
 }
 
 ambrosia_namespace_end

@@ -19,16 +19,17 @@
 // Ambrosia includes
 #include "commandline.h"
 #include "help_and_version_output.h"
-#include "program_options.h"
 
 // libAmbrosia includes
 #include "Ambrosia/configuration.h"
 #include "Ambrosia/debug.h"
+#include "Ambrosia/dependency_paths.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/error.h"
 #include "Ambrosia/Error/soft_error.h"
 #include "Ambrosia/nectar.h"
-#include "Ambrosia/Targets/project.h"
+#include "Ambrosia/program_options.h"
+#include "Ambrosia/Target/project.h"
 
 using namespace ambrosia;
 
@@ -59,14 +60,15 @@ try {
   // Welcome message
   print_version_information();
 
-  program_options options;
+  lib::program_options options;
   lib::configuration configuration;
+  lib::dependency_paths_set external_dependencies;
   lib::project project(configuration);
 
-  apply_commandline_options(string_vector(argv+1, argv+argc), options, project);
+  apply_commandline_options(string_vector(argv+1, argv+argc), options, external_dependencies, project);
 
   //project.read_project_files();
-  lib::drink_nectar(project);
+  lib::drink_nectar(project, external_dependencies);
 #ifdef AMBROSIA_DEBUG
   const double project_read_time = difftime(time(0), begin_time);
   time_t t = time(0);

@@ -14,10 +14,13 @@
 cmake_minimum_required(VERSION 2.8)
 project(Ambrosia)
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -pedantic ${CMAKE_CXX_FLAGS}")
-elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -pedantic ${CMAKE_CXX_FLAGS}")
+if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+set(CMAKE_CXX_FLAGS "-std=c++0x -pedantic-errors -Wextra -Wconversion -Wuninitialized -Winit-self -Wmissing-include-dirs -Wstrict-aliasing -Werror ${CMAKE_CXX_FLAGS}")
+set(CMAKE_LINK_FLAGS "-static ${CMAKE_LINK_FLAGS}")
+endif()
+
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+add_definitions(-DAMBROSIA_DEBUG)
 endif()
 
 file(GLOB libAmbrosia_sources libAmbrosia/Source/*.cpp libAmbrosia/Source/Error/*.cpp libAmbrosia/Source/Target/*.cpp libAmbrosia/Source/Platform/common.cpp)
@@ -36,5 +39,9 @@ set_target_properties(libAmbrosia PROPERTIES OUTPUT_NAME "Ambrosia")
 file(GLOB Ambrosia_sources Ambrosia/Source/*.cpp)
 file(GLOB Ambrosia_headers Ambrosia/Include/*.h)
 
+include_directories("${Ambrosia_SOURCE_DIR}/Ambrosia/Include")
 add_executable(Ambrosia ${Ambrosia_sources} ${Ambrosia_headers})
 target_link_libraries(Ambrosia libAmbrosia)
+if(WIN32)
+  target_link_libraries(Ambrosia shlwapi)
+endif()

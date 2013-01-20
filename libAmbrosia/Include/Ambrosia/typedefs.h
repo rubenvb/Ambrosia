@@ -62,7 +62,9 @@ ambrosia_namespace_end
 libambrosia_namespace_begin
 
 // Forward declarations
-struct external_dependency;
+class binary;
+struct dependency_paths;
+class external;
 class project;
 class target;
 namespace platform
@@ -73,16 +75,17 @@ struct command;
 // homogeneous typedefs
 typedef std::unordered_set<file> file_set;
 typedef std::unordered_set<build_element> build_element_set;
-typedef std::unordered_set<external_dependency> external_dependency_set;
+typedef std::unordered_set<external> external_dependency_set;
 typedef std::unique_ptr<target> target_ptr;
 typedef std::vector<target_ptr> target_ptr_vector;
 typedef std::vector<platform::command> command_vector;
+typedef std::set<dependency_paths> dependency_paths_set;
 
 // heterogeneous typedefs
 typedef std::map<file_type, build_element_set> map_file_type_build_element_set;
 typedef std::map<file_type, string_set> map_file_type_string_set;
 typedef std::map<std::string, file_set> map_string_file_set;
-typedef std::map<target_type, std::set<binary*>> dependency_map;
+typedef std::map<target_type, std::set<target*>> dependency_map;
 
 typedef std::map<toolchain_option, std::string> toolchain_option_map;
 typedef std::map<language_option, std::string> language_option_map;

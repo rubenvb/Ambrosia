@@ -30,6 +30,7 @@
 // C++ includes
 #include <iterator>
 #include <string>
+#include <utility>
 
 libambrosia_namespace_begin
 
@@ -37,7 +38,13 @@ class target
 {
 public:
   target(const std::string& name,
-         const target_type type);
+         const target_type type,
+         const dependency_map& dependencies = dependency_map());
+
+  bool operator<(const target& rhs) const
+  { return (name < rhs.name) ? true : (type < rhs.type); }
+  bool operator==(const target& rhs) const
+  { return name == rhs.name && type == rhs.type; }
 
   // Build commands
   virtual void generate_commands()
@@ -47,9 +54,12 @@ public:
   virtual void execute_build_commands() const
   {   }
 
+  // data
   std::string name;
   target_type type;
+  dependency_map dependencies;
 
+  virtual const std::string& source_directory() const = 0;
   std::map<file_type, build_element_set> files;
   std::map<file_type, string_set> directories;
   string_set libraries;
@@ -59,5 +69,15 @@ public:
 };
 
 libambrosia_namespace_end
+
+namespace std
+{
+  template <>
+  struct hash<libambrosia::target>
+  {
+    std::size_t operator()(const libambrosia::target& dep) const
+    { return hash<string>()(dep.name); }
+  };
+}
 
 #endif // AMBROSIA_TARGET_TARGET_H

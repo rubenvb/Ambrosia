@@ -22,10 +22,8 @@
 // Global include
 #include "global.h"
 
-// Ambrosia includes
-#include "program_options.h"
-
 // libAmbrosia includes
+#include "Ambrosia/program_options.h"
 #include "Ambrosia/typedefs.h"
 
 // Foward declarations
@@ -38,18 +36,19 @@ libambrosia_namespace_end
 ambrosia_namespace_begin
 
 void apply_commandline_options(const string_vector& options,
-                               program_options& program_options,
+                               lib::program_options& program_options,
+                               lib::dependency_paths_set& external_dependencies,
                                lib::project& project);
 // trim argument="arg<char>value" to "arg" and return "value". If argument="arg", return empty string.
 const std::string split_argument(std::string& argument,
                                  const char split_char,
                                  const size_t argument_number);
 
-void add_build_target(program_options& options,
+void add_build_target(lib::program_options& options,
                       const std::string& target,
                       const string_set& config_strings = string_set());
 
-void set_program_option(program_options& options,
+void set_program_option(lib::program_options& options,
                         const std::string& option,
                         const std::size_t argument_number);
 
@@ -67,8 +66,8 @@ bool add_configuration_options(const std::string& options,
 
 void add_external_dependency(const std::string& name,
                              const std::string& location,
-                             lib::project& project
-                             const std::size_t argument_number));
+                             lib::dependency_paths_set& external_dependencies,
+                             const std::size_t argument_number);
 
 ambrosia_namespace_end
 

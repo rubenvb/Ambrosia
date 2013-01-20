@@ -22,7 +22,6 @@
 // Ambrosia includes
 #include "help_and_version_output.h"
 #include "output.h"
-#include "program_options.h"
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
@@ -30,8 +29,8 @@
   using libambrosia::configuration;
 #include "Ambrosia/debug.h"
   using libambrosia::debug;
-#include "Ambrosia/dependency.h"
-  using libambrosia::dependency;
+#include "Ambrosia/dependency_paths.h"
+  using libambrosia::dependency_paths;
 #include "Ambrosia/enums.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/commandline_error.h"
@@ -47,10 +46,12 @@
 #include "Ambrosia/nectar.h"
 #include "Ambrosia/platform.h"
   using libambrosia::operator/;
-#include "Ambrosia/Targets/project.h"
+#include "Ambrosia/program_options.h"
+  using libambrosia::program_options;
+#include "Ambrosia/Target/project.h"
   using libambrosia::project;
-#include "Ambrosia/Targets/target.h"
-  using libambrosia::target;
+#include "Ambrosia/typedefs.h"
+  using libambrosia::dependency_paths_set;
 
 // C++ includes
 #include <cstddef>
@@ -66,6 +67,7 @@ ambrosia_namespace_begin
 
 void apply_commandline_options(const string_vector& arguments,
                                program_options& options,
+                               dependency_paths_set& external_dependencies,
                                lib::project& project)
 {
   // Debug output
@@ -173,7 +175,7 @@ void apply_commandline_options(const string_vector& arguments,
         debug(debug::commandline) << "commandline::apply_commandline_options::Option: " << argument << " with value " << value << ".\n";
         if(argument.size() > 4 && !argument.compare(0,4, "with"))
         {
-          add_external_dependency(argument.substr(5), value, project);
+          add_external_dependency(argument.substr(5), value, external_dependencies, argument_number);
         }
         else
           throw commandline_error("Double-dashed argument can only be of the form \'--with-*=*\' for now." + argument +"\n" + value, argument_number);
@@ -327,7 +329,7 @@ bool add_configuration_options(const string& options,
 
 void add_external_dependency(const string& name,
                              const string& location,
-                             lib::project& project,
+                             dependency_paths_set& external_dependencies,
                              const size_t argument_number)
 {
   if(location.empty())
@@ -342,29 +344,19 @@ void add_external_dependency(const string& name,
     string suffix = name.substr(index+1);
     string real_name = name.substr(0,name.size()-index-3);
     debug(debug::commandline) << "commandline::add_external_dependency::Found suffix: " << suffix << " and real name " << real_name << ".\n";
-    dependency& current;
-    auto result = project.dependencies.find(dependency(real_name));
-    if(result != std::end(project.dependencies))
-    {
-      debug(debug::commandline) << "commandline::add_external_dependency::Dependency already present.\n";
-      current = *result;
-    }
-    else
-    {
-      debug(debug::commandline) << "commandline::add_external_dependency::Creating new dependency for " << real_name << ".\n";
-      auto result = project.dependencies.insert(dependency(real_name));
-      current = result.second;
-    }
 
+    // insert or get reference to item already present
+    auto& dependency = *(external_dependencies.insert(dependency_paths(real_name)).first);
     if(suffix == "include")
     {
       debug(debug::commandline) << "commandline::add_external_dependency::Include directory specified for " << real_name << ".\n";
-      if(!result->include_directory.empty())
+      if(!dependency.include.empty())
         throw commandline_error("You can only specify the --with-"+real_name+"-include option once.", argument_number);
-      result->include_directory = location;
-      project.targets.emplace_back(new target(real_name, project.configuration, libambrosia::target_type::external));
-      project.targets.back()->directories[libambrosia::file_type::header].insert(location);
-      project.dependencies.insert(dependency(real_name, libambrosia::target_type::external, project.targets.back().get()));
+
+      if(!lib::platform::directory_exists(location))
+        throw commandline_error(real_name + " include directory does not exist: " + location, argument_number);
+
+      dependency.include = location;
     }
     else
       throw internal_error("--with-<bla>-[lib,bin,config]=<blabla> not implemented yet.");
@@ -372,14 +364,13 @@ void add_external_dependency(const string& name,
   else
   {
     debug(debug::commandline) << "commandline::add_external_dependency::Adding external dependency target with conventional subdirectories.\n";
-    project.targets.emplace_back(new target(name, project.configuration, libambrosia::target_type::external));
-    project.targets.back()->directories[libambrosia::file_type::header].insert(location / "include");
-    project.targets.back()->configuration.build_directory = location / "lib";
-    project.targets.back()->configuration.build_directory = location / "bin";
+    auto& dependency = *(external_dependencies.insert(dependency_paths(name)).first);
+    if(!dependency.include.empty())
+      throw commandline_error("You cannot specify --with-"+name+"="+location+" twice or together with --with-"+name+"-include=", argument_number);
 
-    debug(debug::commandline) << "commandline::add_external_dependency::Adding the external dependency to the project dependency list.\n";
-    //TODO fix this shit: dependencies shouldn't be there or should be improved
-    project.dependencies.insert(dependency(name, lib::target_type::external, project.targets.back().get()));
+    dependency.include = location / "include";
+    if(!dependency.lib.empty())
+      throw commandline_error("You cannot specify --with-"+name+"="+location+" twice or together with --with-"+name+"-lib=", argument_number);
   }
 }
 

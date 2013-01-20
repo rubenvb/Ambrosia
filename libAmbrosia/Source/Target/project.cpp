@@ -11,13 +11,13 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Targets/project.cpp
+ * Ambrosia/Target/project.cpp
  * Class implementation.
  *
  **/
 
 // Class include
-#include "Ambrosia/Targets/project.h"
+#include "Ambrosia/Target/project.h"
 
 // Ambrosia includes
 #include "Ambrosia/debug.h"
@@ -28,17 +28,18 @@
 
 libambrosia_namespace_begin
 
-/*project::project(const ::libambrosia::configuration& configuration)
-: target("unknown", configuration, target_type::project),
+project::project(const ::libambrosia::configuration& configuration)
+: target("unknown", target_type::project),
+  configuration(configuration),
   file_cache()
-{   }*/
+{   }
 project::project(const string& name,
                  const ::libambrosia::configuration& configuration,
-                 const external_dependency_set& external_dependencies,
                  const dependency_map& dependencies)
-: target(name, target_type::project),
+: target(name, target_type::project, dependencies),
+  configuration(configuration),
   file_cache(),
-  configuration(configuration)
+  targets()
 {   }
 
 void project::generate_commands()

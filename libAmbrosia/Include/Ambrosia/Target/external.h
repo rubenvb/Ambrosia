@@ -22,8 +22,8 @@
  *
  **/
 
-#ifndef AMBROSIA_TARGET_EXTERNAL_DEPENDENCY_H
-#define AMBROSIA_TARGET_EXTERNAL_DEPENDENCY_H
+#ifndef AMBROSIA_TARGET_EXTERNAL_H
+#define AMBROSIA_TARGET_EXTERNAl_H
 
 // Global include
 #include "Ambrosia/global.h"
@@ -34,46 +34,31 @@
 #include "Ambrosia/typedefs.h"
 
 // C++ includes
-#include <memory>
 #include <string>
-#include <tuple>
-#include <vector>
 
 libambrosia_namespace_begin
 
-struct external_dependency : public target
+class external : public target
 {
 public:
-  external_dependency(const std::string& name,
-                      const std::string& include_directory,
-                      const std::string& lib_directory,
-                      const string_set& libraries,
-                      const bool optional = false);
-  external_dependency(const std::string& name,
-                      const bool optional = false);
+  external(const std::string& name,
+           const target_type type,
+           const std::string& include_directory = std::string(),
+           const std::string& lib_directory = std::string(),
+           const std::string& bin_directory = std::string(),
+           const string_set& libraries = string_set(),
+           const dependency_map& dependencies = dependency_map(),
+           const bool optional = false);
 
-  bool operator<(const external_dependency& rhs) const
-  { return name < rhs.name; }
-  bool operator==(const external_dependency& rhs) const
-  { return name == rhs.name; }
+  virtual const std::string& source_directory() const
+  { return empty_string; }
 
-  const std::string name;
-  std::string include_directory;
-  std::string lib_directory;
-  string_set libraries;
   bool optional;
+
+private:
+  const std::string empty_string = "";
 };
 
 libambrosia_namespace_end
 
-namespace std
-{
-  template <>
-  struct hash<libambrosia::external_dependency>
-  {
-    std::size_t operator()(const libambrosia::external_dependency& dep) const
-    { return hash<string>()(dep.name); }
-  };
-}
-
-#endif // AMBROSIA_TARGET_EXTERNAL_DEPENDENCY_H
+#endif // AMBROSIA_TARGET_EXTERNAL_H
