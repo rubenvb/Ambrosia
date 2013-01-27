@@ -61,4 +61,14 @@ private:
 
 libambrosia_namespace_end
 
+namespace std
+{
+  template <>
+  struct hash<libambrosia::external>
+  {
+    std::size_t operator()(const libambrosia::external& dep) const
+    { return hash<string>()(dep.name); }
+  };
+}
+
 #endif // AMBROSIA_TARGET_EXTERNAL_H
