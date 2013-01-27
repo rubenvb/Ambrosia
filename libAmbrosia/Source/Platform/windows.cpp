@@ -174,6 +174,20 @@ time_t get_time(FILETIME const& ft)
 /*
  * Mostly platform dependently implemented functions
  ****************************************************/
+string_vector get_commandline_arguments(char*[],
+                                        const int)
+{
+  int argc;
+  wchar_t** argv = CommandLineToArgvW(GetCommandLineW(), &argc); // check failure!
+  string_vector result;
+  result.reserve(static_cast<string_vector::size_type>(argc));
+  for(int i=0; i<argc; ++i)
+  {
+    result.push_back(convert_to_utf8(argv[i]));
+  }
+  return result;
+}
+
 bool is_absolute_path(const string& path)
 {
   return !PathIsRelativeW(convert_to_utf16(path).c_str());

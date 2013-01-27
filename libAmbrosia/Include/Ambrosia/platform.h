@@ -24,6 +24,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/enums.h"
+#include "Ambrosia/typedefs.h"
 
 // C++ includes
 #include <memory>
@@ -106,6 +107,7 @@ toolchain detect_toolchain();
 /*
  * Mostly platform dependently implemented functions
  ****************************************************/
+string_vector get_commandline_arguments(char*[], const int);
 bool is_absolute_path(const std::string& path);
 // Single level directory scan
 template<class output_iterator>

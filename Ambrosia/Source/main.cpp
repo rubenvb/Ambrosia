@@ -65,6 +65,7 @@ try {
   lib::dependency_paths_set external_dependencies;
   lib::project project(configuration);
 
+  string_vector arguments = lib::platform::get_commandline_arguments(argv, argc);
   apply_commandline_options(string_vector(argv+1, argv+argc), options, external_dependencies, project);
 
   //project.read_project_files();

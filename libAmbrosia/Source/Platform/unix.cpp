@@ -98,6 +98,12 @@ void command::add_arguments(const command& other_command)
 /*
  * Mostly platform dependently implemented functions
  ****************************************************/
+string_vector get_commandline_arguments(char *argv[],
+                                        const int argc)
+{
+  return string_vector(argv+1, argv+argc);
+}
+
 bool is_absolute_path(const string& path)
 {
   if(path.empty())

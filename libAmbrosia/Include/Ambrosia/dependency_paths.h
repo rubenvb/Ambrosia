@@ -29,13 +29,17 @@ libambrosia_namespace_begin
 
 struct dependency_paths
 {
-  dependency_paths(const std::string& name) : name(name), include(), lib(), bin(), pkgconfig() {}
+  dependency_paths(const std::string& name) : name(name) {}
   std::string name;
-  // mutable to allow edits from std::[unordered_]set elements
+  // mutable to allow edits from std::[unordered_]set container
   mutable std::string include;
   mutable std::string lib;
   mutable std::string bin;
   mutable std::string pkgconfig;
+
+  // "cache" of libraries and headers that were previously detected
+  mutable string_set headers;
+  mutable string_set libraries;
 
   bool operator<(const dependency_paths& rhs) const
   { return name < rhs.name; }
