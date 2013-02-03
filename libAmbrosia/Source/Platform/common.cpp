@@ -62,8 +62,10 @@
 #include <vector>
   using std::vector;
 
-libambrosia_namespace_begin
-
+namespace ambrosia
+{
+namespace lib
+{
 namespace platform
 {
 
@@ -250,4 +252,6 @@ void create_directory_recursive(const string& name)
 
 } // namespace platform
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

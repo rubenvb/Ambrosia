@@ -31,7 +31,10 @@
 #include <map>
 #include <string>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 extern const std::map<std::string, architecture> architecture_map;
 extern const std::map<architecture, std::string> architecture_map_inverse;
@@ -57,6 +60,8 @@ extern const std::map<toolchain, toolchain_option_map> toolchain_options;
 extern const std::map<toolchain, std::map<file_type, language_option_map>> language_options;
 extern const std::map<os, os_option_map> os_options;
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_ENUM_MAPS_H

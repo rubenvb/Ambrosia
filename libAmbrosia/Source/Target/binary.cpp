@@ -33,7 +33,10 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 binary::binary(const string& name,
                const ::libambrosia::configuration& configuration,
@@ -259,4 +262,6 @@ void binary::execute_build_commands() const
                                 "\tstderr: " << stderr_output << "\n";
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

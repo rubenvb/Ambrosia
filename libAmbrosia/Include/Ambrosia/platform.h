@@ -32,8 +32,10 @@
 #include <utility>
 #include <vector>
 
-libambrosia_namespace_begin
-
+namespace ambrosia
+{
+namespace lib
+{
 namespace platform
 {
 
@@ -138,6 +140,8 @@ std::pair<bool, int> execute_command(const platform::command& command,
 
 } // namespace platform
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_PLATFORM_H

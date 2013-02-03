@@ -25,7 +25,8 @@
 // C++ includes
 #include <iostream>
 
-ambrosia_namespace_begin
+namespace ambrosia
+{
 
 class output
 {
@@ -47,6 +48,6 @@ private:
   static std::ostream& output_stream;
 };
 
-ambrosia_namespace_end
+} // namespace ambrosia
 
 #endif // OUTPUT_H

@@ -25,7 +25,10 @@
 // libAmbrosia includes
 #include "Ambrosia/Error/error.h"
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 class platform_error : public error
 {
@@ -33,6 +36,8 @@ public:
   platform_error();
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_ERROR_PLATFORM_ERROR_H

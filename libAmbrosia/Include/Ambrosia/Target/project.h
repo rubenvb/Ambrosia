@@ -26,7 +26,10 @@
 #include "Ambrosia/file_cache.h"
 #include "Ambrosia/Target/target.h"
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 class project : public target
 {
@@ -53,6 +56,8 @@ private:
   const std::string filename;
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_TARGET_PROJECT_H

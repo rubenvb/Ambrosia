@@ -21,7 +21,6 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
-#include "Ambrosia/boost_wrapper.h"
 #include "Ambrosia/Target/external.h"
 #include "Ambrosia/enum_maps.h"
 
@@ -36,52 +35,55 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 #ifdef AMBROSIA_DEBUG
 // static member initialization
 debug::type debug::level = debug::always;
 
 const map<std::string, debug::type> debug_map =
-  map_entries_begin
-    entry_begin "commandline",   debug::commandline entry_end
-    entry_begin "algorithm",     debug::algorithm entry_end
-    entry_begin "nectar",        debug::nectar entry_end
-    entry_begin "lexer",         debug::lexer entry_end
-    entry_begin "parser",        debug::parser entry_end
-    entry_begin "NoT ReAcHABle", debug::nectar_parser entry_end
-    entry_begin "conditional",   debug::conditional entry_end
-    entry_begin "target",        debug::target entry_end
-    entry_begin "files",         debug::files entry_end
-    entry_begin "platform",      debug::platform entry_end
-    entry_begin "status",        debug::status entry_end
-    entry_begin "config",        debug::config entry_end
-    entry_begin "command_gen",   debug::command_gen entry_end
-    entry_begin "command_exec",  debug::command_exec entry_end
-    entry_begin "dependencies",  debug::dependencies entry_end
-    entry_begin "initial",       debug::initial entry_end
-    entry_begin "all",           debug::always entry_end
-  entries_end;
+  {
+    {"commandline",   debug::commandline},
+    {"algorithm",     debug::algorithm},
+    {"nectar",        debug::nectar},
+    {"lexer",         debug::lexer},
+    {"parser",        debug::parser},
+    {"NoT ReAcHABle", debug::nectar_parser},
+    {"conditional",   debug::conditional},
+    {"target",        debug::target},
+    {"files",         debug::files},
+    {"platform",      debug::platform},
+    {"status",        debug::status},
+    {"config",        debug::config},
+    {"command_gen",   debug::command_gen},
+    {"command_exec",  debug::command_exec},
+    {"dependencies",  debug::dependencies},
+    {"initial",       debug::initial},
+    {"all",           debug::always},
+  };
 const map<debug::type, std::string> debug_map_inverse =
-  map_entries_begin
-    entry_begin debug::commandline,   "commandline" entry_end
-    entry_begin debug::algorithm,     "algorithm" entry_end
-    entry_begin debug::nectar,        "nectar" entry_end
-    entry_begin debug::lexer,         "lexer" entry_end
-    entry_begin debug::parser,        "parser" entry_end
-    entry_begin debug::nectar_parser, "nectar and parser" entry_end
-    entry_begin debug::conditional,   "conditional" entry_end
-    entry_begin debug::target,        "target" entry_end
-    entry_begin debug::files,         "files" entry_end
-    entry_begin debug::platform,      "platform" entry_end
-    entry_begin debug::status,        "status" entry_end
-    entry_begin debug::config,        "config" entry_end
-    entry_begin debug::command_gen,   "command_gen" entry_end
-    entry_begin debug::command_exec,  "command_exec" entry_end
-    entry_begin debug::dependencies,  "dependencies" entry_end
-    entry_begin debug::initial,       "initial" entry_end
-    entry_begin debug::always,        "all" entry_end
-  entries_end;
+  {
+    {debug::commandline,   "commandline"},
+    {debug::algorithm,     "algorithm"},
+    {debug::nectar,        "nectar"},
+    {debug::lexer,         "lexer"},
+    {debug::parser,        "parser"},
+    {debug::nectar_parser, "nectar and parser"},
+    {debug::conditional,   "conditional"},
+    {debug::target,        "target"},
+    {debug::files,         "files"},
+    {debug::platform,      "platform"},
+    {debug::status,        "status"},
+    {debug::config,        "config"},
+    {debug::command_gen,   "command_gen"},
+    {debug::command_exec,  "command_exec"},
+    {debug::dependencies,  "dependencies"},
+    {debug::initial,       "initial"},
+    {debug::always,        "all"},
+  };
 
 debug::debug(const type debug_level)
 : output(0 != (debug_level & level)) // MSVC C4800 without "0 !="
@@ -173,4 +175,6 @@ debug& debug::operator<<(const dependency_map& dependencies)
 
 #endif // AMBROSIA_DEBUG
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

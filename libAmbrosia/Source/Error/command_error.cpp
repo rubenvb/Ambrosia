@@ -28,7 +28,10 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 command_error::command_error(const string& error_output,
                              const platform::command& failed_command)
@@ -53,4 +56,6 @@ void command_error::output_message() const
        << "Error output:\n" << message << "\n";
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

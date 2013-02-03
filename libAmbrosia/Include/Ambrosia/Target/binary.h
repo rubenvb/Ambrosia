@@ -26,7 +26,10 @@
 #include "Ambrosia/Target/external.h"
 #include "Ambrosia/Target/target.h"
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 class binary : public target
 {
@@ -62,6 +65,8 @@ public:
   dependency_map dependencies;
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_TARGET_BINARY_H

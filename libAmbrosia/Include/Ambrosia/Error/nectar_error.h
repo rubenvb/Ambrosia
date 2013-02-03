@@ -28,7 +28,10 @@
 // C++ includes
 #include <string>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 class nectar_error : public error
 {
@@ -45,6 +48,8 @@ protected:
   const std::size_t m_line_number;
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_ERROR_NECTAR_ERROR_H

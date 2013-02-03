@@ -28,7 +28,10 @@
 // C++ includes
 #include <string>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 class syntax_error : public nectar_error
 {
@@ -41,6 +44,8 @@ public:
   void output_message() const;
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_ERROR_SYNTAX_ERROR_H

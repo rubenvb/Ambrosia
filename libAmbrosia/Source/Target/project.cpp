@@ -26,7 +26,10 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 project::project(const ::libambrosia::configuration& configuration)
 : target("unknown", target_type::project),
@@ -68,4 +71,6 @@ void project::execute_build_commands() const
   }
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

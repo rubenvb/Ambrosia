@@ -22,7 +22,10 @@
 // Global include
 #include "Ambrosia/global.h"
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 // Operating system
 enum class os
@@ -175,6 +178,8 @@ enum class os_option
   shared_library_extension
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_ENUMS_H

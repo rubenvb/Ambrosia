@@ -31,7 +31,10 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 nectar_error::nectar_error(const string& message,
                            const string& filename,
@@ -49,4 +52,6 @@ nectar_error::nectar_error(const string& message,
    error::output_message();
 }
 
-libambrosia_namespace_end
+ } // namespace lib
+
+ } // namespace ambrosia

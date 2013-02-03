@@ -27,7 +27,10 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 external::external(const std::string& name,
                    const target_type type,
@@ -45,4 +48,6 @@ external::external(const std::string& name,
   this->libraries = libraries;
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

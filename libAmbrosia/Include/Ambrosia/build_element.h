@@ -25,7 +25,10 @@
 // libAmbrosia includes
 #include "Ambrosia/file.h"
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 struct build_element
 {
@@ -43,7 +46,9 @@ struct build_element
   { return source_file.name == rhs.source_file.name; }
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 // for unordered_* containers
 namespace std

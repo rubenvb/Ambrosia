@@ -28,7 +28,10 @@
 // C++ includes
 #include <functional>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 // Forward declarations
 class configuration;
@@ -60,8 +63,8 @@ private:
   map_string_file_set m_build_files;  // all files in configuration::m_build_directory
 };
 
-//extern file_cache s_file_cache;
+} // namespace lib
 
-libambrosia_namespace_end
+} // namespace ambrosia
 
 #endif // AMBROSIA_FILE_CACHE_H

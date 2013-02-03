@@ -22,16 +22,15 @@
 // libAmbrosia global include
 #include "Ambrosia/global.h"
 
-ambrosia_namespace_begin
-
+namespace ambrosia
+{
 namespace app
 {
   // Versioning
   const int version_major = 0;
   const int version_minor = 0;
   const int version_bugfix = 1;
-}
-
-ambrosia_namespace_end
+} // namespace app
+} // namespace ambrosia
 
 #endif // GLOBAL_H

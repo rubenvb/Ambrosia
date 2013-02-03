@@ -21,7 +21,6 @@
 
 // libambrosia includes
 #include "Ambrosia/algorithm.h"
-#include "Ambrosia/boost_wrapper.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/Error/internal_error.h"
 #include "Ambrosia/enums.h"
@@ -33,7 +32,10 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 configuration::configuration()
 : environment_PATH(platform::get_environment_PATH()),
@@ -66,15 +68,15 @@ void configuration::set_source_directory(const string& source_directory)
 void configuration::initialize_config()
 {
   config_strings =
-    list_entries_begin
-      entry_begin os_map_inverse.at(target_os) entry_end // Target OS
-      entry_begin architecture_map_inverse.at(target_architecture) entry_end // Target architecture
-      entry_begin toolchain_map_inverse.at(target_toolchain) entry_end // Toolchain
-      entry_begin "build_" + os_map_inverse.at(build_os) entry_end // Build OS
-      entry_begin "build_" + architecture_map_inverse.at(build_architecture) entry_end // Build architecture
+    {
+       os_map_inverse.at(target_os) , // Target OS
+       architecture_map_inverse.at(target_architecture) , // Target architecture
+       toolchain_map_inverse.at(target_toolchain) , // Toolchain
+       "build_" + os_map_inverse.at(build_os) , // Build OS
+       "build_" + architecture_map_inverse.at(build_architecture) , // Build architecture
       //entry_begin environment_map_inverse.at(build_environment) entry_end // Shell environment
-      entry_begin "debug" entry_end // debug build is the default
-    entries_end;
+       "debug" , // debug build is the default
+    };
   // Convenience config strings
   // OS related
   if(target_os == os::Linux || target_os == os::MacOSX)
@@ -91,4 +93,6 @@ void configuration::initialize_config()
       config_strings.insert("mingw");
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

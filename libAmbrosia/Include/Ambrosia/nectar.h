@@ -31,7 +31,10 @@
 #include <set>
 #include <string>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 // forward declarations
 class configuration;
@@ -48,6 +51,8 @@ void drink_nectar(project& project,
 // uses s_configuration to apply the requested build configuration
 void apply_configuration(target_ptr_vector& targets);
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_NECTAR_H

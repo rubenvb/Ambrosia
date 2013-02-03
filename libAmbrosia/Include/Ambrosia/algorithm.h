@@ -34,7 +34,10 @@
 #include <memory>
 #include <sstream>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 /* Freestanding functions (libAmbrosia independent)
  *************************/
@@ -212,6 +215,8 @@ inline file_type detect_type(const file_type general_type, const std::string& fi
   }
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_ALGORITHM_H

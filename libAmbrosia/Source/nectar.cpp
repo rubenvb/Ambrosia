@@ -46,7 +46,10 @@
 // C-ish includes
 #include <ctime>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 const string find_project_file(const string& directory,
                                project& project)
@@ -106,4 +109,6 @@ void apply_configuration(target_ptr_vector& /*targets*/)
   throw error("nectar::apply_configuration::Not implemented.");
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

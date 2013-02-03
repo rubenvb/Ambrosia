@@ -20,7 +20,6 @@
 #include "Ambrosia/enum_maps.h"
 
 // libAmbrosia includes
-#include "Ambrosia/boost_wrapper.h"
 
 // C++ includes
 #include <functional>
@@ -30,411 +29,416 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 const map<string, architecture> architecture_map =
-  map_entries_begin
-    entry_begin "x86",   architecture::x86 entry_end
-    entry_begin "amd64", architecture::amd64 entry_end
-  entries_end;
+  {
+    {"x86",   architecture::x86},
+    {"amd64", architecture::amd64}
+  };
 const map<architecture, string> architecture_map_inverse =
-  map_entries_begin
-    entry_begin architecture::x86,   "x86" entry_end
-    entry_begin architecture::amd64, "AMD64" entry_end
-  entries_end;
+  {
+    {architecture::x86,   "x86"},
+    {architecture::amd64, "AMD64"}
+  };
 
 // libambrosia::os has two maps: one for config related stuff, the other for nice output.
 const map<os, string> os_name_map =
-  map_entries_begin
-    entry_begin os::Windows, "Windows" entry_end
-    entry_begin os::Linux,   "Linux" entry_end
-    entry_begin os::MacOSX,  "Mac OS X" entry_end
-  entries_end;
+  {
+    {os::Windows, "Windows"},
+    {os::Linux,   "Linux"},
+    {os::MacOSX,  "Mac OS X"}
+  };
 const map<string, os> os_name_map_inverse =
-  map_entries_begin
-    entry_begin "Windows",  os::Windows entry_end
-    entry_begin "Linux",    os::Linux entry_end
-    entry_begin "Mac OS X", os::MacOSX entry_end
-  entries_end;
+  {
+    {"Windows",  os::Windows},
+    {"Linux",    os::Linux},
+    {"Mac OS X", os::MacOSX}
+  };
 const map<string, os> os_map =
-  map_entries_begin
-    entry_begin "windows", os::Windows entry_end
-    entry_begin "linux",   os::Linux entry_end
-    entry_begin "mac",     os::MacOSX entry_end
-  entries_end;
+  {
+    {"windows", os::Windows},
+    {"linux",   os::Linux},
+    {"mac",     os::MacOSX}
+  };
 const map<os, string> os_map_inverse =
-  map_entries_begin
-    entry_begin os::Windows, "windows" entry_end
-    entry_begin os::Linux,   "linux" entry_end
-    entry_begin os::MacOSX,  "mac" entry_end
-  entries_end;
+  {
+    {os::Windows, "windows"},
+    {os::Linux,   "linux"},
+    {os::MacOSX,  "mac"}
+  };
 
 // libambrosia::toolchain has two maps: one for the ambrosia cross specification, another for true vendor name output. Both map to the same internal representation (i.e. the vendor name).
 const map<string, toolchain> vendor_map =
-  map_entries_begin
-    entry_begin "GNU",       toolchain::GNU entry_end
-    entry_begin "Microsoft", toolchain::Microsoft entry_end
-    entry_begin "LLVM",      toolchain::LLVM entry_end
-    entry_begin "Intel",     toolchain::Intel entry_end
-  entries_end;
+  {
+    {"GNU",       toolchain::GNU},
+    {"Microsoft", toolchain::Microsoft},
+    {"LLVM",      toolchain::LLVM},
+    {"Intel",     toolchain::Intel}
+  };
 const map<toolchain, string> vendor_map_inverse =
-  map_entries_begin
-    entry_begin toolchain::GNU,       "GNU" entry_end
-    entry_begin toolchain::Microsoft, "Microsoft" entry_end
-    entry_begin toolchain::LLVM,      "LLVM" entry_end
-    entry_begin toolchain::Intel,     "Intel" entry_end
-  entries_end;
+  {
+    {toolchain::GNU,       "GNU"},
+    {toolchain::Microsoft, "Microsoft"},
+    {toolchain::LLVM,      "LLVM"},
+    {toolchain::Intel,     "Intel"}
+  };
 
 const map<string, toolchain> toolchain_map =
-  map_entries_begin
-    entry_begin "gcc",   toolchain::GNU entry_end
-    entry_begin "msvc",  toolchain::Microsoft entry_end
-    entry_begin "clang", toolchain::LLVM entry_end
-    entry_begin "icc",   toolchain::Intel entry_end
-  entries_end;
+  {
+    {"gcc",   toolchain::GNU},
+    {"msvc",  toolchain::Microsoft},
+    {"clang", toolchain::LLVM},
+    {"icc",   toolchain::Intel}
+  };
 const map<toolchain, string> toolchain_map_inverse =
-  map_entries_begin
-    entry_begin toolchain::GNU,       "gcc" entry_end
-    entry_begin toolchain::Microsoft, "msvc" entry_end
-    entry_begin toolchain::LLVM,      "clang" entry_end
-    entry_begin toolchain::Intel,     "icc" entry_end
-  entries_end;
+  {
+    {toolchain::GNU,       "gcc"},
+    {toolchain::Microsoft, "msvc"},
+    {toolchain::LLVM,      "clang"},
+    {toolchain::Intel,     "icc"}
+  };
 
 const map<string, target_type> target_type_map =
-  map_entries_begin
-    entry_begin "app",     target_type::application entry_end
-    entry_begin "lib",     target_type::library entry_end
-    entry_begin "sub",     target_type::project entry_end
-    entry_begin "install", target_type::install entry_end
-    entry_begin "test",    target_type::test entry_end
-  entries_end;
+  {
+    {"app",     target_type::application},
+    {"lib",     target_type::library},
+    {"sub",     target_type::project},
+    {"install", target_type::install},
+    {"test",    target_type::test}
+  };
 const map<target_type, string> target_type_map_inverse =
-  map_entries_begin
-    entry_begin target_type::application, "app" entry_end
-    entry_begin target_type::library,     "lib" entry_end
-    entry_begin target_type::project,     "sub" entry_end
-    entry_begin target_type::install,     "install" entry_end
-    entry_begin target_type::test,        "test" entry_end
-  entries_end;
+  {
+    {target_type::application, "app"},
+    {target_type::library,     "lib"},
+    {target_type::project,     "sub"},
+    {target_type::install,     "install"},
+    {target_type::test,        "test"}
+  };
 
 const map<string, file_type> file_type_map =
-  map_entries_begin
-    entry_begin "SOURCES",         file_type::source entry_end
-    entry_begin "SOURCES_C",       file_type::source_c entry_end
-    entry_begin "SOURCES_CXX",     file_type::source_cxx entry_end
-    entry_begin "SOURCES_JAVA",    file_type::source_java entry_end
-    entry_begin "SOURCES_FORTRAN", file_type::source_fortran entry_end
-    entry_begin "HEADERS",         file_type::header entry_end
-    entry_begin "HEADERS_C",       file_type::header_c entry_end
-    entry_begin "HEADERS_CXX",     file_type::header_cxx entry_end
-    entry_begin "LIBS",            file_type::library entry_end
-    entry_begin "RESOURCES",       file_type::resource entry_end
-    entry_begin "QT_UI",           file_type::Qt_ui entry_end
-    entry_begin "QT_MOC",          file_type::Qt_moc entry_end
-    entry_begin "QT_RC",           file_type::Qt_rc entry_end
-  entries_end;
+  {
+    {"SOURCES",         file_type::source},
+    {"SOURCES_C",       file_type::source_c},
+    {"SOURCES_CXX",     file_type::source_cxx},
+    {"SOURCES_JAVA",    file_type::source_java},
+    {"SOURCES_FORTRAN", file_type::source_fortran},
+    {"HEADERS",         file_type::header},
+    {"HEADERS_C",       file_type::header_c},
+    {"HEADERS_CXX",     file_type::header_cxx},
+    {"LIBS",            file_type::library},
+    {"RESOURCES",       file_type::resource},
+    {"QT_UI",           file_type::Qt_ui},
+    {"QT_MOC",          file_type::Qt_moc},
+    {"QT_RC",           file_type::Qt_rc}
+  };
 const map<file_type, string> file_type_map_inverse =
-  map_entries_begin
-    entry_begin file_type::source,         "SOURCES" entry_end
-    entry_begin file_type::source_c,       "SOURCES_C" entry_end
-    entry_begin file_type::source_cxx,     "SOURCES_CXX" entry_end
-    entry_begin file_type::source_java,    "SOURCES_JAVA" entry_end
-    entry_begin file_type::source_fortran, "SOURCES_FORTRAN" entry_end
-    entry_begin file_type::header,         "HEADERS" entry_end
-    entry_begin file_type::header_c,       "HEADERS_C" entry_end
-    entry_begin file_type::header_cxx,     "HEADER_CXX" entry_end
-    entry_begin file_type::library,        "LIBS" entry_end
-    entry_begin file_type::resource,       "RESOURCES" entry_end
-    entry_begin file_type::Qt_ui,          "QT_UI" entry_end
-    entry_begin file_type::Qt_moc,         "QT_MOC" entry_end
-    entry_begin file_type::Qt_rc,          "Qt_RC" entry_end
-  entries_end;
+  {
+    {file_type::source,         "SOURCES"},
+    {file_type::source_c,       "SOURCES_C"},
+    {file_type::source_cxx,     "SOURCES_CXX"},
+    {file_type::source_java,    "SOURCES_JAVA"},
+    {file_type::source_fortran, "SOURCES_FORTRAN"},
+    {file_type::header,         "HEADERS"},
+    {file_type::header_c,       "HEADERS_C"},
+    {file_type::header_cxx,     "HEADER_CXX"},
+    {file_type::library,        "LIBS"},
+    {file_type::resource,       "RESOURCES"},
+    {file_type::Qt_ui,          "QT_UI"},
+    {file_type::Qt_moc,         "QT_MOC"},
+    {file_type::Qt_rc,          "Qt_RC"}
+  };
 const map<string, file_type> directory_type_map =
-  map_entries_begin
-    entry_begin "SOURCE_DIRS",   file_type::source entry_end
-    entry_begin "HEADER_DIRS",   file_type::header entry_end
-    entry_begin "RESOURCE_DIRS", file_type::resource entry_end
-    entry_begin "QT_UI_DIRS",    file_type::Qt_ui entry_end
-    entry_begin "QT_MOC_DIRS",   file_type::Qt_moc entry_end
-    entry_begin "QT_RC_DIRS",    file_type::Qt_rc entry_end
-  entries_end;
+  {
+    {"SOURCE_DIRS",   file_type::source},
+    {"HEADER_DIRS",   file_type::header},
+    {"RESOURCE_DIRS", file_type::resource},
+    {"QT_UI_DIRS",    file_type::Qt_ui},
+    {"QT_MOC_DIRS",   file_type::Qt_moc},
+    {"QT_RC_DIRS",    file_type::Qt_rc}
+  };
 const map<file_type, string> directory_type_map_inverse =
-  map_entries_begin
-    entry_begin file_type::source,   "SOURCE_DIRS" entry_end
-    entry_begin file_type::header,   "HEADER_DIRS" entry_end
-    entry_begin file_type::resource, "RESOURCE_DIRS" entry_end
-    entry_begin file_type::Qt_ui,    "QT_UI_DIRS" entry_end
-    entry_begin file_type::Qt_moc,   "QT_MOC_DIRS" entry_end
-    entry_begin file_type::Qt_rc,    "QT_RC_DIRS" entry_end
-  entries_end;
+  {
+    {file_type::source,   "SOURCE_DIRS"},
+    {file_type::header,   "HEADER_DIRS"},
+    {file_type::resource, "RESOURCE_DIRS"},
+    {file_type::Qt_ui,    "QT_UI_DIRS"},
+    {file_type::Qt_moc,   "QT_MOC_DIRS"},
+    {file_type::Qt_rc,    "QT_RC_DIRS"}
+  };
 
 const map<string, conditional_operator> conditional_operator_map =
-  map_entries_begin
-    entry_begin ")", conditional_operator::right_parenthesis entry_end
-    entry_begin "(", conditional_operator::left_parenthesis entry_end
-    entry_begin "+", conditional_operator::and_op entry_end
-    entry_begin "|", conditional_operator::or_op entry_end
-    entry_begin "!", conditional_operator::not_op entry_end
-  entries_end;
+  {
+    {")", conditional_operator::right_parenthesis},
+    {"(", conditional_operator::left_parenthesis},
+    {"+", conditional_operator::and_op},
+    {"|", conditional_operator::or_op},
+    {"!", conditional_operator::not_op}
+  };
 const map<conditional_operator, std::string> conditional_operator_map_inverse =
-  map_entries_begin
-    entry_begin conditional_operator::right_parenthesis, ")" entry_end
-    entry_begin conditional_operator::left_parenthesis,  "(" entry_end
-    entry_begin conditional_operator::and_op,            "+" entry_end
-    entry_begin conditional_operator::or_op,             "|" entry_end
-    entry_begin conditional_operator::not_op,            "!" entry_end
-  entries_end;
+  {
+    {conditional_operator::right_parenthesis, ")"},
+    {conditional_operator::left_parenthesis,  "("},
+    {conditional_operator::and_op,            "+"},
+    {conditional_operator::or_op,             "|"},
+    {conditional_operator::not_op,            "!"}
+  };
 
 const std::map<toolchain, toolchain_option_map> toolchain_options =
-  map_entries_begin
-    entry_begin toolchain::GNU,
-      map_entries_begin
-        entry_begin toolchain_option::compiler_c,       "gcc" entry_end
-        entry_begin toolchain_option::compiler_cxx,     "g++" entry_end
-        entry_begin toolchain_option::compiler_fortran, "gfortran" entry_end
-        entry_begin toolchain_option::compiler_nologo,  "" entry_end
+  {
+    {toolchain::GNU,
+      {
+        {toolchain_option::compiler_c,       "gcc"},
+        {toolchain_option::compiler_cxx,     "g++"},
+        {toolchain_option::compiler_fortran, "gfortran"},
+        {toolchain_option::compiler_nologo,  ""},
 
-        entry_begin toolchain_option::include_dir,     "-I" entry_end
-        entry_begin toolchain_option::include_file,    "-include" entry_end
-        entry_begin toolchain_option::include_file,    "-include" entry_end
-        entry_begin toolchain_option::include_sysfile, "-sys-include" entry_end
+        {toolchain_option::include_dir,     "-I"},
+        {toolchain_option::include_file,    "-include"},
+        {toolchain_option::include_file,    "-include"},
+        {toolchain_option::include_sysfile, "-sys-include"},
 
-        entry_begin toolchain_option::output_object,         "-o" entry_end
-        entry_begin toolchain_option::output_pch,            "-o" entry_end
-        entry_begin toolchain_option::output_debug,          "" entry_end
-        entry_begin toolchain_option::output_import_library, "-Wl,--out-implib," entry_end
+        {toolchain_option::output_object,         "-o"},
+        {toolchain_option::output_pch,            "-o"},
+        {toolchain_option::output_debug,          ""},
+        {toolchain_option::output_import_library, "-Wl,--out-implib,"},
 
-        entry_begin toolchain_option::compile_only,  "-c" entry_end
-        entry_begin toolchain_option::compile_debug, "-g" entry_end
+        {toolchain_option::compile_only,  "-c"},
+        {toolchain_option::compile_debug, "-g"},
 
-        entry_begin toolchain_option::object_extension, ".o" entry_end
+        {toolchain_option::object_extension, ".o"},
 
-        entry_begin toolchain_option::optimize_none,    "-O0" entry_end
-        entry_begin toolchain_option::optimize_normal,  "-O2" entry_end
-        entry_begin toolchain_option::optimize_size,    "-Os" entry_end
-        entry_begin toolchain_option::optimize_extreme, "-O3" entry_end
-        entry_begin toolchain_option::optimize_link,    "-flto" entry_end
-        entry_begin toolchain_option::optimize_extra,   "-fomit-frame-pointer -momit-leaf-frame-pointer" entry_end
+        {toolchain_option::optimize_none,    "-O0"},
+        {toolchain_option::optimize_normal,  "-O2"},
+        {toolchain_option::optimize_size,    "-Os"},
+        {toolchain_option::optimize_extreme, "-O3"},
+        {toolchain_option::optimize_link,    "-flto"},
+        {toolchain_option::optimize_extra,   "-fomit-frame-pointer -momit-leaf-frame-pointer"},
 
-        entry_begin toolchain_option::dynamic_linker_c,       "gcc" entry_end
-        entry_begin toolchain_option::dynamic_linker_cxx,     "g++" entry_end
-        entry_begin toolchain_option::dynamic_linker_fortran, "gfortran" entry_end
+        {toolchain_option::dynamic_linker_c,       "gcc"},
+        {toolchain_option::dynamic_linker_cxx,     "g++"},
+        {toolchain_option::dynamic_linker_fortran, "gfortran"},
 
-        entry_begin toolchain_option::static_linker,       "ar" entry_end
-        entry_begin toolchain_option::static_link_options, "rcsP" entry_end
+        {toolchain_option::static_linker,       "ar"},
+        {toolchain_option::static_link_options, "rcsP"},
 
-        entry_begin toolchain_option::link_debug,            "" entry_end
-        entry_begin toolchain_option::link_optimize,         "-flto" entry_end
-        entry_begin toolchain_option::link_strip,            "-s" entry_end
-        entry_begin toolchain_option::link_library,          "-l" entry_end
-        entry_begin toolchain_option::link_search_directory, "-L" entry_end
+        {toolchain_option::link_debug,            ""},
+        {toolchain_option::link_optimize,         "-flto"},
+        {toolchain_option::link_strip,            "-s"},
+        {toolchain_option::link_library,          "-l"},
+        {toolchain_option::link_search_directory, "-L"},
 
-        entry_begin toolchain_option::static_library_prefix,    "lib" entry_end
-        entry_begin toolchain_option::static_library_extension, ".a" entry_end
-        entry_begin toolchain_option::shared_library_prefix,    "lib" entry_end
-        entry_begin toolchain_option::import_library_extension, ".dll.a" entry_end
-      entries_end
-    entry_end
-    entry_begin toolchain::Microsoft,
-      map_entries_begin
-        entry_begin toolchain_option::compiler_c,      "cl" entry_end
-        entry_begin toolchain_option::compiler_cxx,    "cl" entry_end
-        entry_begin toolchain_option::compiler_nologo, "/NOLOGO" entry_end
+        {toolchain_option::static_library_prefix,    "lib"},
+        {toolchain_option::static_library_extension, ".a"},
+        {toolchain_option::shared_library_prefix,    "lib"},
+        {toolchain_option::import_library_extension, ".dll.a"},
+      }
+    },
+    {toolchain::Microsoft,
+      {
+        {toolchain_option::compiler_c,      "cl"},
+        {toolchain_option::compiler_cxx,    "cl"},
+        {toolchain_option::compiler_nologo, "/NOLOGO"},
 
-        entry_begin toolchain_option::include_dir,     "/I" entry_end
-        entry_begin toolchain_option::include_file,    "/FI" entry_end
-        entry_begin toolchain_option::include_pch,     "/Fp" entry_end
-        entry_begin toolchain_option::include_sysfile, "" entry_end
+        {toolchain_option::include_dir,     "/I"},
+        {toolchain_option::include_file,    "/FI"},
+        {toolchain_option::include_pch,     "/Fp"},
+        {toolchain_option::include_sysfile, ""},
 
-        entry_begin toolchain_option::output_object,         "/Fo" entry_end
-        entry_begin toolchain_option::output_pch,            "/Yc" entry_end
-        entry_begin toolchain_option::output_debug,          "" entry_end
-        entry_begin toolchain_option::output_import_library, "/implib" entry_end
+        {toolchain_option::output_object,         "/Fo"},
+        {toolchain_option::output_pch,            "/Yc"},
+        {toolchain_option::output_debug,          ""},
+        {toolchain_option::output_import_library, "/implib"},
 
-        entry_begin toolchain_option::compile_only,  "/c" entry_end
-        entry_begin toolchain_option::compile_debug, "/Zi" entry_end
+        {toolchain_option::compile_only,  "/c"},
+        {toolchain_option::compile_debug, "/Zi"},
 
-        entry_begin toolchain_option::object_extension, ".obj" entry_end
+        {toolchain_option::object_extension, ".obj"},
 
-        entry_begin toolchain_option::optimize_none,    "/Od" entry_end
-        entry_begin toolchain_option::optimize_normal,  "/O2" entry_end
-        entry_begin toolchain_option::optimize_size,    "/O1" entry_end
-        entry_begin toolchain_option::optimize_extreme, "/Ox" entry_end
-        entry_begin toolchain_option::optimize_link,    "/GL" entry_end
-        entry_begin toolchain_option::optimize_extra,   "" entry_end
+        {toolchain_option::optimize_none,    "/Od"},
+        {toolchain_option::optimize_normal,  "/O2"},
+        {toolchain_option::optimize_size,    "/O1"},
+        {toolchain_option::optimize_extreme, "/Ox"},
+        {toolchain_option::optimize_link,    "/GL"},
+        {toolchain_option::optimize_extra,   ""},
 
-        entry_begin toolchain_option::dynamic_linker_c,       "link" entry_end
-        entry_begin toolchain_option::dynamic_linker_cxx,     "link" entry_end
+        {toolchain_option::dynamic_linker_c,       "link"},
+        {toolchain_option::dynamic_linker_cxx,     "link"},
 
-        entry_begin toolchain_option::static_linker,       "link" entry_end
-        entry_begin toolchain_option::static_link_options, "/LIB /OUT:" entry_end
+        {toolchain_option::static_linker,       "link"},
+        {toolchain_option::static_link_options, "/LIB /OUT:"},
 
-        entry_begin toolchain_option::link_debug,            "/DEBUG" entry_end
-        entry_begin toolchain_option::link_optimize,         "/LTCG /NOWIN98" entry_end
-        entry_begin toolchain_option::link_strip,            "/OPT:ICF" entry_end
-        entry_begin toolchain_option::link_library,          "" entry_end
-        entry_begin toolchain_option::link_search_directory, "/libpath:" entry_end
+        {toolchain_option::link_debug,            "/DEBUG"},
+        {toolchain_option::link_optimize,         "/LTCG /NOWIN98"},
+        {toolchain_option::link_strip,            "/OPT:ICF"},
+        {toolchain_option::link_library,          ""},
+        {toolchain_option::link_search_directory, "/libpath:"},
 
-        entry_begin toolchain_option::static_library_prefix,    "" entry_end
-        entry_begin toolchain_option::static_library_extension, ".lib" entry_end
-        entry_begin toolchain_option::shared_library_prefix,    "" entry_end
-        entry_begin toolchain_option::import_library_extension, ".dll.lib" entry_end
-      entries_end
-    entry_end
-    entry_begin toolchain::LLVM,
-      map_entries_begin
-        entry_begin toolchain_option::compiler_c,   "clang" entry_end
-        entry_begin toolchain_option::compiler_cxx, "clang++" entry_end
-        entry_begin toolchain_option::compiler_nologo,  "" entry_end
+        {toolchain_option::static_library_prefix,    ""},
+        {toolchain_option::static_library_extension, ".lib"},
+        {toolchain_option::shared_library_prefix,    ""},
+        {toolchain_option::import_library_extension, ".dll.lib"},
+      }
+    },
+    {toolchain::LLVM,
+      {
+        {toolchain_option::compiler_c,      "clang"},
+        {toolchain_option::compiler_cxx,    "clang++"},
+        {toolchain_option::compiler_nologo, ""},
 
-        entry_begin toolchain_option::include_dir,     "-I" entry_end
-        entry_begin toolchain_option::include_file,    "-include" entry_end
-        entry_begin toolchain_option::include_file,    "-include" entry_end
-        entry_begin toolchain_option::include_sysfile, "-sys-include" entry_end
+        {toolchain_option::include_dir,     "-I"},
+        {toolchain_option::include_file,    "-include"},
+        {toolchain_option::include_file,    "-include"},
+        {toolchain_option::include_sysfile, "-sys-include"},
 
-        entry_begin toolchain_option::output_object,         "-o" entry_end
-        entry_begin toolchain_option::output_pch,            "-o" entry_end
-        entry_begin toolchain_option::output_debug,          "" entry_end
-        entry_begin toolchain_option::output_import_library, "-Wl,--out-implib," entry_end
+        {toolchain_option::output_object,         "-o"},
+        {toolchain_option::output_pch,            "-o"},
+        {toolchain_option::output_debug,          ""},
+        {toolchain_option::output_import_library, "-Wl,--out-implib,"},
 
-        entry_begin toolchain_option::compile_only,  "-c" entry_end
-        entry_begin toolchain_option::compile_debug, "-g" entry_end
+        {toolchain_option::compile_only,  "-c"},
+        {toolchain_option::compile_debug, "-g"},
 
-        entry_begin toolchain_option::object_extension, ".o" entry_end
+        {toolchain_option::object_extension, ".o"},
 
-        entry_begin toolchain_option::optimize_none,    "-O0" entry_end
-        entry_begin toolchain_option::optimize_normal,  "-O2" entry_end
-        entry_begin toolchain_option::optimize_size,    "-Os" entry_end
-        entry_begin toolchain_option::optimize_extreme, "-O3" entry_end
-        entry_begin toolchain_option::optimize_link,    "-flto" entry_end
-        entry_begin toolchain_option::optimize_extra,   "-fomit-frame-pointer -momit-leaf-frame-pointer" entry_end
+        {toolchain_option::optimize_none,    "-O0"},
+        {toolchain_option::optimize_normal,  "-O2"},
+        {toolchain_option::optimize_size,    "-Os"},
+        {toolchain_option::optimize_extreme, "-O3"},
+        {toolchain_option::optimize_link,    "-flto"},
+        {toolchain_option::optimize_extra,   "-fomit-frame-pointer -momit-leaf-frame-pointer"},
 
-        entry_begin toolchain_option::dynamic_linker_c,   "clang" entry_end
-        entry_begin toolchain_option::dynamic_linker_cxx, "clang++" entry_end
+        {toolchain_option::dynamic_linker_c,   "clang"},
+        {toolchain_option::dynamic_linker_cxx, "clang++"},
 
-        entry_begin toolchain_option::static_linker,       "ar" entry_end
-        entry_begin toolchain_option::static_link_options, "rcsP" entry_end
+        {toolchain_option::static_linker,       "ar"},
+        {toolchain_option::static_link_options, "rcsP"},
 
-        entry_begin toolchain_option::link_debug,            "" entry_end
-        entry_begin toolchain_option::link_optimize,         "-flto" entry_end
-        entry_begin toolchain_option::link_strip,            "-s" entry_end
-        entry_begin toolchain_option::link_library,          "-l" entry_end
-        entry_begin toolchain_option::link_search_directory, "-L" entry_end
+        {toolchain_option::link_debug,            ""},
+        {toolchain_option::link_optimize,         "-flto"},
+        {toolchain_option::link_strip,            "-s"},
+        {toolchain_option::link_library,          "-l"},
+        {toolchain_option::link_search_directory, "-L"},
 
-        entry_begin toolchain_option::static_library_prefix,    "lib" entry_end
-        entry_begin toolchain_option::static_library_extension, ".a" entry_end
-        entry_begin toolchain_option::shared_library_prefix,    "lib" entry_end
-        entry_begin toolchain_option::import_library_extension, ".dll.a" entry_end
-      entries_end
-    entry_end
-  entries_end;
+        {toolchain_option::static_library_prefix,    "lib"},
+        {toolchain_option::static_library_extension, ".a"},
+        {toolchain_option::shared_library_prefix,    "lib"},
+        {toolchain_option::import_library_extension, ".dll.a"},
+      }
+    }
+  };
 
 const std::map<toolchain, std::map<file_type, language_option_map>> language_options =
-  map_entries_begin
-    entry_begin toolchain::GNU,
-      map_entries_begin
-        entry_begin file_type::source_c,
-          map_entries_begin
-            entry_begin language_option::compile_language, "-x c" entry_end
-            entry_begin language_option::std_c89,          "-std=c89" entry_end
-            entry_begin language_option::std_c90,          "-std=c90" entry_end
-            entry_begin language_option::std_c99,          "-std=c99" entry_end
-            entry_begin language_option::std_c11,          "-std=c11" entry_end
-            entry_begin language_option::std_gnu89,        "-std=gnu89" entry_end
-            entry_begin language_option::std_gnu90,        "-std=gnu90" entry_end
-            entry_begin language_option::std_gnu99,        "-std=gnu99" entry_end
-            entry_begin language_option::std_gnu11,        "-std=gnu11" entry_end
-          entries_end
-        entry_end
-        entry_begin file_type::source_cxx,
-          map_entries_begin
-            entry_begin language_option::compile_language, "-x c++" entry_end
-            entry_begin language_option::std_cxx98,        "-std=c++98" entry_end
-            entry_begin language_option::std_cxx03,        "-std=c++03" entry_end
-            entry_begin language_option::std_cxx11,        "-std=c++11" entry_end
-            entry_begin language_option::std_gnuxx98,      "-std=gnu++98" entry_end
-            entry_begin language_option::std_gnuxx03,      "-std=gnu++03" entry_end
-            entry_begin language_option::std_gnuxx11,      "-std=gnu++11" entry_end
-          entries_end
-        entry_end
-      entries_end
-    entry_end
-    entry_begin toolchain::Microsoft,
-      map_entries_begin
-        entry_begin file_type::source_c,
-          map_entries_begin
-            entry_begin language_option::compile_language, "" entry_end
-            entry_begin language_option::std_cxx98,        "" entry_end
-            entry_begin language_option::std_cxx03,        "" entry_end
-            entry_begin language_option::std_cxx11,        "" entry_end
-            entry_begin language_option::std_gnuxx98,      "" entry_end
-            entry_begin language_option::std_gnuxx03,      "" entry_end
-            entry_begin language_option::std_gnuxx11,      "" entry_end
-          entries_end
-        entry_end
-        entry_begin file_type::source_cxx,
-          map_entries_begin
-            entry_begin language_option::compile_language, "" entry_end
-            entry_begin language_option::std_cxx98,        "" entry_end
-            entry_begin language_option::std_cxx03,        "" entry_end
-            entry_begin language_option::std_cxx11,        "" entry_end
-            entry_begin language_option::std_gnuxx98,      "" entry_end
-            entry_begin language_option::std_gnuxx03,      "" entry_end
-            entry_begin language_option::std_gnuxx11,      "" entry_end
-          entries_end
-        entry_end
-      entries_end
-    entry_end
-    entry_begin toolchain::LLVM,
-      map_entries_begin
-        entry_begin file_type::source_c,
-          map_entries_begin
-            entry_begin language_option::compile_language, "-x c" entry_end
-            entry_begin language_option::std_c89,          "-std=c89" entry_end
-            entry_begin language_option::std_c90,          "-std=c90" entry_end
-            entry_begin language_option::std_c99,          "-std=c99" entry_end
-            entry_begin language_option::std_c11,          "-std=c11" entry_end
-            entry_begin language_option::std_gnu89,        "-std=gnu89" entry_end
-            entry_begin language_option::std_gnu90,        "-std=gnu90" entry_end
-            entry_begin language_option::std_gnu99,        "-std=gnu99" entry_end
-            entry_begin language_option::std_gnu11,        "-std=gnu11" entry_end
-          entries_end
-        entry_end
-        entry_begin file_type::source_cxx,
-          map_entries_begin
-            entry_begin language_option::compile_language, "-x c++" entry_end
-            entry_begin language_option::std_cxx98,        "-std=c++98" entry_end
-            entry_begin language_option::std_cxx03,        "-std=c++03" entry_end
-            entry_begin language_option::std_cxx11,        "-std=c++11" entry_end
-            entry_begin language_option::std_gnuxx98,      "-std=gnu++98" entry_end
-            entry_begin language_option::std_gnuxx03,      "-std=gnu++03" entry_end
-            entry_begin language_option::std_gnuxx11,      "-std=gnu++11" entry_end
-          entries_end
-        entry_end
-      entries_end
-    entry_end
-  entries_end;
+  {
+    {toolchain::GNU,
+      {
+        {file_type::source_c,
+          {
+            {language_option::compile_language, "-x c"},
+            {language_option::std_c89,          "-std=c89"},
+            {language_option::std_c90,          "-std=c90"},
+            {language_option::std_c99,          "-std=c99"},
+            {language_option::std_c11,          "-std=c11"},
+            {language_option::std_gnu89,        "-std=gnu89"},
+            {language_option::std_gnu90,        "-std=gnu90"},
+            {language_option::std_gnu99,        "-std=gnu99"},
+            {language_option::std_gnu11,        "-std=gnu11"},
+          }
+        },
+        {file_type::source_cxx,
+          {
+            {language_option::compile_language, "-x c++"},
+            {language_option::std_cxx98,        "-std=c++98"},
+            {language_option::std_cxx03,        "-std=c++03"},
+            {language_option::std_cxx11,        "-std=c++11"},
+            {language_option::std_gnuxx98,      "-std=gnu++98"},
+            {language_option::std_gnuxx03,      "-std=gnu++03"},
+            {language_option::std_gnuxx11,      "-std=gnu++11"},
+          }
+        }
+      }
+    },
+    {toolchain::Microsoft,
+      {
+        {file_type::source_c,
+          {
+            {language_option::compile_language, ""},
+            {language_option::std_cxx98,        ""},
+            {language_option::std_cxx03,        ""},
+            {language_option::std_cxx11,        ""},
+            {language_option::std_gnuxx98,      ""},
+            {language_option::std_gnuxx03,      ""},
+            {language_option::std_gnuxx11,      ""},
+          }
+        },
+        {file_type::source_cxx,
+          {
+            {language_option::compile_language, ""},
+            {language_option::std_cxx98,        ""},
+            {language_option::std_cxx03,        ""},
+            {language_option::std_cxx11,        ""},
+            {language_option::std_gnuxx98,      ""},
+            {language_option::std_gnuxx03,      ""},
+            {language_option::std_gnuxx11,      ""},
+          }
+        }
+      }
+    },
+    {toolchain::LLVM,
+      {
+        {file_type::source_c,
+          {
+            {language_option::compile_language, "-x c"},
+            {language_option::std_c89,          "-std=c89"},
+            {language_option::std_c90,          "-std=c90"},
+            {language_option::std_c99,          "-std=c99"},
+            {language_option::std_c11,          "-std=c11"},
+            {language_option::std_gnu89,        "-std=gnu89"},
+            {language_option::std_gnu90,        "-std=gnu90"},
+            {language_option::std_gnu99,        "-std=gnu99"},
+            {language_option::std_gnu11,        "-std=gnu11"},
+          }
+        },
+        {file_type::source_cxx,
+          {
+            {language_option::compile_language, "-x c++"},
+            {language_option::std_cxx98,        "-std=c++98"},
+            {language_option::std_cxx03,        "-std=c++03"},
+            {language_option::std_cxx11,        "-std=c++11"},
+            {language_option::std_gnuxx98,      "-std=gnu++98"},
+            {language_option::std_gnuxx03,      "-std=gnu++03"},
+            {language_option::std_gnuxx11,      "-std=gnu++11"},
+          }
+        }
+      }
+    }
+  };
 
 const std::map<os, os_option_map> os_options =
-  map_entries_begin
-    entry_begin os::Windows,
-      map_entries_begin
-        entry_begin os_option::executable_extension,     ".exe" entry_end
-        entry_begin os_option::shared_library_extension, ".dll" entry_end
-      entries_end
-    entry_end
-    entry_begin os::Linux,
-      map_entries_begin
-        entry_begin os_option::executable_extension,     "" entry_end
-        entry_begin os_option::shared_library_extension, ".so" entry_end
-      entries_end
-    entry_end
-    entry_begin os::MacOSX,
-      map_entries_begin
-        entry_begin os_option::executable_extension,     "" entry_end
-        entry_begin os_option::shared_library_extension, ".dylib" entry_end
-      entries_end
-    entry_end
-  entries_end;
+  {
+    {os::Windows,
+      {
+        {os_option::executable_extension,     ".exe"},
+        {os_option::shared_library_extension, ".dll"},
+      }
+    },
+    {os::Linux,
+      {
+        {os_option::executable_extension,     ""},
+        {os_option::shared_library_extension, ".so"},
+      }
+    },
+    {os::MacOSX,
+      {
+        {os_option::executable_extension,     ""},
+        {os_option::shared_library_extension, ".dylib"},
+      }
+    }
+  };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

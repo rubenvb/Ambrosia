@@ -21,7 +21,6 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
-#include "Ambrosia/boost_wrapper.h"
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/internal_error.h"
 #include "Ambrosia/platform.h"
@@ -35,7 +34,10 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 generator::generator(const ::libambrosia::file_type type,
                      build_element_set& files,
@@ -167,4 +169,6 @@ const string& generator::languagestd_option() const
   }
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

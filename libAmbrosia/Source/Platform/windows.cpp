@@ -59,8 +59,10 @@
 #include <ext/stdio_filebuf.h>
 #endif // __GLIBCXX__
 
-libambrosia_namespace_begin
-
+namespace ambrosia
+{
+namespace lib
+{
 namespace platform
 {
 
@@ -439,4 +441,6 @@ unique_ptr<ofstream> open_ofstream(const string& filename)
 
 } // namespace platform
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

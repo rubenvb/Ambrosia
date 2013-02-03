@@ -27,7 +27,10 @@
 #include "Ambrosia/platform.h"
 #include "Ambrosia/typedefs.h"
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 // Forward declarations
 class file_cache;
@@ -70,6 +73,8 @@ private:
   void initialize_config();
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_CONFIGURATION_H

@@ -24,9 +24,10 @@
   using std::cout;
   using std::ostream;
 
-ambrosia_namespace_begin
+namespace ambrosia
+{
 
 // static member initialization
 std::ostream& output::output_stream = std::cout;
 
-ambrosia_namespace_end
+} // namespace ambrosia

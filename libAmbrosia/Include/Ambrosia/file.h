@@ -25,7 +25,10 @@
 // C++ includes
 #include <string>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 struct file
 {
@@ -42,7 +45,9 @@ struct file
   { return name == rhs.name; }
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 namespace std
 {

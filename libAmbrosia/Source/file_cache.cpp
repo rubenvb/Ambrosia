@@ -35,7 +35,10 @@
 #include <utility>
   using std::pair;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 file_cache::file_cache()
 : m_source_files(),
@@ -165,4 +168,6 @@ void file_cache::add_build_directory(const std::string& directory)
   }
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

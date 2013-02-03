@@ -63,7 +63,8 @@
 #include <string>
   using std::string;
 
-ambrosia_namespace_begin
+namespace ambrosia
+{
 
 void apply_commandline_options(const string_vector& arguments,
                                program_options& options,
@@ -376,4 +377,4 @@ void add_external_dependency(const string& name,
   }
 }
 
-ambrosia_namespace_end
+} // namespace ambrosia

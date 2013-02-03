@@ -30,7 +30,10 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 commandline_error::commandline_error(const string& message,
                                      const size_t argument_number)
@@ -44,4 +47,6 @@ void commandline_error::output_message() const
   error::output_message();
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

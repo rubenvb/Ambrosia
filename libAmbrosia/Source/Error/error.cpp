@@ -29,7 +29,10 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 error::error(const string& message,
              const string_vector& list)
@@ -63,4 +66,6 @@ void error::output_message() const
   }
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

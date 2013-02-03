@@ -25,7 +25,10 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 internal_error::internal_error(const string& message)
 : error(message)
@@ -38,4 +41,6 @@ void internal_error::output_message() const
   error::output_message();
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

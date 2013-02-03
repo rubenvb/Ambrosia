@@ -21,7 +21,6 @@
 
 // libAmbrosia includes
 #include "Ambrosia/algorithm.h"
-#include "Ambrosia/boost_wrapper.h"
 #include "Ambrosia/build_element.h"
 #include "Ambrosia/configuration.h"
 #include "Ambrosia/debug.h"
@@ -66,27 +65,30 @@
 #include <vector>
   using std::vector;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 const set<char> special_characters =
-  list_entries_begin
-    entry_begin '(' entry_end
-    entry_begin ')' entry_end
-    entry_begin '{' entry_end
-    entry_begin '}' entry_end
-    entry_begin ':' entry_end
-    entry_begin ',' entry_end
-  entries_end;
+  {
+    '(',
+    ')',
+    '{',
+    '}',
+    ':',
+    ',',
+  };
 const set<char> special_characters_newline =
-  list_entries_begin
-    entry_begin '(' entry_end
-    entry_begin ')' entry_end
-    entry_begin '{' entry_end
-    entry_begin '}' entry_end
-    entry_begin ':' entry_end
-    entry_begin ',' entry_end
-    entry_begin '\n' entry_end
-  entries_end;
+  {
+    '(',
+    ')',
+    '{',
+    '}',
+    ':',
+    ',',
+    '\n',
+  };
 
 nectar_loader::nectar_loader(::libambrosia::project& project,
                              istream& stream,
@@ -960,4 +962,6 @@ void nectar_loader::validate_directory(const string& directory)
     throw syntax_error("Wildcard characters ?* are not allowed in directory names.", filename, line_number);
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

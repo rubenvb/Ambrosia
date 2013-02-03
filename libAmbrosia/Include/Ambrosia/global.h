@@ -19,12 +19,6 @@
 #ifndef AMBROSIA_GLOBAL_H
 #define AMBROSIA_GLOBAL_H
 
-// namespace definition
-#define ambrosia_namespace_begin namespace ambrosia {
-#define ambrosia_namespace_end }
-#define libambrosia_namespace_begin namespace ambrosia { namespace lib {
-#define libambrosia_namespace_end } }
-
 // deleted function workarounds
 #ifdef _MSC_VER
 #define DELETED_FUNCTION
@@ -32,14 +26,19 @@
 #define DELETED_FUNCTION = delete
 #endif
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 // Versioning
 const int version_major = 0;
 const int version_minor = 0;
 const int version_bugfix = 1;
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 // namespace shortcut
 namespace libambrosia = ambrosia::lib;

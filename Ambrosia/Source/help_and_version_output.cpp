@@ -26,7 +26,8 @@
 // Ambrosia includes
 #include "output.h"
 
-ambrosia_namespace_begin
+namespace ambrosia
+{
 
 void print_help_information()
 {
@@ -41,4 +42,4 @@ void print_version_information()
            << " with the " << lib::vendor_map_inverse.at(lib::platform::ambrosia_toolchain) << " toolchain.\n\n";
 }
 
-ambrosia_namespace_end
+} // namespace ambrosia

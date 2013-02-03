@@ -29,7 +29,10 @@
 // C++ includes
 #include <iostream>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 class debug
 {
@@ -116,6 +119,8 @@ debug& debug::operator<<(const dependency_map&);
 
 #endif // AMBROSIA_DEBUG
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_DEBUG_H

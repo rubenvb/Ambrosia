@@ -25,8 +25,10 @@
 // C++ includes
 #include <string>
 
-libambrosia_namespace_begin
-
+namespace ambrosia
+{
+namespace lib
+{
 struct dependency_paths
 {
   dependency_paths(const std::string& name) : name(name) {}
@@ -48,7 +50,9 @@ struct dependency_paths
   { return name == rhs.name; }
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 namespace std
 {

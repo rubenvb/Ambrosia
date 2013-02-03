@@ -32,7 +32,10 @@
 #include <string>
 #include <utility>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 class target
 {
@@ -66,7 +69,9 @@ public:
   platform::command link_command;
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 namespace std
 {

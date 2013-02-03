@@ -28,7 +28,10 @@
 // C++ includes
 #include <string>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 class commandline_error : public error
 {
@@ -42,6 +45,8 @@ private:
     const std::size_t m_argument_number;
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_ERROR_COMMANDLINE_ERROR_H

@@ -25,7 +25,10 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 soft_error::soft_error(const string& message)
 : error(message)
@@ -40,4 +43,6 @@ void soft_error::output_message() const
        << "\t" << message << "\n";
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

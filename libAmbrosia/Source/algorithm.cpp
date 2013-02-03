@@ -50,7 +50,10 @@
 // C-ish includes
 #include <cstring>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 /* Freestanding functions
  *************************/
@@ -319,4 +322,6 @@ void find_dependencies(dependency_map& dependencies,
     debug(debug::algorithm) << "algorithm::find_dependencies::No " << target_type_map_inverse.at(type) << " dependencies in project " << project.name << ".\n";
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

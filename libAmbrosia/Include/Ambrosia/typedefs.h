@@ -40,7 +40,8 @@
  * STL typedefs
  ***************/
 
-ambrosia_namespace_begin
+namespace ambrosia
+{
 
 // Homogeneous typedefs
 typedef std::pair<std::string, std::string> string_pair;
@@ -54,13 +55,15 @@ typedef std::pair<std::string, string_set> pair_string_string_set;
 typedef std::map<std::string, string_set> map_string_set_string;
 typedef std::map<std::string, string_vector> map_string_string_vector;
 
-ambrosia_namespace_end
+} // namespace ambrosia
 
 /*
  * libAmbrosia typedefs
  ***********************/
-libambrosia_namespace_begin
-
+namespace ambrosia
+{
+namespace lib
+{
 // Forward declarations
 class binary;
 struct dependency_paths;
@@ -70,7 +73,7 @@ class target;
 namespace platform
 {
 struct command;
-}
+} // namespace platform
 
 // homogeneous typedefs
 typedef std::unordered_set<file> file_set;
@@ -91,6 +94,8 @@ typedef std::map<toolchain_option, std::string> toolchain_option_map;
 typedef std::map<language_option, std::string> language_option_map;
 typedef std::map<os_option, std::string> os_option_map;
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_TYPEDEFS_H

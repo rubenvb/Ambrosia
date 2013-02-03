@@ -36,7 +36,10 @@
 // C++ includes
 #include <string>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 class external : public target
 {
@@ -58,7 +61,9 @@ private:
   const std::string empty_string = "";
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 namespace std
 {

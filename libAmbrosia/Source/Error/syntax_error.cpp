@@ -30,7 +30,10 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 syntax_error::syntax_error(const string& message,
                            const string& filename,
@@ -45,4 +48,6 @@ void syntax_error::output_message() const
   nectar_error::output_message();
 }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

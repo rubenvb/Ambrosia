@@ -32,7 +32,10 @@
 #include <string>
   using std::string;
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 target::target(const string& name,
                const target_type type)
@@ -44,4 +47,6 @@ target::target(const string& name,
   link_command()
 {   }
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

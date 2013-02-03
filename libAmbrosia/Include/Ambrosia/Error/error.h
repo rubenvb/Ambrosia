@@ -28,7 +28,10 @@
 // C++ includes
 #include <string>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 class error
 {
@@ -46,6 +49,8 @@ protected:
     string_vector list;
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_ERROR_ERROR_H

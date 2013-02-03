@@ -30,7 +30,10 @@
 #include <memory>
 #include <string>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 // Forward declarations
 class target;
@@ -63,6 +66,8 @@ protected:
   const std::string& languagestd_option() const;
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_GENERATOR_H

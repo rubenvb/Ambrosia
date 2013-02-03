@@ -27,13 +27,18 @@
 #include "Ambrosia/typedefs.h"
 
 // Foward declarations
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 class configuration;
 class program_options;
 class project;
-libambrosia_namespace_end
+} // namespace lib
+} // namespace ambrosia
 
-ambrosia_namespace_begin
+namespace ambrosia
+{
 
 void apply_commandline_options(const string_vector& options,
                                lib::program_options& program_options,
@@ -69,6 +74,6 @@ void add_external_dependency(const std::string& name,
                              lib::dependency_paths_set& external_dependencies,
                              const std::size_t argument_number);
 
-ambrosia_namespace_end
+} // namespace ambrosia
 
 #endif // COMMANDLINE_H

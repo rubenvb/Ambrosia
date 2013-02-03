@@ -36,7 +36,10 @@
 #include <utility>
 #include <vector>
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 // forward declarations
 class target;
@@ -123,6 +126,8 @@ private:
   void validate_directory(const std::string& directory);
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_NECTAR_LOADER_H

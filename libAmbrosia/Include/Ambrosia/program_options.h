@@ -25,7 +25,10 @@
 // libAmbrosia includes
 #include "Ambrosia/typedefs.h"
 
-libambrosia_namespace_begin
+namespace ambrosia
+{
+namespace lib
+{
 
 struct program_options
 {
@@ -35,6 +38,8 @@ struct program_options
   map_string_set_string target_options;
 };
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia
 
 #endif // AMBROSIA_PROGRAM_OPTIONS_H
