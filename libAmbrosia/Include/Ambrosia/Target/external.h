@@ -47,7 +47,6 @@ public:
            const std::string& lib_directory = std::string(),
            const std::string& bin_directory = std::string(),
            const string_set& libraries = string_set(),
-           const dependency_map& dependencies = dependency_map(),
            const bool optional = false);
 
   virtual const std::string& source_directory() const

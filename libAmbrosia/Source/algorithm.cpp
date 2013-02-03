@@ -275,46 +275,48 @@ void find_dependencies(dependency_map& dependencies,
                        const string &name,
                        bool searching_in_subproject)
 {
-  debug(debug::algorithm) << "algorithm::find_dependencies::Looking for matching targets in project " << project.name << ".\n";
+  debug(debug::algorithm) << "algorithm::find_dependencies::Looking for matching " << target_type_map_inverse.at(type) << " targets in project " << project.name << ".\n";
+  debug(debug::algorithm) << "algorithm::find_dependencies::Current project's dependencies: " << project.dependencies << "\n";
   std::function<bool(const target& t)> check_match;
   if(!searching_in_subproject)
-    check_match = [&name,&type](const target& t) { return t.type == type && t.name == name; };
+    check_match = [&name,&type](const target& t) { return t.type == type && (name == t.name || wildcard_compare("*::"+name, t.name)); };
   else
     check_match = [&type](const target& t) { return t.type == type; };
 
   for(auto&& target : project.targets)
   {
+    debug(debug::algorithm) << "algorithm::find_dependencies::Checking project target " << target->name << ".\n";
     if(check_match(*target))
     {
       debug(debug::algorithm) << "algorithm::read_dependencies::Found match for " << name << " in project " << project.name << ".\n";
       if(!dependencies[type].insert(target.get()).second)
         throw internal_error("algorithm::find_dependencies::Failed inserting dependency. An *identical* target is being added twice.");
+
+      debug(debug::algorithm) << "algorithm::find_dependencies::Number of " << target_type_map_inverse.at(type) << " dependencies " << dependencies[type].size() << ".\n";
     }
-    else if(target->type == target_type::project && target->name == name)
+    else if(target->type == target_type::project && wildcard_compare("*::"+name, target->name))
     {
       debug(debug::algorithm) << "algorithm::Found subproject " << target->name << ".\n";
       find_dependencies(dependencies, *static_cast<class project*>(target.get()), type, name, true); // true means search without name match
     }
+    debug(debug::algorithm) << "algorithm::find_dependencies::No match: " << target->name << " for *::" << name << ".\n";
   }
-  if(!searching_in_subproject)
+  debug(debug::algorithm) << "algorithm::find_dependencies::Looking for matching " << target_type_map_inverse.at(type) << " dependencies in project " << project.name << ".\n";
+  auto result = project.dependencies.find(target_type::library);
+  if(result != std::end(project.dependencies))
   {
-    auto result = project.dependencies.find(type);
-    if(result == std::end(project.dependencies))
+    for(auto&& dependency : result->second)
     {
-      debug(debug::algorithm) << "algorithm::find_dependencies::Project has no dependencies.\n";
-      return;
-    }
-    debug(debug::algorithm) << "algorithm::find_dependencies::Looking for matches in project " << project.name << " dependencies.\n";
-    for(auto&& dependency : project.dependencies.at(type))
-    {
-      if(dependency->type == type && dependency->name == name)
+      debug(debug::algorithm) << "algorithm::find_dependencies::Checking project dependency " << dependency->name << ".\n";
+      if(check_match(*dependency))
       {
-        debug(debug::algorithm) << "algorithm::find_dependencies::Found match in project " << project.name << "\'s dependencies.\n";
         if(!dependencies[type].insert(dependency).second)
-          throw internal_error("algorithm::find_dependencies::Failed inserting dependency. An *identical* target is being added twice.");
+          throw internal_error("algorithm::find_dependencies::Failed inserting dependency from project dependency. An *identical* target is being added twice.");
       }
     }
   }
+  else
+    debug(debug::algorithm) << "algorithm::find_dependencies::No " << target_type_map_inverse.at(type) << " dependencies in project " << project.name << ".\n";
 }
 
 libambrosia_namespace_end

@@ -38,8 +38,7 @@ class target
 {
 public:
   target(const std::string& name,
-         const target_type type,
-         const dependency_map& dependencies = dependency_map());
+         const target_type type);
 
   bool operator<(const target& rhs) const
   { return (name < rhs.name) ? true : (type < rhs.type); }
@@ -57,7 +56,6 @@ public:
   // data
   std::string name;
   target_type type;
-  dependency_map dependencies;
 
   virtual const std::string& source_directory() const = 0;
   std::map<file_type, build_element_set> files;

@@ -35,7 +35,7 @@ public:
   binary(const std::string& name,
          const ::libambrosia::configuration& configuration,
          const target_type type,
-         const dependency_map& dependencies);
+         const dependency_map& dependencies = dependency_map());
 
   // Target information
   bool add_source_directory(const file_type type,

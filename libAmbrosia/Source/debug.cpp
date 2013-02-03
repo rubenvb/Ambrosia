@@ -162,6 +162,8 @@ debug& debug::operator<<(const dependency_map& dependencies)
       std::cerr << "\t" << target_type_map_inverse.at(target_list.first) << ":\n";
       for(auto& target : target_list.second)
       {
+        if(target==nullptr)
+          throw internal_error("Nullptr target.");
         std::cerr << "\t\t" << target->name << "\n";
       }
     }

@@ -35,9 +35,8 @@ external::external(const std::string& name,
                    const std::string& lib_directory,
                    const std::string& bin_directory,
                    const string_set& libraries,
-                   const dependency_map& dependencies,
                    const bool optional)
-: target(name, type, dependencies),
+: target(name, type),
   optional(optional)
 {
   directories[file_type::header].insert(include_directory);

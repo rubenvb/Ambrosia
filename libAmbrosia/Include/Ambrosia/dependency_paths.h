@@ -40,6 +40,7 @@ struct dependency_paths
   // "cache" of libraries and headers that were previously detected
   mutable string_set headers;
   mutable string_set libraries;
+  mutable string_set applications;
 
   bool operator<(const dependency_paths& rhs) const
   { return name < rhs.name; }

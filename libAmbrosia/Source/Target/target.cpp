@@ -35,11 +35,9 @@
 libambrosia_namespace_begin
 
 target::target(const string& name,
-               const target_type type,
-               const dependency_map& dependencies)
+               const target_type type)
 : name(name),
   type(type),
-  dependencies(dependencies),
   files(),
   directories(),
   parallel_commands(),

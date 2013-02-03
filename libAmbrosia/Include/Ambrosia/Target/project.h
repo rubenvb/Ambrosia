@@ -33,8 +33,7 @@ class project : public target
 public:
   project(const ::libambrosia::configuration& configuration);
   project(const std::string& name,
-          const ::libambrosia::configuration& configuration,
-          const dependency_map& dependencies = dependency_map());
+          const ::libambrosia::configuration& configuration);
 
   void generate_commands(); // generate build commands for all targets
   void dump_commands() const; // dump commands of all targets
@@ -45,7 +44,8 @@ public:
 
   lib::configuration configuration;
 
-  target_ptr_vector targets;
+  dependency_map dependencies; // dep targets
+  target_ptr_vector targets; // other targets
 
   ::libambrosia::file_cache file_cache;
 

@@ -43,6 +43,19 @@ const map<architecture, string> architecture_map_inverse =
     entry_begin architecture::amd64, "AMD64" entry_end
   entries_end;
 
+// libambrosia::os has two maps: one for config related stuff, the other for nice output.
+const map<os, string> os_name_map =
+  map_entries_begin
+    entry_begin os::Windows, "Windows" entry_end
+    entry_begin os::Linux,   "Linux" entry_end
+    entry_begin os::MacOSX,  "Mac OS X" entry_end
+  entries_end;
+const map<string, os> os_name_map_inverse =
+  map_entries_begin
+    entry_begin "Windows",  os::Windows entry_end
+    entry_begin "Linux",    os::Linux entry_end
+    entry_begin "Mac OS X", os::MacOSX entry_end
+  entries_end;
 const map<string, os> os_map =
   map_entries_begin
     entry_begin "windows", os::Windows entry_end
@@ -51,14 +64,12 @@ const map<string, os> os_map =
   entries_end;
 const map<os, string> os_map_inverse =
   map_entries_begin
-    entry_begin os::Windows, "Windows" entry_end
+    entry_begin os::Windows, "windows" entry_end
     entry_begin os::Linux,   "linux" entry_end
-    entry_begin os::MacOSX,  "Mac OS X" entry_end
+    entry_begin os::MacOSX,  "mac" entry_end
   entries_end;
 
-// libambrosia::toolchain has two maps: one for the ambrosia cross
-// specification, another for true vendor name output. Both map to
-// the same internal representation (i.e. the vendor name).
+// libambrosia::toolchain has two maps: one for the ambrosia cross specification, another for true vendor name output. Both map to the same internal representation (i.e. the vendor name).
 const map<string, toolchain> vendor_map =
   map_entries_begin
     entry_begin "GNU",       toolchain::GNU entry_end

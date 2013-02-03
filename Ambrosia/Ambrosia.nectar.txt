@@ -11,14 +11,14 @@
 # If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 #
 
-dep lib libAmbrosia
+dep lib Ambrosia
 #the below stuff is optional and required only if you want to build a subproject seperately (in this case with an externally installed libAmbrosia)
 #{
 #  HEADERS Ambrosia/global.h
 #  LIBS Ambrosia
 #}
 
-app Ambrosia : lib libAmbrosia
+app Ambrosia : lib Ambrosia
 {
   SOURCE_DIRS Source
   HEADER_DIRS Include

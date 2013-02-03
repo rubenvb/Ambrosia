@@ -95,7 +95,7 @@ void drink_nectar(project& project,
 
   // read targets
   debug(debug::files) << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
-  nectar_loader loader(project, external_dependencies, filename, "", stream);
+  nectar_loader loader(project,  stream, filename, "", external_dependencies);
 
   loader.extract_nectar();
   debug(debug::nectar) << "nectar::drink_nectar::Finished parsing project files.\n";

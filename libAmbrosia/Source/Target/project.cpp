@@ -34,9 +34,8 @@ project::project(const ::libambrosia::configuration& configuration)
   file_cache()
 {   }
 project::project(const string& name,
-                 const ::libambrosia::configuration& configuration,
-                 const dependency_map& dependencies)
-: target(name, target_type::project, dependencies),
+                 const ::libambrosia::configuration& configuration)
+: target(name, target_type::project),
   configuration(configuration),
   file_cache(),
   targets()

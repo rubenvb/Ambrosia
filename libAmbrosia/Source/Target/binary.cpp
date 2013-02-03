@@ -39,9 +39,15 @@ binary::binary(const string& name,
                const ::libambrosia::configuration& configuration,
                const target_type type,
                const dependency_map& dependencies)
-: target(name, type, dependencies),
-  configuration(configuration)
-{   }
+: target(name, type),
+  configuration(configuration),
+  dependencies(dependencies)
+{
+  this->configuration.build_directory = configuration.build_directory / name;
+  // Set default output directories:
+  directories[file_type::library].insert(this->configuration.build_directory);
+  directories[file_type::executable].insert(this->configuration.build_directory);
+}
 
 void binary::add_source_file(const file_type general_type,
                              const string& filename,
@@ -152,7 +158,8 @@ void binary::generate_commands()
   {
     //TODO: check static vs shared library
     link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_linker));
-    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_link_options)+configuration.build_directory / (toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension)));
+    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_link_options));
+    link_command.add_argument(configuration.build_directory / (toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension)));
   }
   else if(type == target_type::application)
   {

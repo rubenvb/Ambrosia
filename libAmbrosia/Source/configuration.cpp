@@ -77,26 +77,14 @@ void configuration::initialize_config()
     entries_end;
   // Convenience config strings
   // OS related
-  if(target_os == os::Windows)
-    config_strings.insert("windows");
   if(target_os == os::Linux || target_os == os::MacOSX)
     config_strings.insert("unix");
-  if(target_os == os::Linux)
-    config_strings.insert("linux");
-  if(target_os == os::MacOSX)
-    config_strings.insert("mac");
 
   // Toolchain related
-  if(target_toolchain == toolchain::Microsoft)
-    config_strings.insert("msvc");
-  if(target_toolchain == toolchain::Intel)
-    config_strings.insert("icc");
+  // nada
 
   // Architecture related
-  if(target_architecture == architecture::x86)
-    config_strings.insert("x86");
-  else if(target_architecture == architecture::amd64)
-    config_strings.insert("amd64");
+  // nada
 
   // OS and toolchain related
   if(target_os == os::Windows && target_toolchain == toolchain::GNU)

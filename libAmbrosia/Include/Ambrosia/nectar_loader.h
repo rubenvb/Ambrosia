@@ -50,11 +50,12 @@ extern const std::set<char> special_characters_newline;
 class nectar_loader
 {
 public:
-  nectar_loader(::libambrosia::project& project,
-                const dependency_paths_set& external_dependencies,
+  nectar_loader(libambrosia::project& project,
+                std::istream& stream,
                 const std::string& full_filename,
                 const std::string& sub_directory,
-                std::istream& stream);
+                const dependency_paths_set& external_dependencies,
+                const dependency_map& internal_dependencies = dependency_map());
   ~nectar_loader();
 
   void extract_nectar();
@@ -64,8 +65,9 @@ public:
   nectar_loader(const nectar_loader&) DELETED_FUNCTION;
 
 private:
-  ::libambrosia::project& project;
-  const dependency_paths_set& external_dependencies;
+  libambrosia::project& project;
+  const dependency_map& internal_dependencies; // from colon-seperated list in project file
+  const dependency_paths_set& external_dependencies; // from commandline or IDE
   const std::string& filename; // used for error reporting
   const std::string subdirectory; // used for file searching, without configuration.source_directory() !
   std::istream& stream; // file input stream
@@ -86,7 +88,7 @@ private:
   bool next_list_token(const configuration& configuration,
                        std::string& token);
   bool process_conditional();
-  // reads colon-lists of dependencies, ends at first '{'
+  // reads colon-lists of dependencies, ends at first '{', searches recursively in project.dependencies
   dependency_map read_dependencies();
 /*
  * Parsing
@@ -110,8 +112,11 @@ private:
                           file_cache& file_cache); // parses -l and -L items, and handle interproject dependencies?
   // target parsers
   void parse_global();
-  void parse_binary(binary& binary, file_cache& file_cache);
-  void parse_dependency(const std::string& name, const target_type type, const dependency_paths_set& external_dependencies);
+  void parse_binary(binary& binary,
+                    file_cache& file_cache);
+  void parse_dependency(const std::string& name,
+                        const target_type type,
+                        const dependency_paths_set& external_dependencies);
   // input validation functions (see Ambrosia wiki for valid input requirements)
   void validate_variable(const std::string& config);
   void validate_filename(const std::string& filename);

@@ -371,6 +371,8 @@ void add_external_dependency(const string& name,
     dependency.include = location / "include";
     if(!dependency.lib.empty())
       throw commandline_error("You cannot specify --with-"+name+"="+location+" twice or together with --with-"+name+"-lib=", argument_number);
+
+    dependency.lib = location / "lib";
   }
 }
 
