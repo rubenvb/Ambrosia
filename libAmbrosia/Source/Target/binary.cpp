@@ -25,7 +25,6 @@
 #include "Ambrosia/enum_maps.h"
 #include "Ambrosia/Error/command_error.h"
 #include "Ambrosia/file_cache.h"
-#include "Ambrosia/generator.h"
 
 // C++ includes
 #include <iterator>
@@ -103,117 +102,80 @@ void binary::generate_commands()
 {
   debug(debug::command_gen) << "binary::generate_commands::Generating commands for binary: " << name << ".\n";
 
+  // Dependency information gathering
+  string_set header_directories;
   string_set library_directories;
   string_vector libraries; // libraries to link to the final object file
-
-  // Generate compilation commands per source file
-  for(auto type_it = std::begin(files); type_it != std::end(files); ++type_it)
+  debug(debug::command_gen) << "binary::generate_commands::Gathering information from target dependencies: " << dependencies[target_type::library].size() << " library dependencies.\n";
+  for(auto&& dependency : dependencies.at(target_type::library))
   {
-    debug(debug::command_gen) << "binary::generate_commands::Generating commands for " << type_it->second.size() << " " << file_type_map_inverse.at(type_it->first) << " files.\n";
-    string_set header_directories;
-    // add the project's header dirs
-    for(auto&& directory : directories.at(file_type::header))
+    debug(debug::command_gen) << "binary::generate_commands::Including dependency " << dependency->name << "\'s header directories.\n";
+    const string& source_directory = dependency->source_directory();
+    const string_set& dependency_header_directories = dependency->directories.at(file_type::header);
+    if(dependency->type == target_type::external)
     {
-      header_directories.insert(configuration.source_directory / directory);
-    }
-    debug(debug::command_gen) << "binary::generate_commands::Current target direct library dependencies: " << dependencies[target_type::library].size() << "\n";
-    for(auto&& dependency : dependencies.at(target_type::library))
-    {
-      debug(debug::command_gen) << "binary::generate_commands::Including dependency " << dependency->name << "\'s header directories.\n";
-      const string& source_directory = dependency->source_directory();
-      const string_set& dependency_header_directories = dependency->directories.at(file_type::header);
-      if(dependency->type == target_type::external)
+      debug(debug::command_gen) << "binary::generate_commands::Include dependency " << dependency->name << " header directories:\n";
+      for(auto&& header_directory : dependency_header_directories)
       {
-        debug(debug::command_gen) << "binary::generate_commands::Include dependency " << dependency->name << " header directories:\n";
-        for(auto&& header_directory : dependency_header_directories)
-        {
-          debug(debug::command_gen) << "\t" << header_directory << "\n";
-          header_directories.insert(header_directory);
-        }
+        debug(debug::command_gen) << "\t" << header_directory << "\n";
+        header_directories.insert(header_directory);
       }
-      else
-      {
-        for(auto&& header_directory : dependency_header_directories)
-        {
-          debug(debug::command_gen) << "binary::generate_commands::Including directory: " << header_directory << " with source directory " << source_directory << "\n";
-          header_directories.insert(source_directory / header_directory);
-        }
-      }
-      if(dependency->type == target_type::library)
-      {
-        debug(debug::command_gen) << "binary::generate_commands::Including library " << dependency->name << " in (dynamic) linker command.\n"
-                                     "\twith library search directory: " << dependency->directories[file_type::library] << " and library names " << dependency->libraries << ".\n";
-        library_directories.insert(std::begin(dependency->directories[file_type::library]), std::end(dependency->directories[file_type::library]));
-        libraries.push_back(dependency->name);
-        for(auto&& library : dependency->libraries)
-        {
-          libraries.push_back(library);
-        }
-      }
-    }
-    debug(debug::command_gen) << "binary::generate_commands::Creating command generator for the " << vendor_map_inverse.at(configuration.target_toolchain) << " toolchain for " << os_map_inverse.at(configuration.target_os) << ".\n";
-    generator command_generator(type_it->first, type_it->second, header_directories, configuration);
-    command_generator.generate_object_filenames();
-    command_generator.generate_parallel_commands(std::back_inserter(parallel_commands));
-  }
-  // Generate the final "link" command
-  if(type == target_type::library)
-  {
-    //TODO: check static vs shared library
-    link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_linker));
-    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_link_options));
-    link_command.add_argument(configuration.build_directory / (toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension)));
-  }
-  else if(type == target_type::application)
-  {
-    if(contains(configuration.source_types, file_type::source_cxx))
-    {
-      debug(debug::command_gen) << "binary::generate_commands::Linking with C++ linker driver.\n";
-      link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::dynamic_linker_cxx));
-      if(contains(configuration.source_types, file_type::source_fortran))
-        libraries.push_back(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::runtime_library_fortran));
-    }
-    else if(contains(configuration.source_types, file_type::source_fortran))
-    {
-      debug(debug::command_gen) << "binary::generate_commands::Linking with Fortran linker driver.\n";
-      link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::dynamic_linker_fortran));
     }
     else
     {
-      debug(debug::command_gen) << "binary::generate_commands::Linking with C linker driver.\n";
-      link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::dynamic_linker_c));
+      for(auto&& header_directory : dependency_header_directories)
+      {
+        debug(debug::command_gen) << "binary::generate_commands::Including directory: " << header_directory << " with source directory " << source_directory << "\n";
+        header_directories.insert(source_directory / header_directory);
+      }
     }
-
-    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::output_object));
-    link_command.add_argument(configuration.build_directory / name  + os_options.at(configuration.target_os).at(os_option::executable_extension));
-  }
-  for(auto type_it = std::begin(files); type_it != std::end(files); ++type_it)
-  {
-    for(auto&& build_element : type_it->second)
+    if(dependency->type == target_type::library)
     {
-      link_command.add_argument(build_element.object_file.name);
+      debug(debug::command_gen) << "binary::generate_commands::Including library " << dependency->name << " in (dynamic) linker command.\n"
+                                   "\twith library search directory: " << dependency->directories[file_type::library] << " and library names " << dependency->libraries << ".\n";
+      library_directories.insert(std::begin(dependency->directories[file_type::library]), std::end(dependency->directories[file_type::library]));
+      libraries.push_back(dependency->name);
+      for(auto&& library : dependency->libraries)
+      {
+        libraries.push_back(library);
+      }
     }
   }
-  // add all library search directories
-  for(auto&& library_directory : library_directories)
+
+  // add the project's header dirs
+  for(auto&& directory : directories.at(file_type::header))
   {
-    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_search_directory) + library_directory);
+    header_directories.insert(configuration.source_directory / directory);
   }
-  // add all libraries to link
-  for(auto&& library : libraries)
+
+  // Command generation
+  toolchain_option_map toolchain_options = ::libambrosia::toolchain_options.at(configuration.target_toolchain);
+  os_option_map os_options = ::libambrosia::os_options.at(configuration.target_os);
+  generate_parallel_commands(toolchain_options, os_options, header_directories);
+  generate_final_commands();
+  /*for(auto type_it = std::begin(files); type_it != std::end(files); ++type_it)
   {
-    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::link_library) + library);
-  }
-  debug(debug::command_gen) << "binary::generate_commands::Final command: " << link_command << "\n";
+    debug(debug::command_gen) << "binary::generate_commands::Generating commands for " << type_it->second.size() << " " << file_type_map_inverse.at(type_it->first) << " files.\n";
+
+    debug(debug::command_gen) << "binary::generate_commands::Creating command generator for the " << vendor_map_inverse.at(configuration.target_toolchain) << " toolchain for " << os_map_inverse.at(configuration.target_os) << ".\n";
+    // set the correct command string maps
+
+    generate_object_filenames(toolchain_options);
+    generate_parallel_commands();
+    generate_final_commands();
+    //compile_generator command_generator(type_it->first, type_it->second, header_directories, configuration);
+    //command_generator.generate_object_filenames();
+    //parallel_commands = command_generator.generate_parallel_commands();
+  }*/
+
+  debug(debug::command_gen) << "binary::generate_commands::Final commands: " << final_commands << "\n";
 }
 
 void binary::dump_commands() const
 {
-  for(auto&& command : parallel_commands)
-  {
-    debug(debug::command_gen) << "binary::dump_commands::Parallel command: " << command << "\n";
-  }
-  debug(debug::command_gen) << "binary::dump_commands::Final command: " << link_command << "\n";
+  debug(debug::command_gen) << "binary::dump_commands::Parallel commands: " << parallel_commands << "\n";
+
+  debug(debug::command_gen) << "binary::dump_commands::Final commands: " << final_commands << "\n";
 }
 
 void binary::execute_build_commands() const
@@ -243,23 +205,95 @@ void binary::execute_build_commands() const
                                   "\tstdout: " << stdout_output << "\n"
                                   "\tstderr: " << stderr_output << "\n";
   }
-  string stdout_output;
-  string stderr_output;
-  auto result = execute_command(link_command, stdout_output, stderr_output);
-  if(!result.first)
+  for(auto&& command : final_commands)
   {
-    debug(debug::command_exec) << "binary::execute_build_commands::failed to execute command: " << link_command << "\n";
-    throw internal_error("Failed to execute link command.");
+    string stdout_output;
+    string stderr_output;
+    auto result = execute_command(command, stdout_output, stderr_output);
+    if(!result.first)
+    {
+      debug(debug::command_exec) << "binary::execute_build_commands::failed to execute command: " << command << "\n";
+      throw internal_error("Failed to execute link command.");
+    }
+    if(result.second != 0)
+    {
+      debug(debug::command_exec) << "binary::execute_commands::Command returned failure.\n" << stderr_output << "\n";
+      throw command_error(stderr_output, command);
+    }
+    debug(debug::command_exec) << "binary::execute_build_commands::Link command execution succesful!\n"
+                                  "\tcommand was: " << command << "\n"
+                                  "\tstdout: " << stdout_output << "\n"
+                                  "\tstderr: " << stderr_output << "\n";
   }
-  if(result.second != 0)
+}
+
+void binary::generate_parallel_commands(const toolchain_option_map& toolchain_options,
+                                        const os_option_map& /*os_options*/,
+                                        const string_set& header_directories)
+{
+  file_set& object_files = files[file_type::object]; // for easy access
+  for(auto&& type_files : files)
   {
-    debug(debug::command_exec) << "binary::execute_commands::Command returned failure.\n" << stderr_output << "\n";
-    throw command_error(stderr_output, link_command);
+    file_type type = type_files.first;
+    if(get_general_type(type) == file_type::source)
+    {
+      const file_set& source_files = type_files.second;
+      const language_option_map language_options = ::libambrosia::language_options.at(configuration.target_toolchain).at(type);
+      debug(debug::command_gen) << "binary::generate_parallel_commands::Generating commands for " << source_files.size() << " " << file_type_map_inverse.at(type) << " files.\n";
+      platform::command first_part; // before source file name
+      platform::command second_part; // between source file name and object file name
+      platform::command third_part; // after object file name
+
+      // generate the part of the command that comes before the source file name
+      debug(debug::command_gen) << "binary::generate_parallel_commands::Generating first part of command.\n";
+
+      if(type == file_type::source_c)
+        first_part.set_program(toolchain_options.at(toolchain_option::compiler_c));
+      else if(type == file_type::source_cxx)
+        first_part.set_program(toolchain_options.at(toolchain_option::compiler_cxx));
+      else if(type == file_type::source_fortran)
+        first_part.set_program(toolchain_options.at(toolchain_option::compiler_fortran));
+      else
+        throw error("Compiling source files other than C, C++, or Fortran is unsupported at this time.");
+
+      debug(debug::command_gen) << "binary::generate_parallel_commands::getting language standard option.\n";
+      //first_part.add_argument(language_options.at(language_option::compile_language));
+      if(!contains(configuration.config_strings, "msvc"))
+        first_part.add_argument(configuration.languagestd_option(language_options, type));
+      first_part.add_argument(toolchain_options.at(toolchain_option::compile_only));
+      for(auto&& header_directory : header_directories)
+      {
+        first_part.add_argument(toolchain_options.at(toolchain_option::include_dir) + header_directory);
+      }
+
+      // generate the part of the command that comes between the source file name and object file name
+      debug(debug::command_gen) << "binary::generate_parallel_commands::Generating second part of command.\n";
+      // nada
+
+      // generate part of the command that comes after the object file name
+      debug(debug::command_gen) << "binary::generate_parallel_commands::Generating third part of command.\n";
+      // nada
+      for(auto&& source_file : source_files)
+      {
+        const string object_filename = configuration.build_directory / get_basename(source_file.name) + toolchain_options.at(toolchain_option::object_extension);
+        const auto result = object_files.insert(file(object_filename, platform::last_modified(object_filename)));
+        if(!result.second)
+          throw internal_error("Object file with the exact same name encountered. I really need to handle this better.");
+        platform::command command = first_part;
+        command.add_argument(source_file.name);
+        command.add_arguments(second_part);
+        command.add_argument(toolchain_options.at(toolchain_option::output_object) + object_filename);
+        command.add_arguments(third_part);
+      }
+    }
+    else
+      debug(debug::command_gen) << "binary::generate_parallel_commands::Skipping " << file_type_map_inverse.at(type_files.first) << " files in command generation.\n";
   }
-  debug(debug::command_exec) << "binary::execute_build_commands::Link command execution succesful!\n"
-                                "\tcommand was: " << link_command << "\n"
-                                "\tstdout: " << stdout_output << "\n"
-                                "\tstderr: " << stderr_output << "\n";
+}
+
+void binary::generate_final_commands()
+{
+
 }
 
 } // namespace lib

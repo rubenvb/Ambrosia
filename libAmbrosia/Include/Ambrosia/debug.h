@@ -113,6 +113,8 @@ debug& debug::operator<<(const std::set<file_type>&);
 template<>
 debug& debug::operator<<(const platform::command&);
 template<>
+debug& debug::operator<<(const command_vector&);
+template<>
 debug& debug::operator<<(const external_dependency_set&);
 template<>
 debug& debug::operator<<(const dependency_map&);

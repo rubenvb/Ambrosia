@@ -43,6 +43,9 @@ public:
   // source directory and file where the object's configuration is attached to
   void set_source_directory(const std::string& source_directory);
 
+  const std::string& languagestd_option(const language_option_map& language_options,
+                                        const file_type type) const;
+
   // Environment PATH
   const string_vector environment_PATH;
   // build platform identification

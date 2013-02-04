@@ -139,6 +139,16 @@ debug& debug::operator<<(const platform::command& command)
   return *this;
 }
 template<>
+debug& debug::operator<<(const command_vector& commands)
+{
+  for(auto&& command : commands)
+  {
+    this->operator<<(command) << "\n";
+  }
+  return *this;
+}
+
+template<>
 debug& debug::operator<<(const external_dependency_set& dependencies)
 {
   if(output)
@@ -173,7 +183,7 @@ debug& debug::operator<<(const dependency_map& dependencies)
   return *this;
 }
 
-#endif // AMBROSIA_DEBUG
+#endif // AMBROSIA_DEBUG_H
 
 } // namespace lib
 

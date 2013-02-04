@@ -44,7 +44,7 @@ target::target(const string& name,
   files(),
   directories(),
   parallel_commands(),
-  link_command()
+  final_commands()
 {   }
 
 } // namespace lib

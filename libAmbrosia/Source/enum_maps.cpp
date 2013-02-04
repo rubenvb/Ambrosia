@@ -417,6 +417,27 @@ const std::map<toolchain, std::map<file_type, language_option_map>> language_opt
     }
   };
 
+extern const std::map<string, language_option> language_option_config_map =
+  {
+    {"c89", language_option::std_c89},
+    {"c90", language_option::std_c90},
+    {"c99", language_option::std_c99},
+    {"c11", language_option::std_c11},
+
+    {"GNU89", language_option::std_gnu89},
+    {"GNU90", language_option::std_gnu90},
+    {"GNU99", language_option::std_gnu99},
+    {"GNU11", language_option::std_gnu11},
+
+    {"C++89", language_option::std_cxx98},
+    {"C++03", language_option::std_cxx03},
+    {"C++11", language_option::std_cxx11},
+
+    {"GNU++98", language_option::std_gnuxx98},
+    {"GNU++03", language_option::std_gnuxx03},
+    {"GNU++11", language_option::std_gnuxx11}
+  };
+
 const std::map<os, os_option_map> os_options =
   {
     {os::Windows,

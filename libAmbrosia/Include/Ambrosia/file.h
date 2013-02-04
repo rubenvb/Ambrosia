@@ -23,6 +23,7 @@
 #include "global.h"
 
 // C++ includes
+#include <functional>
 #include <string>
 
 namespace ambrosia

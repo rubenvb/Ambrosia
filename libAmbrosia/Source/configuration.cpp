@@ -93,6 +93,44 @@ void configuration::initialize_config()
       config_strings.insert("mingw");
 }
 
+const string& configuration::languagestd_option(const language_option_map& language_options,
+                                                const file_type type) const
+{
+  switch(type)
+  {
+    case file_type::source_c:
+    {
+      static string_set cstd_strings = {"C89", "C90", "C11", "GNU89", "GNU90", "GNU99", "GNU11"};
+      string_vector result;
+      std::set_intersection(std::begin(cstd_strings), std::end(cstd_strings),
+                            std::begin(config_strings), std::end(config_strings),
+                            std::back_inserter(result));
+      if(result.size() == 1)
+        return language_options.at(language_option_config_map.at(result.back()));
+      else if(result.size() > 1)
+        throw internal_error("Double language std specification: ", result);
+      else
+        return language_options.at(language_option::std_c99);
+    }
+    case file_type::source_cxx:
+    {
+      static string_set cxxstd_strings = {"C++98", "C++03", "C++11", "GNU++98", "GNU++03", "GNU++11"};
+      string_vector result;
+      std::set_intersection(std::begin(cxxstd_strings), std::end(cxxstd_strings),
+                            std::begin(config_strings), std::end(config_strings),
+                            std::back_inserter(result));
+      if(result.size() == 1)
+        return language_options.at(language_option_config_map.at(result.back()));
+      else if(result.size() > 1)
+        throw internal_error("Double language std specification: ", result);
+      else
+        return language_options.at(language_option::std_cxx11);
+    }
+    default:
+      throw internal_error("language std options not fully implemented yet.");
+  }
+}
+
 } // namespace lib
 
 } // namespace ambrosia

@@ -58,6 +58,7 @@ extern const std::map<conditional_operator, std::function<bool(bool,bool)>> cond
 
 extern const std::map<toolchain, toolchain_option_map> toolchain_options;
 extern const std::map<toolchain, std::map<file_type, language_option_map>> language_options;
+extern const std::map<std::string, language_option> language_option_config_map;
 extern const std::map<os, os_option_map> os_options;
 
 } // namespace lib

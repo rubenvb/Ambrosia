@@ -61,12 +61,12 @@ public:
   target_type type;
 
   virtual const std::string& source_directory() const = 0;
-  std::map<file_type, build_element_set> files;
+  std::unordered_map<file_type, file_set> files;
   std::map<file_type, string_set> directories;
   string_set libraries;
 
   command_vector parallel_commands;
-  platform::command link_command;
+  command_vector final_commands;
 };
 
 } // namespace lib

@@ -48,7 +48,7 @@ public:
   void find_source_files(const std::string& filename,
                          const std::string& source_directory,
                          const string_set& subdirectories,
-                         build_element_set& files);
+                         file_set& files);
   // Match filename with all directories and match wildcards
   const file_set match_source_files(const std::string& filename,
                                     const configuration* config,

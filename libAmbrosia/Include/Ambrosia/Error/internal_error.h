@@ -36,7 +36,9 @@ namespace lib
 class internal_error : public error
 {
 public:
-    internal_error( const std::string& message );
+    internal_error(const std::string& message);
+    internal_error(const std::string& message,
+                   const string_vector& list);
 
     void output_message() const;
 };

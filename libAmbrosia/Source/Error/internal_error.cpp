@@ -33,6 +33,10 @@ namespace lib
 internal_error::internal_error(const string& message)
 : error(message)
 {   }
+internal_error::internal_error(const string& message,
+                               const string_vector& list)
+: error(message, list)
+{   }
 
 void internal_error::output_message() const
 {

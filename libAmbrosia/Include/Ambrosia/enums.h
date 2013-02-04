@@ -22,6 +22,9 @@
 // Global include
 #include "Ambrosia/global.h"
 
+// C++ includes
+#include <functional>
+
 namespace ambrosia
 {
 namespace lib
@@ -81,6 +84,7 @@ enum class file_type
   header,
   header_c,
   header_cxx,
+  object,
   library,
   executable,
   resource,
@@ -181,5 +185,16 @@ enum class os_option
 } // namespace lib
 
 } // namespace ambrosia
+
+// std::hash specializations
+namespace std
+{
+  template <>
+  struct hash<libambrosia::file_type>
+  {
+    std::size_t operator()(const libambrosia::file_type& type) const
+    { return hash<int>()(static_cast<int>(type)); }
+  };
+}
 
 #endif // AMBROSIA_ENUMS_H

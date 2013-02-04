@@ -62,7 +62,7 @@ const file_set& file_cache::get_source_file_set(const std::string& directory)
 void file_cache::find_source_files(const std::string& filename,
                                    const std::string& source_directory,
                                    const string_set& subdirectories,
-                                   build_element_set& files)
+                                   file_set& files)
 {
   debug(debug::files) << "file_cache::find_source_files::Finding matches for " << filename << " in subdirectories of " << source_directory << ":\n" << subdirectories;
   // handle filename with directory prepended
