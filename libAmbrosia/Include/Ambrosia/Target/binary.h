@@ -68,7 +68,8 @@ private:
   void generate_parallel_commands(const toolchain_option_map& toolchain_options,
                                   const os_option_map& os_options,
                                   const string_set& header_directories);
-  void generate_final_commands();
+  void generate_final_commands(const string_set& library_directories,
+                               const string_vector& dependency_libraries);
 };
 
 } // namespace lib

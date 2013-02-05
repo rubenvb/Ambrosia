@@ -112,9 +112,9 @@ const map<string, target_type> target_type_map =
   };
 const map<target_type, string> target_type_map_inverse =
   {
-    {target_type::application, "app"},
-    {target_type::library,     "lib"},
-    {target_type::project,     "sub"},
+    {target_type::application, "application"},
+    {target_type::library,     "library"},
+    {target_type::project,     "subproject"},
     {target_type::install,     "install"},
     {target_type::test,        "test"}
   };
@@ -129,6 +129,7 @@ const map<string, file_type> file_type_map =
     {"HEADERS",         file_type::header},
     {"HEADERS_C",       file_type::header_c},
     {"HEADERS_CXX",     file_type::header_cxx},
+    {"OBJECT",          file_type::object},
     {"LIBS",            file_type::library},
     {"RESOURCES",       file_type::resource},
     {"QT_UI",           file_type::Qt_ui},
@@ -137,19 +138,20 @@ const map<string, file_type> file_type_map =
   };
 const map<file_type, string> file_type_map_inverse =
   {
-    {file_type::source,         "SOURCES"},
-    {file_type::source_c,       "SOURCES_C"},
-    {file_type::source_cxx,     "SOURCES_CXX"},
-    {file_type::source_java,    "SOURCES_JAVA"},
-    {file_type::source_fortran, "SOURCES_FORTRAN"},
-    {file_type::header,         "HEADERS"},
-    {file_type::header_c,       "HEADERS_C"},
-    {file_type::header_cxx,     "HEADER_CXX"},
-    {file_type::library,        "LIBS"},
-    {file_type::resource,       "RESOURCES"},
-    {file_type::Qt_ui,          "QT_UI"},
-    {file_type::Qt_moc,         "QT_MOC"},
-    {file_type::Qt_rc,          "Qt_RC"}
+    {file_type::source,         "source"},
+    {file_type::source_c,       "C source"},
+    {file_type::source_cxx,     "C++ source"},
+    {file_type::source_java,    "Java source"},
+    {file_type::source_fortran, "Fortran source"},
+    {file_type::header,         "header"},
+    {file_type::header_c,       "C header"},
+    {file_type::header_cxx,     "C++ header"},
+    {file_type::object,         "object"},
+    {file_type::library,        "library"},
+    {file_type::resource,       "resource"},
+    {file_type::Qt_ui,          "Qt ui"},
+    {file_type::Qt_moc,         "Qt moc"},
+    {file_type::Qt_rc,          "Qt rc"}
   };
 const map<string, file_type> directory_type_map =
   {
@@ -162,12 +164,12 @@ const map<string, file_type> directory_type_map =
   };
 const map<file_type, string> directory_type_map_inverse =
   {
-    {file_type::source,   "SOURCE_DIRS"},
-    {file_type::header,   "HEADER_DIRS"},
-    {file_type::resource, "RESOURCE_DIRS"},
-    {file_type::Qt_ui,    "QT_UI_DIRS"},
-    {file_type::Qt_moc,   "QT_MOC_DIRS"},
-    {file_type::Qt_rc,    "QT_RC_DIRS"}
+    {file_type::source,   "source"},
+    {file_type::header,   "header"},
+    {file_type::resource, "resource"},
+    {file_type::Qt_ui,    "Qt ui"},
+    {file_type::Qt_moc,   "Qt moc"},
+    {file_type::Qt_rc,    "Qt rc"}
   };
 
 const map<string, conditional_operator> conditional_operator_map =
