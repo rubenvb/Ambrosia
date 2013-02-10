@@ -172,6 +172,23 @@ time_t get_time(FILETIME const& ft)
   return static_cast<time_t>(ull.QuadPart / 10000000ULL - 11644473600ULL);
 }
 
+void read_from_pipe(const HANDLE read_end, string& result)
+{
+  DWORD bytes_available = 0;
+  while(PeekNamedPipe(read_end, nullptr, 0, nullptr, &bytes_available, nullptr) && bytes_available > 0)
+  {
+    debug(debug::platform) << "windows::execute_command::" << bytes_available << " bytes available on the stdout pipe.\n";
+    string buffer;
+    buffer.resize(bytes_available);
+    DWORD bytes_read = 0;
+    if(ReadFile(read_end, &buffer[0], bytes_available, &bytes_read, nullptr) && bytes_read != 0)
+    {
+      result.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
+      debug(debug::platform) << "windows::execute_command::Read " << bytes_read << " bytes from stdout pipe:\n"
+                             << buffer.substr(0, static_cast<size_t>(bytes_read)+1) << "\n";
+    }
+  }
+}
 
 /*
  * Mostly platform dependently implemented functions
@@ -304,8 +321,8 @@ std::pair<bool, int> execute_command(const platform::command& command,
   // adapted from http://msdn.microsoft.com/en-us/library/ms682499(VS.110).aspx
   SECURITY_ATTRIBUTES attributes;
 
-  attributes.nLength = static_cast<DWORD>(sizeof(SECURITY_ATTRIBUTES)); // Set the bInheritHandle flag so pipe handles are inherited.
-  attributes.bInheritHandle = TRUE;
+  attributes.nLength = static_cast<DWORD>(sizeof(SECURITY_ATTRIBUTES));
+  attributes.bInheritHandle = TRUE; // Set the bInheritHandle flag so pipe handles are inherited.
   attributes.lpSecurityDescriptor = nullptr;
 
   // Create a pipe for the child process's STDOUT
@@ -318,9 +335,6 @@ std::pair<bool, int> execute_command(const platform::command& command,
   HANDLE stderr_write_handle;
   if(!CreatePipe(&stderr_read_handle, &stderr_write_handle, &attributes, 0))
     throw error("Win32 error: Unable to create pipe for stderr.");
-  // Ensure the read handle to the pipe for STDOUT is not inherited.
-  if(!SetHandleInformation(stdout_read_handle, HANDLE_FLAG_INHERIT, 0))
-    throw error("Win32 error: Unable to set stdout read handle inheritability.");
 
   PROCESS_INFORMATION process_info = {0,0,0,0};
   STARTUPINFOW startup_info = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
@@ -330,11 +344,7 @@ std::pair<bool, int> execute_command(const platform::command& command,
   startup_info.hStdOutput =stdout_write_handle;
   startup_info.dwFlags |= STARTF_USESTDHANDLES;
 
-  //TODO: remove this stupid copy
-  //wstring arguments(command.program + L" " + command.arguments);
-  //debug(debug::always) << current_working_directory();
-
-  if(!CreateProcessW(nullptr,//command.program.c_str(), // app
+  if(!CreateProcessW(nullptr, // app
                      &command.arguments[0], // commandline arguments
                      nullptr, // process security attributes
                      nullptr, // primary thread security attributes
@@ -346,7 +356,7 @@ std::pair<bool, int> execute_command(const platform::command& command,
                      &process_info)) // receives PROCESS_INFORMATION
     return std::make_pair(false, -1); // return false to signify process creation error
 
-  debug(debug::platform) << "windows::execute_command::CreateProcess call successful.\n";
+  debug(debug::platform) << "windows::execute_command::CreateProcess call successful for " << command << "\n";
 
   // Close thread handle
   CloseHandle(process_info.hThread);
@@ -356,6 +366,9 @@ std::pair<bool, int> execute_command(const platform::command& command,
   {
     if(!GetExitCodeProcess(process_info.hProcess, &exit_code))
       throw error("Win32 error: failed to call GetExitCodeProcess with error: " + to_string(GetLastError()));
+
+    read_from_pipe(stdout_read_handle, string_cout);
+    read_from_pipe(stderr_read_handle, string_cerr);
 
     Sleep(100);
   }
@@ -370,26 +383,8 @@ std::pair<bool, int> execute_command(const platform::command& command,
   CloseHandle(stdout_write_handle);
   CloseHandle(stderr_write_handle);
 
-  // Read from pipes, a kB at a time
-  const size_t buffer_size = 1024;
-  string buffer;
-  buffer.resize(buffer_size);
-  DWORD bytes_read = 0;
-
-  debug(debug::platform) << "windows::execute_command::reading from stdout pipe.\n";
-  while(ReadFile(stdout_read_handle, &buffer[0], buffer_size, &bytes_read, nullptr) && bytes_read != 0)
-  {
-    string_cout.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
-    debug(debug::platform) << "windows::execute_command::Read " << bytes_read << " bytes from stdout pipe:\n"
-                           << string_cout << "\n";
-  }
-  debug(debug::platform) << "windows::execute_command::reading from stderr pipe.\n";
-  while(ReadFile(stderr_read_handle, &buffer[0], buffer_size, &bytes_read, nullptr) && bytes_read != 0)
-  {
-    string_cerr.append(buffer.substr(0, static_cast<size_t>(bytes_read)+1));
-    debug(debug::platform) << "windows::execute_command::Read " << bytes_read << " bytes from stderr pipe:\n"
-                           << string_cerr << (string_cerr.empty() ? "" : "\n");
-  }
+  read_from_pipe(stdout_read_handle, string_cout);
+  read_from_pipe(stderr_read_handle, string_cerr);
   // Close pipe read handles
   CloseHandle(stdout_read_handle);
   CloseHandle(stderr_read_handle);

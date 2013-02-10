@@ -53,8 +53,10 @@
 // C-ish includes
 #include <cstring>
 
-libambrosia_namespace_begin
-
+namespace ambrosia
+{
+namespace lib
+{
 namespace platform
 {
 
@@ -272,4 +274,6 @@ unique_ptr<ofstream> open_ofstream(const std::string& filename)
 
 } // namespace platform
 
-libambrosia_namespace_end
+} // namespace lib
+
+} // namespace ambrosia

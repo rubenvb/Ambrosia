@@ -32,6 +32,11 @@
 #include <utility>
 #include <vector>
 
+// Platform includes
+#ifdef _WIN32
+#include <windows.h>
+#endif // _WIN32
+
 namespace ambrosia
 {
 namespace lib
@@ -90,6 +95,8 @@ struct command
 #if _WIN32
 const std::string convert_to_utf8(const std::wstring& utf16_string);
 const std::wstring convert_to_utf16(const std::string& utf8_string);
+time_t get_time(FILETIME const& ft);
+void read_from_pipe(const HANDLE read_end, std::string& result);
 #endif // _WIN32
 /*
  * Possible commonly implemented functions

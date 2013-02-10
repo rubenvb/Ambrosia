@@ -225,7 +225,7 @@ const std::map<toolchain, toolchain_option_map> toolchain_options =
         {toolchain_option::dynamic_linker_fortran, "gfortran"},
 
         {toolchain_option::static_linker,       "ar"},
-        {toolchain_option::static_link_options, "rcsP"},
+        {toolchain_option::static_link_options, "rcsP "},
 
         {toolchain_option::link_debug,            ""},
         {toolchain_option::link_optimize,         "-flto"},
@@ -317,7 +317,7 @@ const std::map<toolchain, toolchain_option_map> toolchain_options =
         {toolchain_option::dynamic_linker_cxx, "clang++"},
 
         {toolchain_option::static_linker,       "ar"},
-        {toolchain_option::static_link_options, "rcsP"},
+        {toolchain_option::static_link_options, "rcsP "},
 
         {toolchain_option::link_debug,            ""},
         {toolchain_option::link_optimize,         "-flto"},

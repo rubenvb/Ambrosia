@@ -19,10 +19,13 @@
 lib Ambrosia : lib (msvc)boost
 {
   HEADER_DIRS Include
+  HEADERS Ambrosia/*.h \
+          Ambrosia/Error/*.h \
+          Ambrosia/Target/*.h
+
   SOURCE_DIRS Source \
               Source/Error \
               Source/Target
-
   SOURCES *.cpp \
           Platform/common.cpp
   # Platform files

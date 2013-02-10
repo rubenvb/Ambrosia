@@ -293,8 +293,7 @@ void binary::generate_final_commands(const string_set& library_directories,
   {
     //TODO: check static vs shared library
     link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_linker));
-    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_link_options));
-    link_command.add_argument(configuration.build_directory / (toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + configuration.name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension)));
+    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_link_options)+configuration.build_directory / (toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + configuration.name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension)));
   }
   else if(type == target_type::application)
   {

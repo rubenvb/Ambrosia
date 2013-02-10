@@ -49,10 +49,32 @@ using namespace ambrosia;
 
 using namespace std;
 
+#ifdef AMBROSIA_DEBUG
+time_t begin_time;
+time_t project_read_time;
+time_t command_generation_time;
+time_t command_execution_time;
+void output_execution_times()
+{
+  cerr << "Ambrosia execution times:\n"
+       << "Project loading: " << difftime(project_read_time, begin_time) << " seconds,\n"
+       << "Command generation: " << difftime(command_generation_time, project_read_time) << " seconds,\n"
+       << "Command execution: " << difftime(command_execution_time, command_generation_time) << " seconds,\n"
+       << "Total build time: " << difftime(time(0), begin_time) << " seconds.\n";
+}
+
+#endif
+
+
+
+
 int main(int argc, char* argv[])
 try {
 #ifdef AMBROSIA_DEBUG
-  time_t begin_time = time(0);
+  begin_time = time(0);
+  project_read_time = begin_time;
+  command_generation_time = begin_time;
+  command_execution_time = begin_time;
 #endif
   // improve iostream performance
   std::ios_base::sync_with_stdio(false);
@@ -68,14 +90,11 @@ try {
   string_vector arguments = lib::platform::get_commandline_arguments(argv, argc);
   apply_commandline_options(string_vector(argv+1, argv+argc), options, external_dependencies, project);
 
-  //project.read_project_files();
   lib::drink_nectar(project, external_dependencies);
+
 #ifdef AMBROSIA_DEBUG
-  const double project_read_time = difftime(time(0), begin_time);
-  time_t t = time(0);
+  project_read_time = time(0);
 #endif
-  // TODO: enable config strings from the commandline
-  // project.apply_project_configuration();
 
   project.generate_commands();
 
@@ -83,29 +102,24 @@ try {
     project.dump_commands();
 
 #ifdef AMBROSIA_DEBUG
-  const double command_generation_time = difftime(time(0), t);
-  t = time(0);
+  command_generation_time = time(0);
 #endif
 
   project.execute_build_commands();
+
 #ifdef AMBROSIA_DEBUG
-  const double command_execution_time = difftime(time(0), t);
-  t = time(0);
+  command_execution_time = time(0);
 #endif
 
 #ifdef AMBROSIA_DEBUG
-  const double total_time = difftime(time(0), begin_time);
-  cerr << "Ambrosia execution times:\n"
-       << "Project loading: " << project_read_time << " seconds,\n"
-       << "Command generation: " << command_generation_time << " seconds,\n"
-       << "Command execution: " << command_execution_time << " seconds,\n"
-       << "Total build time: " << total_time << " seconds.\n";
+  output_execution_times();
 #endif
 }
 #ifdef AMBROSIA_DEBUG
 catch(libambrosia::soft_error& e)
 {
   e.output_message();
+  output_execution_times();
 #else
 catch(libambrosia::soft_error&)
 {
@@ -114,9 +128,15 @@ catch(libambrosia::soft_error&)
 catch(libambrosia::error& e)
 {
   e.output_message();
+#ifdef AMBROSIA_DEBUG
+  output_execution_times();
+#endif
 }
 catch(std::exception& e)
 {
   cout << "something bad happened:\n";
   cout << e.what() << "\n";
+#ifdef AMBROSIA_DEBUG
+  output_execution_times();
+#endif
 }

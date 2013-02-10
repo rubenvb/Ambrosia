@@ -142,7 +142,7 @@ void nectar_loader::extract_nectar()
     }
     else if("sub" == token)
     {
-      debug(debug::parser) << "nectar_loader::extract_nectar::\'sub\' section found at line " << line_number << ".\n";
+      debug(debug::parser) << "nectar_loader::extract_nectar::Subproject section found at line " << line_number << ".\n";
       // get name and dependencies of sub target
       if(next_token(token))
       {
@@ -158,8 +158,7 @@ void nectar_loader::extract_nectar()
         string full_subproject_filename = full_subproject_directory / subproject_filename;
         if(!platform::file_exists(full_subproject_filename))
         {
-          //TODO: check what happens here...
-          debug(debug::nectar) << "nectar_loader::extract_nectar:Subproject filename is same as subdirectory.\n";
+          throw nectar_error("Subproject project file missing: " + full_subproject_filename, filename, line_number);
         }
         // 2. Open project file
         const auto& stream_ptr = platform::open_ifstream(full_subproject_filename);
