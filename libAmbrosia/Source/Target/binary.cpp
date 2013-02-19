@@ -53,53 +53,6 @@ binary::binary(const string& name,
   directories[file_type::executable].insert(this->configuration.build_directory);
 }
 
-void binary::add_source_file(const file_type general_type,
-                             const string& filename,
-                             file_cache& file_cache,
-                             const string& /*nectar_file*/,
-                             const size_t /*line_number*/)
-{
-  // add source file type to list
-  // search specific file_type directories
-  const file_type specific_type = detect_type(general_type, filename);
-  string_set& specific_directories = directories[specific_type];
-  string_set& general_directories = directories[general_type];
-  specific_directories.insert(std::begin(general_directories), std::end(general_directories));
-  debug(debug::target) << "binary::add_source_file::Finding " << file_type_map_inverse.at(specific_type) << " files matching " << filename << " in:\n"
-                      << specific_directories << "\n";
-  file_cache.find_source_files(filename, configuration.source_directory, specific_directories, files[specific_type]);
-  configuration.source_types.insert(specific_type);
-  //if(general_type != specific_type)
-  //  file_cache.find_source_files(filename, configuration.source_directory, general_directories, files[general_type]);
-}
-bool binary::add_source_directory(const file_type type,
-                                  const string& directory,
-                                  file_cache& file_cache)
-{
-  debug(debug::target) << "binary::add_source_directory::Adding directory " << directory << " of type " << file_type_map_inverse.at(type) << ".\n";
-  if(!file_cache.add_source_directory(configuration.source_directory / directory))
-    return false;
-  if(!directories[type].insert(directory).second)
-    debug(debug::target) << "binary::add_source_directory::Directory " << directory << " already present.\n";
-
-  const file_type general_type = get_general_type(type);
-  if(type != general_type)
-  {
-    debug(debug::target) << "binary::add_source_directory::Adding directory " << directory << " of general type " << file_type_map_inverse.at(type) << ".\n";
-    if(!directories[general_type].insert(directory).second)
-      debug(debug::target) << "binary::add_source_directory::Directory " << directory << " already present.\n";
-  }
-
-  return true;
-}
-
-void binary::add_library(const string& library,
-                         const string& /*nectar_file*/,
-                         const size_t /*line_number*/)
-{
-  libraries.insert(library);
-}
-
 void binary::generate_commands()
 {
   debug(debug::command_gen) << "binary::generate_commands::Generating commands for " << target_type_map_inverse.at(type) << ": " << name << ".\n";
@@ -288,15 +241,22 @@ void binary::generate_parallel_commands(const toolchain_option_map& toolchain_op
 void binary::generate_final_commands(const string_set& library_directories,
                                      const string_vector& dependency_libraries)
 {
+  time_t time_newest_object_file = std::max_element(std::begin(files.at(file_type::object)), std::end(files.at(file_type::object)), [](const file& f1, const file& f2) { return f1.time_modified < f2.time_modified; })->time_modified;
   platform::command link_command;
   if(type == target_type::library)
   {
+    const string library_name = configuration.build_directory / toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + configuration.name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension);
+    if(platform::last_modified(library_name) < time_newest_object_file)
+      return; // skip library linking if output file is newer than all object files
     //TODO: check static vs shared library
     link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_linker));
-    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_link_options)+configuration.build_directory / (toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + configuration.name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension)));
+    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_link_options) + library_name);
   }
   else if(type == target_type::application)
   {
+    const string application_name = configuration.build_directory / configuration.name  + os_options.at(configuration.target_os).at(os_option::executable_extension);
+    if(platform::last_modified(application_name) < time_newest_object_file)
+      return; // skip application linking
     if(contains(configuration.source_types, file_type::source_cxx))
     {
       debug(debug::command_gen) << "binary::generate_commands::Linking with C++ linker driver.\n";
@@ -315,8 +275,7 @@ void binary::generate_final_commands(const string_set& library_directories,
       link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::dynamic_linker_c));
     }
 
-    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::output_object));
-    link_command.add_argument(configuration.build_directory / configuration.name  + os_options.at(configuration.target_os).at(os_option::executable_extension));
+    link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::output_object)+application_name);
   }
   for(auto&& object_file : files.at(file_type::object))
   {

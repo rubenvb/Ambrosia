@@ -70,25 +70,8 @@ namespace ambrosia
 namespace lib
 {
 
-const set<char> special_characters =
-  {
-    '(',
-    ')',
-    '{',
-    '}',
-    ':',
-    ',',
-  };
-const set<char> special_characters_newline =
-  {
-    '(',
-    ')',
-    '{',
-    '}',
-    ':',
-    ',',
-    '\n',
-  };
+const set<char> special_characters = { '(', ')', '{', '}', ':', ',' };
+const set<char> special_characters_newline = { '(', ')', '{', '}', ':', ',', '\n' };
 
 nectar_loader::nectar_loader(::libambrosia::project& project,
                              istream& stream,
@@ -213,7 +196,7 @@ void nectar_loader::extract_nectar()
 
           unique_ptr<binary> binary_target(new binary(target_name, target_configuration, type, dependencies));
 
-          parse_binary(*binary_target, project.file_cache);
+          parse_binary(*binary_target);
 
           project.targets.emplace_back(std::move(binary_target));
         }
@@ -707,36 +690,36 @@ void nectar_loader::process_inner_list_conditional(const configuration& /*config
 }
 
 void nectar_loader::parse_file_list(const file_type type,
-                                    binary& binary,
-                                    file_cache& file_cache)
+                                    target& target,
+                                    configuration& configuration)
 {
   debug(debug::parser) << "nectar_loader::parse_file_list::Parsing " << file_type_map_inverse.at(type) << " file list.\n";
   bool empty = true; // a list must not be empty
   string token;
 
-  while(next_list_token(binary.configuration, token))
+  while(next_list_token(configuration, token))
   {
     debug(debug::parser) << "nectar_loader::parse_file_list::adding matches to file " << token << " to the file list.\n";
     empty = false;
-    binary.add_source_file(type, token, file_cache, filename, line_number); // errors are assembled in this function
+    add_source_file(target, type, token, configuration);
   }
   if(empty)
     throw syntax_error("A list must not be empty.", filename, line_number);
 }
 void nectar_loader::parse_source_directory_list(const file_type type,
-                                                binary& binary,
-                                                file_cache& file_cache)
+                                                target& target,
+                                                const configuration& configuration)
 {
   debug(debug::parser) << "nectar_loader::parse_source_directory_list::Parsing full list, nonexistent directories are kept in error_list.\n";
   bool empty_list = true; // a list must not be empty
   string token;
   string_vector error_list;
   // gather all list items
-  while(next_list_token(binary.configuration, token))
+  while(next_list_token(configuration, token))
   {
     empty_list = false;
 
-    if(!binary.add_source_directory(type, token, file_cache))
+    if(!add_source_directory(target, type, token, configuration))
       error_list.push_back("line " + to_string(line_number) +": " + token); // add the bad directory to error_list
   }
   if(empty_list)
@@ -753,12 +736,12 @@ void nectar_loader::parse_variable_list(string_set&)
   throw nectar_error("Variable list parsing isn't done yet.", filename, line_number);
 }
 
-void nectar_loader::parse_library_list(binary& binary,
-                                       file_cache& /*file_cache*/)
+void nectar_loader::parse_library_list(target& target,
+                                       const configuration& configuration)
 {
   string token;
   string_vector error_list;
-  while(next_list_token(binary.configuration, token))
+  while(next_list_token(configuration, token))
   {
     // LIBS items must be of the form '-lsomelib' or '-Lsomedirectory'
     if(token.size() <= 2)
@@ -767,7 +750,7 @@ void nectar_loader::parse_library_list(binary& binary,
     {
       token = token.substr(2);
       debug(debug::parser) << "nectar_loader::parse_library_list::Found library name: " << token << ".\n";
-      binary.add_library(token, filename, line_number);
+      add_library(target, token);
     }
     else if(!token.compare(0, 2, "-L"))
     {
@@ -786,13 +769,100 @@ void nectar_loader::parse_library_list(binary& binary,
   }
 }
 
-void nectar_loader::parse_global()
+void nectar_loader::add_source_file(target& target,
+                                    const file_type general_type,
+                                    const string& filename,
+                                    configuration& configuration)
 {
-  throw internal_error("nectar_loader::parse_global::Unimplemented.");
+  // add source file type to list
+  // search specific file_type directories
+  const file_type specific_type = detect_type(general_type, filename);
+  string_set& specific_directories = target.directories[specific_type];
+  string_set& general_directories = target.directories[general_type];
+  specific_directories.insert(std::begin(general_directories), std::end(general_directories));
+  debug(debug::parser) << "nectar_loader::add_source_file::Finding " << file_type_map_inverse.at(specific_type) << " files matching " << filename << " in:\n"
+                       << specific_directories << "\n";
+  project.file_cache.find_source_files(filename, configuration.source_directory, specific_directories, target.files[specific_type]);
+  configuration.source_types.insert(specific_type);
+}
+bool nectar_loader::add_source_directory(target& target,
+                                         const file_type type,
+                                         const string& directory,
+                                         const configuration& configuration)
+{
+  debug(debug::parser) << "nectar_loader::add_source_directory::Adding directory " << directory << " of type " << file_type_map_inverse.at(type) << ".\n";
+  if(!project.file_cache.add_source_directory(configuration.source_directory / directory))
+    return false;
+  if(!target.directories[type].insert(directory).second)
+    debug(debug::parser) << "nectar_loader::add_source_directory::Directory " << directory << " already present.\n";
+
+  const file_type general_type = get_general_type(type);
+  if(type != general_type)
+  {
+    debug(debug::parser) << "nectar_loader::add_source_directory::Adding directory " << directory << " of general type " << file_type_map_inverse.at(type) << ".\n";
+    if(!target.directories[general_type].insert(directory).second)
+      debug(debug::parser) << "nectar_loader::add_source_directory::Directory " << directory << " already present.\n";
+  }
+  return true;
 }
 
-void nectar_loader::parse_binary(binary& binary,
-                                 file_cache& file_cache)
+void nectar_loader::add_library(target& target,
+                                const string& library)
+{
+  target.libraries.insert(library);
+}
+
+
+void nectar_loader::parse_global()
+{
+  debug(debug::parser) << "nectar_loader::parse_global::Processing global section.\n";
+  size_t curly_brace_count = 1; // parsing starts inside curly braces block
+  string token;
+  bool already_modified_NAME = false;
+  while(curly_brace_count > 0 && next_token(token))
+  {
+    debug(debug::parser) << "nectar_loader::parse_global::Token: \'" << token << "\'.\n";
+    if("}" == token)
+      ++curly_brace_count;
+    else if("{" == token)
+      --curly_brace_count;
+    else if("(" == token)
+      process_inner_conditional(project.configuration);
+    else if("CONFIG" == token)
+      // Fix this: not everything is possible in global sections
+      parse_variable_list(project.configuration.config_strings);
+    else if ("NAME" == token)
+    {  // do stuff here
+    }
+    else
+    {
+      file_type type;
+      if(map_value(file_type_map, token, type))
+      {
+        debug(debug::parser) << "nectar_loader::parse_global::" << token << " list detected.\n";
+        if(type == file_type::library)
+          parse_library_list(project, project.configuration);
+        else
+          parse_file_list(type, project, project.configuration);
+
+        debug(debug::parser) << "nectar_loader::parse_global::Succesfully parsed list of files or librar(y director)ies.\n";
+      } // or a list of directories
+      else if(map_value(directory_type_map, token, type))
+      {
+        debug(debug::parser) << "nectar_loader::parse_global::" << file_type_map_inverse.at(type) << " directory list detected.\n";
+        const file_type general_type = get_general_type(type);
+        if(general_type == file_type::source || type == file_type::header)
+          parse_source_directory_list(type, project, project.configuration);
+        else
+          throw nectar_error("Parsing of " + token + " not yet implemented.", filename, line_number);
+      }
+      else
+        throw syntax_error("Unexpected token: " + token, filename, line_number);
+    }
+  }
+}
+
+void nectar_loader::parse_binary(binary& binary)
 {
   debug(debug::parser) << "nectar_loader::parse_binary::Processing named target section: " << binary.name << ".\n";
   size_t curly_brace_count = 1; // parsing starts inside curly braces block
@@ -809,10 +879,7 @@ void nectar_loader::parse_binary(binary& binary,
     else if("(" == token)
       process_inner_conditional(binary.configuration);
     else if("CONFIG" == token)
-    {
-      debug(debug::parser) << "nectar_loader::parse_binary::CONFIG detected.\n";
       parse_variable_list(binary.configuration.config_strings);
-    }
     else if ("NAME" == token)
     {
       debug(debug::parser) << "nectar_loader::parse_binary::NAME detected.\n";
@@ -839,9 +906,9 @@ void nectar_loader::parse_binary(binary& binary,
       {
         debug(debug::parser) << "nectar_loader::parse_binary::" << token << " list detected.\n";
         if(type == file_type::library)
-          parse_library_list(binary, file_cache);
+          parse_library_list(binary, binary.configuration);
         else
-          parse_file_list(type, binary, file_cache);
+          parse_file_list(type, binary, binary.configuration);
 
         debug(debug::parser) << "nectar_loader::parse_binary::Succesfully parsed list of files or librar(y director)ies.\n";
       } // or a list of directories
@@ -850,7 +917,7 @@ void nectar_loader::parse_binary(binary& binary,
         debug(debug::parser) << "nectar_loader::parse_binary::" << file_type_map_inverse.at(type) << " directory list detected.\n";
         const file_type general_type = get_general_type(type);
         if(general_type == file_type::source || type == file_type::header)
-          parse_source_directory_list(type, binary, file_cache);
+          parse_source_directory_list(type, binary, binary.configuration);
         else
           throw nectar_error("Parsing of " + token + " not yet implemented.", filename, line_number);
       }

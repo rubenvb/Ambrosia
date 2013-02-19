@@ -104,19 +104,30 @@ private:
   void process_inner_list_conditional(const configuration& configuration); // evaluated against m_configuration, skips item in list
   // item lists
   void parse_file_list(const file_type type,
-                       binary& binary,
-                       file_cache& file_cache); // matches wildcards to filenames and checks existence
+                       target& target,
+                       configuration& configuration); // matches wildcards to filenames and checks existence
   void parse_source_directory_list(const file_type type,
-                                   binary & binary,
-                                   file_cache& file_cache); // searches source_directory / subdirectory
+                                   target& target,
+                                   const configuration& configuration); // searches source_directory / subdirectory
   void parse_build_directory(const file_type type);  // will be created on first use
   void parse_variable_list(string_set& items); // only adds or removes strings from variables
-  void parse_library_list(binary& binary,
-                          file_cache& file_cache); // parses -l and -L items, and handle interproject dependencies?
+  void parse_library_list(target& target,
+                          const configuration& configuration); // parses -l and -L items, and handle interproject dependencies?
+  // Adding files
+  void parse_library_list(target& target);
+  void add_source_file(target& target,
+                       const file_type general_type,
+                       const std::string& filename,
+                       configuration& configuration);
+  bool add_source_directory(target& target,
+                            const file_type type,
+                            const std::string& directory,
+                            const configuration& configuration);
+  void add_library(target& target,
+                   const std::string& library);
   // target parsers
   void parse_global();
-  void parse_binary(binary& binary,
-                    file_cache& file_cache);
+  void parse_binary(binary& binary);
   void parse_dependency(const std::string& name,
                         const target_type type,
                         const dependency_paths_set& external_dependencies);
