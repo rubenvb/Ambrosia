@@ -69,6 +69,7 @@ void file_cache::find_source_files(const std::string& filename,
   const string_pair directory_filename(split_preceding_directory(filename));
   const string& preceding_directory = directory_filename.first;
   const string& true_filename = directory_filename.second;
+  bool something_found = false;
   for(auto&& subdirectory : subdirectories)
   {
     const string full_directory = source_directory / subdirectory / preceding_directory;
@@ -86,9 +87,12 @@ void file_cache::find_source_files(const std::string& filename,
       {
         debug(debug::files) << "file_cache::find_source_files::Match found: " << source_file.name << "\n";
         files.insert(file(full_directory / source_file.name, source_file.time_modified));
+        something_found = true;
       }
     }
   }
+  if(!something_found)
+    throw error("nothing found, and I need to fix up this code.");
 }
 
 const file_set file_cache::match_source_files(const string& filename,

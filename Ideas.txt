@@ -17,3 +17,4 @@ TODO marks all sections of code with a known limitation. These are not bugs, jus
 - Improve target::add_directory to read cached file data from somewhere. Only fix if performance sucks.
    This would make it so that scan_directory is only called once per Ambrosia run, instead of once, per occurence.
    Of course the user should work around that by adding the directory in the global target if possible.
+- ar

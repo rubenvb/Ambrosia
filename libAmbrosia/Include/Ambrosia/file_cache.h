@@ -52,7 +52,7 @@ public:
   // Match filename with all directories and match wildcards
   const file_set match_source_files(const std::string& filename,
                                     const configuration* config,
-                                    const string_set& directories = string_set());
+                                    const string_set& directories = {});
   // Find
   // Read directory contents from disk (don't complain if already present).
   bool add_source_directory(const std::string& directory);

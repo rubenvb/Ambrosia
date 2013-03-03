@@ -2,4 +2,4 @@ This file lists a couple of items that need drastic improvement or general code 
 
 1. nectar_loader: the parser is ugly as hell.
 
-2. file_cache: both the project class and each target hold references to the same single file_cache instance. This can be improved.
+2. algorithm: generalize a split_string, it is used in commandline and parse_binary for sure, maybe other places as well.

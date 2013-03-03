@@ -38,11 +38,13 @@ namespace lib
 {
 
 target::target(const string& name,
-               const target_type type)
+               const target_type type,
+               const std::unordered_map<file_type, file_set>& files,
+               const std::map<file_type, string_set>& directories)
 : name(name),
   type(type),
-  files(),
-  directories(),
+  files(files),
+  directories(directories),
   parallel_commands(),
   final_commands()
 {   }

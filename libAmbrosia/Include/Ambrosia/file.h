@@ -33,7 +33,7 @@ namespace lib
 
 struct file
 {
-  file(const std::string& name = "",
+  file(const std::string& name = {},
        const time_t time_modified = 0)
   : name(name), time_modified(time_modified)
   {}

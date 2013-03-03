@@ -58,14 +58,14 @@ public:
                 const std::string& full_filename,
                 const std::string& sub_directory,
                 const dependency_paths_set& external_dependencies,
-                const dependency_map& internal_dependencies = dependency_map());
+                const dependency_map& internal_dependencies = {});
   ~nectar_loader();
 
   void extract_nectar();
 
   // Disallow copy(constructor)ing and assignment (shuts up warning of -Weffc++)
-  nectar_loader& operator=(const nectar_loader&) DELETED_FUNCTION;
-  nectar_loader(const nectar_loader&) DELETED_FUNCTION;
+  nectar_loader& operator=(const nectar_loader&) = delete;
+  nectar_loader(const nectar_loader&) = delete;
 
 private:
   libambrosia::project& project;
@@ -74,14 +74,16 @@ private:
   const std::string& filename; // used for error reporting
   const std::string subdirectory; // used for file searching, without configuration.source_directory() !
   std::istream& stream; // file input stream
-  std::istream::pos_type current_position; // current istream position
   std::size_t line_number; // used for error reporting
   bool global_processed; // only one global section per project file is allowed
+  // keep track for previous_token
+  std::istream::pos_type current_position;
+  std::size_t current_line_number;
 /*
  * Warning output
  *****************/
   void syntax_warning(const std::string& message,
-                      const string_vector& warning_list = string_vector()) const;
+                      const string_vector& warning_list = {}) const;
 /*
  * Lexing
  *********/

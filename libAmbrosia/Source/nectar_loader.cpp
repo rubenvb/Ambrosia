@@ -181,7 +181,7 @@ void nectar_loader::extract_nectar()
       if(next_token(token))
       {
         if("{" == token)
-          throw syntax_error("Expected \'" + token + "\' name after \'" + token + "\'.", filename, line_number);
+          throw syntax_error("Expected " + token + " name after \'" + token + "\'.", filename, line_number);
         else
         {
           // Store target name
@@ -190,15 +190,16 @@ void nectar_loader::extract_nectar()
           // Add target's dependencies
           dependency_map dependencies = read_dependencies();
 
-          configuration target_configuration = project.configuration;
-          debug(debug::config) << "nectar_loader::extract_nectar::Setting build directory for binary " << target_name << ".\n";
-          //target_configuration.build_directory = target_configuration.build_directory / target_name;
+          if(next_token(token) && token == "{")
+          {
+            unique_ptr<binary> binary_target(new binary(target_name, type, project.configuration, project.files, project.directories, dependencies));
 
-          unique_ptr<binary> binary_target(new binary(target_name, target_configuration, type, dependencies));
+            parse_binary(*binary_target);
 
-          parse_binary(*binary_target);
-
-          project.targets.emplace_back(std::move(binary_target));
+            project.targets.emplace_back(std::move(binary_target));
+          }
+          else
+            throw syntax_error("Expected \'{\' after target name or dependency list.", filename, line_number);
         }
       }
     }
@@ -302,12 +303,15 @@ bool nectar_loader::next_token(string& token,
   // FIXME: ugly as hell, alternatives welcome.
   token.clear();
   bool inside_quotes = false;
+  bool reading_literal = false;
   char c;
-  current_position = stream.tellg(); // backup current position
+  // backup current position
+  current_position = stream.tellg();
+  current_line_number = line_number;
 
   while(stream.get(c))
   {
-    debug(debug::lexer) << "nectar_loader::next_token::line number " << line_number << ", character: \'" << output_form(c) << "\'', token so far: "
+    debug(debug::lexer) << "nectar_loader::next_token::line number " << line_number << ", character: \'" << output_form(c) << "\', token so far: "
                         << output_form(token) << "\n";
     if(inside_quotes)
     {
@@ -365,7 +369,21 @@ bool nectar_loader::next_token(string& token,
         break;
       }
       else if('\"' == c)
-        throw syntax_error("Beginning quotes must be preceded by a whitespace or a special character.", filename, line_number);
+      {
+        //FIXME very non-general, but effective way to handle string literal assignments
+        if(token.back() == '=')
+        {
+          reading_literal = true;
+          token.append(1, c);
+        }
+        else if(reading_literal)
+        {
+          reading_literal = false;
+          token.append(1, c);
+        }
+        else
+          throw syntax_error("Beginning quotes must be preceded by a whitespace or a special character.", filename, line_number);
+      }
       else
         token.append(1, c);
     }
@@ -379,6 +397,7 @@ void nectar_loader::previous_token()
 {
   debug(debug::parser) << "nectar_loader::previous_token::Resetting input stream position.\n";
   stream.seekg(current_position);
+  line_number = current_line_number;
 }
 
 bool nectar_loader::next_list_token(const configuration& configuration,
@@ -781,7 +800,7 @@ void nectar_loader::add_source_file(target& target,
   string_set& general_directories = target.directories[general_type];
   specific_directories.insert(std::begin(general_directories), std::end(general_directories));
   debug(debug::parser) << "nectar_loader::add_source_file::Finding " << file_type_map_inverse.at(specific_type) << " files matching " << filename << " in:\n"
-                       << specific_directories << "\n";
+                       << specific_directories;
   project.file_cache.find_source_files(filename, configuration.source_directory, specific_directories, target.files[specific_type]);
   configuration.source_types.insert(specific_type);
 }
@@ -812,7 +831,6 @@ void nectar_loader::add_library(target& target,
   target.libraries.insert(library);
 }
 
-
 void nectar_loader::parse_global()
 {
   debug(debug::parser) << "nectar_loader::parse_global::Processing global section.\n";
@@ -821,18 +839,24 @@ void nectar_loader::parse_global()
   bool already_modified_NAME = false;
   while(curly_brace_count > 0 && next_token(token))
   {
-    debug(debug::parser) << "nectar_loader::parse_global::Token: \'" << token << "\'.\n";
+    debug(debug::parser) << "nectar_loader::parse_global::Token: \'" << token << "\', curly_brace_count: " << curly_brace_count << ".\n";
     if("}" == token)
-      ++curly_brace_count;
-    else if("{" == token)
       --curly_brace_count;
+    else if("{" == token)
+      ++curly_brace_count;
     else if("(" == token)
       process_inner_conditional(project.configuration);
     else if("CONFIG" == token)
       // Fix this: not everything is possible in global sections
       parse_variable_list(project.configuration.config_strings);
     else if ("NAME" == token)
-    {  // do stuff here
+    {
+      if(!next_list_token(project.configuration, token))
+        throw syntax_error("Expected project name after NAME.", filename, line_number);
+
+      project.configuration.name = token;
+      if(next_list_token(project.configuration, token))
+        throw syntax_error("NAME must be followed by only one token.", filename, line_number);
     }
     else
     {
@@ -871,7 +895,7 @@ void nectar_loader::parse_binary(binary& binary)
 
   while(curly_brace_count > 0 && next_token(token))
   {
-    debug(debug::parser) << "nectar_loader::parse_binary::Token: \'" << token << "\'.\n";
+    debug(debug::parser) << "nectar_loader::parse_binary::Token: \'" << token << "\', line number " << line_number << ", curly_brace_count: " << curly_brace_count << ".\n";
     if("}" == token)
       --curly_brace_count;
     else if("{" == token)
@@ -880,6 +904,20 @@ void nectar_loader::parse_binary(binary& binary)
       process_inner_conditional(binary.configuration);
     else if("CONFIG" == token)
       parse_variable_list(binary.configuration.config_strings);
+    else if ("DEFINES" == token)
+    {
+      debug(debug::parser) << "nectar_loader::parse_binary::DEFINES detected.\n";
+      bool empty_list = true;
+      while(next_list_token(binary.configuration, token))
+      {
+        empty_list = false;
+        debug(debug::parser) << "nectar_loader::parse_binary::Adding \'" << token << "\' to list of DEFINES.\n";
+        if(!binary.configuration.defines.insert(token).second)
+          throw syntax_error("DEFINES already contains \'" +  token + "\'.", filename, line_number);
+      }
+      if(empty_list)
+        throw syntax_error("\'DEFINES\' must be followed by a list of compiler defines (e.g. SOMEMACRO, SOMEMACRO=somevalue).", filename, line_number);
+    }
     else if ("NAME" == token)
     {
       debug(debug::parser) << "nectar_loader::parse_binary::NAME detected.\n";
@@ -947,9 +985,9 @@ void nectar_loader::parse_dependency(const string& name,
     auto result = std::find_if(std::begin(dependencies->second), std::end(dependencies->second), find_target);
     if(result != std::end(dependencies->second))
     {
-      debug(debug::parser) << "nectar_loader::parse_dependency::Found dependency in project " << project.name << ", so it should be OK." << *result << "\n";
+      debug(debug::parser) << "nectar_loader::parse_dependency::Found dependency in project " << project.name << ", so it should be OK.\n";
       dependency = *result;
-      debug(debug::always) << dependency << "\n\n";
+      debug(debug::always) << dependency->name << "\n\n";
     }
   }
   if(dependency == nullptr)
@@ -1004,7 +1042,7 @@ void nectar_loader::parse_dependency(const string& name,
     else
       throw syntax_error("Unexpected token: " + token, filename, line_number);
   }
-  debug(debug::parser) << "nectar_loader::parse_dependency::Added dependency " << dependency << " to project " << project.name << ".\n";
+  debug(debug::parser) << "nectar_loader::parse_dependency::Added dependency " << dependency->name << " to project " << project.name << ".\n";
   project.dependencies[type].insert(dependency);
 }
 

@@ -49,6 +49,7 @@ configuration::configuration()
   project_file(),
   build_directory("."),
   user_variables(),
+  defines(),
   config_strings()
 {
   initialize_config();

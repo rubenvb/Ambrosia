@@ -36,9 +36,11 @@ class binary : public target
 public:
   // project local target
   binary(const std::string& name,
-         const ::libambrosia::configuration& configuration,
          const target_type type,
-         const dependency_map& dependencies = dependency_map());
+         const ::libambrosia::configuration& configuration,
+         const std::unordered_map<file_type, file_set>& files = {},
+         const std::map<file_type, string_set>& directories = {},
+         const dependency_map& dependencies = {});
 
   void generate_commands();
   void dump_commands() const;

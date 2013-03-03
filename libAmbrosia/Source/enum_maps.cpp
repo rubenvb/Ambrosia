@@ -198,6 +198,8 @@ const std::map<toolchain, toolchain_option_map> toolchain_options =
         {toolchain_option::compiler_fortran, "gfortran"},
         {toolchain_option::compiler_nologo,  ""},
 
+        {toolchain_option::define, "-D"},
+
         {toolchain_option::include_dir,     "-I"},
         {toolchain_option::include_file,    "-include"},
         {toolchain_option::include_file,    "-include"},
@@ -245,6 +247,8 @@ const std::map<toolchain, toolchain_option_map> toolchain_options =
         {toolchain_option::compiler_cxx,    "cl"},
         {toolchain_option::compiler_nologo, "/NOLOGO"},
 
+        {toolchain_option::define, "/D"},
+
         {toolchain_option::include_dir,     "/I"},
         {toolchain_option::include_file,    "/FI"},
         {toolchain_option::include_pch,     "/Fp"},
@@ -290,6 +294,8 @@ const std::map<toolchain, toolchain_option_map> toolchain_options =
         {toolchain_option::compiler_c,      "clang"},
         {toolchain_option::compiler_cxx,    "clang++"},
         {toolchain_option::compiler_nologo, ""},
+
+        {toolchain_option::define, "-D"},
 
         {toolchain_option::include_dir,     "-I"},
         {toolchain_option::include_file,    "-include"},

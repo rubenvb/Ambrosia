@@ -68,6 +68,8 @@ public:
   string_map user_variables; // user string --> value
   string_set config_strings;
 
+  string_set defines; // for -D... compiler option
+
   std::string gnu_prefix;
 
 private:

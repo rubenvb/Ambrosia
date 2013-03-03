@@ -41,7 +41,9 @@ class target
 {
 public:
   target(const std::string& name,
-         const target_type type);
+         const target_type type,
+         const std::unordered_map<file_type, file_set>& files = {},
+         const std::map<file_type, string_set>& directories = {});
 
   bool operator<(const target& rhs) const
   { return (name < rhs.name) ? true : (type < rhs.type); }

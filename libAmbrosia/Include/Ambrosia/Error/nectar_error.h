@@ -39,7 +39,7 @@ public:
   nectar_error(const std::string& message,
                const std::string& filename,
                const std::size_t line_number,
-               const string_vector& list = string_vector());
+               const string_vector& list = {});
 
   virtual void output_message() const;
 

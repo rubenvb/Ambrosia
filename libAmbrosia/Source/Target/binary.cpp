@@ -39,18 +39,20 @@ namespace lib
 {
 
 binary::binary(const string& name,
-               const ::libambrosia::configuration& configuration,
                const target_type type,
+               const ::libambrosia::configuration& configuration,
+               const std::unordered_map<file_type, file_set>& files,
+               const std::map<file_type, string_set>& directories,
                const dependency_map& dependencies)
-: target(name, type),
+: target(name, type, files, directories),
   configuration(configuration),
   dependencies(dependencies)
 {
   this->configuration.name = name;
   this->configuration.build_directory = configuration.build_directory / name;
   // Set default output directories:
-  directories[file_type::library].insert(this->configuration.build_directory);
-  directories[file_type::executable].insert(this->configuration.build_directory);
+  this->directories[file_type::library].insert(this->configuration.build_directory);
+  this->directories[file_type::executable].insert(this->configuration.build_directory);
 }
 
 void binary::generate_commands()
@@ -69,7 +71,8 @@ void binary::generate_commands()
     const string_set& dependency_header_directories = dependency->directories.at(file_type::header);
     if(dependency->type == target_type::external)
     {
-      debug(debug::command_gen) << "binary::generate_commands::Including external dependency " << dependency->name << "'s' header directories:\n";
+      // dependency_header_directories contains full paths (as e.g. specified on commandline)
+      debug(debug::command_gen) << "binary::generate_commands::Including external dependency " << dependency->name << "'s header directories:\n";
       for(auto&& header_directory : dependency_header_directories)
       {
         debug(debug::command_gen) << "\t" << header_directory << "\n";
@@ -78,6 +81,7 @@ void binary::generate_commands()
     }
     else
     {
+      debug(debug::command_gen) << "binary::generate_commands::Including internal dependency " << dependency->name << "'s header directories:\n";
       for(auto&& header_directory : dependency_header_directories)
       {
         debug(debug::command_gen) << "binary::generate_commands::Including directory: " << header_directory << ", with source directory " << source_directory << "\n";
@@ -86,8 +90,9 @@ void binary::generate_commands()
     }
     if(dependency->type == target_type::library)
     {
-      debug(debug::command_gen) << "binary::generate_commands::Including library " << dependency->name << " in (dynamic) linker command.\n"
-                                   "\twith library search directory: " << dependency->directories[file_type::library] << " and library names " << dependency->libraries << ".\n";
+      debug(debug::command_gen) << "binary::generate_commands::Including library " << dependency->name << " in (dynamic) linker command with library search directories:\n"
+                                << dependency->directories[file_type::library]
+                                << "\tand library names\n" << dependency->libraries;
       library_directories.insert(std::begin(dependency->directories[file_type::library]), std::end(dependency->directories[file_type::library]));
       dependency_libraries.push_back(dependency->name);
       for(auto&& library : dependency->libraries)
@@ -208,6 +213,12 @@ void binary::generate_parallel_commands(const toolchain_option_map& toolchain_op
         first_part.add_argument(toolchain_options.at(toolchain_option::include_dir) + header_directory);
       }
 
+      debug(debug::command_gen) << "binary::generate_parallel_commands::adding DEFINES.\n";
+      for(auto&& define : configuration.defines)
+      {
+        first_part.add_argument(toolchain_options.at(toolchain_option::define) + define);
+      }
+
       // generate the part of the command that comes between the source file name and object file name
       debug(debug::command_gen) << "binary::generate_parallel_commands::Generating second part of command.\n";
       // nada
@@ -242,11 +253,12 @@ void binary::generate_final_commands(const string_set& library_directories,
                                      const string_vector& dependency_libraries)
 {
   time_t time_newest_object_file = std::max_element(std::begin(files.at(file_type::object)), std::end(files.at(file_type::object)), [](const file& f1, const file& f2) { return f1.time_modified < f2.time_modified; })->time_modified;
+  // TODO: handle link library modified dates, currently always relinking...
   platform::command link_command;
   if(type == target_type::library)
   {
     const string library_name = configuration.build_directory / toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + configuration.name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension);
-    if(platform::last_modified(library_name) < time_newest_object_file)
+    if(platform::last_modified(library_name) > time_newest_object_file)
       return; // skip library linking if output file is newer than all object files
     //TODO: check static vs shared library
     link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_linker));
@@ -255,8 +267,9 @@ void binary::generate_final_commands(const string_set& library_directories,
   else if(type == target_type::application)
   {
     const string application_name = configuration.build_directory / configuration.name  + os_options.at(configuration.target_os).at(os_option::executable_extension);
-    if(platform::last_modified(application_name) < time_newest_object_file)
-      return; // skip application linking
+    //See TODO above
+    //if(platform::last_modified(application_name) > time_newest_object_file)
+    //  return; // skip application linking
     if(contains(configuration.source_types, file_type::source_cxx))
     {
       debug(debug::command_gen) << "binary::generate_commands::Linking with C++ linker driver.\n";

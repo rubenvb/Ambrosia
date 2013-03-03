@@ -102,6 +102,8 @@ enum class toolchain_option
   compiler_fortran, // gfortran, ...
   compiler_nologo, // /NOLOGO
 
+  define,
+
   include_dir, // -I, /I
   include_file, // -include, /FI
   include_pch, // -include, -Fp

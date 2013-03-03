@@ -36,7 +36,7 @@ struct build_element
   mutable file object_file;
   bool already_built;
 
-  build_element(const file& source, const file& object = file())
+  build_element(const file& source, const file& object = {})
   : source_file(source), object_file(object)
   {   }
 
