@@ -72,6 +72,7 @@ namespace lib
 
 const set<char> special_characters = { '(', ')', '{', '}', ':', ',' };
 const set<char> special_characters_newline = { '(', ')', '{', '}', ':', ',', '\n' };
+const set<char> special_characters_conditional = { '(', ')', '|', '+', '!' };
 
 nectar_loader::nectar_loader(::libambrosia::project& project,
                              istream& stream,
@@ -303,7 +304,6 @@ bool nectar_loader::next_token(string& token,
   // FIXME: ugly as hell, alternatives welcome.
   token.clear();
   bool inside_quotes = false;
-  bool reading_literal = false;
   char c;
   // backup current position
   current_position = stream.tellg();
@@ -316,6 +316,13 @@ bool nectar_loader::next_token(string& token,
     if(inside_quotes)
     {
       debug(debug::lexer) << "nectar_loader::next_token::Inside quotes.\n";
+      if('\\' == c)
+      {
+        if(stream.get(c))
+          token.append(1, c);
+        else
+          throw syntax_error("Valid escape character expected after \'\\\'", filename, line_number);
+      }
       if('\"' == c)
         break; // end of token at end of quotes
       else if('\n' == c)
@@ -368,22 +375,8 @@ bool nectar_loader::next_token(string& token,
         stream.putback(c);
         break;
       }
-      else if('\"' == c)
-      {
-        //FIXME very non-general, but effective way to handle string literal assignments
-        if(token.back() == '=')
-        {
-          reading_literal = true;
-          token.append(1, c);
-        }
-        else if(reading_literal)
-        {
-          reading_literal = false;
-          token.append(1, c);
-        }
-        else
-          throw syntax_error("Beginning quotes must be preceded by a whitespace or a special character.", filename, line_number);
-      }
+      //else if('\"' == c)
+      //  throw syntax_error("Beginning quotes must be preceded by a whitespace or a special character.", filename, line_number);
       else
         token.append(1, c);
     }
@@ -512,7 +505,7 @@ bool nectar_loader::test_condition(const function<bool(const string&)>& config_c
   bool previous_was_operator = false; // only for |!+
   bool negate = false;
   conditional_operator op = conditional_operator::left_parenthesis;
-  while(next_token(token))
+  while(next_token(token, special_characters_conditional))
   {
     if(token == "(")
     {
@@ -534,6 +527,8 @@ bool nectar_loader::test_condition(const function<bool(const string&)>& config_c
             throw std::logic_error( "nectar_loader::test_condition:Operator " + conditional_operator_map_inverse.at(op) + " unexpected." );
         }
       }
+      else
+        throw syntax_error("Opening parenthesis must be preceded by a conditional operator.", filename, line_number);
     }
     else if(token == ")")
     {
@@ -694,18 +689,26 @@ void nectar_loader::process_inner_conditional(const configuration& configuration
   {
     debug(debug::parser) << "nectar_loader::process_inner_conditional::conditional returned false, skipping all relevant parts.\n";
     string token;
-    while(next_token(token, special_characters_newline))
+    while(next_list_token(configuration, token))
     {
-      if( "\n" == token )
-        break; // reached the end
-      else
-        continue; // ignore anything in the list following a false conditional
+      debug(debug::parser) << "nectar_loader::process_inner_conditional::ignoring token: \'" << token << "\'.\n";
+      // ignore anything in the list following a false conditional
+      continue;
     }
   }
 }
-void nectar_loader::process_inner_list_conditional(const configuration& /*configuration*/)
+void nectar_loader::process_inner_list_conditional(const configuration& configuration)
 {
-  throw nectar_error("Inner list conditionals not implemented yet.", filename, line_number);
+  debug(debug::parser) << "nectar_loader::process_inner_list_conditional::Using target config:\n" << configuration.config_strings << "\n";
+  if(test_condition([&configuration](const string& item) { return contains(configuration.config_strings, item); }))
+    debug(debug::parser) << "nectar_loader::process_inner_list_conditional::condition returned true, nothing to skip.\n";
+  else
+  {
+    debug(debug::parser) << "nectar_loader::process_inner_list_conditional::conditional returned false, skipping list item.\n";
+    string token;
+    if(!next_list_token(configuration, token))
+      throw syntax_error("A list must not be empty.", filename, line_number);
+  }
 }
 
 void nectar_loader::parse_file_list(const file_type type,
