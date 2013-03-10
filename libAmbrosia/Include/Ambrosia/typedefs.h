@@ -48,7 +48,7 @@ namespace ambrosia
 typedef std::pair<std::string, std::string> string_pair;
 typedef std::map<std::string, std::string> string_map;
 typedef std::vector<std::string> string_vector;
-typedef std::unordered_set<std::string> string_set;
+typedef std::unordered_set<std::string> string_set; // must be unordered: insertion order must be maintained!
 
 // Heterogeneous typedefs
 typedef std::pair<std::string, bool> pair_string_bool;

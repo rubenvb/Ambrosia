@@ -59,48 +59,11 @@ void binary::generate_commands()
 {
   debug(debug::command_gen) << "binary::generate_commands::Generating commands for " << target_type_map_inverse.at(type) << ": " << name << ".\n";
 
-  // Dependency information gathering
   string_set header_directories;
   string_set library_directories;
-  string_vector dependency_libraries; // libraries to link to the final object file
-  debug(debug::command_gen) << "binary::generate_commands::Gathering information from target dependencies: " << dependencies[target_type::library].size() << " library dependencies.\n";
-  for(auto&& dependency : dependencies.at(target_type::library))
-  {
-    debug(debug::command_gen) << "binary::generate_commands::Including dependency " << dependency->name << "\'s header directories.\n";
-    const string& source_directory = dependency->source_directory();
-    const string_set& dependency_header_directories = dependency->directories.at(file_type::header);
-    if(dependency->type == target_type::external)
-    {
-      // dependency_header_directories contains full paths (as e.g. specified on commandline)
-      debug(debug::command_gen) << "binary::generate_commands::Including external dependency " << dependency->name << "'s header directories:\n";
-      for(auto&& header_directory : dependency_header_directories)
-      {
-        debug(debug::command_gen) << "\t" << header_directory << "\n";
-        header_directories.insert(header_directory);
-      }
-    }
-    else
-    {
-      debug(debug::command_gen) << "binary::generate_commands::Including internal dependency " << dependency->name << "'s header directories:\n";
-      for(auto&& header_directory : dependency_header_directories)
-      {
-        debug(debug::command_gen) << "binary::generate_commands::Including directory: " << header_directory << ", with source directory " << source_directory << "\n";
-        header_directories.insert(source_directory / header_directory);
-      }
-    }
-    if(dependency->type == target_type::library)
-    {
-      debug(debug::command_gen) << "binary::generate_commands::Including library " << dependency->name << " in (dynamic) linker command with library search directories:\n"
-                                << dependency->directories[file_type::library]
-                                << "\tand library names\n" << dependency->libraries;
-      library_directories.insert(std::begin(dependency->directories[file_type::library]), std::end(dependency->directories[file_type::library]));
-      dependency_libraries.push_back(dependency->name);
-      for(auto&& library : dependency->libraries)
-      {
-        dependency_libraries.push_back(library);
-      }
-    }
-  }
+  string_vector dependency_libraries;
+
+  gather_dependency_information(header_directories, library_directories, dependency_libraries);
 
   // add the project's header dirs
   for(auto&& directory : directories.at(file_type::header))
@@ -171,6 +134,55 @@ void binary::execute_build_commands() const
                                   "\tcommand was: " << command << "\n"
                                   "\tstdout: " << stdout_output << "\n"
                                   "\tstderr: " << stderr_output << "\n";
+  }
+}
+
+
+void binary::gather_dependency_information(string_set& header_directories,
+                                           string_set& library_directories,
+                                           string_vector& libraries)
+{
+  // Dependency information gathering
+  debug(debug::command_gen) << "binary::gather_dependency_information::Gathering information from target dependencies: " << dependencies[target_type::library].size() << " library dependencies.\n";
+  for(auto&& dependency : dependencies[target_type::library])
+  {
+    debug(debug::command_gen) << "binary::gather_dependency_information::Including dependency " << dependency->name << "\'s header directories.\n";
+    const string& source_directory = dependency->source_directory();
+    const string_set& dependency_header_directories = dependency->directories.at(file_type::header);
+    if(dependency->type == target_type::external)
+    {
+      // dependency_header_directories contains full paths (as e.g. specified on commandline)
+      debug(debug::command_gen) << "binary::gather_dependency_information::Including external dependency " << dependency->name << "'s header directories:\n";
+      for(auto&& header_directory : dependency_header_directories)
+      {
+        debug(debug::command_gen) << "\t" << header_directory << "\n";
+        header_directories.insert(header_directory);
+      }
+    }
+    else
+    {
+      debug(debug::command_gen) << "binary::gather_dependency_information::Including internal dependency " << dependency->name << "'s header directories:\n";
+      for(auto&& header_directory : dependency_header_directories)
+      {
+        debug(debug::command_gen) << "binary::gather_dependency_information::Including directory: " << header_directory << ", with source directory " << source_directory << "\n";
+        header_directories.insert(source_directory / header_directory);
+      }
+    }
+    debug(debug::command_gen) << "binary::gather_dependency_information::Including library " << dependency->name << " in (dynamic) linker command with library search directories:\n"
+                              << dependency->directories[file_type::library]
+                              << "\tand library names\n" << dependency->libraries;
+    libraries.push_back(dependency->name); // should use dependency->configuration.name, but that requires a cast as class target has no member configuration :(
+    for(auto&& library_directory : dependency->directories[file_type::library])
+    {
+      library_directories.insert(library_directory);
+    }
+
+    for(auto&& library : dependency->libraries)
+    {
+      libraries.push_back(library);
+    }
+    debug(debug::command_gen) << "binary::gather_dependency_information::Gathering dependency " << dependency->name << "\'s dependencies\' dependency information.\n";
+    dependency->gather_dependency_information(header_directories, library_directories, libraries);
   }
 }
 

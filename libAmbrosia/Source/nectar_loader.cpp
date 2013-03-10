@@ -471,10 +471,8 @@ dependency_map nectar_loader::read_dependencies()
         }
         const string& name = token;
         debug(debug::parser) << "nectar_loader::read_dependencies::Locating " << target_type_map_inverse.at(type) << " dependency: " << name << ".\n";
-        const size_t number_of_dependencies = dependencies.size();
-        find_dependencies(dependencies, project, type, name);
-        if(dependencies.size() == number_of_dependencies)
-          throw nectar_error("Dependency not declared in current project file: " + name + ". Make sure there is a matching \'dep\' item for this dependency.", filename, line_number);
+        if(!find_dependencies(dependencies, project, type, name))
+          throw nectar_error("Dependency not declared in current project file: " + name + ". Make sure there is a matching \'dep\' item for this dependency, or check the name if it is a lib/app target in the current project.", filename, line_number);
       }
     }
     else
@@ -990,7 +988,6 @@ void nectar_loader::parse_dependency(const string& name,
     {
       debug(debug::parser) << "nectar_loader::parse_dependency::Found dependency in project " << project.name << ", so it should be OK.\n";
       dependency = *result;
-      debug(debug::always) << dependency->name << "\n\n";
     }
   }
   if(dependency == nullptr)

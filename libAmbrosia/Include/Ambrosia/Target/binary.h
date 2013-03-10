@@ -48,6 +48,9 @@ public:
 
   const std::string& source_directory() const
   { return configuration.source_directory; }
+  void gather_dependency_information(string_set& header_directories,
+                                     string_set& library_directories,
+                                     string_vector& libraries);
 
   libambrosia::configuration configuration;
 

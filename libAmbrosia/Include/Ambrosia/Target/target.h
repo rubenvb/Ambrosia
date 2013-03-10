@@ -63,6 +63,9 @@ public:
   target_type type;
 
   virtual const std::string& source_directory() const = 0;
+  virtual void gather_dependency_information(string_set& header_directories,
+                                             string_set& library_directories,
+                                             string_vector& libraries);
   std::unordered_map<file_type, file_set> files;
   std::map<file_type, string_set> directories;
   string_set libraries;
