@@ -751,9 +751,27 @@ void nectar_loader::parse_build_directory(const file_type)
 {
   throw nectar_error("Build directory list parsing isn't done yet.", filename, line_number);
 }
-void nectar_loader::parse_variable_list(string_set&)
+void nectar_loader::parse_variable_list(string_set& strings,
+                                        const configuration& configuration)
 {
-  throw nectar_error("Variable list parsing isn't done yet.", filename, line_number);
+  string token;
+  while(next_list_token(configuration, token))
+  {
+    if(token[0] == '~')
+    {
+      auto it = strings.find(token);
+      if(it != std::end(strings))
+        strings.erase(it);
+      else
+        syntax_warning("String " + token + " not present in variable.");
+    }
+    else
+    {
+      if(!strings.insert(token).second)
+        syntax_warning("String " + token + " already in variable.");
+    }
+  }
+  //throw nectar_error("Variable list parsing isn't done yet.", filename, line_number);
 }
 
 void nectar_loader::parse_library_list(target& target,
@@ -849,7 +867,7 @@ void nectar_loader::parse_global()
       process_inner_conditional(project.configuration);
     else if("CONFIG" == token)
       // Fix this: not everything is possible in global sections
-      parse_variable_list(project.configuration.config_strings);
+      parse_variable_list(project.configuration.config_strings, project.configuration);
     else if ("NAME" == token)
     {
       if(!next_list_token(project.configuration, token))
@@ -904,7 +922,7 @@ void nectar_loader::parse_binary(binary& binary)
     else if("(" == token)
       process_inner_conditional(binary.configuration);
     else if("CONFIG" == token)
-      parse_variable_list(binary.configuration.config_strings);
+      parse_variable_list(binary.configuration.config_strings, binary.configuration);
     else if ("DEFINES" == token)
     {
       debug(debug::parser) << "nectar_loader::parse_binary::DEFINES detected.\n";

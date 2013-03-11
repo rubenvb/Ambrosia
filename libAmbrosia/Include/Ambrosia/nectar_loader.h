@@ -112,7 +112,8 @@ private:
                                    target& target,
                                    const configuration& configuration); // searches source_directory / subdirectory
   void parse_build_directory(const file_type type);  // will be created on first use
-  void parse_variable_list(string_set& items); // only adds or removes strings from variables
+  void parse_variable_list(string_set& items,
+                           const configuration& configuration); // only adds or removes strings from variables
   void parse_library_list(target& target,
                           const configuration& configuration); // parses -l and -L items, and handle interproject dependencies?
   // Adding files

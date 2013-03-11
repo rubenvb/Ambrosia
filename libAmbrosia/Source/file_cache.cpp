@@ -64,13 +64,16 @@ void file_cache::find_source_files(const std::string& filename,
                                    const string_set& subdirectories,
                                    file_set& files)
 {
-  debug(debug::files) << "file_cache::find_source_files::Finding matches for " << filename << " in subdirectories of " << source_directory << ":\n" << subdirectories;
+  string_set subdirs = subdirectories;
+  if(subdirs.empty())
+    subdirs.insert(".");
+  debug(debug::files) << "file_cache::find_source_files::Finding matches for " << filename << " in subdirectories of " << source_directory << ":\n" << subdirs;
   // handle filename with directory prepended
   const string_pair directory_filename(split_preceding_directory(filename));
   const string& preceding_directory = directory_filename.first;
   const string& true_filename = directory_filename.second;
   bool something_found = false;
-  for(auto&& subdirectory : subdirectories)
+  for(auto&& subdirectory : subdirs)
   {
     const string full_directory = source_directory / subdirectory / preceding_directory;
     debug(debug::files) << "file_cache::find_source_files::Finding matches in " << full_directory << ".\n";
