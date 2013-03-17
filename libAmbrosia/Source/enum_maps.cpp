@@ -172,6 +172,31 @@ const map<file_type, string> directory_type_map_inverse =
     {file_type::Qt_rc,    "Qt rc"}
   };
 
+const std::map<std::string, build_type> build_type_map =
+  {
+    {"release",            build_type::release},
+    {"debug",              build_type::debug},
+    {"release_with_debug", build_type::release_with_debug},
+    {"profile",            build_type::profile},
+  };
+extern const std::map<build_type, std::string> build_type_map_inverse =
+  {
+    {build_type::release,            "release"},
+    {build_type::debug,              "debug"},
+    {build_type::release_with_debug, "release with debug information"},
+    {build_type::profile,            "profile"},
+  };
+extern const std::map<std::string, linkage> linkage_map =
+  {
+    {"shared", linkage::load_time},
+    {"static", linkage::link_time}
+  };
+extern const std::map<linkage, std::string> linkage_map_inverse =
+  {
+    {linkage::load_time, "shared"},
+    {linkage::link_time, "static"}
+  };
+
 const map<string, conditional_operator> conditional_operator_map =
   {
     {")", conditional_operator::right_parenthesis},

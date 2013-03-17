@@ -45,7 +45,8 @@ public:
   const std::string& source_directory() const
   { return configuration.source_directory; }
 
-  lib::configuration configuration;
+  lib::configuration configuration; // projectwide configuration (inherited from parent or specified in global section
+
 
   dependency_map dependencies; // dep targets
   target_ptr_vector targets; // other targets

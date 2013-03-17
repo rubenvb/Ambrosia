@@ -67,6 +67,8 @@ public:
 
   string_map user_variables; // user string --> value
   string_set config_strings;
+  std::vector<linkage> build_linkages; // shared or static or both
+  std::vector<build_type> build_types; // debug, release, both or others
 
   string_set defines; // for -D... compiler option
 

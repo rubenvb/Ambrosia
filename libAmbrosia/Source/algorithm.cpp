@@ -59,6 +59,7 @@ namespace lib
  *************************/
 const string operator /(const string& left, const string& right)
 {
+  debug(debug::algorithm) << "algorithm::operator/::Combining " << left << " and " << right << ".\n";
   if(left.empty())
     return right;
   else if(right.empty())

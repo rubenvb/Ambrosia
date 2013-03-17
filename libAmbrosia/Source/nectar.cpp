@@ -24,10 +24,10 @@
 #include "Ambrosia/configuration.h"
 #include "Ambrosia/debug.h"
 #include "Ambrosia/dependency_paths.h"
+#include "Ambrosia/parser.h"
 #include "Ambrosia/platform.h"
 #include "Ambrosia/Target/project.h"
 #include "Ambrosia/typedefs.h"
-#include "Ambrosia/nectar_loader.h"
 
 // C++ includes
 #include <fstream>
@@ -91,16 +91,12 @@ void drink_nectar(project& project,
 {
   // open file
   const string& filename = project.configuration.source_directory / project.configuration.project_file;
-  const auto& stream_ptr(platform::open_ifstream(filename));
-  auto& stream = *stream_ptr;
-  if(!stream)
-    throw error("Unable to open *.nectar.txt file: " + filename);
 
   // read targets
   debug(debug::files) << "nectar::opening file: " << filename << " succeeded, loading contents.\n";
-  nectar_loader loader(project,  stream, filename, "", external_dependencies);
+  parser parser(project, filename, "", external_dependencies);
 
-  loader.extract_nectar();
+  parser.parse_nectar();
   debug(debug::nectar) << "nectar::drink_nectar::Finished parsing project files.\n";
 }
 

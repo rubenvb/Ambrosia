@@ -1,5 +1,7 @@
 This file lists a couple of items that need drastic improvement or general code cleanup.
 
-1. nectar_loader: the parser is ugly as hell.
+1. nectar_loader: split parser and lexer
 
 2. algorithm: generalize a split_string, it is used in commandline and parse_binary for sure, maybe other places as well.
+
+3. clean up file_cache, and don't try to match every file if there are no wildcards.

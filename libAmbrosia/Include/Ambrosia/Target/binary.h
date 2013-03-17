@@ -37,6 +37,8 @@ public:
   // project local target
   binary(const std::string& name,
          const target_type type,
+         const std::string& build_type,
+         const std::string& linkage,
          const ::libambrosia::configuration& configuration,
          const std::unordered_map<file_type, file_set>& files = {},
          const std::map<file_type, string_set>& directories = {},

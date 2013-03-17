@@ -370,7 +370,7 @@ std::pair<bool, int> execute_command(const platform::command& command,
     read_from_pipe(stdout_read_handle, string_cout);
     read_from_pipe(stderr_read_handle, string_cerr);
 
-    Sleep(100);
+    Sleep(10);
   }
   debug(debug::platform) << "windows::execute_command::Process exit code: " << exit_code << "\n";
 

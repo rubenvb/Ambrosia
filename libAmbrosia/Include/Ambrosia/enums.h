@@ -94,6 +94,20 @@ enum class file_type
   // ...
 };
 
+enum class build_type
+{
+  debug,
+  release,
+  release_with_debug,
+  profile
+  //...
+};
+enum class linkage
+{
+  link_time, // static library (.a, .lib)
+  load_time // shared library (.so, .dylib, .dll)
+};
+
 // Toolchain-specific options
 enum class toolchain_option
 {

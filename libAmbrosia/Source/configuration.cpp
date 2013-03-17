@@ -50,7 +50,9 @@ configuration::configuration()
   build_directory("."),
   user_variables(),
   defines(),
-  config_strings()
+  config_strings(),
+  build_linkages({linkage::link_time, linkage::load_time}),
+  build_types({build_type::debug, build_type::release})
 {
   initialize_config();
   debug(debug::config) << "\nconfiguration::config_strings contains:\n" << config_strings << "\n";

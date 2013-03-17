@@ -52,6 +52,11 @@ extern const std::map<file_type, std::string> file_type_map_inverse;
 extern const std::map<std::string, file_type> directory_type_map;
 extern const std::map<file_type, std::string> directory_type_map_inverse;
 
+extern const std::map<std::string, build_type> build_type_map;
+extern const std::map<build_type, std::string> build_type_map_inverse;
+extern const std::map<std::string, linkage> linkage_map;
+extern const std::map<linkage, std::string> linkage_map_inverse;
+
 extern const std::map<std::string, conditional_operator> conditional_operator_map;
 extern const std::map<conditional_operator, std::string> conditional_operator_map_inverse;
 extern const std::map<conditional_operator, std::function<bool(bool,bool)>> conditional_function_map;

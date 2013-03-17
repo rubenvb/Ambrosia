@@ -49,7 +49,7 @@ using namespace ambrosia;
 
 using namespace std;
 
-#ifdef AMBROSIA_DEBUG
+//#ifdef AMBROSIA_DEBUG
 time_t begin_time;
 time_t project_read_time;
 time_t command_generation_time;
@@ -62,20 +62,16 @@ void output_execution_times()
        << "Command execution: " << difftime(command_execution_time, command_generation_time) << " seconds,\n"
        << "Total build time: " << difftime(time(0), begin_time) << " seconds.\n";
 }
-
-#endif
-
-
-
+//#endif
 
 int main(int argc, char* argv[])
 try {
-#ifdef AMBROSIA_DEBUG
+//#ifdef AMBROSIA_DEBUG
   begin_time = time(0);
   project_read_time = begin_time;
   command_generation_time = begin_time;
   command_execution_time = begin_time;
-#endif
+//#endif
   // improve iostream performance
   std::ios_base::sync_with_stdio(false);
 
@@ -92,51 +88,52 @@ try {
 
   lib::drink_nectar(project, external_dependencies);
 
-#ifdef AMBROSIA_DEBUG
+//#ifdef AMBROSIA_DEBUG
   project_read_time = time(0);
-#endif
+//#endif
 
   project.generate_commands();
 
   if(options.dump_commands)
     project.dump_commands();
 
-#ifdef AMBROSIA_DEBUG
+//#ifdef AMBROSIA_DEBUG
   command_generation_time = time(0);
-#endif
+//#endif
 
   project.execute_build_commands();
 
-#ifdef AMBROSIA_DEBUG
+//#ifdef AMBROSIA_DEBUG
   command_execution_time = time(0);
-#endif
+//#endif
 
-#ifdef AMBROSIA_DEBUG
+//#ifdef AMBROSIA_DEBUG
   output_execution_times();
-#endif
+//#endif
 }
 #ifdef AMBROSIA_DEBUG
 catch(libambrosia::soft_error& e)
 {
   e.output_message();
-  output_execution_times();
-#else
+  #else
 catch(libambrosia::soft_error&)
 {
 #endif
+  output_execution_times();
+
 }
 catch(libambrosia::error& e)
 {
   e.output_message();
-#ifdef AMBROSIA_DEBUG
+//#ifdef AMBROSIA_DEBUG
   output_execution_times();
-#endif
+//#endif
 }
 catch(std::exception& e)
 {
   cout << "something bad happened:\n";
   cout << e.what() << "\n";
-#ifdef AMBROSIA_DEBUG
+//#ifdef AMBROSIA_DEBUG
   output_execution_times();
-#endif
+//#endif
 }

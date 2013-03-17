@@ -17,4 +17,9 @@ TODO marks all sections of code with a known limitation. These are not bugs, jus
 - Improve target::add_directory to read cached file data from somewhere. Only fix if performance sucks.
    This would make it so that scan_directory is only called once per Ambrosia run, instead of once, per occurence.
    Of course the user should work around that by adding the directory in the global target if possible.
-- ar
+- ar is much slower if there is an existing file. Delete existing file if it needs to be relinked.
+
+- split targets from configurations, to allow e.g. different configurations to be built (debug/release/static/shared).
+  This requires double target parsing, because there may be conditionals based on "shared" in CONFIG, e.g.
+  (windows+shared)DEFINES EXPORT_MY_API
+  (windows+static)DEFINES BUILDING_STATICALLY

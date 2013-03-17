@@ -40,6 +40,8 @@ namespace lib
 
 binary::binary(const string& name,
                const target_type type,
+               const std::string& build_type,
+               const std::string& linkage,
                const ::libambrosia::configuration& configuration,
                const std::unordered_map<file_type, file_set>& files,
                const std::map<file_type, string_set>& directories,
@@ -49,7 +51,9 @@ binary::binary(const string& name,
   dependencies(dependencies)
 {
   this->configuration.name = name;
-  this->configuration.build_directory = configuration.build_directory / name;
+  this->configuration.config_strings.insert(build_type);
+  this->configuration.config_strings.insert(linkage);
+  this->configuration.build_directory = configuration.build_directory / name / linkage / build_type;
   // Set default output directories:
   this->directories[file_type::library].insert(this->configuration.build_directory);
   this->directories[file_type::executable].insert(this->configuration.build_directory);
@@ -219,6 +223,7 @@ void binary::generate_parallel_commands(const toolchain_option_map& toolchain_op
       //first_part.add_argument(language_options.at(language_option::compile_language));
       if(!contains(configuration.config_strings, "msvc"))
         first_part.add_argument(configuration.languagestd_option(language_options, type));
+      first_part.add_argument(toolchain_options.at(toolchain_option::compiler_nologo));
       first_part.add_argument(toolchain_options.at(toolchain_option::compile_only));
       for(auto&& header_directory : header_directories)
       {
@@ -269,9 +274,11 @@ void binary::generate_final_commands(const string_set& library_directories,
   platform::command link_command;
   if(type == target_type::library)
   {
-    const string library_name = configuration.build_directory / toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + configuration.name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension);
-    if(platform::last_modified(library_name) > time_newest_object_file)
+    const string library_name = configuration.build_directory / (toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_prefix) + configuration.name + toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_library_extension));
+    debug(debug::always) << "\t" << library_name << "\n";
+    if(platform::last_modified(library_name) < time_newest_object_file)
       return; // skip library linking if output file is newer than all object files
+
     //TODO: check static vs shared library
     link_command.set_program(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_linker));
     link_command.add_argument(toolchain_options.at(configuration.target_toolchain).at(toolchain_option::static_link_options) + library_name);
