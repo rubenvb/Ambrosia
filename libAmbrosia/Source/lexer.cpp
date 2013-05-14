@@ -34,6 +34,8 @@
   using std::istream;
 #include <set>
   using std::set;
+#include <stdexcept>
+  using std::logic_error;
 #include <string>
   using std::string;
 

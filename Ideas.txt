@@ -23,3 +23,47 @@ TODO marks all sections of code with a known limitation. These are not bugs, jus
   This requires double target parsing, because there may be conditionals based on "shared" in CONFIG, e.g.
   (windows+shared)DEFINES EXPORT_MY_API
   (windows+static)DEFINES BUILDING_STATICALLY
+
+
+Redesigning the internals...
+============================
+
+The current design of Ambrosia needs a lot of hacking to work
+right:
+ - hand-written parser makes it difficult to catch all edge cases
+   * alternative e.g. Boost.Spirit: requires grammar definition and large dependency
+   * current lexer/parser is growing very robust through time, and for now not unwieldly monstrous.
+ - multiple parses of targets for requested build configurations.
+   * inefficient parsing and file searching!
+   * multiple output of the same error messages.
+   * ...
+ - only top-level dependencies.
+   * hard to track per-file dependencies (e.g. header file dependencies).
+   * rigid structure of dependency handling; "all or nothing"
+ - no implicit dependency sorting (not really design related, but still lame).
+ - Current command generation is terribly hardcoded.
+   * this limits flexibility, but even in the current command generation there should be enough (three parts to a command)
+   * really needs user-customizable CMake like toolchain files, but with a lot more info built-in.
+
+Proposed solution:
+ - the concepts "atom", "step", "rule", and "dependency" make up everything:
+   * atom:
+     > source file: created outside of build process (dependency, real source file)
+     > generated file: created during/by build process
+   * step:
+     > single command (external program) or operation (internal Ambrosia function call) to execute
+   * rule:
+     > one or more steps to generate one or more atom files from one or more atom files.
+
+ - classes used to describe this abstractness will be:
+   * atom: contains local configuration,
+      -> source: externally made file
+      -> product: file made during/by the build
+   * step -> internal: does not invoke external program
+          -> external: invokes external program
+   * rule: holds a list of steps, execute prerequisites, and a means to actually execute the steps
+
+ - rules will be generated from building blocks which consist of
+   * .rules.txt files or compiled-in version of these.
+   * atom configuration and Ambrosia configuration
+   * atom sources.
