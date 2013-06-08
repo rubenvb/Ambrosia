@@ -20,9 +20,9 @@ dep lib Ambrosia
 
 app Ambrosia : lib Ambrosia
 {
-  SOURCE_DIRS Source
-  HEADER_DIRS Include
-  HEADERS *.h
-  SOURCES *.cpp
+  SOURCE_DIRS .
+  HEADER_DIRS .
+  HEADERS *.h++
+  SOURCES *.c++
   #LIBS -lAmbrosia # library is automatically added if libAmbrosia is another project in the same tree
 }
