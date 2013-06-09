@@ -11,7 +11,7 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/debug.h
+ * Ambrosia/debug.h++
  * Class designed to be used as temporary output stream for debugging purposes.
  *
  **/
@@ -27,7 +27,7 @@ namespace ambrosia
     class debug;
   }
 }
-#define debug(x, ...) (void*)0 // empty
+#define debug(x, ...) (void)0 // no-op
 #else
 // libAmbrosia includes
 #include "Ambrosia/typedefs.h++"

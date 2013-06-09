@@ -11,7 +11,7 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/global.h
+ * Ambrosia/global.h++
  * Global header included by all other Ambrosia library headers.
  *
  **/

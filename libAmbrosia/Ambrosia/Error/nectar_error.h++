@@ -11,13 +11,13 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Error/nectar_error.h
+ * Ambrosia/Error/nectar_error.h++
  * Error related to a *.nectar.txt file.
  *
  **/
 
-#ifndef AMBROSIA_ERROR_NECTAR_ERROR_H
-#define AMBROSIA_ERROR_NECTAR_ERROR_H
+#ifndef AMBROSIA_NECTAR_ERROR_H
+#define AMBROSIA_NECTAR_ERROR_H
 
 // Global include
 #include "Ambrosia/global.h++"
@@ -52,4 +52,4 @@ protected:
 
 } // namespace ambrosia
 
-#endif // AMBROSIA_ERROR_NECTAR_ERROR_H
+#endif // AMBROSIA_NECTAR_ERROR_H

@@ -11,13 +11,13 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Error/error.h
+ * Ambrosia/Error/error.h++
  * Ambrosia's exception base class.
  *
  **/
 
-#ifndef AMBROSIA_ERROR_ERROR_H
-#define AMBROSIA_ERROR_ERROR_H
+#ifndef AMBROSIA_ERROR_H
+#define AMBROSIA_ERROR_H
 
 // Global include
 #include "Ambrosia/global.h++"
@@ -53,4 +53,4 @@ protected:
 
 } // namespace ambrosia
 
-#endif // AMBROSIA_ERROR_ERROR_H
+#endif // AMBROSIA_ERROR_H

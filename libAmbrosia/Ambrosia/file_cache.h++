@@ -11,7 +11,7 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/file_cache.h
+ * Ambrosia/file_cache.h++
  * Cache for filesystem. Stores source and build directories
  *
  **/

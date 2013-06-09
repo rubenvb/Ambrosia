@@ -11,7 +11,7 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/external_dependency.h
+ * Ambrosia/external_dependency.h++
  * Class representing an external dependency containing:
  *  - search directories
  *  - library files
@@ -22,8 +22,8 @@
  *
  **/
 
-#ifndef AMBROSIA_TARGET_EXTERNAL_H
-#define AMBROSIA_TARGET_EXTERNAl_H
+#ifndef AMBROSIA_EXTERNAL_H
+#define AMBROSIA_EXTERNAl_H
 
 // Global include
 #include "Ambrosia/global.h++"

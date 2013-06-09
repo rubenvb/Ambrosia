@@ -11,13 +11,13 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Error/syntax_error.h
+ * Ambrosia/Error/syntax_error.h++
  * A syntax error.
  *
  **/
 
-#ifndef AMBROSIA_ERROR_SYNTAX_ERROR_H
-#define AMBROSIA_ERROR_SYNTAX_ERROR_H
+#ifndef AMBROSIA_SYNTAX_ERROR_H
+#define AMBROSIA_SYNTAX_ERROR_H
 
 // Global include
 #include "Ambrosia/global.h++"
@@ -48,4 +48,4 @@ public:
 
 } // namespace ambrosia
 
-#endif // AMBROSIA_ERROR_SYNTAX_ERROR_H
+#endif // AMBROSIA_SYNTAX_ERROR_H

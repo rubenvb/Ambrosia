@@ -11,13 +11,13 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Target/binary.h
+ * Ambrosia/Target/binary.h++
  * Binary target, with a library or app as output.
  *
  **/
 
-#ifndef AMBROSIA_TARGET_BINARY_H
-#define AMBROSIA_TARGET_BINARY_H
+#ifndef AMBROSIA_BINARY_H
+#define AMBROSIA_BINARY_H
 
 // Global include
 #include "Ambrosia/global.h++"
@@ -70,4 +70,4 @@ private:
 
 } // namespace ambrosia
 
-#endif // AMBROSIA_TARGET_BINARY_H
+#endif // AMBROSIA_BINARY_H

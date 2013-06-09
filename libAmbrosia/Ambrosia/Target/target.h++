@@ -11,13 +11,13 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Target/target.h
+ * Ambrosia/Target/target.h++
  * Abstract target base class.
  *
  **/
 
-#ifndef AMBROSIA_TARGET_TARGET_H
-#define AMBROSIA_TARGET_TARGET_H
+#ifndef AMBROSIA_TARGET_H
+#define AMBROSIA_TARGET_H
 
 // Global include
 #include "Ambrosia/global.h++"
@@ -89,4 +89,4 @@ namespace std
   };
 }
 
-#endif // AMBROSIA_TARGET_TARGET_H
+#endif // AMBROSIA_TARGET_H

@@ -11,7 +11,7 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * enum_maps.cpp
+ * enum_maps.c++
  * Enum map definitions.
  *
  **/
@@ -20,6 +20,7 @@
 #include "Ambrosia/enum_maps.h++"
 
 // libAmbrosia includes
+#include "Ambrosia/enums.h++"
 
 // C++ includes
 #include <functional>

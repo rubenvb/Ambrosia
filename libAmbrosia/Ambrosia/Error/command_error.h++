@@ -11,13 +11,13 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Error/command_error.h
+ * Ambrosia/Error/command_error.h++
  * Error displaying the failed command
  *
  **/
 
-#ifndef AMBROSIA_ERROR_COMMAND_ERROR_H
-#define AMBROSIA_ERROR_COMMAND_ERROR_H
+#ifndef AMBROSIA_COMMAND_ERROR_H
+#define AMBROSIA_COMMAND_ERROR_H
 
 // Global include
 #include "Ambrosia/global.h++"
@@ -50,4 +50,4 @@ private:
 
 } // namespace ambrosia
 
-#endif // AMBROSIA_ERROR_COMMAND_ERROR_H
+#endif // AMBROSIA_COMMAND_ERROR_H

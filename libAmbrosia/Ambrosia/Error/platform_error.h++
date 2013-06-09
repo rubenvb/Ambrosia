@@ -11,13 +11,14 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Error/platform_error.cpp
+ * Ambrosia/Error/platform_error.c++
  * Error class for platform API specific error handling.
+ * Implementation in Platform/*.c++
  *
  **/
 
-#ifndef AMBROSIA_ERROR_PLATFORM_ERROR_H
-#define AMBROSIA_ERROR_PLATFORM_ERROR_H
+#ifndef AMBROSIA_PLATFORM_ERROR_H
+#define AMBROSIA_PLATFORM_ERROR_H
 
 // Global include
 #include "Ambrosia/platform.h++"
@@ -40,4 +41,4 @@ public:
 
 } // namespace ambrosia
 
-#endif // AMBROSIA_ERROR_PLATFORM_ERROR_H
+#endif // AMBROSIA_PLATFORM_ERROR_H

@@ -11,13 +11,13 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Error/soft_error.h
+ * Ambrosia/Error/soft_error.h++
  * Error thrown to end the commandline utility after help or version output was requested.
  *
  **/
 
-#ifndef AMBROSIA_ERROR_SOFT_ERROR_H
-#define AMBROSIA_ERROR_SOFT_ERROR_H
+#ifndef AMBROSIA_SOFT_ERROR_H
+#define AMBROSIA_SOFT_ERROR_H
 
 // Global include
 #include "Ambrosia/global.h++"
@@ -46,4 +46,4 @@ public:
 
 } // namespace ambrosia
 
-#endif // AMBROSIA_ERROR_SOFT_ERROR_H
+#endif // AMBROSIA_SOFT_ERROR_H

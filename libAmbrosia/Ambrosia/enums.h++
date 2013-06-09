@@ -11,7 +11,7 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/enums.h
+ * Ambrosia/enums.h++
  * Ambrosia's handy enums.
  *
  **/
@@ -27,178 +27,178 @@
 
 namespace ambrosia
 {
-namespace lib
-{
+  namespace lib
+  {
+    // Operating system
+    enum class os
+    {
+      Windows,
+      Linux,
+      MacOSX
+    };
 
-// Operating system
-enum class os
-{
-  Windows,
-  Linux,
-  MacOSX
-  // ...
-};
-// CPU architecture
-enum class architecture
-{
-  x86,
-  amd64,
-  ARM
-  // ...
-};
-// Toolchain comprising of compiler, linker, and general tools
-enum class toolchain
-{
-  Unknown,
-  GNU, // GCC+binutils
-  Microsoft, // cl.exe and link.exe
-  LLVM, // Clang+binutils
-  Intel // ICC+platform linker
-  // ...
-};
+    // CPU architecture
+    enum class architecture
+    {
+      x86,
+      amd64,
+      ARM,
+      ARM64
+      // ...
+    };
+    // Toolchain comprising of compiler, linker, and general tools
+    enum class toolchain
+    {
+      Unknown,
+      GNU, // GCC+binutils
+      Microsoft, // cl.exe and link.exe
+      LLVM, // Clang+binutils
+      Intel // ICC+platform linker
+      // ...
+    };
 
-enum class conditional_operator
-{   // defines operator precedence
-  right_parenthesis, // )
-  left_parenthesis,  // (
-  and_op,            // +
-  or_op,             // |
-  not_op             // !
-};
-enum class target_type
-{
-  application,
-  library,
-  project,
-  install,
-  test,
-  external
-};
-enum class file_type
-{
-  source,
-  source_c,
-  source_cxx,
-  source_java,
-  source_fortran,
-  header,
-  header_c,
-  header_cxx,
-  object,
-  library,
-  executable,
-  resource,
-  Qt_ui,
-  Qt_moc,
-  Qt_rc
-  // ...
-};
+    enum class conditional_operator
+    {   // defines operator precedence
+      right_parenthesis, // )
+      left_parenthesis,  // (
+      and_op,            // +
+      or_op,             // |
+      not_op             // !
+    };
+    enum class target_type
+    {
+      application,
+      library,
+      project,
+      install,
+      test,
+      external
+    };
+    enum class file_type
+    {
+      source,
+      source_c,
+      source_cxx,
+      source_java,
+      source_fortran,
+      header,
+      header_c,
+      header_cxx,
+      object,
+      library,
+      executable,
+      resource,
+      Qt_ui,
+      Qt_moc,
+      Qt_rc
+      // ...
+    };
 
-enum class build_type
-{
-  debug,
-  release,
-  release_with_debug,
-  profile
-  //...
-};
-enum class linkage
-{
-  link_time, // static library (.a, .lib)
-  load_time // shared library (.so, .dylib, .dll)
-};
+    enum class build_type
+    {
+      debug,
+      release,
+      release_with_debug,
+      profile
+      //...
+    };
+    enum class linkage
+    {
+      link_time, // static library (.a, .lib)
+      load_time // shared library (.so, .dylib, .dll)
+    };
 
-// Toolchain-specific options
-enum class toolchain_option
-{
-  compiler_c, // gcc, clang, cl, icc
-  compiler_cxx, // g++ clang++, cl, icc
-  compiler_fortran, // gfortran, ...
-  compiler_nologo, // /NOLOGO
+    // Toolchain-specific options
+    enum class toolchain_option
+    {
+      compiler_c, // gcc, clang, cl, icc
+      compiler_cxx, // g++ clang++, cl, icc
+      compiler_fortran, // gfortran, ...
+      compiler_nologo, // /NOLOGO
 
-  define,
+      define,
 
-  include_dir, // -I, /I
-  include_file, // -include, /FI
-  include_pch, // -include, -Fp
-  include_sysfile, // -sys-include
+      include_dir, // -I, /I
+      include_file, // -include, /FI
+      include_pch, // -include, -Fp
+      include_sysfile, // -sys-include
 
-  output_object, // -o, /Fo
-  output_pch, // -o, /Fp
-  output_debug, // ??
-  output_import_library, // /implib
-  output_static_link, // /OUT:
+      output_object, // -o, /Fo
+      output_pch, // -o, /Fp
+      output_debug, // ??
+      output_import_library, // /implib
+      output_static_link, // /OUT:
 
-  compile_only, // -c, /c
-  compile_debug,
-  syntax_only, // -fsyntax-only, /Zs
-  included_headers, // -M, /showIncludes
+      compile_only, // -c, /c
+      compile_debug,
+      syntax_only, // -fsyntax-only, /Zs
+      included_headers, // -M, /showIncludes
 
-  object_extension, // .o, .obj
+      object_extension, // .o, .obj
 
-  optimize_none, // -O0, /Od
-  optimize_normal, // -O2, /O2
-  optimize_size, // -Os, /O1
-  optimize_extreme, // -O3, /Ox
-  optimize_link, // -flto, /GL
-  optimize_extra, // options that make debugging impossible but added because Ambrosia is awesome
-                  // these include for example: -fomit-frame-pointer, -momit-leaf-frame-pointer, /Gy
+      optimize_none, // -O0, /Od
+      optimize_normal, // -O2, /O2
+      optimize_size, // -Os, /O1
+      optimize_extreme, // -O3, /Ox
+      optimize_link, // -flto, /GL
+      optimize_extra, // options that make debugging impossible but added because Ambrosia is awesome
+      // these include for example: -fomit-frame-pointer, -momit-leaf-frame-pointer, /Gy
 
-  enable_sse, // -msse, /arch:SSE
-  enable_sse2, // -msse2, /arch:SSE2
+      enable_sse, // -msse, /arch:SSE
+      enable_sse2, // -msse2, /arch:SSE2
 
-  dynamic_linker_c, // executable and shared library linker for C
-  dynamic_linker_cxx, // executable and shared library linker for C++
-  dynamic_linker_fortran, // executable and shared library linker for Fortran
+      dynamic_linker_c, // executable and shared library linker for C
+      dynamic_linker_cxx, // executable and shared library linker for C++
+      dynamic_linker_fortran, // executable and shared library linker for Fortran
 
-  static_linker, // static library archive linker driver
-  static_link_options, // default static linker options
+      static_linker, // static library archive linker driver
+      static_link_options, // default static linker options
 
-  link_debug, // /DEBUG
-  link_optimize, // -flto, /LTCG /NOWIN98
-  link_strip, // -s, /OPT:ICF
-  link_library, // -l
-  link_search_directory, // -L, /libpath:
+      link_debug, // /DEBUG
+      link_optimize, // -flto, /LTCG /NOWIN98
+      link_strip, // -s, /OPT:ICF
+      link_library, // -l
+      link_search_directory, // -L, /libpath:
 
-  runtime_library_cxx, // libstdc++, libc++
-  runtime_library_fortran, // libgfortran, ...
+      runtime_library_cxx, // libstdc++, libc++
+      runtime_library_fortran, // libgfortran, ...
 
-  static_library_prefix, // lib
-  static_library_extension, // .a, .lib
-  shared_library_prefix, // lib
-  import_library_extension // .dll.a .dll.lib
-};
-// Language-specific options
-enum class language_option
-{
-  compile_language, // -x [objective-]c[++]
+      static_library_prefix, // lib
+      static_library_extension, // .a, .lib
+      shared_library_prefix, // lib
+      import_library_extension // .dll.a .dll.lib
+    };
+    // Language-specific options
+    enum class language_option
+    {
+      compile_language, // -x [objective-]c[++]
 
-  std_c89,
-  std_c90,
-  std_c99,
-  std_c11,
+      std_c89,
+      std_c90,
+      std_c99,
+      std_c11,
 
-  std_gnu89,
-  std_gnu90,
-  std_gnu99,
-  std_gnu11,
+      std_gnu89,
+      std_gnu90,
+      std_gnu99,
+      std_gnu11,
 
-  std_cxx98,
-  std_cxx03,
-  std_cxx11,
+      std_cxx98,
+      std_cxx03,
+      std_cxx11,
 
-  std_gnuxx98,
-  std_gnuxx03,
-  std_gnuxx11
-};
-// OS-specific options
-enum class os_option
-{
-  executable_extension,
-  shared_library_extension
-};
+      std_gnuxx98,
+      std_gnuxx03,
+      std_gnuxx11
+    };
+    // OS-specific options
+    enum class os_option
+    {
+      executable_extension,
+      shared_library_extension
+    };
 
-} // namespace lib
+  } // namespace lib
 
 } // namespace ambrosia
 

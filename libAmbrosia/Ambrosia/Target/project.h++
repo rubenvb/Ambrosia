@@ -11,13 +11,13 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software.
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  *
- * Ambrosia/Target/project.h
+ * Ambrosia/Target/project.h++
  * Project target used as top-level target and for "sub" targets.
  *
  **/
 
-#ifndef AMBROSIA_TARGET_PROJECT_H
-#define AMBROSIA_TARGET_PROJECT_H
+#ifndef AMBROSIA_PROJECT_H
+#define AMBROSIA_PROJECT_H
 
 // Global include
 #include "Ambrosia/global.h++"
@@ -61,4 +61,4 @@ private:
 
 } // namespace ambrosia
 
-#endif // AMBROSIA_TARGET_PROJECT_H
+#endif // AMBROSIA_PROJECT_H
