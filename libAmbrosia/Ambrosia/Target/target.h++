@@ -24,6 +24,7 @@
 
 // libAmbrosia includes
 #include "Ambrosia/configuration.h++"
+#include "Ambrosia/enums.h++"
 #include "Ambrosia/platform.h++"
 #include "Ambrosia/typedefs.h++"
 
@@ -43,8 +44,8 @@ class target
 public:
   target(const std::string& name,
          const target_type type,
-         const std::unordered_map<file_type, file_set>& files = std::unordered_map<file_type, file_set>(),
-         const std::map<file_type, string_set>& directories = std::map<file_type, string_set>() );
+         const std::unordered_map<file_type, file_set>& files,// = {},
+         const std::map<file_type, string_set>& directories = {});
 
   bool operator<(const target& rhs) const
   { return (name < rhs.name) ? true : (type < rhs.type); }

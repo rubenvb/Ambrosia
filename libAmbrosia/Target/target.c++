@@ -49,9 +49,9 @@ target::target(const string& name,
   final_commands()
 {   }
 
-void target::gather_dependency_information(string_set& header_directories,
-                                           string_set& library_directories,
-                                           string_vector& libraries)
+void target::gather_dependency_information(string_set&,// header_directories,
+                                           string_set&,// library_directories,
+                                           string_vector&)// libraries)
 {   }
 
 } // namespace lib

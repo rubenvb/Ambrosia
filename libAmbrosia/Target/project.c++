@@ -32,13 +32,13 @@ namespace lib
 {
 
 project::project(const ::libambrosia::configuration& configuration)
-: target("unknown", target_type::project),
+: target("unknown", target_type::project, std::unordered_map<file_type, file_set>()),
   configuration(configuration),
   file_cache()
 {   }
 project::project(const string& name,
                  const ::libambrosia::configuration& configuration)
-: target(name, target_type::project),
+: target(name, target_type::project, std::unordered_map<file_type, file_set>()),
   configuration(configuration),
   file_cache(),
   targets()

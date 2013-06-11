@@ -43,6 +43,6 @@ namespace ambrosia
 }
 
 // execute expr over all variadic template arguments
-#define EXPAND(expr) ambrosia::lib::swallow{0, ((expr),0)...}
+#define EXPAND(expr) (void)ambrosia::lib::swallow{0, ((expr),0)...}
 
 #endif

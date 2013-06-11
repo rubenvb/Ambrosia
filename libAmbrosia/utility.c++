@@ -29,6 +29,8 @@
 #include <algorithm>
 #include <ostream>
   using std::ostream;
+#include <string>
+  using std::string;
 
 namespace ambrosia
 {
@@ -65,7 +67,7 @@ namespace ambrosia
     #if _WIN32
       os << platform::convert_to_utf8(command.arguments);
     #else
-      std::for_each(std::begin(command.array), std::end(command.array)-1,[](const string& argument) { os << " " << argument; });
+      std::for_each(std::begin(command.array), std::end(command.array)-1,[&os](const string& argument) { os << " " << argument; });
     #endif
       return os;
     }

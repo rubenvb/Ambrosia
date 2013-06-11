@@ -17,13 +17,13 @@
  **/
 
 // Function include
-#include "Ambrosia/platform.h"
+#include "Ambrosia/platform.h++"
 
 // libAmbrosia includes
-#include "Ambrosia/algorithm.h"
-#include "Ambrosia/Error/error.h"
-#include "Ambrosia/debug.h"
-#include "Ambrosia/typedefs.h"
+#include "Ambrosia/algorithm.h++"
+#include "Ambrosia/Error/error.h++"
+#include "Ambrosia/debug.h++"
+#include "Ambrosia/typedefs.h++"
 
 // Platform includes
 #include <dirent.h>
@@ -210,7 +210,7 @@ std::pair<bool, int> execute_command(const command &command,
     case -1:
       throw error("fork failed.");
     case 0:
-      debug(debug::command_exec) << "unix::execute_command::Doing pipe stuff.\n";
+      debug(debug::command_exec, "unix::execute_command::Doing pipe stuff.\n");
       // Close read end in the child
       close(cout_pipe[0]);
       close(cout_pipe[0]);
@@ -225,7 +225,7 @@ std::pair<bool, int> execute_command(const command &command,
         std::_Exit(-1); // Quickly exit leaving the parent's file descriptors untouched.
     default:
       if(waitpid(pid, &exit_code, 0) != -1)
-        debug(debug::command_exec) << "unix::execute_command::Child exited with status " << exit_code << ".\n";
+        debug(debug::command_exec, "unix::execute_command::Child exited with status ", exit_code, ".\n");
       else
         throw error("waitpid failed.");
 
@@ -252,7 +252,7 @@ std::pair<bool, int> execute_command(const command &command,
       if(bytes_read == -1)
         throw error("Failure reading from stdout pipe.");
   }
-  debug(debug::command_exec) << "unix::execute_command::Executed command with return code " << exit_code << ".\n";
+  debug(debug::command_exec, "unix::execute_command::Executed command with return code ", exit_code, ".\n");
   // TODO: figure out how to reliably detect if the exec call failed or the exec'ed program returned -1
   if(exit_code == -1)
     return std::make_pair(false,exit_code);

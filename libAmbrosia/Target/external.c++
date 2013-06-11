@@ -39,7 +39,7 @@ external::external(const std::string& name,
                    const std::string& bin_directory,
                    const string_set& libraries,
                    const bool optional)
-: target(name, type),
+: target(name, type, std::unordered_map<file_type, file_set>()),
   optional(optional)
 {
   directories[file_type::header].insert(include_directory);

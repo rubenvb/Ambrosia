@@ -31,6 +31,7 @@
 #include "Ambrosia/Target/project.h++"
 
 // C++ includes
+#include <fstream>
 #include <iostream>
   using std::cerr;
   using std::istream;
@@ -549,7 +550,7 @@ void parser::parse_dependency(const string& name,
       throw nectar_error("Required application dependency "+name+" must have binary directory specified.", filename, lexer.line_number);
 
     debug(debug::parser, "Copying dependency directories to \'external\' target.\n");
-    project.targets.emplace_back(new external(name, type, result->include, result->lib, result->bin));
+    project.targets.emplace_back(new external(name, type, result->include, result->lib, result->bin, string_set(), false));
     dependency = project.targets.back().get();
   }
   if(dependency == nullptr)

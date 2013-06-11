@@ -46,11 +46,11 @@ class external : public target
 public:
   external(const std::string& name,
            const target_type type,
-           const std::string& include_directory = {},
-           const std::string& lib_directory = {},
-           const std::string& bin_directory = {},
-           const string_set& libraries = {},
-           const bool optional = false);
+           const std::string& include_directory,// = {},
+           const std::string& lib_directory,// = {},
+           const std::string& bin_directory,// = {},
+           const string_set& libraries,// = {},
+           const bool optional);// = false);
 
   virtual const std::string& source_directory() const
   { return empty_string; }
